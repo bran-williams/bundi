@@ -1,0 +1,14 @@
+{
+  "windowTitle": "Mineman 2: Order of the stone",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.bundi.voxel.VoxelScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+
+  "sceneDirectory": "com.branwilliams.bundi"
+}

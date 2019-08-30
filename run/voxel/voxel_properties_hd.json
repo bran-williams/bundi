@@ -1,0 +1,195 @@
+{
+  "diamond_block": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/diamond_block.png",
+        "normal": "blocks_hd/diamond_block_n.png",
+        "specular": "blocks_hd/diamond_block_s.png"
+      }
+    }
+  },
+  "bricks": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/bricks.png",
+        "normal": "blocks_hd/bricks_n.png",
+        "specular": "blocks_hd/bricks_s.png"
+      }
+    }
+  },
+  "stone": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/stone.png",
+        "normal": "blocks_hd/stone_n.png"
+      }
+    }
+  },
+  "dirt": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/dirt.png",
+        "normal": "blocks_hd/dirt_n.png"
+      }
+    }
+  },
+  "grass": {
+    "faces": {
+      "front": {
+        "diffuse": "blocks_hd/grass_block_side.png",
+        "normal":  "blocks_hd/grass_block_side_n.png"
+      },
+      "back": {
+        "diffuse": "blocks_hd/grass_block_side.png",
+        "normal":  "blocks_hd/grass_block_side_n.png"
+      },
+      "top": {
+        "diffuse": "blocks_hd/grass_block_top.png",
+        "normal":  "blocks_hd/grass_block_top_n.png"
+      },
+      "bottom": {
+        "diffuse": "blocks_hd/dirt.png",
+        "normal":  "blocks_hd/dirt_n.png"
+      },
+      "right": {
+        "diffuse": "blocks_hd/grass_block_side.png",
+        "normal":  "blocks_hd/grass_block_side_n.png"
+      },
+      "left": {
+        "diffuse": "blocks_hd/grass_block_side.png",
+        "normal":  "blocks_hd/grass_block_side_n.png"
+      }
+    }
+  },
+  "oak_log": {
+    "faces": {
+      "front": {
+        "diffuse": "blocks_hd/oak_log.png",
+        "normal":  "blocks_hd/oak_log_n.png"
+      },
+      "back": {
+        "diffuse": "blocks_hd/oak_log.png",
+        "normal":  "blocks_hd/oak_log_n.png"
+      },
+      "top": {
+        "diffuse": "blocks_hd/oak_log_top.png",
+        "normal":  "blocks_hd/oak_log_top_n.png"
+      },
+      "bottom": {
+        "diffuse": "blocks_hd/oak_log_top.png",
+        "normal":  "blocks_hd/oak_log_top_n.png"
+      },
+      "right": {
+        "diffuse": "blocks_hd/oak_log.png",
+        "normal":  "blocks_hd/oak_log_n.png"
+      },
+      "left": {
+        "diffuse": "blocks_hd/oak_log.png",
+        "normal":  "blocks_hd/oak_log_n.png"
+      }
+    }
+  },
+  "oak_planks": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/oak_planks.png",
+        "specular": "blocks_hd/oak_planks_s.png",
+        "normal": "blocks_hd/oak_planks_n.png"
+      }
+    }
+  },
+  "oak_leaves": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/oak_leaves.png"
+      }
+    },
+    "translucent": true
+  },
+  "bookshelf": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/bookshelf.png",
+        "normal": "blocks_hd/bookshelf_n.png"
+      }
+    }
+  },
+  "emerald_block": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/emerald_block.png",
+        "specular": "blocks_hd/emerald_block_s.png",
+        "normal": "blocks_hd/emerald_block_n.png"
+      }
+    }
+  },
+  "gold_block": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/gold_block.png",
+        "specular": "blocks_hd/gold_block_s.png",
+        "normal": "blocks_hd/gold_block_n.png"
+      }
+    }
+  },
+  "gravel": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/gravel.png",
+        "specular": "blocks_hd/gravel_s.png",
+        "normal": "blocks_hd/gravel_n.png"
+      }
+    }
+  },
+  "iron_block": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/iron_block.png",
+        "specular": "blocks_hd/iron_block_s.png",
+        "normal": "blocks_hd/iron_block_n.png"
+      }
+    }
+  },
+  "sand": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/sand.png",
+        "normal": "blocks_hd/sand_n.png"
+      }
+    }
+  },
+  "sponge": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/sponge.png",
+        "normal": "blocks_hd/sponge_n.png"
+      }
+    }
+  },
+  "glass": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/glass.png",
+        "normal": "blocks_hd/glass_n.png"
+      }
+    },
+    "translucent": true
+  },
+  "glowstone": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/glowstone.png",
+        "normal": "blocks_hd/glowstone_n.png",
+        "specular": "blocks_hd/glowstone_s.png"
+      }
+    }
+  },
+  "bedrock": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/bedrock.png",
+        "normal": "blocks_hd/bedrock_n.png"
+      }
+    }
+  }
+}

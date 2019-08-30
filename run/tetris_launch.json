@@ -1,0 +1,13 @@
+{
+  "windowTitle": "Tetris",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.bundi.tetris.TetrisScene",
+
+  "assetDirectory": "./tetris/",
+  "tempDirectory": "./tetris/temp",
+  "sceneDirectory": "com.branwilliams.bundi.tetris"
+}

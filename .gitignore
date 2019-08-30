@@ -1,0 +1,9 @@
+.gradle/
+.idea/
+*.iml
+*.ipr
+*.iws
+*.log
+build/
+out/
+/run/models/

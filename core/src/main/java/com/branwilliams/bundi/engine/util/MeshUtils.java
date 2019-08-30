@@ -1,0 +1,268 @@
+package com.branwilliams.bundi.engine.util;
+
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
+import java.util.List;
+
+/**
+ * Created by Brandon Williams on 9/6/2018.
+ */
+public enum MeshUtils {
+    INSTANCE;
+
+    /**
+     * Calculates the tangents and bitangents for a given set of vertices and texture coordinates. Assuming that the
+     * mesh does not have indices.
+     * TODO this and Gram-Schmidt orthogonalize and calculate handedness
+     * */
+    public static void calculateTangentBitangents(int[] indices, float[] vertices, float[] textureCoordinates, float[] tangents,
+                                                  float[] bitangents) {
+        System.out.println(vertices.length / 3 + ", " + textureCoordinates.length / 2);
+        if (vertices.length / 3 != textureCoordinates.length / 2) {
+            throw new IllegalArgumentException("Number of vertices must equal the number of texture coordinates!");
+        }
+
+        // This operation is done with 3 vertices.
+        for (int i = 0; i < indices.length; i += 3) {
+            int index0 = indices[i];
+            int index1 = indices[i+1];
+            int index2 = indices[i+2];
+
+            Vector3f v0 = new Vector3f(vertices[index0], vertices[index0 + 1], vertices[index0 + 2]);
+            Vector3f v1 = new Vector3f(vertices[index1], vertices[index1 + 1], vertices[index1 + 2]);
+            Vector3f v2 = new Vector3f(vertices[index2], vertices[index2 + 1], vertices[index2 + 2]);
+
+            Vector2f uv0 = new Vector2f(textureCoordinates[index0], textureCoordinates[index0 + 1]);
+            Vector2f uv1 = new Vector2f(textureCoordinates[index1], textureCoordinates[index1 + 1]);
+            Vector2f uv2 = new Vector2f(textureCoordinates[index2], textureCoordinates[index2 + 1]);
+
+            Vector3f tangent = calculateTangent(v0, v1, v2, uv0, uv1, uv2);
+
+            tangents[index0] = tangent.x;
+            tangents[index0 + 1] = tangent.y;
+            tangents[index0 + 2] = tangent.z;
+
+            tangents[index1] = tangent.x;
+            tangents[index1 + 1] = tangent.y;
+            tangents[index1 + 2] = tangent.z;
+
+            tangents[index2] = tangent.x;
+            tangents[index2 + 1] = tangent.y;
+            tangents[index2 + 2] = tangent.z;
+
+            Vector3f bitangent = calculateBitangent(v0, v1, v2, uv0, uv1, uv2);
+
+            bitangents[index0] = bitangent.x;
+            bitangents[index0 + 1] = bitangent.y;
+            bitangents[index0 + 2] = bitangent.z;
+
+            bitangents[index1] = bitangent.x;
+            bitangents[index1 + 1] = bitangent.y;
+            bitangents[index1 + 2] = bitangent.z;
+
+            bitangents[index2] = bitangent.x;
+            bitangents[index2 + 1] = bitangent.y;
+            bitangents[index2 + 2] = bitangent.z;
+        }
+    }
+
+    /**
+     * Calculates the tangents and bitangents for a given set of vertices and texture coordinates. Assuming that the
+     * mesh does not have indices.
+     * */
+    public static void calculateTangentBitangents(float[] vertices, float[] textureCoordinates, float[] tangents,
+                                                  float[] bitangents) {
+        int totalVertices = vertices.length / 3;
+
+        if (totalVertices != textureCoordinates.length / 2) {
+            throw new IllegalArgumentException("Number of vertices must equal the number of texture coordinates!");
+        }
+
+        // This operation is done with 3 vertices.
+        for (int i = 0; i < totalVertices; i += 3) {
+            Vector3f v0 = new Vector3f(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
+            Vector3f v1 = new Vector3f(vertices[(i + 1) * 3], vertices[(i + 1) * 3 + 1], vertices[(i + 1) * 3 + 2]);
+            Vector3f v2 = new Vector3f(vertices[(i + 2) * 3], vertices[(i + 2) * 3 + 1], vertices[(i + 2) * 3 + 2]);
+
+            Vector2f uv0 = new Vector2f(textureCoordinates[i * 2], textureCoordinates[i * 2 + 1]);
+            Vector2f uv1 = new Vector2f(textureCoordinates[(i + 1) * 2], textureCoordinates[(i + 1) * 2 + 1]);
+            Vector2f uv2 = new Vector2f(textureCoordinates[(i + 2) * 2], textureCoordinates[(i + 2) * 2 + 1]);
+
+            Vector3f tangent = calculateTangent(v0, v1, v2, uv0, uv1, uv2);
+
+            tangents[i * 3] = tangent.x;
+            tangents[i * 3 + 1] = tangent.y;
+            tangents[i * 3 + 2] = tangent.z;
+
+            tangents[(i + 1) * 3] = tangent.x;
+            tangents[(i + 1) * 3 + 1] = tangent.y;
+            tangents[(i + 1) * 3 + 2] = tangent.z;
+
+            tangents[(i + 2) * 3] = tangent.x;
+            tangents[(i + 2) * 3 + 1] = tangent.y;
+            tangents[(i + 2) * 3 + 2] = tangent.z;
+
+            Vector3f bitangent = calculateBitangent(v0, v1, v2, uv0, uv1, uv2);
+
+            bitangents[i * 3] = bitangent.x;
+            bitangents[i * 3 + 1] = bitangent.y;
+            bitangents[i * 3 + 2] = bitangent.z;
+
+            bitangents[(i + 1) * 3] = bitangent.x;
+            bitangents[(i + 1) * 3 + 1] = bitangent.y;
+            bitangents[(i + 1) * 3 + 2] = bitangent.z;
+
+            bitangents[(i + 2) * 3] = bitangent.x;
+            bitangents[(i + 2) * 3 + 1] = bitangent.y;
+            bitangents[(i + 2) * 3 + 2] = bitangent.z;
+        }
+    }
+
+    public static void calculateTangentBitangent(float[] vertices, float[] textureCoords, float[] tangents,
+                                                  float[] bitangents, int v0Index, int v1Index, int v2Index) {
+        // Create vectors to make this calculation a little easier to read.
+        Vector3f v0 = new Vector3f(vertices[v0Index * 3], vertices[v0Index * 3 + 1], vertices[v0Index * 3 + 2]);
+        Vector3f v1 = new Vector3f(vertices[v1Index * 3], vertices[v1Index * 3 + 1], vertices[v1Index * 3 + 2]);
+        Vector3f v2 = new Vector3f(vertices[v2Index * 3], vertices[v2Index * 3 + 1], vertices[v2Index * 3 + 2]);
+
+        Vector2f uv0 = new Vector2f(textureCoords[v0Index * 2], textureCoords[v0Index * 2 + 1]);
+        Vector2f uv1 = new Vector2f(textureCoords[v1Index * 2], textureCoords[v1Index * 2 + 1]);
+        Vector2f uv2 = new Vector2f(textureCoords[v2Index * 2], textureCoords[v2Index * 2 + 1]);
+
+        Vector3f tangent = calculateTangent(v0, v1, v2, uv0, uv1, uv2);
+
+        tangents[v0Index * 3] = tangent.x;
+        tangents[v0Index * 3 + 1] = tangent.y;
+        tangents[v0Index * 3 + 2] = tangent.z;
+
+        tangents[v1Index * 3] = tangent.x;
+        tangents[v1Index * 3 + 1] = tangent.y;
+        tangents[v1Index * 3 + 2] = tangent.z;
+
+        tangents[v2Index * 3] = tangent.x;
+        tangents[v2Index * 3 + 1] = tangent.y;
+        tangents[v2Index * 3 + 2] = tangent.z;
+
+        Vector3f bitangent = calculateBitangent(v0, v1, v2, uv0, uv1, uv2);
+
+        bitangents[v0Index * 3] = bitangent.x;
+        bitangents[v0Index * 3 + 1] = bitangent.y;
+        bitangents[v0Index * 3 + 2] = bitangent.z;
+
+        bitangents[v1Index * 3] = bitangent.x;
+        bitangents[v1Index * 3 + 1] = bitangent.y;
+        bitangents[v1Index * 3 + 2] = bitangent.z;
+
+        bitangents[v2Index * 3] = bitangent.x;
+        bitangents[v2Index * 3 + 1] = bitangent.y;
+        bitangents[v2Index * 3 + 2] = bitangent.z;
+    }
+
+    /**
+     * Calculates the tangent for a given set of vectors and uvs.
+     * */
+    public static Vector3f calculateTangent(Vector3f v0, Vector3f v1, Vector3f v2, Vector2f uv0,
+                                                               Vector2f uv1, Vector2f uv2) {
+        Vector3f deltaPos1 = new Vector3f(v1).sub(v0);
+        Vector3f deltaPos2 = new Vector3f(v2).sub(v0);
+
+        // UV delta
+        Vector2f deltaUV1 = new Vector2f(uv1).sub(uv0);
+        Vector2f deltaUV2 = new Vector2f(uv2).sub(uv0);
+
+        float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+        Vector3f tangent = new Vector3f();
+        tangent.x = r * deltaUV2.y * deltaPos1.x - deltaUV1.y * deltaPos2.x;
+        tangent.y = r * deltaUV2.y * deltaPos1.y - deltaUV1.y * deltaPos2.y;
+        tangent.z = r * deltaUV2.y * deltaPos1.z - deltaUV1.y * deltaPos2.z;
+        tangent.normalize();
+
+        return tangent;
+    }
+
+    /**
+     * Calculates the bitangent for a given set of vectors and uvs.
+     * */
+    public static Vector3f calculateBitangent(Vector3f v0, Vector3f v1, Vector3f v2, Vector2f uv0,
+                                     Vector2f uv1, Vector2f uv2) {
+        Vector3f deltaPos1 = new Vector3f(v1).sub(v0);
+        Vector3f deltaPos2 = new Vector3f(v2).sub(v0);
+
+        Vector2f deltaUV1 = new Vector2f(uv1).sub(uv0);
+        Vector2f deltaUV2 = new Vector2f(uv2).sub(uv0);
+
+        float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+
+        Vector3f bitangent = new Vector3f();
+        bitangent.x = r * (-deltaUV2.x * deltaPos1.x + deltaUV1.x * deltaPos2.x);
+        bitangent.y = r * (-deltaUV2.x * deltaPos1.y + deltaUV1.x * deltaPos2.y);
+        bitangent.z = r * (-deltaUV2.x * deltaPos1.z + deltaUV1.x * deltaPos2.z);
+        bitangent.normalize();
+
+        return bitangent;
+    }
+
+    /**
+     * Converts a given list of vectors to an array of floats.
+     * */
+    public static float[] toArray4f(List<Vector4f> vectors) {
+        float[] array = new float[vectors.size() * 4];
+        for (int i = 0; i < vectors.size(); i++) {
+            Vector4f vector = vectors.get(i);
+            array[i * 4] = vector.x;
+            array[i * 4 + 1] = vector.y;
+            array[i * 4 + 2] = vector.z;
+            array[i * 4 + 3] = vector.w;
+
+        }
+        return array;
+    }
+
+
+    /**
+     * Converts a given list of vectors to an array of floats.
+     * */
+    public static float[] toArray3f(List<Vector3f> vectors) {
+        float[] array = new float[vectors.size() * 3];
+        for (int i = 0; i < vectors.size(); i++) {
+            Vector3f vector = vectors.get(i);
+            array[i * 3] = vector.x;
+            array[i * 3 + 1] = vector.y;
+            array[i * 3 + 2] = vector.z;
+        }
+        return array;
+    }
+
+    /**
+     * Converts a given list of vectors to an array of floats.
+     * */
+    public static float[] toArray2f(List<Vector2f> vectors) {
+        float[] array = new float[vectors.size() * 2];
+        for (int i = 0; i < vectors.size(); i++) {
+            Vector2f vector = vectors.get(i);
+            array[i * 2] = vector.x;
+            array[i * 2 + 1] = vector.y;
+        }
+        return array;
+    }
+
+    public static int[] toArrayi(List<Integer> list) {
+        int[] res = list.stream().mapToInt((Integer i) -> i).toArray();
+
+        return res;
+    }
+
+    public static float[] toArrayf(List<Float> list) {
+        float[] res = new float[list.size()];
+
+        int i = 0;
+        for (float f : list) {
+            res[i++] = f;
+        }
+
+        return res;
+    }
+}

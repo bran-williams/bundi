@@ -1,0 +1,14 @@
+{
+  "windowTitle": "Mchezo",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.bundi.engine.selector.SelectorScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+
+  "sceneDirectory": "com.branwilliams.bundi"
+}

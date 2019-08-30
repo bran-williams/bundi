@@ -1,0 +1,6 @@
+rootProject.name = 'bundi'
+
+include 'core'
+include 'terrain'
+include 'voxel'
+include 'gui'

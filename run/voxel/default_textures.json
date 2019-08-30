@@ -1,0 +1,6 @@
+{
+  "diffuse": "blocks_hd/default/diffuse_default.png",
+  "specular": "blocks_hd/default/specular_default.png",
+  "normal": "blocks_hd/default/normal_default.png",
+  "emission": "blocks_hd/default/emission_default.png"
+}

@@ -1,0 +1,11 @@
+{
+  "forward": "w",
+  "left": "a",
+  "backward": "s",
+  "right": "d",
+  "ascend": "space",
+  "descend": "left_shift",
+  "pause": "escape",
+  "updateSun": "r",
+  "noclip": "f"
+}

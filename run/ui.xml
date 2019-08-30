@@ -1,0 +1,10 @@
+<UI>
+    <Frame tag="butt" title="Title here" x="50" y="50" width="100" height="80">
+        <ListLayout padding="2" componentPadding="1"/>
+        <FontData font="Verdana" size="20" style="bold"/>
+
+        <Button tag="test" width="100" height="20" text="Here's a button">
+            <FontData font="Verdana" size="18" style="bold"/>
+        </Button>
+    </Frame>
+</UI>
