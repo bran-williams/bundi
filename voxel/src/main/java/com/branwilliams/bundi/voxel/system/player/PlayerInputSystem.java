@@ -15,7 +15,6 @@ import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.components.WalkComponent;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Reads the player input from their keycodes and updates the movement component.

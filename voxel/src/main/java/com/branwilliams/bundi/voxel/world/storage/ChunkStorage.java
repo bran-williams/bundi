@@ -177,7 +177,6 @@ public interface ChunkStorage {
         markChunkDirty(chunkX + 1, chunkZ);
         markChunkDirty(chunkX, chunkZ - 1);
         markChunkDirty(chunkX, chunkZ + 1);
-
     }
 
     /**

@@ -94,7 +94,6 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
 
         drawVoxelSelection(renderContext, window);
 
-        Texture.unbind(scene.getTexturePack().getNormalTextureAtlas());
         ShaderProgram.unbind();
     }
 

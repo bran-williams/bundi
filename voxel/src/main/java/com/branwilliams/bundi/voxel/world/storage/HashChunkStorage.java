@@ -14,7 +14,6 @@ public class HashChunkStorage implements ChunkStorage {
 
     private Map<ChunkPos, VoxelChunk> chunks;
 
-
     public HashChunkStorage() {
         this.chunks = new HashMap<>();
     }
