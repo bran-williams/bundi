@@ -41,15 +41,3 @@ git clone https://github.com/bran-williams/bundi.git
 
 - Set module to the submodule of interest.
     * e.g. `voxel.main`
-
-### Dependencies
-
-* [lwjgl](https://github.com/LWJGL/lwjgl3) - OpenGL & OpenAL & STB
-* [glfw](http://www.glfw.org/) - Cross Platform Window API for OpenGL
-* [joml](https://github.com/JOML-CI/JOML) - Java OpenGL math library (for linear algebra operations)
-* [assimp](http://www.assimp.org/) - Open-Asset-Importer-Lib (for 3D models)
-* [reflections](https://github.com/ronmamo/reflections) - Java runtime metadata analysis tool (loading from classpaths)
-* [gson](https://github.com/google/gson) - Json serialization/deserialization
-* [PngDecoder](http://twl.l33tlabs.org/) - Loading PNGs
-
-### Resources used
