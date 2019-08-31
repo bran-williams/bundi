@@ -3,7 +3,6 @@
   "windowWidth": 1600,
   "windowHeight": 900,
   "vsync": true,
-  "fullscreen": true,
   "keycodes": "./keycodes.json",
 
   "launchScene": "com.branwilliams.terrain.TerrainScene",

@@ -1,4 +1,4 @@
-package com.branwilliams.terrain;
+package com.branwilliams.terrain.render;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.shader.*;

@@ -1,4 +1,4 @@
-package com.branwilliams.terrain;
+package com.branwilliams.terrain.render;
 
 import com.branwilliams.bundi.engine.core.AbstractRenderer;
 import com.branwilliams.bundi.engine.core.Engine;
@@ -22,7 +22,7 @@ public class TerrainRenderer extends AbstractRenderer {
     @Override
     public void init(Engine engine, Window window) throws Exception {
         super.init(engine, window);
-        glClearColor(0.3F, 0.3F, 0.3F, 1F);
+        glClearColor(0.1F, 0.5F, 1F, 1F);
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
