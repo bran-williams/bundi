@@ -58,7 +58,7 @@ public class VoxelSelectionRenderPass extends RenderPass<VoxelRenderContext> {
 
         RaycastResult selectedVoxel = scene.getPlayerState().getRaycast();
         Vector3f voxelPos = selectedVoxel.blockPosition;
-        Voxel voxel = scene.getVoxelWorld().getVoxelAtPosition(voxelPos);
+        Voxel voxel = scene.getVoxelWorld().getChunks().getVoxelAtPosition(voxelPos);
         AABB voxelAABB = voxel.getBoundingBox((int) voxelPos.x, (int) voxelPos.y, (int) voxelPos.z);
         Vector3f voxelCenter = voxelAABB.getCenter();
 

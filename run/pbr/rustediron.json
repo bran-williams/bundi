@@ -1,0 +1,6 @@
+{
+  "diffuse": "pbr/textures/rustediron/rustediron2_basecolor.png",
+  "metallic": "pbr/textures/rustediron/rustediron2_metallic.png",
+  "normal": "pbr/textures/rustediron/rustediron2_normal.png",
+  "roughness": "pbr/textures/rustediron/rustediron2_roughness.png"
+}

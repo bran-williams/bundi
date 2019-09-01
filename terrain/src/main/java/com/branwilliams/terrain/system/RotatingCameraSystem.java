@@ -48,7 +48,7 @@ public class RotatingCameraSystem extends MouseControlSystem {
     @Override
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
         super.fixedUpdate(engine, entitySystemManager, deltaTime);
-        float yawRadians = Mathf.toRadians(yaw);
+        float yawRadians = 2F * Mathf.PI * (yaw / 360F);
         for (IEntity entity : entitySystemManager.getEntities(this)) {
             Camera camera = entity.getComponent(Camera.class);
             camera.setPosition(radius.x + Mathf.cos(yawRadians) * radius.x, radius.y, radius.z + Mathf.sin(yawRadians) * radius.z);

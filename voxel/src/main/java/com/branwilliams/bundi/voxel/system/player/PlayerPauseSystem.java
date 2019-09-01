@@ -36,9 +36,7 @@ import static com.branwilliams.bundi.gui.impl.Pointers.FONT_TOOLTIP;
 public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListener {
 
     private static final String[] ITEMS = {
-            "bruh",
-            "ok",
-            "epic"
+            "Button"
     };
 
     private static final int UI_PADDING = 20;
@@ -47,7 +45,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
 
     private AudioSource source;
 
-    private final ValueContainer.Value pitch_value = new ValueContainer.Value("Pitch", 0F, 1F, 3F, "adjust oof pitch");
+    private final ValueContainer.Value pitch_value = new ValueContainer.Value("Setting", 0F, 1F, 3F, "Adjust this setting");
 
     private Toolbox toolbox;
 
@@ -120,7 +118,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
 
                         for (String item : ITEMS) {
                             Button button = new Button(item + "_tag", item);
-                            button.setTooltip("Run the scene " + item + ".");
+                            button.setTooltip("Here's the tooltip for item " + item + ".");
                             button.setFont(smallFont);
                             button.onPressed((b, action) -> {
                                 source.setPitch(pitch_value.getValue());

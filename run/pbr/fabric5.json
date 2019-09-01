@@ -1,0 +1,5 @@
+{
+  "diffuse": "pbr/textures/fabric5/Fabric 05_diffuse.png",
+  "normal": "pbr/textures/fabric5/Fabric 05_normal.png",
+  "roughness": "pbr/textures/fabric5/Fabric 05_roughness.png"
+}

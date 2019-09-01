@@ -98,14 +98,14 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
         if (playerState.getRaycast() != null) {
             switch (buttonId) {
                 case MOUSE_LEFT_CLICK:
-                    scene.getVoxelWorld().setVoxelAtPosition(Voxels.air, playerState.getRaycast().blockPosition);
+                    scene.getVoxelWorld().getChunks().setVoxelAtPosition(Voxels.air, playerState.getRaycast().blockPosition);
                     interactionDelay = TICKS_PER_INTERACTION;
                     break;
                 case MOUSE_RIGHT_CLICK:
                     Vector3f placePosition = new Vector3f(playerState.getRaycast().blockPosition);
                     placePosition.add(playerState.getRaycast().face);
-                    if (scene.getVoxelWorld().getVoxelAtPosition(placePosition).isAir()) {
-                        scene.getVoxelWorld().setVoxelAtPosition(playerState.getVoxelInHand(), placePosition);
+                    if (scene.getVoxelWorld().getChunks().getVoxelAtPosition(placePosition).isAir()) {
+                        scene.getVoxelWorld().getChunks().setVoxelAtPosition(playerState.getVoxelInHand(), placePosition);
                         interactionDelay = TICKS_PER_INTERACTION;
                     }
                     break;

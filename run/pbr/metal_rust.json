@@ -1,0 +1,5 @@
+{
+  "diffuse": "pbr/textures/metal_rust/Metal Rust_baseColor.png",
+  "normal": "pbr/textures/metal_rust/Metal Rust_normal.png",
+  "roughness": "pbr/textures/metal_rust/Metal Rust_roughness.png"
+}

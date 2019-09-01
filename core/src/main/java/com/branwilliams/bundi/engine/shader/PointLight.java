@@ -58,9 +58,9 @@ public class PointLight {
 //        return getRadius(0.005F);
 //    }
 
-        /**
-         * quadratic = 1.0 / (radius*radius * minLight)
-         * */
+    /**
+     * quadratic = 1.0 / (radius*radius * minLight)
+     * */
     public float getRadius(float minLight) {
         return Mathf.sqrt(1 / (attenuation.getQuadratic() * minLight));
     }

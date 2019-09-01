@@ -1,0 +1,6 @@
+{
+  "diffuse": "pbr/textures/bamboo/bamboo-wood-semigloss-albedo.png",
+  "metallic": "pbr/textures/bamboo/bamboo-wood-semigloss-metal.png",
+  "normal": "pbr/textures/bamboo/bamboo-wood-semigloss-normal.png",
+  "roughness": "pbr/textures/bamboo/bamboo-wood-semigloss-roughness.png"
+}

@@ -54,7 +54,7 @@ public class ChunkBorderRenderPass extends RenderPass<VoxelRenderContext> {
 
 
         Transformable playerTransform = scene.getPlayer().getComponent(Transformable.class);
-        VoxelChunk playerChunk = scene.getVoxelWorld().getChunkAtPosition(playerTransform.getPosition());
+        VoxelChunk playerChunk = scene.getVoxelWorld().getChunks().getChunkAtPosition(playerTransform.getPosition());
 
         dynamicVAO.begin();
         RenderUtils.addAABB(dynamicVAO, playerChunk.getAABB(), 1F, 0F, 0F, 1F);

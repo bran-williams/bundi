@@ -264,7 +264,7 @@ public class Mesh implements Destructible {
                 + ", renderMode="
                 + renderMode
                 + ", ebo="
-                + ebo.toString()
+                + (ebo == null ? null : ebo.toString())
                 + "]";
     }
 }

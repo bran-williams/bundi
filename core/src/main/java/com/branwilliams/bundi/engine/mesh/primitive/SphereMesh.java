@@ -7,6 +7,7 @@ import com.branwilliams.bundi.engine.util.MeshUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.branwilliams.bundi.engine.util.MeshUtils.toArrayf;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 
 /**
@@ -82,18 +83,10 @@ public class SphereMesh extends Mesh {
             t -= dt;
         }
 
-        float[] verticesArray = new float[vertices.size()];
-        for (int k = 0; k < vertices.size(); k++) {
-            verticesArray[k] = vertices.get(k);
-        }
-        float[] texCoordsArray = new float[textureCoordinates.size()];
-        for (int k = 0; k < textureCoordinates.size(); k++) {
-            texCoordsArray[k] = textureCoordinates.get(k);
-        }
-        float[] normalsArray = new float[normals.size()];
-        for (int k = 0; k < normals.size(); k++) {
-            normalsArray[k] = normals.get(k);
-        }
+        float[] verticesArray = toArrayf(vertices);
+        float[] texCoordsArray = toArrayf(textureCoordinates);
+        float[] normalsArray = toArrayf(normals);
+
         bind();
         storeAttribute(0, verticesArray,3);
         storeAttribute(1, texCoordsArray, 2);

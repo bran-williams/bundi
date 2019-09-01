@@ -97,10 +97,10 @@ public class VoxelWorld implements Destructible {
      * @return True if the provided chunk position is within the radius around the chunkX and chunkZ provided.
      * */
     private boolean isChunkWithinRange(ChunkPos chunkPos, int chunkX, int chunkZ, int radius) {
-        return chunkPos.getX() >= chunkX - radius
-                && chunkPos.getX() < chunkX + radius
+        return     chunkPos.getX() >= chunkX - radius
+                && chunkPos.getX() <  chunkX + radius
                 && chunkPos.getZ() >= chunkZ - radius
-                && chunkPos.getZ() < chunkZ + radius;
+                && chunkPos.getZ() <  chunkZ + radius;
     }
 
     /**
@@ -120,74 +120,6 @@ public class VoxelWorld implements Destructible {
     }
 
     /**
-     * @return The {@link VoxelChunk} at the given position.
-     * */
-    public VoxelChunk getChunk(int chunkX, int chunkZ) {
-        return chunks.getChunk(chunkX, chunkZ);
-    }
-
-    /**
-     * @return The {@link VoxelChunk} located in the real position provided.
-     * */
-    public VoxelChunk getChunkAtPosition(Vector3f position) {
-        return chunks.getChunkAtPosition(position);
-    }
-
-    /**
-     * @return The {@link VoxelChunk} located in the real position provided.
-     * */
-    public VoxelChunk getChunkAtPosition(float x, float z) {
-        return chunks.getChunkAtPosition(x, z);
-    }
-
-    /**
-     * @return The {@link VoxelChunk} located in the real position provided.
-     * */
-    public VoxelChunk getChunkAtPosition(int x, int z) {
-        return chunks.getChunkAtPosition(x, z);
-    }
-
-    public void setVoxelAtPosition(Voxel voxel, Vector3f position) {
-        chunks.setVoxelAtPosition(voxel, position);
-    }
-
-    public void setVoxelAtPosition(Voxel voxel, float x, float y, float z) {
-        chunks.setVoxelAtPosition(voxel, x, y, z);
-    }
-
-    public void setVoxelAtPosition(Voxel voxel, int x, int y, int z) {
-        chunks.setVoxelAtPosition(voxel, x, y, z);
-    }
-
-    public Voxel getVoxelFacingPosition(Vector3f position, VoxelFace face) {
-        return chunks.getVoxelFacingPosition(position, face);
-    }
-
-    public Voxel getVoxelAtPosition(Vector3f position) {
-        return chunks.getVoxelAtPosition(position);
-    }
-
-    public Voxel getVoxelFacingPosition(float x, float y, float z, VoxelFace face) {
-        return chunks.getVoxelFacingPosition(x, y, z, face);
-    }
-
-
-    public Voxel getVoxelAtPosition(float x, float y, float z) {
-        return chunks.getVoxelAtPosition(x, y, z);
-    }
-
-    public Voxel getVoxelFacingPosition(int x, int y, int z, VoxelFace face) {
-        return chunks.getVoxelFacingPosition(x, y, z, face);
-    }
-
-    /**
-     * @return The {@link Voxel} at the given position.
-     * */
-    public Voxel getVoxelAtPosition(int x, int y, int z) {
-        return chunks.getVoxelAtPosition(x, y, z);
-    }
-
-    /**
      *
      * */
     public List<AABB> queryVoxelsWithinAABB(AABB aabb, Predicate<Voxel> filter) {
@@ -196,7 +128,7 @@ public class VoxelWorld implements Destructible {
         for (int x = Mathf.floor(aabb.getMinX()); x < Mathf.ceil(aabb.getMaxX()); x++) {
             for (int y = Mathf.floor(aabb.getMinY()); y < Mathf.ceil(aabb.getMaxY()); y++) {
                 for (int z = Mathf.floor(aabb.getMinZ()); z < Mathf.ceil(aabb.getMaxZ()); z++) {
-                    Voxel voxel = getVoxelAtPosition(x, y, z);
+                    Voxel voxel = chunks.getVoxelAtPosition(x, y, z);
                     if (filter.test(voxel))
                         voxels.add(voxel.getBoundingBox(x, y, z));
                 }
@@ -256,7 +188,7 @@ public class VoxelWorld implements Destructible {
         boolean found = false;
         while (t < distance) {
 
-            if (!getVoxelAtPosition(x, y, z).isAir()) {
+            if (!chunks.getVoxelAtPosition(x, y, z).isAir()) {
                 found = true;
                 break;
             }

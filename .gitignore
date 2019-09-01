@@ -6,5 +6,5 @@
 *.log
 build/
 out/
-/run/models/
-/*/build/
+run/models/
+*/build/

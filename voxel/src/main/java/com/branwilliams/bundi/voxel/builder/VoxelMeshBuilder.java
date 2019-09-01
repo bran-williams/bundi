@@ -212,7 +212,7 @@ public class VoxelMeshBuilder {
             float realX = voxelChunk.chunkPos.getRealX() + x;
             float realY = y;
             float realZ = voxelChunk.chunkPos.getRealZ() + z;
-            adjacentVoxel = voxelWorld.getVoxelFacingPosition(realX, realY, realZ, face);
+            adjacentVoxel = voxelWorld.getChunks().getVoxelFacingPosition(realX, realY, realZ, face);
         } else {
             adjacentVoxel = voxelChunk.getVoxelFacingPosition(x, y, z, face);
         }

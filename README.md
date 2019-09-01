@@ -2,19 +2,14 @@
 
 OpenGL rendering engine written in Java. 
 
-## Screenshots
-#### Quadtree Demo
-![quadtree-demo](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/quadtree-demo.png)
+## Modules
+#### Voxel
+![voxel](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/mineman.png)
 
-#### Blinn-Phong Lighting
-![dragon-demo](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/dragon-demo.png)
+#### Physically Based Rendering
+![pbr_bamboo](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/pbr_bamboo.png)
 
-#### Perlin Noise terrain generation
-![terrain-demo](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/terrain-demo.png)
-
-#### Deferred rendering pipeline
-![blinn-deferred-demo](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/blinn-deferred-demo.png)
-
+![pbr_rustediron](https://raw.githubusercontent.com/bran-williams/test-engine/master/screenshots/pbr_rustediron.png)
 
 ## Usage
 - Using this application requires cloning this repo and creating run configurations for the submodules.
