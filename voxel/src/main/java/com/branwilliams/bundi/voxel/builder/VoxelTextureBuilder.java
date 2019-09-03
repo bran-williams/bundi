@@ -11,10 +11,9 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.OptionalInt;
+import java.util.*;
 
+import static com.branwilliams.bundi.voxel.io.VoxelTexturePack.PLACEHOLDER_FOR_UNMAPPED_TEXTURE;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -42,11 +41,12 @@ public class VoxelTextureBuilder {
                                      Map<String, TextureData> textures,
                                      Map<String, Vector4f> textureMappings,
                                      TextureData defaultTexture) {
+
         int maxMipMapLevels = Mathf.floor(Mathf.log(2, textureAtlasProperties.getTextureSize()));
 
         // Then build the original texture atlas
         TextureData originalTextureAtlas = buildTexture(textureAtlasProperties.getWidth(),
-                textureAtlasProperties.getHeight(), textureAtlasProperties.getPadding(), textures, textureMappings);
+                textureAtlasProperties.getHeight(), textureAtlasProperties.getPadding(), textures, textureMappings, defaultTexture);
 
         Texture texture = new Texture(originalTextureAtlas, false);
 //        System.out.println(texture);
@@ -71,7 +71,7 @@ public class VoxelTextureBuilder {
             // Then create texture atlases using the downsampled texture data for each mipmap
             createMipmapsForTextureAtlas(textureAtlasProperties.getWidth(),
                     textureAtlasProperties.getHeight(), textureAtlasProperties.getPadding(), downsampledTextures,
-                    textureMappings, texture);
+                    textureMappings, texture, defaultTexture);
         } else {
             texture.generateMipmaps();
         }
@@ -87,7 +87,8 @@ public class VoxelTextureBuilder {
     private void createMipmapsForTextureAtlas(int width, int height, int padding,
                                               Map<String, DownsampledTextureData> downsampledTextures,
                                               Map<String, Vector4f> textureMappings,
-                                              Texture texture) {
+                                              Texture texture,
+                                              TextureData defaultTexture) {
         int maxSamples = getMaxSamples(downsampledTextures);
 
         // OpenGL mip map levels are indexed from 0 ~ GL_TEXTURE_MAX_LEVEL where 0 is the index of the original sized
@@ -108,7 +109,7 @@ public class VoxelTextureBuilder {
             int sample = i;
             Map<String, TextureData> textureData = extractTextureDataFromDownsampled(downsampledTextures, i);
 
-            TextureData mipmapTextureAtlas = buildTexture(width, height, padding, textureData, textureMappings);
+            TextureData mipmapTextureAtlas = buildTexture(width, height, padding, textureData, textureMappings, defaultTexture);
             System.out.println("mip=" + (i + 1) + ", sampleIdx=" + sample + ",img=" + mipmapTextureAtlas);
 
             texture.uploadMipMap(i + 1, mipmapTextureAtlas);
@@ -196,17 +197,26 @@ public class VoxelTextureBuilder {
      * */
     private TextureData buildTexture(int width, int height, int padding,
                                      Map<String, TextureData> textures,
-                                     Map<String, Vector4f> textureMappings) {
+                                     Map<String, Vector4f> textureMappings,
+                                     TextureData defaultTexture) {
 
         // Half of the padded area contains pixels from the edges of each texture.
         int halfPadding = padding / 2;
 
         ByteBuffer buffer = MemoryUtil.memAlloc(TEXTURE_CHANNELS * width * height);
 
-        for (Map.Entry<String, TextureData> entry : textures.entrySet()) {
-            TextureData textureData = entry.getValue();
+        for (Map.Entry<String, Vector4f> entry : textureMappings.entrySet()) {
             // Convert from UV coordinates to pixel coordinates
             Vector4f mapping = new Vector4f(textureMappings.get(entry.getKey())).mul(width, height, width, height);
+
+            TextureData textureData;
+
+            // Replace to use the thang
+            if (entry.getKey().startsWith(PLACEHOLDER_FOR_UNMAPPED_TEXTURE)) {
+                textureData = defaultTexture;
+            } else {
+                textureData = textures.get(entry.getKey());
+            }
 
             ByteBuffer textureBuffer = textureData.getData();
 
@@ -239,4 +249,5 @@ public class VoxelTextureBuilder {
 
         return textureData;
     }
+
 }

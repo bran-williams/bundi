@@ -29,6 +29,8 @@ import static com.branwilliams.bundi.voxel.VoxelConstants.MAX_TEXTURE_SIZE;
  */
 public class VoxelTexturePack implements Destructible {
 
+    public static final String PLACEHOLDER_FOR_UNMAPPED_TEXTURE = "placeholder_for_unmapped_";
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final VoxelRegistry voxelRegistry;
@@ -78,14 +80,17 @@ public class VoxelTexturePack implements Destructible {
         // generated from it are the baseline for all other atlases.
         TextureAtlasProperties textureAtlasProperties = buildDiffuseTextureAtlas(textureLoader);
 
+        System.out.println("specular:");
         specularTextureAtlas = buildOptionalTextureAtlas(textureLoader, textureAtlasProperties,
                 VoxelFaceTexture::getSpecularPath,
                 defaultVoxelFaceTexture.getSpecular());
 
+        System.out.println("normal:");
         normalTextureAtlas = buildOptionalTextureAtlas(textureLoader, textureAtlasProperties,
                 VoxelFaceTexture::getNormalPath,
                 defaultVoxelFaceTexture.getNormal());
 
+        System.out.println("emission:");
         emissionTextureAtlas = buildOptionalTextureAtlas(textureLoader, textureAtlasProperties,
                 VoxelFaceTexture::getEmissionPath,
                 defaultVoxelFaceTexture.getEmission());
@@ -107,7 +112,6 @@ public class VoxelTexturePack implements Destructible {
         Map<String, Vector4f> optionalTextureMappings = new HashMap<>();
 
         int unmappedTextureCount = 0;
-        String unmappedTexturePlaceholder = "placeholder_for_unmapped_";
 
         for (VoxelProperties voxelProperties : voxelRegistry.getVoxelProperties().values()) {
             for (VoxelFaceTexture voxelFaceTexture : voxelProperties.getFaces().values()) {
@@ -115,10 +119,10 @@ public class VoxelTexturePack implements Destructible {
                 Vector4f mapping = this.textureMappings.get(voxelFaceTexture.getDiffusePath());
                 String texturePath = texturePathExtractor.apply(voxelFaceTexture);
 
-                if (texturePath != null) {
+                if (texturePath != null && !texturePath.isEmpty()) {
                     optionalTextureMappings.put(texturePath, new Vector4f(mapping));
                 } else {
-                    optionalTextureMappings.put(unmappedTexturePlaceholder + (++unmappedTextureCount), new Vector4f(mapping));
+                    optionalTextureMappings.put(PLACEHOLDER_FOR_UNMAPPED_TEXTURE + (++unmappedTextureCount), new Vector4f(mapping));
                 }
             }
         }
