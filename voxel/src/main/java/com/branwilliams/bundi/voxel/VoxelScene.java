@@ -5,7 +5,9 @@ import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.core.event.LockableStateUpdateEvent;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.shader.*;
+import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.systems.LockableSystem;
+import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
 import com.branwilliams.bundi.voxel.components.*;
@@ -52,6 +54,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
     private Projection projection;
 
     private Camera camera;
+
+    private Skybox skybox;
 
     private VoxelRegistry voxelRegistry;
 
@@ -126,8 +130,16 @@ public class VoxelScene extends AbstractScene implements Lockable {
     @Override
     public void play(Engine engine) {
         es.clearEntities();
-        playerState = new PlayerState();
 
+        try {
+            TextureLoader textureLoader = new TextureLoader(engine.getContext());
+            CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/one.csv");
+            skybox = new Skybox(500, new Material(skyboxTexture));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        playerState = new PlayerState();
 
         player = es.entity("player")
                 .component(new CameraComponent(camera, 0.16F),
@@ -236,6 +248,10 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Skybox getSkybox() {
+        return skybox;
     }
 
     public VoxelRegistry getVoxelRegistry() {

@@ -1,0 +1,14 @@
+{
+  "windowTitle": "Splish splash",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.bundi.water.WaterScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+
+  "sceneDirectory": "com.branwilliams.bundi"
+}

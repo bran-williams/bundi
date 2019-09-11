@@ -49,7 +49,10 @@ public abstract class AbstractScene implements Scene {
 
     @Override
     public void destroy() {
-        // TODO destroy entities here.
+        es.destroy();
+
+        if (renderer != null)
+            renderer.destroy();
     }
 
     @Override

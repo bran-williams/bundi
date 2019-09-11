@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.engine.ecs;
 
+import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
@@ -10,7 +11,7 @@ import java.util.*;
  * Manages entities and systems.
  * Created by Brandon Williams on 6/24/2018.
  */
-public class EntitySystemManager {
+public class EntitySystemManager implements Destructible {
 
     private final List<ISystem> systems = new ArrayList<>();
 
@@ -312,6 +313,20 @@ public class EntitySystemManager {
                     entitiesGrouped.remove(matcher);
             }
         }
+    }
+
+
+    @Override
+    public void destroy() {
+        systems.stream()
+               .filter((s) -> s instanceof Destructible)
+               .map((s) -> (Destructible) s)
+               .forEach(Destructible::destroy);
+
+        entities.stream()
+                .filter((s) -> s instanceof Destructible)
+                .map((s) -> (Destructible) s)
+                .forEach(Destructible::destroy);
     }
 
     public void addListener(EntityListener listener) {

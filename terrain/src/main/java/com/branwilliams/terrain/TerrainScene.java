@@ -6,6 +6,7 @@ import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.*;
+import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.ArrayTexture;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
@@ -26,7 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
  * @author Brandon
  * @since August 30, 2019
  */
-public class TerrainScene extends AbstractScene implements Window.KeyListener {
+public class TerrainScene extends AbstractScene {
 
     private static final int TERRAIN_TILE_SIZE = 128;
 
@@ -34,12 +35,7 @@ public class TerrainScene extends AbstractScene implements Window.KeyListener {
 
     private static final int TERRAIN_TILE_VERTICES_Z = 256;
 
-    private static final float TERRAIN_TILE_AMPLITUDE = 16;
-
-    private static final Transformable focalPoint = new Transformation()
-            .position(TERRAIN_TILE_SIZE * 0.5F, 0F, TERRAIN_TILE_SIZE * 0.5F);
-
-    private boolean shouldExit = false;
+    private static final float TERRAIN_TILE_AMPLITUDE = 48;
 
     private Camera camera;
 
@@ -47,14 +43,11 @@ public class TerrainScene extends AbstractScene implements Window.KeyListener {
 
     public TerrainScene() {
         super("terrain_scene");
-        this.addKeyListener(this);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
-        window.disableCursor();
-
-        es.addSystem(new RotatingCameraSystem(this, focalPoint, new Vector3f(TERRAIN_TILE_SIZE, TERRAIN_TILE_AMPLITUDE, TERRAIN_TILE_SIZE)));
+        es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 6F));
         es.initSystems(engine, window);
 
         worldProjection = new Projection(window, 70, 0.001F, 1000F);
@@ -76,8 +69,8 @@ public class TerrainScene extends AbstractScene implements Window.KeyListener {
 
         TerrainGenerator terrainGenerator = new TerrainGenerator();
 
-        float[] frequencies = { 1F, 4F, 16  };
-        float[] percentages = { 1F, 0.25F, 0.125F };
+        float[] frequencies = { 1F, 4F, 2F  };
+        float[] percentages = { 1F, 0.25F, 0.5F };
 
         HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
                 1F / TERRAIN_TILE_SIZE);
@@ -131,22 +124,6 @@ public class TerrainScene extends AbstractScene implements Window.KeyListener {
     @Override
     public void update(Engine engine, double deltaTime) {
         super.update(engine, deltaTime);
-        if (shouldExit)
-            engine.stop();
-    }
-
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-        switch (key) {
-            case GLFW_KEY_ESCAPE:
-                shouldExit = true;
-                break;
-        }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
     }
 
     public Camera getCamera() {

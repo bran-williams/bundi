@@ -1,9 +1,6 @@
 package com.branwilliams.bundi.engine.shader;
 
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -173,7 +170,18 @@ public class ShaderProgram {
     }
 
     /**
-     * Assigns the vec3 uniform variable a new value.
+     * Assigns the mat4 uniform variable a new value.
+     * */
+    public void setUniform(String name, Matrix3f matrix) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer floatBuffer = stack.mallocFloat(9);
+            matrix.get(floatBuffer);
+            glUniformMatrix3fv(uniforms.get(name), false, floatBuffer);
+        }
+    }
+
+    /**
+     * Assigns the vec2 uniform variable a new value.
      * */
     public void setUniform(String name, Vector2f vector) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -195,7 +203,7 @@ public class ShaderProgram {
     }
 
     /**
-     * Assigns the vec3 uniform variable a new value.
+     * Assigns the vec4 uniform variable a new value.
      * */
     public void setUniform(String name, Vector4f vector) {
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -205,6 +213,53 @@ public class ShaderProgram {
         }
     }
 
+    /**
+     * Assigns the vec4 uniform array variable a new value.
+     * */
+    public void setUniform(String name, Vector4f[] vectors) {
+        int vectorSize = 4;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer floatBuffer = stack.mallocFloat(vectorSize * vectors.length);
+            int pos = 0;
+            for (Vector4f v : vectors) {
+                v.get(pos, floatBuffer);
+                pos += vectorSize;
+            }
+            glUniform4fv(uniforms.get(name), floatBuffer);
+        }
+    }
+
+    /**
+     * Assigns the vec3 uniform array variable a new value.
+     * */
+    public void setUniform(String name, Vector3f[] vectors) {
+        int vectorSize = 3;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer floatBuffer = stack.mallocFloat(vectorSize * vectors.length);
+            int pos = 0;
+            for (Vector3f v : vectors) {
+                v.get(pos, floatBuffer);
+                pos += vectorSize;
+            }
+            glUniform3fv(uniforms.get(name), floatBuffer);
+        }
+    }
+
+    /**
+     * Assigns the vec2 uniform array variable a new value.
+     * */
+    public void setUniform(String name, Vector2f[] vectors) {
+        int vectorSize = 2;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer floatBuffer = stack.mallocFloat(vectorSize * vectors.length);
+            int pos = 0;
+            for (Vector2f v : vectors) {
+                v.get(pos, floatBuffer);
+                pos += vectorSize;
+            }
+            glUniform2fv(uniforms.get(name), floatBuffer);
+        }
+    }
 
     /**
      * Assigns the integer uniform variable to a new value.

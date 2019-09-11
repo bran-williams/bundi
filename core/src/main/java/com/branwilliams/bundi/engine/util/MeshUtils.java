@@ -221,10 +221,20 @@ public enum MeshUtils {
         return array;
     }
 
+    public static float[] toArray3f(Vector3f[] vectors) {
+        float[] array = new float[vectors.length * 3];
+        for (int i = 0; i < vectors.length; i++) {
+            Vector3f vector = vectors[i];
+            array[i * 3] = vector.x;
+            array[i * 3 + 1] = vector.y;
+            array[i * 3 + 2] = vector.z;
+        }
+        return array;
+    }
 
-    /**
-     * Converts a given list of vectors to an array of floats.
-     * */
+        /**
+         * Converts a given list of vectors to an array of floats.
+         * */
     public static float[] toArray3f(List<Vector3f> vectors) {
         float[] array = new float[vectors.size() * 3];
         for (int i = 0; i < vectors.size(); i++) {

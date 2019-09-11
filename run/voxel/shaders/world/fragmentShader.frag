@@ -29,24 +29,23 @@ uniform vec3 viewPos;
 
 // constants
 const float transparencyThreshold = 0.5;
-const float tileSize = 64;
 
 /**
  TBN calculation from
  http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html
 */
 vec3 calculateMappedNormal() {
-    vec3 Normal = normalize(passNormal);
-    vec3 Tangent = normalize(passTangent);
-    Tangent = normalize(Tangent - dot(Tangent, Normal) * Normal);
-    vec3 Bitangent = cross(Tangent, Normal);
-    vec3 BumpMapNormal = texture(material.normal, passTextureCoordinates).xyz;
-    BumpMapNormal = 2.0 * BumpMapNormal - vec3(1.0, 1.0, 1.0);
-    vec3 NewNormal;
-    mat3 TBN = mat3(Tangent, Bitangent, Normal);
-    NewNormal = TBN * BumpMapNormal;
-    NewNormal = normalize(NewNormal);
-    return NewNormal;
+    vec3 normal = normalize(passNormal);
+    vec3 tangent = normalize(passTangent);
+    tangent = normalize(tangent - dot(tangent, normal) * normal);
+    vec3 bitangent = cross(tangent, normal);
+    vec3 bumpMapNormal = texture(material.normal, passTextureCoordinates).xyz;
+    bumpMapNormal = 2.0 * bumpMapNormal - vec3(1.0, 1.0, 1.0);
+    vec3 newNormal;
+    mat3 TBN = mat3(tangent, bitangent, normal);
+    newNormal = TBN * bumpMapNormal;
+    newNormal = normalize(newNormal);
+    return newNormal;
 }
 
 void main() {

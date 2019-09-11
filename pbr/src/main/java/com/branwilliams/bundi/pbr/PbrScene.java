@@ -6,6 +6,9 @@ import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
 import com.branwilliams.bundi.engine.shader.*;
+import com.branwilliams.bundi.engine.skybox.Skybox;
+import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
+import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.pbr.pipeline.PbrRenderPipeline;
@@ -42,6 +45,8 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
     private Camera camera;
 
+    private Skybox skybox;
+
     private IEntity sphereEntity;
 
     private Path assetDirectory;
@@ -60,6 +65,7 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
         PbrRenderPipeline renderPipeline = new PbrRenderPipeline(this, this::getCamera, this::getExposure, worldProjection);
+//        renderPipeline.addFirst(new SkyboxRenderPass(this::getCamera, this::getSkybox));
         renderPipeline.addLast(new PbrDebugRenderPass());
         PbrRenderer renderer = new PbrRenderer(this, renderPipeline);
         setRenderer(renderer);
@@ -81,6 +87,9 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
                     new Transformation().position(objectPosition).rotate(90F, 0F, 0F),
                     sphereModel
             ).build();
+
+            CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/ame.csv");
+            skybox = new Skybox(500, new Material(skyboxTexture));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -136,6 +145,10 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
     public float getExposure() {
         return exposure;
+    }
+
+    public Skybox getSkybox() {
+        return skybox;
     }
 
     @Override
