@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.atmosphere;
 
+import com.branwilliams.bundi.atmosphere.pipeline.passes.SkydomeRenderPass;
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
@@ -16,6 +17,8 @@ public class AtmosphereScene extends AbstractScene {
 
     private Camera camera;
 
+    private Skydome skydome;
+
     public AtmosphereScene() {
         super("atmosphere");
     }
@@ -29,7 +32,7 @@ public class AtmosphereScene extends AbstractScene {
         RenderContext renderContext = new RenderContext(worldProjection);
 
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
-
+        renderPipeline.addLast(new SkydomeRenderPass(this::getCamera, this::getSkydome));
         AtmosphereRenderer renderer = new AtmosphereRenderer(this, renderPipeline);
         setRenderer(renderer);
     }
@@ -47,5 +50,9 @@ public class AtmosphereScene extends AbstractScene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public Skydome getSkydome() {
+        return skydome;
     }
 }

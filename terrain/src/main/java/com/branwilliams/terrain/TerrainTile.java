@@ -18,15 +18,31 @@ public class TerrainTile implements Destructible {
 
     private Material material;
 
-    private AABB collisionBox;
-
     private float[][] heightmap;
+
+    private float size;
 
     public TerrainTile(float[][] heightmap, Transformable transform, Mesh mesh, Material material) {
         this.heightmap = heightmap;
         this.transform = transform;
         this.mesh = mesh;
         this.material = material;
+    }
+
+    public float[][] getHeightmap() {
+        return heightmap;
+    }
+
+    public void setHeightmap(float[][] heightmap) {
+        this.heightmap = heightmap;
+    }
+
+    public float getSize() {
+        return size;
+    }
+
+    public void setSize(float size) {
+        this.size = size;
     }
 
     public Transformable getTransform() {
@@ -51,14 +67,6 @@ public class TerrainTile implements Destructible {
 
     public void setMaterial(Material material) {
         this.material = material;
-    }
-
-    public AABB getCollisionBox() {
-        return collisionBox;
-    }
-
-    public void setCollisionBox(AABB collisionBox) {
-        this.collisionBox = collisionBox;
     }
 
     @Override
