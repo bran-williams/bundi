@@ -19,8 +19,8 @@ public class SkydomeShaderProgram extends ShaderProgram {
     public SkydomeShaderProgram(EngineContext engineContext) throws ShaderInitializationException, ShaderUniformException {
         super();
         Path directory = engineContext.getAssetDirectory();
-        this.setVertexShader(IOUtils.readFile(directory, "shaders/deferred/phong/skydome/vertexShader.vert", null));
-        this.setFragmentShader(IOUtils.readFile(directory, "shaders/deferred/phong/skydome/fragmentShader.frag", null));
+        this.setVertexShader(IOUtils.readFile(directory, "atmosphere/shaders/skydome/vertexShader.vert", null));
+        this.setFragmentShader(IOUtils.readFile(directory, "atmosphere/shaders/skydome/fragmentShader.frag", null));
         this.link();
 
         this.createUniform("projectionMatrix");
