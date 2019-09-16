@@ -6,4 +6,5 @@ include 'voxel'
 include 'gui'
 include 'pbr'
 include 'water'
+include 'atmosphere'
 

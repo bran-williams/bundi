@@ -34,8 +34,6 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
 
     public static final int WATER_PLANE_LENGTH = 128;
 
-    public static final int NUMBERWAVES = 4;
-
     private final Water water = createWater(0.3F, WATER_PLANE_LENGTH);
 
     private Camera camera;
@@ -46,30 +44,30 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
 
     private Water createWater(float overallSteepness, int planeLength) {
         Wave[] normalWaves = {
-                new Wave(0.05F, 0.02F, 0.3F, overallSteepness / (0.3F * 0.02F * NUMBERWAVES),
+                new Wave(0.05F, 0.02F, 0.3F, overallSteepness / (0.3F * 0.02F * Water.NUMBERWAVES),
                         new Vector2f(1F, 1.5F)),
 
-                new Wave(0.1F, 0.01F, 0.4F, overallSteepness / (0.4F * 0.01F * NUMBERWAVES),
+                new Wave(0.1F, 0.01F, 0.4F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
                         new Vector2f(0.8F, 0.2F)),
 
-                new Wave(0.04F, 0.035F, 0.1F, overallSteepness / (0.4F * 0.01F * NUMBERWAVES),
+                new Wave(0.04F, 0.035F, 0.1F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
                         new Vector2f(-0.2F, -0.1F)),
 
-                new Wave(0.05F, 0.007F, 0.2F, overallSteepness / (0.4F * 0.01F * NUMBERWAVES),
+                new Wave(0.05F, 0.007F, 0.2F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
                         new Vector2f(-0.4F, -0.3F)),
         };
 
         Wave[] surfaceWaves = {
-                new Wave(1F, 0.01F, 4F, overallSteepness / (4F * 0.01F * NUMBERWAVES),
+                new Wave(1F, 0.01F, 4F, overallSteepness / (4F * 0.01F * Water.NUMBERWAVES),
                         new Vector2f(1F, 1F)),
 
-                new Wave(0.5F, 0.02F, 3F, overallSteepness / (3F * 0.02F * NUMBERWAVES),
+                new Wave(0.5F, 0.02F, 3F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
                         new Vector2f(1F, 0F)),
 
-                new Wave(0.1F, 0.015F, 2F, overallSteepness / (3F * 0.02F * NUMBERWAVES),
+                new Wave(0.1F, 0.015F, 2F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
                         new Vector2f(-0.1F, -0.2F)),
 
-                new Wave(1.1F, 0.008F, 1F, overallSteepness / (3F * 0.02F * NUMBERWAVES),
+                new Wave(1.1F, 0.008F, 1F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
                         new Vector2f(-0.2F, -0.1F)),
         };
         return new Water(normalWaves, surfaceWaves, planeLength);
@@ -135,6 +133,13 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
     public void keyPress(Window window, int key, int scancode, int mods) {
         if (key == GLFW_KEY_G) {
             wireframe = !wireframe;
+        }
+        if (key == GLFW_KEY_E) {
+            water.getTransformable().getRotation().x += 0.5F;
+        }
+
+        if (key == GLFW_KEY_Q) {
+            water.getTransformable().getRotation().x -= 0.5F;
         }
     }
 

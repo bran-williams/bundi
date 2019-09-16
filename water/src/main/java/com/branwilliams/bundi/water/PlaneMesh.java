@@ -10,10 +10,14 @@ import com.branwilliams.bundi.engine.mesh.Mesh;
 public class PlaneMesh extends Mesh {
 
     public PlaneMesh(int vertexCount) {
-        this(vertexCount, vertexCount);
+        this(1F, vertexCount);
     }
 
-    public PlaneMesh(int vertexCountX, int vertexCountZ) {
+    public PlaneMesh(float squareSize, int vertexCount) {
+        this(squareSize, vertexCount, vertexCount);
+    }
+
+    public PlaneMesh(float squareSize, int vertexCountX, int vertexCountZ) {
         super();
         int count = vertexCountX * vertexCountZ;
 
@@ -24,9 +28,9 @@ public class PlaneMesh extends Mesh {
 
         for (int i = 0; i < vertexCountX; i++) {
             for (int j = 0; j < vertexCountZ; j++) {
-                vertices[vertexPointer * 3] = i;// (float) i / ((float) vertexCountX - 1) * size;
+                vertices[vertexPointer * 3] = (float) i * squareSize;
                 vertices[vertexPointer * 3 + 1] = 0;
-                vertices[vertexPointer * 3 + 2] = j;// (float) j / ((float) vertexCountZ - 1) * size;
+                vertices[vertexPointer * 3 + 2] = (float) j * squareSize;
                 vertexPointer++;
             }
         }

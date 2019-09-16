@@ -15,6 +15,8 @@ import org.joml.Vector4f;
  */
 public class Water implements Destructible {
 
+    public static final int NUMBERWAVES = 4;
+
     private Transformable transformable;
 
     private WaterNormalBuffer normalBuffer;
@@ -34,6 +36,9 @@ public class Water implements Destructible {
     private Wave[] surfaceWaves;
 
     public Water(Wave[] normalWaves, Wave[] surfaceWaves, int planeLength) {
+        if (normalWaves.length != NUMBERWAVES || surfaceWaves.length != NUMBERWAVES) {
+            throw new IllegalArgumentException("Water tiles must have " + NUMBERWAVES + " waves.");
+        }
         this.transformable = new Transformation();
         this.color = new Vector4f();
         this.normalWaves = normalWaves;
