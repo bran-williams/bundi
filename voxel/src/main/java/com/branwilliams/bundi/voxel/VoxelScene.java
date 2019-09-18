@@ -292,12 +292,11 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     public void setGuiScreen(GuiScreen guiScreen) {
         if (this.guiScreen != null) {
-            getEventManager().unsubscribe(LockableStateUpdateEvent.class, this.guiScreen::consume);
+            this.guiScreen.close(this);
             this.guiScreen.destroy();
         }
         if (guiScreen != null) {
             guiScreen.initialize(this);
-            getEventManager().subscribe(LockableStateUpdateEvent.class, guiScreen::consume);
         }
         this.guiScreen = guiScreen;
     }

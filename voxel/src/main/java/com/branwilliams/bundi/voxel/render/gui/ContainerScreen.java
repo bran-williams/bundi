@@ -11,8 +11,6 @@ public abstract class ContainerScreen implements GuiScreen {
 
     public ContainerManager containerManager;
 
-//    private Container canvasContainer;
-
     public ContainerScreen(ContainerManager containerManager) {
         this.containerManager = containerManager;
     }

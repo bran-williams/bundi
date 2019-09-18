@@ -19,5 +19,4 @@ public class AbstractContainerScreen extends ContainerScreen {
         super(containerManager);
     }
 
-
 }
