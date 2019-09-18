@@ -64,6 +64,7 @@ public class Frame extends MoveableContainer {
                 ", y=" + getY() +
                 ", width=" + getWidth() +
                 ", height=" + getHeight() +
+                ", components=" + components +
                 '}';
     }
 
