@@ -24,7 +24,7 @@ public abstract class AbstractRenderer implements Renderer, Window.WindowListene
 
     @Override
     public void render(Engine engine, Window window, double deltaTime) {
-        renderPipeline.render(engine, window);
+        renderPipeline.render(engine, window, deltaTime);
     }
 
     @Override

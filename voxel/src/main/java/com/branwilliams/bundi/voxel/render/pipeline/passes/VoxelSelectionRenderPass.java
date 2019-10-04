@@ -51,7 +51,7 @@ public class VoxelSelectionRenderPass extends RenderPass<VoxelRenderContext> {
     }
 
     @Override
-    public void render(VoxelRenderContext renderContext, Engine engine, Window window) {
+    public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         if (scene.getPlayerState().getRaycast() == null) {
             return;
         }

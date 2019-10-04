@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.engine.ecs;
 
+import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Nameable;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
  * An Entity simply contains an id and a list of components.
  * Created by Brandon Williams on 6/24/2018.
  */
-public interface IEntity extends Nameable {
+public interface IEntity extends Nameable, Destructible {
 
     /**
      * @return The unique id for this entity instance

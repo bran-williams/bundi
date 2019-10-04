@@ -15,8 +15,6 @@ import com.branwilliams.bundi.water.Water;
 import com.branwilliams.bundi.water.pipeline.WaterNormalBuffer;
 import com.branwilliams.bundi.water.pipeline.shaders.WaterNormalShaderProgram;
 
-import java.util.function.Supplier;
-
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -61,7 +59,7 @@ public class WaterNormalRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         int width = window.getWidth();
         int height = window.getHeight();
 

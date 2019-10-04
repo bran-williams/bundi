@@ -46,7 +46,7 @@ public class TerrainRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         this.terrainShaderProgram.bind();
         this.terrainShaderProgram.setProjectionMatrix(renderContext.getProjection());
         this.terrainShaderProgram.setViewMatrix(cameraSupplier.get());

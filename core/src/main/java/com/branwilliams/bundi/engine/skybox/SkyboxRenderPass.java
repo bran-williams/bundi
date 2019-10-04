@@ -43,7 +43,7 @@ public class SkyboxRenderPass <RenderContextType extends RenderContext> extends 
     }
 
     @Override
-    public void render(RenderContextType renderContext, Engine engine, Window window) {
+    public void render(RenderContextType renderContext, Engine engine, Window window, double deltaTime) {
         // Bind skybox shader program and render skybox.
         this.skyboxShaderProgram.bind();
         this.skyboxShaderProgram.setProjectionMatrix(renderContext.getProjection());

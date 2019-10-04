@@ -1,4 +1,4 @@
-package com.branwilliams.bundi.water.pipeline.passes;
+package com.branwilliams.bundi.atmosphere.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
@@ -8,38 +8,39 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
-import com.branwilliams.bundi.engine.mesh.MeshRenderer;
+import com.branwilliams.bundi.engine.model.Model;
+import com.branwilliams.bundi.engine.model.ModelRenderer;
 import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.bundi.water.Water;
-import com.branwilliams.bundi.water.pipeline.shaders.WaterShaderProgram;
+import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 
 import java.util.function.Supplier;
 
-
 /**
  * @author Brandon
- * @since September 04, 2019
+ * @since September 17, 2019
  */
-public class WaterRenderPass extends RenderPass<RenderContext> {
-
-    private WaterShaderProgram shaderProgram;
+public class ModelRenderPass extends RenderPass<RenderContext> {
 
     private final Scene scene;
 
     private final Supplier<Camera> camera;
 
-    private final IComponentMatcher matcher;
+    private final IComponentMatcher componentMatcher;
 
-    public WaterRenderPass(Scene scene, Supplier<Camera> camera) {
+    private DynamicShaderProgram shaderProgram;
+
+
+    public ModelRenderPass(Scene scene, Supplier<Camera> camera) {
         this.scene = scene;
         this.camera = camera;
-        this.matcher = scene.getEs().matcher(Water.class);
+        this.componentMatcher = scene.getEs().matcher(Transformable.class, Model.class);
     }
 
     @Override
     public void init(RenderContext renderContext, Engine engine, Window window) throws InitializationException {
         try {
-            shaderProgram = new WaterShaderProgram(engine.getContext());
+            shaderProgram = new DynamicShaderProgram(VertexFormat.POSITION_UV, DynamicShaderProgram.VIEW_MATRIX);
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }
@@ -51,13 +52,12 @@ public class WaterRenderPass extends RenderPass<RenderContext> {
         shaderProgram.setProjectionMatrix(renderContext.getProjection());
         shaderProgram.setViewMatrix(camera.get());
 
-        for (IEntity entity : scene.getEs().getEntities(matcher)) {
-            Water water = entity.getComponent(Water.class);
+        for (IEntity entity : scene.getEs().getEntities(componentMatcher)) {
+            Transformable transformable = entity.getComponent(Transformable.class);
+            Model model = entity.getComponent(Model.class);
+            shaderProgram.setModelMatrix(transformable);
 
-            shaderProgram.setModelMatrix(water.getTransformable());
-            shaderProgram.setWater(water);
-
-            MeshRenderer.render(water.getWaterMesh(), water.getMaterial());
+            ModelRenderer.renderModel(model);
         }
 
         ShaderProgram.unbind();

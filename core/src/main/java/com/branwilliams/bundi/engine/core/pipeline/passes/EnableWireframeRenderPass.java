@@ -28,7 +28,7 @@ public class EnableWireframeRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         if (wireframe.get())
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }

@@ -45,7 +45,7 @@ public class WaterTextureRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
 
         shaderProgram.bind();
         shaderProgram.setProjectionMatrix(orthoProjection);

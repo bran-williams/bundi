@@ -42,7 +42,7 @@ public class PbrDebugRenderPass extends RenderPass<PbrRenderContext> {
     }
 
     @Override
-    public void render(PbrRenderContext renderContext, Engine engine, Window window) {
+    public void render(PbrRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         shaderProgram.bind();
         shaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
         shaderProgram.setModelMatrix(Transformable.empty());

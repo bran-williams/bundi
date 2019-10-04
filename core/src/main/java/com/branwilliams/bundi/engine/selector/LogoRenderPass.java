@@ -1,14 +1,14 @@
 package com.branwilliams.bundi.engine.selector;
 
+import com.branwilliams.bundi.engine.model.Model;
+import com.branwilliams.bundi.engine.model.ModelRenderer;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
-import com.branwilliams.bundi.engine.asset.ModelLoader;
+import com.branwilliams.bundi.engine.model.ModelLoader;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
-import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
@@ -55,7 +55,7 @@ public class LogoRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         glEnable(GL_DEPTH_TEST);
 
         shaderProgram.bind();
@@ -66,9 +66,7 @@ public class LogoRenderPass extends RenderPass<RenderContext> {
         logoTransformable.getRotation().y += 0.2F;
         shaderProgram.setModelMatrix(logoTransformable);
 
-        for (Mesh mesh : logoModel.getMeshes()) {
-            MeshRenderer.render(mesh, null);
-        }
+        ModelRenderer.renderModel(logoModel);
 
         ShaderProgram.unbind();
     }

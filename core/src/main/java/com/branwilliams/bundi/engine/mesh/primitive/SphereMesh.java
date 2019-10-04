@@ -1,6 +1,8 @@
 package com.branwilliams.bundi.engine.mesh.primitive;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 
@@ -16,8 +18,8 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
  */
 public class SphereMesh extends Mesh {
 
-    public SphereMesh(float radius, int slices, int stacks) {
-        this(radius, slices, stacks, true, false);
+    public SphereMesh(float radius, int slices, int stacks, VertexFormat vertexFormat) {
+        this(radius, slices, stacks, vertexFormat, false);
     }
 
     /**
@@ -26,10 +28,9 @@ public class SphereMesh extends Mesh {
      * The sphere is subdivided around the z axis into slices and along the z axis
      * into stacks (similar to lines of longitude and latitude).
      *
-     * @param tangentBitangent True if this mesh needs tangents/bitangents.
      * @param invNormals True if this mesh needs inverted normals. (facing inward)
      */
-    public SphereMesh(float radius, int slices, int stacks, boolean tangentBitangent, boolean invNormals) {
+    public SphereMesh(float radius, int slices, int stacks, VertexFormat vertexFormat, boolean invNormals) {
         super();
         this.setRenderMode(GL_TRIANGLE_STRIP);
         List<Float> vertices = new ArrayList<>();
@@ -83,22 +84,39 @@ public class SphereMesh extends Mesh {
             t -= dt;
         }
 
-        float[] verticesArray = toArrayf(vertices);
-        float[] texCoordsArray = toArrayf(textureCoordinates);
-        float[] normalsArray = toArrayf(normals);
-
         bind();
-        storeAttribute(0, verticesArray,3);
-        storeAttribute(1, texCoordsArray, 2);
-        storeAttribute(2, normalsArray, 3);
-        if (tangentBitangent) {
+
+        float[] verticesArray = toArrayf(vertices);
+        if (vertexFormat.hasElement(VertexElement.POSITION)) {
+            storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
+            setVertexCount(verticesArray.length / 3);
+        }
+
+        float[] texCoordsArray = toArrayf(textureCoordinates);
+        if (vertexFormat.hasElement(VertexElement.UV)) {
+            storeAttribute(vertexFormat.getElementIndex(VertexElement.UV), texCoordsArray, VertexElement.UV.size);
+        }
+
+        if (vertexFormat.hasElement(VertexElement.NORMAL)) {
+            storeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), toArrayf(normals), VertexElement.NORMAL.size);
+        }
+
+
+
+        if (vertexFormat.hasElement(VertexElement.TANGENT) || vertexFormat.hasElement(VertexElement.BITANGENT)) {
             float[] tangents = new float[verticesArray.length];
             float[] bitangents = new float[verticesArray.length];
+
             MeshUtils.calculateTangentBitangents(verticesArray, texCoordsArray, tangents, bitangents);
-            storeAttribute(3, tangents, 3);
-            storeAttribute(4, bitangents, 3);
+
+            if (vertexFormat.hasElement(VertexElement.TANGENT)) {
+                storeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), tangents, VertexElement.TANGENT.size);
+            }
+
+            if (vertexFormat.hasElement(VertexElement.BITANGENT)) {
+                storeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), bitangents, VertexElement.BITANGENT.size);
+            }
         }
-        setVertexCount(verticesArray.length / 3);
         unbind();
     }
 

@@ -19,7 +19,7 @@ public abstract class RenderPass <CurrentContext extends RenderContext> implemen
     /**
      * Performs rendering of things.
      * */
-    public abstract void render(CurrentContext renderContext, Engine engine, Window window);
+    public abstract void render(CurrentContext renderContext, Engine engine, Window window, double deltaTime);
 
     /**
      * Invoked if this render pass is the last one within the pipeline.

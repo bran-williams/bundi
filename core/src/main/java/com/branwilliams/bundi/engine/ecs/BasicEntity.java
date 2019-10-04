@@ -1,5 +1,7 @@
 package com.branwilliams.bundi.engine.ecs;
 
+import com.branwilliams.bundi.engine.core.Destructible;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,5 +81,14 @@ public final class BasicEntity implements IEntity {
                 ", name='" + name + '\'' +
                 ", components=" + components.values() +
                 '}';
+    }
+
+    @Override
+    public void destroy() {
+        for (Object component : components.values()) {
+            if (component instanceof Destructible) {
+                ((Destructible) component).destroy();
+            }
+        }
     }
 }

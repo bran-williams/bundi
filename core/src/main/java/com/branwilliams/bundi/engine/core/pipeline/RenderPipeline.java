@@ -38,17 +38,17 @@ public class RenderPipeline <CurrentContext extends RenderContext> implements Wi
     /**
      * Iterates over each render pass and invoke their render functions.
      * */
-    public void render(Engine engine, Window window) {
+    public void render(Engine engine, Window window, double deltaTime) {
         RenderPass<CurrentContext> current = initialRenderPass;
         profiler.begin(current.getClass().getSimpleName());
-        current.render(renderContext, engine, window);
+        current.render(renderContext, engine, window, deltaTime);
 
         while (current.getNextPass() != null) {
             current = current.getNextPass();
             profiler.endBegin(current.getClass().getSimpleName());
 
             // render this pass.
-            current.render(renderContext, engine, window);
+            current.render(renderContext, engine, window, deltaTime);
         }
         profiler.end();
 

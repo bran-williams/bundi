@@ -27,6 +27,8 @@ public class VertexFormat {
     public static final VertexFormat POSITION_UV_NORMAL = new VertexFormat(VertexElement.POSITION, VertexElement.UV,
             VertexElement.NORMAL);
 
+    public static final VertexFormat POSITION_NORMAL = new VertexFormat(VertexElement.POSITION, VertexElement.NORMAL);
+
     public static final VertexFormat POSITION = new VertexFormat(VertexElement.POSITION);
 
     public static final VertexFormat POSITION_2D = new VertexFormat(VertexElement.POSITION_2D);

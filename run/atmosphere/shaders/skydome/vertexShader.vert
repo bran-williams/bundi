@@ -1,10 +1,10 @@
 #version 330
 
-in vec3 position;
-in vec3 textureCoordinates;
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
 
 out vec3 passPosition;
-out vec3 passTexCoord;
+out vec3 passNormal;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -12,5 +12,5 @@ uniform mat4 viewMatrix;
 void main() {
     gl_Position = projectionMatrix * viewMatrix * vec4(position, 1.0);
     passPosition = position;
-    passTexCoord = textureCoordinates;
+    passNormal = normal;
 }

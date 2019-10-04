@@ -40,7 +40,7 @@ public class PbrPostProcessingRenderPass extends RenderPass<PbrRenderContext> {
     }
 
     @Override
-    public void render(PbrRenderContext renderContext, Engine engine, Window window) {
+    public void render(PbrRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         // draw to screen!!
         FrameBufferObject.unbind();
         glDepthMask(true);

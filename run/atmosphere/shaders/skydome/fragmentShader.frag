@@ -1,7 +1,7 @@
 #version 330
 
 in vec3 passPosition;
-in vec3 pasTexCoord;
+in vec3 passNormal;
 out vec4 fragColor;
 
 uniform vec4 apexColor;
@@ -9,7 +9,7 @@ uniform vec4 centerColor;
 
 void main() {
     // Determine the position on the sky dome where this pixel is located.
-    float height = passPosition.y;
+    float height = passNormal.y;
 
     // The value ranges from -1.0f to +1.0f so change it to only positive values.
     if (height < 0.0) {

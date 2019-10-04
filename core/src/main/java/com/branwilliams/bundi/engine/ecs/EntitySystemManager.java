@@ -323,10 +323,7 @@ public class EntitySystemManager implements Destructible {
                .map((s) -> (Destructible) s)
                .forEach(Destructible::destroy);
 
-        entities.stream()
-                .filter((s) -> s instanceof Destructible)
-                .map((s) -> (Destructible) s)
-                .forEach(Destructible::destroy);
+        entities.forEach(Destructible::destroy);
     }
 
     public void addListener(EntityListener listener) {

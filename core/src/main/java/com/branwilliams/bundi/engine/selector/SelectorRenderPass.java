@@ -56,7 +56,7 @@ public class SelectorRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         glDisable(GL_DEPTH_TEST);
         worldTransform.setPosition(window.getWidth() * 0.5F, 20, 0F);
 

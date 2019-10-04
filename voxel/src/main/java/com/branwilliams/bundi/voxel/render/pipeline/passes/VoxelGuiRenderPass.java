@@ -79,7 +79,7 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
     }
 
     @Override
-    public void render(VoxelRenderContext renderContext, Engine engine, Window window) {
+    public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         glDisable(GL_DEPTH_TEST);
 
         if (scene.getGuiScreen() != null) {

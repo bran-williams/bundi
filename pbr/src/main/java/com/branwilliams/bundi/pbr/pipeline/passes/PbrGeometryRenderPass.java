@@ -9,6 +9,8 @@ import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
+import com.branwilliams.bundi.engine.model.Model;
+import com.branwilliams.bundi.engine.model.ModelRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.pbr.pipeline.shaders.PbrGeometryShaderProgram;
 import com.branwilliams.bundi.pbr.pipeline.PbrRenderContext;
@@ -51,7 +53,7 @@ public class PbrGeometryRenderPass extends RenderPass<PbrRenderContext> {
      * 2. Render each object within the scene.
      * */
     @Override
-    public void render(PbrRenderContext renderContext, Engine engine, Window window) {
+    public void render(PbrRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         renderContext.getGBuffer().bind();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -77,16 +79,7 @@ public class PbrGeometryRenderPass extends RenderPass<PbrRenderContext> {
 
             this.geometryShaderProgram.setModelMatrix(transformable);
 
-            for (int i = 0; i < model.getMeshes().length; i++) {
-                Material material = model.getMaterial()[i];
-                Mesh mesh = model.getMeshes()[i];
-
-                this.geometryShaderProgram.setMaterial(material);
-
-                MeshRenderer.bind(mesh, material);
-                MeshRenderer.render(mesh);
-                MeshRenderer.unbind(mesh, material);
-            }
+            ModelRenderer.renderModel(model);
         }
 
 //        if (scene.isWireframe())

@@ -14,8 +14,6 @@ import com.branwilliams.bundi.engine.shader.ShaderUniformException;
 
 import java.util.function.Supplier;
 
-import static org.lwjgl.opengl.GL11.*;
-
 /**
  * Created by Brandon Williams on 11/28/2018.
  */
@@ -43,17 +41,14 @@ public class SkydomeRenderPass extends RenderPass<RenderContext> {
     }
 
     @Override
-    public void render(RenderContext renderContext, Engine engine, Window window) {
-        glEnable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+    public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         // Bind skydome shader program and render skydome.
         this.skydomeShaderProgram.bind();
         this.skydomeShaderProgram.setProjectionMatrix(renderContext.getProjection());
         this.skydomeShaderProgram.setViewMatrix(camera.get());
         Skydome skydome = this.skydome.get();
         this.skydomeShaderProgram.setColors(skydome.getApexColor(), skydome.getCenterColor());
-        MeshRenderer.render(skydome.getSkydomeSphere(), null);
+        MeshRenderer.render(skydome.getSkydomeMesh(), null);
     }
 
 }

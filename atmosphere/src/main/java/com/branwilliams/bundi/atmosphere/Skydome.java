@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.atmosphere;
 
-import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
+import com.branwilliams.bundi.engine.mesh.Mesh;
 import org.joml.Vector4f;
 
 /**
@@ -8,24 +8,24 @@ import org.joml.Vector4f;
  */
 public class Skydome {
 
-    private SphereMesh skydomeSphere;
+    private Mesh skydomeMesh;
 
     private Vector4f apexColor;
 
     private Vector4f centerColor;
 
-    public Skydome(SphereMesh skydomeSphere, Vector4f apexColor, Vector4f centerColor) {
-        this.skydomeSphere = skydomeSphere;
+    public Skydome(Mesh skydomeMesh, Vector4f apexColor, Vector4f centerColor) {
+        this.skydomeMesh = skydomeMesh;
         this.apexColor = apexColor;
         this.centerColor = centerColor;
     }
 
-    public SphereMesh getSkydomeSphere() {
-        return skydomeSphere;
+    public Mesh getSkydomeMesh() {
+        return skydomeMesh;
     }
 
-    public void setSkydomeSphere(SphereMesh skydomeSphere) {
-        this.skydomeSphere = skydomeSphere;
+    public void setSkydomeMesh(Mesh skydomeMesh) {
+        this.skydomeMesh = skydomeMesh;
     }
 
     public Vector4f getApexColor() {

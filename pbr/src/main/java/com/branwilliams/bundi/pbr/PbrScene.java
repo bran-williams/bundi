@@ -5,9 +5,10 @@ import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
+import com.branwilliams.bundi.engine.model.Model;
 import com.branwilliams.bundi.engine.shader.*;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.skybox.Skybox;
-import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.IOUtils;
@@ -81,7 +82,7 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
         try {
             PbrMaterial material = readMaterial(assetDirectory, this.material);
-            SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, true, false);
+            SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
             Model sphereModel = new Model(sphereMesh, material.createMaterial(textureLoader));
             sphereEntity = es.entity("sphere").component(
                     new Transformation().position(objectPosition).rotate(90F, 0F, 0F),
@@ -155,12 +156,15 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
     public void keyPress(Window window, int key, int scancode, int mods) {
         if (key == GLFW_KEY_R) {
             Model model = sphereEntity.getComponent(Model.class);
-            model.getMaterial()[0].destroy();
+            model.destroy();
+            sphereEntity.removeComponent(model);
 
-            PbrMaterial material = readMaterial(assetDirectory, this.material);
 
             try {
-                model.setMaterial(material.createMaterial(textureLoader));
+                PbrMaterial material = readMaterial(assetDirectory, this.material);
+                SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
+                Model newModel = new Model(sphereMesh, material.createMaterial(textureLoader));
+                sphereEntity.addComponent(newModel);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -1,4 +1,4 @@
-package com.branwilliams.bundi.engine.asset;
+package com.branwilliams.bundi.engine.model;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.shader.Material;
@@ -6,7 +6,6 @@ import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.texture.Texture;
-import com.branwilliams.bundi.engine.shader.Model;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import org.joml.Vector4f;
@@ -22,8 +21,10 @@ import java.nio.IntBuffer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.io.InputStream;
+import java.util.Map;
 
 import static com.branwilliams.bundi.engine.util.MeshUtils.toArrayf;
 import static com.branwilliams.bundi.engine.util.MeshUtils.toArrayi;
@@ -69,34 +70,36 @@ public class ModelLoader {
         log.info(String.format("Creating model from location %s", location));
 
         int	numMaterials = scene.mNumMaterials();
-        log.debug("Materials #: " + numMaterials);
         PointerBuffer aiMaterials =	scene.mMaterials();
-        List<Material> materials =	new ArrayList<>();
+        log.debug("Materials #: " + numMaterials);
+
+        Material[] materials = new Material[numMaterials];
+
         for	(int i = 0;	i <	numMaterials; i++) {
             AIMaterial aiMaterial =	AIMaterial.create(aiMaterials.get(i));
             log.debug("Creating material " + i);
-            processMaterial(scene, aiMaterial, materials, textureLocation);
+            processMaterial(scene, aiMaterial, (materials[i] = new Material()), textureLocation);
         }
+
+        Map<Material, List<Mesh>> data = new HashMap<>();
 
         int	numMeshes =	scene.mNumMeshes();
         PointerBuffer aiMeshes = scene.mMeshes();
-        Mesh[] meshes =	new	Mesh[numMeshes];
-        Material[] materialsArray = new Material[numMeshes];
+        log.debug("Meshes #: " + numMaterials);
+
         for	(int i = 0;	i <	numMeshes; i++)	{
             AIMesh aiMesh =	AIMesh.create(aiMeshes.get(i));
             Mesh mesh =	processMesh(aiMesh,	vertexFormat);
-            meshes[i] =	mesh;
+
             int materialIdx = aiMesh.mMaterialIndex();
-            if (materialIdx >= 0 && materialIdx < materials.size()) {
-                materialsArray[i] = materials.get(materialIdx);
-            }
+            data.computeIfAbsent(materials[materialIdx], (k) -> new ArrayList<>()).add(mesh);
         }
         aiReleaseImport(scene);
-        return new Model(meshes, materialsArray);
+
+        return new Model(data);
     }
 
-
-    private void processMaterial(AIScene scene, AIMaterial aiMaterial, List<Material> materials, String textureLocation) throws IOException {
+    private void processMaterial(AIScene scene, AIMaterial aiMaterial, Material material, String textureLocation) throws IOException {
         AIColor4D color = AIColor4D.create();
         AIString path = AIString.calloc();
 
@@ -145,7 +148,6 @@ public class ModelLoader {
             log.debug("Specular: " + specular);
         }
 
-        Material material =	new	Material();
 
         if (colorTexture != null) {
             material.setTexture(0, colorTexture);
@@ -159,7 +161,6 @@ public class ModelLoader {
             material.setProperty("hasNormalTexture", true);
             log.debug(String.format("With normal texture %d", normal.getId()));
         }
-        materials.add(material);
     }
 
     /**
@@ -177,7 +178,6 @@ public class ModelLoader {
                 return texture;
             }
         } else {
-            System.out.println(Paths.get(textureLocation, path) + ", " + textureLocation + path);
             TextureData textureData = textureLoader.loadTexture(Paths.get(textureLocation, path));
 //            ImageLoader.ImageData imageData = imageLoader.flip(imageLoader.loadImage(textureLocation + path));
             return new Texture(textureData, true);
@@ -244,36 +244,61 @@ public class ModelLoader {
         if (vertexFormat.hasElement(VertexElement.POSITION)) {
             List<Float> vertices = new ArrayList<>();
             processVertices(aiMesh, vertices);
-            float[] verticesArray = toArrayf(vertices);
-            mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
+
+            if (vertices.size() <= 0) {
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), VertexElement.POSITION.size, VertexElement.POSITION.size);
+            } else {
+                float[] verticesArray = toArrayf(vertices);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
+            }
         }
 
         if (vertexFormat.hasElement(VertexElement.UV)) {
             List<Float> uvs = new ArrayList<>();
             processUVs(aiMesh, uvs);
-            float[] uvsArray = toArrayf(uvs);
-            mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.UV), uvsArray, VertexElement.UV.size);
+
+            if (uvs.size() <= 0) {
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.UV), VertexElement.UV.size, VertexElement.UV.size);
+            } else {
+                float[] uvsArray = toArrayf(uvs);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.UV), uvsArray, VertexElement.UV.size);
+            }
         }
 
         if (vertexFormat.hasElement(VertexElement.NORMAL)) {
             List<Float> normals = new ArrayList<>();
             processNormals(aiMesh, normals);
-            float[] normalsArray = toArrayf(normals);
-            mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), normalsArray, VertexElement.NORMAL.size);
+
+            if (normals.size() <= 0) {
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), VertexElement.NORMAL.size, VertexElement.NORMAL.size);
+            } else {
+                float[] normalsArray = toArrayf(normals);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), normalsArray, VertexElement.NORMAL.size);
+            }
         }
 
         if (vertexFormat.hasElement(VertexElement.TANGENT)) {
             List<Float> tangents = new ArrayList<>();
             processTangents(aiMesh, tangents);
-            float[] tangentsArray = toArrayf(tangents);
-            mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), tangentsArray, VertexElement.TANGENT.size);
+
+            if (tangents.size() <= 0) {
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), VertexElement.TANGENT.size, VertexElement.TANGENT.size);
+            } else {
+                float[] tangentsArray = toArrayf(tangents);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), tangentsArray, VertexElement.TANGENT.size);
+            }
         }
 
         if (vertexFormat.hasElement(VertexElement.BITANGENT)) {
             List<Float> bitangents = new ArrayList<>();
             processBitangents(aiMesh, bitangents);
-            float[] bitangentsArray = toArrayf(bitangents);
-            mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), bitangentsArray, VertexElement.BITANGENT.size);
+
+            if (bitangents.size() <= 0) {
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), VertexElement.BITANGENT.size, VertexElement.BITANGENT.size);
+            } else {
+                float[] bitangentsArray = toArrayf(bitangents);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), bitangentsArray, VertexElement.BITANGENT.size);
+            }
         }
 
         List<Integer> indices = new ArrayList<>();
@@ -316,6 +341,7 @@ public class ModelLoader {
         for (int i = 0; i < uvCount; i++) {
             AIVector3D uv = aiTextures.get();
             textures.add(uv.x());
+//            textures.add(uv.y());
             textures.add(1F - uv.y());
         }
     }

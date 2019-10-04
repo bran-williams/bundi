@@ -9,7 +9,6 @@ import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
@@ -49,7 +48,7 @@ public class VoxelHandRenderPass extends RenderPass<VoxelRenderContext> {
     }
 
     @Override
-    public void render(VoxelRenderContext renderContext, Engine engine, Window window) {
+    public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         Vector3f handPos = new Vector3f(0.5F, -0.4F, -0.5F);
 
         shaderProgram.bind();

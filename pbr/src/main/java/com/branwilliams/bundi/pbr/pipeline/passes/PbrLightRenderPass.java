@@ -61,7 +61,7 @@ public class PbrLightRenderPass extends RenderPass<PbrRenderContext> {
      * 7. Unbinds the mesh, gbuffer textures, shader program, and scene buffer.
      * */
     @Override
-    public void render(PbrRenderContext renderContext, Engine engine, Window window) {
+    public void render(PbrRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         renderContext.getSceneBuffer().bind();
         // Only clear the color buffer because the depth from the geometry pass is needed.
         glClear(GL_COLOR_BUFFER_BIT);

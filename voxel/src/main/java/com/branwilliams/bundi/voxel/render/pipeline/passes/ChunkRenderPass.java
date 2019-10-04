@@ -13,8 +13,6 @@ import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.render.pipeline.shaders.ChunkShaderProgram;
 import com.branwilliams.bundi.voxel.world.chunk.ChunkPos;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;
-import com.branwilliams.bundi.voxel.world.storage.ChunkMeshStorage;
-import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -50,7 +48,7 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
      * 3. Set polygon mode to fill if wireframe is enabled. Terrain shader set this to lines if wireframe is true.
      * */
     @Override
-    public void render(VoxelRenderContext renderContext, Engine engine, Window window) {
+    public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         glEnable(GL_DEPTH_TEST);
         Material material = scene.getTexturePack().getMaterial();
 
