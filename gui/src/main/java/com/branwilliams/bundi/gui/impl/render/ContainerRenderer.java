@@ -1,10 +1,10 @@
 package com.branwilliams.bundi.gui.impl.render;
 
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.ShapeRenderer;
-import com.branwilliams.bundi.gui.Container;
-import com.branwilliams.bundi.gui.Toolbox;
-import com.branwilliams.bundi.gui.render.ImageRenderer;
+import com.branwilliams.bundi.gui.api.ShapeRenderer;
+import com.branwilliams.bundi.gui.api.Container;
+import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.render.ImageRenderer;
 import com.branwilliams.bundi.gui.impl.AbstractComponentRenderer;
 
 import static com.branwilliams.bundi.gui.impl.Pointers.COLOR_SECONDARY_BACKGROUND;

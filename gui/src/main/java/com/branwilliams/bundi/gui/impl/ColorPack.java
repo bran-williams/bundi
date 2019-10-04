@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.gui.impl;
 
-import com.branwilliams.bundi.gui.Toolbox;
+import com.branwilliams.bundi.gui.api.Toolbox;
 
 import java.awt.*;
 import java.util.Random;

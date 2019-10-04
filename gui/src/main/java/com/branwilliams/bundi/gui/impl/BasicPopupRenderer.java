@@ -2,10 +2,10 @@ package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.ShapeRenderer;
-import com.branwilliams.bundi.gui.Toolbox;
-import com.branwilliams.bundi.gui.render.ImageRenderer;
-import com.branwilliams.bundi.gui.render.PopupRenderer;
+import com.branwilliams.bundi.gui.api.ShapeRenderer;
+import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.render.ImageRenderer;
+import com.branwilliams.bundi.gui.api.render.PopupRenderer;
 import java.awt.Color;
 
 import static com.branwilliams.bundi.gui.impl.Pointers.FONT_TOOLTIP;

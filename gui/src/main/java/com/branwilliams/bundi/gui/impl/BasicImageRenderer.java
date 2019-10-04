@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.texture.Texture;
-import com.branwilliams.bundi.gui.render.ImageRenderer;
+import com.branwilliams.bundi.gui.api.render.ImageRenderer;
 
 /**
  * Basic image renderer. <br/>

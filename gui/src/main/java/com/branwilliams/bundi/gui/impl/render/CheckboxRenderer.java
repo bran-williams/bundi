@@ -2,15 +2,17 @@ package com.branwilliams.bundi.gui.impl.render;
 
 import com.branwilliams.bundi.engine.font.FontRenderer;
 import com.branwilliams.bundi.engine.util.ColorUtils;
-import com.branwilliams.bundi.gui.ShapeRenderer;
-import com.branwilliams.bundi.gui.Toolbox;
-import com.branwilliams.bundi.gui.components.Checkbox;
-import com.branwilliams.bundi.gui.render.ImageRenderer;
+import com.branwilliams.bundi.gui.api.ShapeRenderer;
+import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.components.Checkbox;
+import com.branwilliams.bundi.gui.api.render.ImageRenderer;
 import com.branwilliams.bundi.gui.impl.AbstractComponentRenderer;
 
 import java.awt.*;
 
 import static com.branwilliams.bundi.engine.util.ColorUtils.getColorWithEffects;
+import static com.branwilliams.bundi.gui.api.components.Checkbox.CHECKBOX_PADDING;
+import static com.branwilliams.bundi.gui.api.components.Checkbox.CHECKBOX_TEXT_PADDING;
 import static com.branwilliams.bundi.gui.impl.Pointers.COLOR_DEFAULT;
 import static com.branwilliams.bundi.gui.impl.Pointers.COLOR_HIGHLIGHT;
 
@@ -31,7 +33,13 @@ public class CheckboxRenderer extends AbstractComponentRenderer<Checkbox> {
 
         if (checkbox.isEnabled()) {
             Color checkedColor = getColorWithEffects(checkbox.isEnabled() ? toolbox.get(COLOR_HIGHLIGHT) : toolbox.get(COLOR_DEFAULT), checkbox.isHovered(), checkbox.isPressed());
-            shapeRenderer.drawRect(new int[]{checkbox.getX() + 2, checkbox.getY() + 2, 8, 8}, checkedColor);
+            int[] shape = {
+                    checkbox.getX() + CHECKBOX_PADDING,
+                    checkbox.getY() + CHECKBOX_PADDING,
+                    checkbox.getCheckboxSize() - CHECKBOX_PADDING * 2,
+                    checkbox.getCheckboxSize() - CHECKBOX_PADDING * 2
+            };
+            shapeRenderer.drawRect(shape, checkedColor);
         }
         /*GLUtils.glColor(GLUtils.getColorWithEffects(toolbox.get(COLOR_DEFAULT), checkbox.isHovered(), Mouse.isButtonDown(0)));
         GLUtils.drawRect(checkbox.getCheckbox());
@@ -39,6 +47,6 @@ public class CheckboxRenderer extends AbstractComponentRenderer<Checkbox> {
             GLUtils.glColor(GLUtils.getColorWithEffects(checkbox.isEnabled() ? toolbox.get(COLOR_HIGHLIGHT) : toolbox.get(COLOR_DEFAULT), checkbox.isHovered(), Mouse.isButtonDown(0)));
             GLUtils.drawRect(new int[] { checkbox.getX() + 2, checkbox.getY() + 2, 8, 8 });
         }*/
-        fontRenderer.drawString(checkbox.getFont(), checkbox.getText(), checkbox.getX() + 2 + Checkbox.CHECKBOX_SIZE, checkbox.getY(), 0xFFFFFFFF);
+        fontRenderer.drawString(checkbox.getFont(), checkbox.getText(), checkbox.getX() + checkbox.getCheckboxSize() + CHECKBOX_TEXT_PADDING, checkbox.getY(), 0xFFFFFFFF);
     }
 }

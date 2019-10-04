@@ -10,6 +10,8 @@ import com.branwilliams.bundi.engine.systems.LockableSystem;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
+import com.branwilliams.bundi.gui.screen.GuiScreen;
+import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.bundi.voxel.components.*;
 import com.branwilliams.bundi.voxel.io.*;
 import com.branwilliams.bundi.voxel.io.SettingsLoader;
@@ -18,7 +20,6 @@ import com.branwilliams.bundi.voxel.system.world.PhysicsSystem;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelFaceTexture;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelProperties;
 import com.branwilliams.bundi.voxel.render.VoxelRenderer;
-import com.branwilliams.bundi.voxel.render.gui.GuiScreen;
 import com.branwilliams.bundi.voxel.system.player.*;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
 import com.branwilliams.bundi.voxel.world.generator.PerlinChunkGenerator;
@@ -51,6 +52,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
     /** Used to determine whether this scene is paused. */
     private final Lock delegateLock = new Lock();
 
+    private GuiScreenManager guiScreenManager;
+
     private Projection projection;
 
     private Camera camera;
@@ -75,7 +78,6 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     private DirectionalLight sun;
 
-    private GuiScreen guiScreen;
 
     public VoxelScene() {
         super("voxel_scene");
@@ -90,6 +92,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
+        guiScreenManager = new GuiScreenManager(this);
         projection = new Projection(window, 70, 0.01F, 1000F);
         VoxelRenderPipeline voxelRenderPipeline = new VoxelRenderPipeline(this, projection);
         VoxelRenderer voxelRenderer = new VoxelRenderer(this, voxelRenderPipeline);
@@ -287,18 +290,11 @@ public class VoxelScene extends AbstractScene implements Lockable {
     }
 
     public GuiScreen getGuiScreen() {
-        return guiScreen;
+        return guiScreenManager.getGuiScreen();
     }
 
     public void setGuiScreen(GuiScreen guiScreen) {
-        if (this.guiScreen != null) {
-            this.guiScreen.close(this);
-            this.guiScreen.destroy();
-        }
-        if (guiScreen != null) {
-            guiScreen.initialize(this);
-        }
-        this.guiScreen = guiScreen;
+        guiScreenManager.setGuiScreen(guiScreen);
     }
 
     public GameSettings getGameSettings() {

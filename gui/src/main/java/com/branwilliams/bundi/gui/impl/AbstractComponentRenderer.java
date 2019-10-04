@@ -1,11 +1,11 @@
 package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.ShapeRenderer;
-import com.branwilliams.bundi.gui.Component;
-import com.branwilliams.bundi.gui.Toolbox;
-import com.branwilliams.bundi.gui.render.ComponentRenderer;
-import com.branwilliams.bundi.gui.render.ImageRenderer;
+import com.branwilliams.bundi.gui.api.ShapeRenderer;
+import com.branwilliams.bundi.gui.api.Component;
+import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.render.ComponentRenderer;
+import com.branwilliams.bundi.gui.api.render.ImageRenderer;
 
 /**
  * Implementation of the component renderer which simply forces the constructor to accept a toolbox. <br/>

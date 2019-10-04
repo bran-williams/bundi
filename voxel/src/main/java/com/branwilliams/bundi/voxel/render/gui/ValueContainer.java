@@ -1,10 +1,10 @@
 package com.branwilliams.bundi.voxel.render.gui;
 
 import com.branwilliams.bundi.engine.font.FontData;
-import com.branwilliams.bundi.gui.Container;
-import com.branwilliams.bundi.gui.components.Label;
-import com.branwilliams.bundi.gui.components.Slider;
-import com.branwilliams.bundi.gui.layouts.GridLayout;
+import com.branwilliams.bundi.gui.api.Container;
+import com.branwilliams.bundi.gui.api.components.Label;
+import com.branwilliams.bundi.gui.api.components.Slider;
+import com.branwilliams.bundi.gui.api.layouts.GridLayout;
 
 import java.awt.*;
 import java.util.Random;

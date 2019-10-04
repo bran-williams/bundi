@@ -30,6 +30,13 @@ public final class FontData implements Destructible {
     // By default, 4 px is assumed for the width of a space character.
     private int spaceWidth = 4;
 
+    public FontData() {
+    }
+
+    public FontData(FontDescription fontDescription) {
+        setFont(fontDescription.toAwtFont(), fontDescription.isAntialias());
+    }
+
     /**
      * Creates a fontData image and the character locations within the fontData image.
      * */

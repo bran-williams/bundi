@@ -2,7 +2,7 @@ package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.core.Nameable;
 import com.branwilliams.bundi.engine.core.Window;
-import com.branwilliams.bundi.gui.Toolbox;
+import com.branwilliams.bundi.gui.api.Toolbox;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;

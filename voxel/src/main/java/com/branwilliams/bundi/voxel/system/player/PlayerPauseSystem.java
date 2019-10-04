@@ -11,21 +11,25 @@ import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
+import com.branwilliams.bundi.engine.font.FontCache;
 import com.branwilliams.bundi.engine.font.FontData;
-import com.branwilliams.bundi.gui.ContainerManager;
-import com.branwilliams.bundi.gui.Toolbox;
-import com.branwilliams.bundi.gui.components.Button;
-import com.branwilliams.bundi.gui.containers.Frame;
+import com.branwilliams.bundi.gui.api.Container;
+import com.branwilliams.bundi.gui.api.ContainerManager;
+import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.loader.UILoader;
 import com.branwilliams.bundi.gui.impl.BasicRenderer;
 import com.branwilliams.bundi.gui.impl.BasicToolbox;
 import com.branwilliams.bundi.gui.impl.ColorPack;
-import com.branwilliams.bundi.gui.layouts.ListLayout;
+import com.branwilliams.bundi.gui.screen.AbstractContainerScreen;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.components.PlayerControls;
-import com.branwilliams.bundi.voxel.render.gui.AbstractContainerScreen;
-import com.branwilliams.bundi.voxel.render.gui.ValueContainer;
+import org.xml.sax.SAXException;
 
-import java.awt.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.Font;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import static com.branwilliams.bundi.gui.impl.Pointers.FONT_TOOLTIP;
 
@@ -35,32 +39,26 @@ import static com.branwilliams.bundi.gui.impl.Pointers.FONT_TOOLTIP;
  * */
 public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListener {
 
-    private static final String[] ITEMS = {
-            "Button"
-    };
+    private final FontCache fontCache = new FontCache();
 
-    private static final int UI_PADDING = 20;
+    private final UILoader uiLoader = new UILoader(fontCache);
 
     private final VoxelScene scene;
 
-    private AudioSource source;
+    private final Lockable lockable;
 
-    private final ValueContainer.Value pitch_value = new ValueContainer.Value("Setting", 0F, 1F, 3F, "Adjust this setting");
+    private AudioSource source;
 
     private Toolbox toolbox;
 
-    private FontData smallFont;
-
-    private FontData largeFont;
-
     private BasicRenderer renderManager;
 
-    private final Lockable lockable;
 
     public PlayerPauseSystem(VoxelScene scene, Lockable lockable) {
         super(new ClassComponentMatcher(PlayerControls.class));
         this.scene = scene;
         scene.addKeyListener(this);
+
         this.lockable = lockable;
     }
 
@@ -69,11 +67,9 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
         toolbox = new BasicToolbox(window);
         ColorPack.random().apply(toolbox);
 
-        smallFont = new FontData().setFont(new Font("Trebuchet MS", Font.BOLD, 18), true);
-
-        largeFont = new FontData().setFont(new Font("Trebuchet MS", Font.BOLD, 24), true);
-
         renderManager = new BasicRenderer(toolbox);
+
+        FontData smallFont = fontCache.createFont("Verdana", Font.BOLD, 18, true);
         renderManager.getFontRenderer().setFontData(smallFont);
         toolbox.put(FONT_TOOLTIP, smallFont);
 
@@ -104,37 +100,17 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
                 lockable.toggle();
 
                 if (lockable.isLocked()) {
-                    scene.setGuiScreen(new AbstractContainerScreen(() -> {
-                        ContainerManager containerManager = new ContainerManager(renderManager, toolbox);
+                    ContainerManager containerManager = new ContainerManager(renderManager, toolbox);
 
-                        Frame frame = new Frame("frame_tag", "frame title");
-                        frame.setLayering(false);
-                        frame.setUseLayoutSize(true);
-                        frame.setFont(smallFont);
-                        frame.setTooltip("frame tooltip");
-                        frame.setPosition(UI_PADDING, UI_PADDING);
-                        frame.setSize(300, 200);
-                        frame.setLayout(new ListLayout(8, 4));
+                    try {
+                        List<Container> containers = uiLoader.loadUI(new File("./ui.xml"));
+                        for (Container container : containers)
+                            containerManager.add(container);
+                    } catch (IOException | SAXException | ParserConfigurationException e) {
+                        e.printStackTrace();
+                    }
 
-                        for (String item : ITEMS) {
-                            Button button = new Button(item + "_tag", item);
-                            button.setTooltip("Here's the tooltip for item " + item + ".");
-                            button.setFont(smallFont);
-                            button.onPressed((b, action) -> {
-                                source.setPitch(pitch_value.getValue());
-                                source.play();
-                                return true;
-                            });
-                            button.setSize(150, 32);
-                            frame.add(button);
-                        }
-
-                        ValueContainer valueContainer = new ValueContainer(pitch_value, largeFont, smallFont);
-                        frame.add(valueContainer);
-                        frame.layout();
-                        containerManager.add(frame);
-                        return containerManager;
-                    }));
+                    scene.setGuiScreen(new AbstractContainerScreen(containerManager));
                     window.showCursor();
                     window.centerCursor();
                 } else {

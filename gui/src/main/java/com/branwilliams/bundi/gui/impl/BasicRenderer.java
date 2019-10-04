@@ -2,15 +2,15 @@ package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.font.BasicFontRenderer;
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.ShapeRenderer;
-import com.branwilliams.bundi.gui.Container;
-import com.branwilliams.bundi.gui.Toolbox;
-import com.branwilliams.bundi.gui.components.*;
-import com.branwilliams.bundi.gui.containers.Frame;
-import com.branwilliams.bundi.gui.containers.ScrollableContainer;
+import com.branwilliams.bundi.gui.api.ShapeRenderer;
+import com.branwilliams.bundi.gui.api.Container;
+import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.components.*;
+import com.branwilliams.bundi.gui.api.containers.Frame;
+import com.branwilliams.bundi.gui.api.containers.ScrollableContainer;
 import com.branwilliams.bundi.gui.impl.render.*;
-import com.branwilliams.bundi.gui.render.ImageRenderer;
-import com.branwilliams.bundi.gui.render.RenderManager;
+import com.branwilliams.bundi.gui.api.render.ImageRenderer;
+import com.branwilliams.bundi.gui.api.render.RenderManager;
 
 /**
  * Basic implementation of the renderer for the GUI. <br/>

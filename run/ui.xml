@@ -1,10 +1,39 @@
 <UI>
-    <Frame tag="butt" title="Title here" x="50" y="50" width="100" height="80">
-        <ListLayout padding="2" componentPadding="1"/>
+    <Frame tag="butt" title="Title here" x="50" y="50" width="400" height="200">
+        <ListLayout padding="1" componentPadding="2"/>
         <FontData font="Verdana" size="20" style="bold"/>
 
-        <Button tag="test" width="100" height="20" text="Here's a button">
+        <Button tag="test" width="200" height="24" text="Here's a button">
             <FontData font="Verdana" size="18" style="bold"/>
         </Button>
+
+        <Button tag="test2" width="200" height="24" text="Button numero 2">
+            <FontData font="Times New Roman" size="18" style="bold"/>
+        </Button>
+        <Button tag="bruh" width="200" height="24" text="Bruh">
+            <FontData font="Trebuchet MS" size="18" style="bold"/>
+        </Button>
+    </Frame>
+
+
+    <Frame tag="Ok" title="this is epic" x="460" y="50" width="400" height="200">
+        <GridLayout rows="2" columns="2" padding="1" componentPadding="2"/>
+        <FontData font="Verdana" size="20" style="bold"/>
+
+        <Button tag="test" width="200" height="24" text="Here's a button">
+            <FontData font="Verdana" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="test2" width="200" height="24" text="Button numero 2">
+            <FontData font="Times New Roman" size="18" style="bold"/>
+        </Button>
+
+        <Checkbox tag="test3" width="200" height="24" text="Bruh">
+            <FontData font="Trebuchet MS" size="18" style="bold"/>
+        </Checkbox>
+
+        <Slider tag="test3" width="200" height="24">
+            <FontData font="Arial" size="18" style="bold"/>
+        </Slider>
     </Frame>
 </UI>
