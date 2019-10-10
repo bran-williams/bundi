@@ -28,7 +28,7 @@ public class AtmosphereShaderProgram2 extends ShaderProgram {
         this.createUniform("viewMatrix");
 
         this.createUniform("sunPos");
-        this.createUniform("rotStars");
+//        this.createUniform("rotStars");
 
 //        this.createUniform("time");
         this.createUniform("weather");
@@ -36,13 +36,11 @@ public class AtmosphereShaderProgram2 extends ShaderProgram {
         this.createUniform("tint");
         this.createUniform("tint2");
         this.createUniform("sun");
-        this.createUniform("moon");
 
         this.bind();
         this.setUniform("tint", 0);
         this.setUniform("tint2", 1);
         this.setUniform("sun", 2);
-        this.setUniform("moon", 3);
         ShaderProgram.unbind();
         this.validate();
     }
@@ -66,7 +64,7 @@ public class AtmosphereShaderProgram2 extends ShaderProgram {
     }
 
     public void setRotStars(Matrix3f rotStars) {
-        this.setUniform("rotStars", rotStars);
+//        this.setUniform("rotStars", rotStars);
     }
 
     public void setTime(float time) {

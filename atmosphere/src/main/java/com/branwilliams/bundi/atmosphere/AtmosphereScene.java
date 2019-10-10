@@ -74,9 +74,7 @@ public class AtmosphereScene extends AbstractScene {
             skydomeMaterial.setTexture(0, new Texture(textureLoader.loadTexture("textures/atmosphere/tint.png"), false));
             skydomeMaterial.setTexture(1, new Texture(textureLoader.loadTexture("textures/atmosphere/tint2.png"), false));
             skydomeMaterial.setTexture(2, new Texture(textureLoader.loadTexture("textures/atmosphere/sun.png"), false));
-            skydomeMaterial.setTexture(3, new Texture(textureLoader.loadTexture("textures/atmosphere/moon.png"), false));
-
-            System.out.println(skydomeMaterial);
+//            skydomeMaterial.setTexture(3, new Texture(textureLoader.loadTexture("textures/atmosphere/moon.png"), false));
         } catch (Exception e) {
             e.printStackTrace();
         }
