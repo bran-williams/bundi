@@ -20,7 +20,6 @@ public class HeightmapGenerator implements HeightGenerator {
 
     private int height;
 
-
     public HeightmapGenerator(TextureData textureData) {
         this(textureData.getData(), textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), GRAYSCALE_MAX_COLOR);
     }
@@ -52,12 +51,28 @@ public class HeightmapGenerator implements HeightGenerator {
             for (int y = 0; y < height; y++) {
                 int i = (x + y * width) * channels;
 
-                int r = buffer.get(i) & 0xFF;
-                int g = buffer.get(i + 1) & 0xFF;
-                int b = buffer.get(i + 2) & 0xFF;
-                int a = 255;
-                if (channels == 4)
-                    a = buffer.get(i + 3) & 0xFF;
+                int r = 0,g = 0,b = 0,a = 0;
+
+                switch (channels) {
+                    case 1:
+                        r = buffer.get(i) & 0xFF;
+                        break;
+                    case 2:
+                        r = buffer.get(i) & 0xFF;
+                        a = buffer.get(i + 1) & 0xFF;
+                        break;
+                    case 3:
+                        r = buffer.get(i) & 0xFF;
+                        g = buffer.get(i + 1) & 0xFF;
+                        b = buffer.get(i + 2) & 0xFF;
+                        break;
+                    case 4:
+                        r = buffer.get(i) & 0xFF;
+                        g = buffer.get(i + 1) & 0xFF;
+                        b =  buffer.get(i + 2) & 0xFF;
+                        a = buffer.get(i + 3) & 0xFF;
+                        break;
+                }
 
                 setPixel(x, y, (a << 24) | (r << 16) | (g << 8) | b);
             }
@@ -67,6 +82,7 @@ public class HeightmapGenerator implements HeightGenerator {
     @Override
     public float[][] generateHeight(float x, float z, int vertexCountX, int vertexCountZ, float amplitude) {
         if (vertexCountX * vertexCountZ != this.pixels.length) {
+            System.out.println();
             throw new IllegalStateException(String.format("The vertex count must match this heightmaps pixel count. pixel count: %d", this.pixels.length));
         }
         float[][] heights = new float[vertexCountX][vertexCountZ];

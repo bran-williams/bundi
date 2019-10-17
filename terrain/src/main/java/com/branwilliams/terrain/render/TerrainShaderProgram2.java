@@ -11,14 +11,14 @@ import java.nio.file.Path;
 /**
  * Created by Brandon Williams on 6/29/2018.
  */
-public class TerrainShaderProgram extends ShaderProgram {
+public class TerrainShaderProgram2 extends ShaderProgram {
 
     private final Matrix4f worldMatrix = new Matrix4f();
 
-    public TerrainShaderProgram(EngineContext engineContext) throws ShaderInitializationException, ShaderUniformException {
+    public TerrainShaderProgram2(EngineContext engineContext) throws ShaderInitializationException, ShaderUniformException {
         Path directory = engineContext.getAssetDirectory();
         this.setVertexShader(IOUtils.readFile(directory,"shaders/terrain/vertexShader.vert", null));
-        this.setFragmentShader(IOUtils.readFile(directory, "shaders/terrain/fragmentShader.frag", null));
+        this.setFragmentShader(IOUtils.readFile(directory, "shaders/terrain/fragmentShader2.frag", null));
         this.link();
 
         this.createUniform("projectionMatrix");
@@ -26,14 +26,12 @@ public class TerrainShaderProgram extends ShaderProgram {
         this.createUniform("modelMatrix");
         this.createUniform("textureSampler");
         this.createUniform("normalSampler");
-        this.createUniform("blendmapSampler");
         this.createUniform("hasNormalTexture");
         this.createUniform("materialShininess");
         this.createUniform("tiling");
         this.bind();
         this.setUniform("textureSampler", 0);
         this.setUniform("normalSampler", 1);
-        this.setUniform("blendmapSampler", 2);
 
         ShaderProgram.unbind();
         this.validate();

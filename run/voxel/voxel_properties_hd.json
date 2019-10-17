@@ -108,7 +108,29 @@
   },
   "bookshelf": {
     "faces": {
-      "all":  {
+      "front": {
+        "diffuse": "blocks_hd/bookshelf.png",
+        "normal": "blocks_hd/bookshelf_n.png"
+      },
+      "back": {
+        "diffuse": "blocks_hd/bookshelf.png",
+        "normal": "blocks_hd/bookshelf_n.png"
+      },
+      "top": {
+        "diffuse": "blocks_hd/oak_planks.png",
+        "specular": "blocks_hd/oak_planks_s.png",
+        "normal": "blocks_hd/oak_planks_n.png"
+      },
+      "bottom": {
+        "diffuse": "blocks_hd/oak_planks.png",
+        "specular": "blocks_hd/oak_planks_s.png",
+        "normal": "blocks_hd/oak_planks_n.png"
+      },
+      "right": {
+        "diffuse": "blocks_hd/bookshelf.png",
+        "normal": "blocks_hd/bookshelf_n.png"
+      },
+      "left": {
         "diffuse": "blocks_hd/bookshelf.png",
         "normal": "blocks_hd/bookshelf_n.png"
       }

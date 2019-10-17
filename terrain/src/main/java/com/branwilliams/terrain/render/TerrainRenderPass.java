@@ -27,7 +27,7 @@ public class TerrainRenderPass extends RenderPass<RenderContext> {
 
     private final IComponentMatcher componentMatcher;
 
-    private TerrainShaderProgram terrainShaderProgram;
+    private TerrainShaderProgram2 terrainShaderProgram;
 
     public TerrainRenderPass(Scene scene, Supplier<Camera> cameraSupplier) {
         this.scene = scene;
@@ -38,7 +38,7 @@ public class TerrainRenderPass extends RenderPass<RenderContext> {
     @Override
     public void init(RenderContext renderContext, Engine engine, Window window) throws InitializationException {
         try {
-            terrainShaderProgram = new TerrainShaderProgram(engine.getContext());
+            terrainShaderProgram = new TerrainShaderProgram2(engine.getContext());
         } catch (ShaderUniformException | ShaderInitializationException e) {
             System.err.println("Unable to create terrain shader program!");
             throw new InitializationException(e);

@@ -11,9 +11,7 @@ import com.branwilliams.bundi.engine.texture.ArrayTexture;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
-import com.branwilliams.terrain.generator.HeightGenerator;
-import com.branwilliams.terrain.generator.PerlinNoiseGenerator;
-import com.branwilliams.terrain.generator.TerrainGenerator;
+import com.branwilliams.terrain.generator.*;
 import com.branwilliams.terrain.render.TerrainRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderer;
 import com.branwilliams.terrain.system.RotatingCameraSystem;
@@ -21,6 +19,7 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 
+import static com.branwilliams.terrain.generator.HeightmapGenerator.GRAYSCALE_MAX_COLOR;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 /**
@@ -31,15 +30,17 @@ public class TerrainScene extends AbstractScene {
 
     private static final int TERRAIN_TILE_SIZE = 128;
 
-    private static final int TERRAIN_TILE_VERTICES_X = 256;
+    private static final int TERRAIN_TILE_VERTICES_X = 1024;
 
-    private static final int TERRAIN_TILE_VERTICES_Z = 256;
+    private static final int TERRAIN_TILE_VERTICES_Z = 1024;
 
-    private static final float TERRAIN_TILE_AMPLITUDE = 48;
+    private static final float TERRAIN_TILE_AMPLITUDE = 32;
 
     private Camera camera;
 
     private Projection worldProjection;
+
+    private TextureData heightmap;
 
     public TerrainScene() {
         super("terrain_scene");
@@ -69,11 +70,12 @@ public class TerrainScene extends AbstractScene {
 
         TerrainGenerator terrainGenerator = new TerrainGenerator();
 
-        float[] frequencies = { 1F, 4F, 2F  };
-        float[] percentages = { 1F, 0.25F, 0.5F };
-
+        float[] frequencies = { 1F };
+        float[] percentages = { 1F };
         HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
                 1F / TERRAIN_TILE_SIZE);
+//        HeightGenerator generator = new HeightmapGenerator(heightmap);
+
         TerrainTile terrainTile = terrainGenerator.generateTerrainTile(generator, material, TERRAIN_TILE_AMPLITUDE,
                 0, 0, TERRAIN_TILE_SIZE, TERRAIN_TILE_VERTICES_X, TERRAIN_TILE_VERTICES_Z);
 
@@ -88,6 +90,9 @@ public class TerrainScene extends AbstractScene {
 
     private Material createTerrainMaterial(TextureLoader textureLoader) {
         Material terrainMaterial = new Material();
+        terrainMaterial.setProperty("tiling", 16);
+        terrainMaterial.setProperty("materialShininess", 100F);
+
         try {
             TextureData diffuse0 = textureLoader.loadTexture("textures/grass/grass01.png");
             TextureData diffuse1 = textureLoader.loadTexture("textures/sand/sand_color.jpg");
@@ -106,10 +111,13 @@ public class TerrainScene extends AbstractScene {
             terrainMaterial.setTexture(1, normal);
             terrainMaterial.setProperty("hasNormalTexture", true);
 
-            terrainMaterial.setProperty("tiling", 16);
-            terrainMaterial.setProperty("materialShininess", 100F);
-            TextureData blendmap = textureLoader.loadTexture("textures/blendmap0.png");
-            terrainMaterial.setTexture(2, new Texture(blendmap, true));
+//            heightmap = textureLoader.loadTexture("textures/heightmap2.png");
+
+            //TextureData blendmap = textureLoader.loadTexture("textures/blendmap0.png");
+
+            //HeightmapBlendmapGenerator blendmapGenerator = new HeightmapBlendmapGenerator();
+            //TextureData blendmap = blendmapGenerator.generateBlendmap(heightmap, GRAYSCALE_MAX_COLOR);
+            //terrainMaterial.setTexture(2, new Texture(blendmap, true));
         } catch (IOException e) {
             e.printStackTrace();
         }

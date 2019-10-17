@@ -26,6 +26,15 @@ public class TextureData implements Destructible {
 
     private ByteBuffer data;
 
+    public TextureData(int width, int height, int channels, int format) {
+        this(width, height, channels, format, generateTextureBuffer(width, height, channels));
+    }
+
+    public static ByteBuffer generateTextureBuffer(int width, int height, int channels) {
+        ByteBuffer buffer = MemoryUtil.memAlloc(width * height * channels);
+        return buffer;
+    }
+
     public TextureData(int width, int height, int channels, int format, ByteBuffer data) {
         this.width = width;
         this.height = height;
@@ -64,6 +73,10 @@ public class TextureData implements Destructible {
      * @return The index for the provided x and y pixel coordinates.
      * */
     public int getIndex(int x, int y) {
+        return getIndex(width, height, channels, x, y);
+    }
+
+    public static int getIndex(int width, int height, int channels, int x, int y) {
         // Clamp pixel coordinates to the edges
         x = Mathf.clamp(x, width - 1, 0);
         y = Mathf.clamp(y, height - 1, 0);
@@ -102,6 +115,44 @@ public class TextureData implements Destructible {
                 break;
         }
         return ColorUtils.toARGB(a, r, g, b);
+    }
+
+    /**
+     * Sets the r,g,b,a values for the pixel located in the x,y position.
+     * <br/> <br/>
+     * The x position will be clamped to 0 ~ width - 1
+     * <br/>
+     * The y position will be clamped to 0 ~ height - 1
+     * <br/> <br/>
+     * If this texture contains one channel, then the red value is updated and if it has two channels, then the r, a
+     * values are updated.. and so on and so forth.
+     * */
+    public void setPixel(int x, int y, byte r, byte g, byte b, byte a) {
+        // Clamp pixel coordinates to the edges
+        x = Mathf.clamp(x, width - 1, 0);
+        y = Mathf.clamp(y, height - 1, 0);
+
+        int index = getIndex(x, y);
+        switch (channels) {
+            case 1:
+                data.put(index, r);
+                break;
+            case 2:
+                data.put(index, r);
+                data.put(index + 1, a);
+                break;
+            case 3:
+                data.put(index, r);
+                data.put(index + 1, g);
+                data.put(index + 2, b);
+                break;
+            case 4:
+                data.put(index, r);
+                data.put(index + 1, g);
+                data.put(index + 2, b);
+                data.put(index + 3, a);
+                break;
+        }
     }
 
     public ByteBuffer getData() {
