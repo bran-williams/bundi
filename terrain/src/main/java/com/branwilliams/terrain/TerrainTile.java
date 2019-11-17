@@ -4,9 +4,8 @@ import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.shader.Material;
 import com.branwilliams.bundi.engine.shader.Transformable;
-import com.branwilliams.bundi.engine.shape.AABB;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.terrain.generator.TerrainGenerator;
+import com.branwilliams.terrain.generator.TerrainVertex;
 import org.joml.Vector3f;
 
 /**
@@ -21,7 +20,7 @@ public class TerrainTile implements Destructible {
 
     private Material material;
 
-    private TerrainGenerator.TerrainVertex[] heightmap;
+    private TerrainVertex[] heightmap;
 
     private int width;
 
@@ -31,7 +30,7 @@ public class TerrainTile implements Destructible {
         this(null, transform, null, material);
     }
 
-    public TerrainTile(TerrainGenerator.TerrainVertex[] heightmap, Transformable transform, Mesh mesh, Material material) {
+    public TerrainTile(TerrainVertex[] heightmap, Transformable transform, Mesh mesh, Material material) {
         this.heightmap = heightmap;
         this.transform = transform;
         this.mesh = mesh;
@@ -46,7 +45,7 @@ public class TerrainTile implements Destructible {
         return getVertex(x, z).getPosition().y;
     }
 
-    public TerrainGenerator.TerrainVertex getVertex(int x, int z) {
+    public TerrainVertex getVertex(int x, int z) {
         int index = getIndex(x, z);
         return heightmap[index];
     }
@@ -60,11 +59,11 @@ public class TerrainTile implements Destructible {
         return Mathf.clamp(index, heightmap.length - 1, 0);
     }
 
-    public TerrainGenerator.TerrainVertex[] getHeightmap() {
+    public TerrainVertex[] getHeightmap() {
         return heightmap;
     }
 
-    public void setHeightmap(TerrainGenerator.TerrainVertex[] heightmap, int width, int depth) {
+    public void setHeightmap(TerrainVertex[] heightmap, int width, int depth) {
         this.heightmap = heightmap;
         this.width = width;
         this.depth = depth;
@@ -92,6 +91,14 @@ public class TerrainTile implements Destructible {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getDepth() {
+        return depth;
     }
 
     @Override

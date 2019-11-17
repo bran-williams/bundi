@@ -3,6 +3,8 @@ package com.branwilliams.terrain.builder;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 import com.branwilliams.terrain.TerrainTile;
+import com.branwilliams.terrain.generator.TerrainVertex;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +22,9 @@ public class TerrainMeshBuilder {
     }
 
     public Mesh rebuildTerrainMesh(Mesh mesh, TerrainTile terrainTile) {
-        float[][] heightmap = terrainTile.getHeightmap();
-        int vertexCountX = heightmap.length;
-        int vertexCountZ = heightmap[0].length;
+        int vertexCountX = terrainTile.getWidth();
+        int vertexCountZ = terrainTile.getDepth();
         int vertexCount = vertexCountX * vertexCountZ;
-
 
         float[] vertices = new float[vertexCount * 3];
         float[] normals = new float[vertexCount * 3];
@@ -35,21 +35,26 @@ public class TerrainMeshBuilder {
         int[] indices = new int[6 * (vertexCountX - 1) * (vertexCountZ - 1)];
 
         int vertexPointer = 0;
-        for (int i = 0; i < vertexCountX; i++) {
-            for (int j = 0; j < vertexCountZ; j++) {
-                vertices[vertexPointer * 3] = (float) i / ((float) vertexCountX - 1) * terrainTile.getSize();
-                vertices[vertexPointer * 3 + 1] = heightmap[i][j];
-                vertices[vertexPointer * 3 + 2] = (float) j / ((float) vertexCountZ - 1) * terrainTile.getSize();
+        for (TerrainVertex vertex : terrainTile.getHeightmap()) {
+            vertices[vertexPointer * 3] = vertex.getPosition().x;
+            vertices[vertexPointer * 3 + 1] = vertex.getPosition().y;
+            vertices[vertexPointer * 3 + 2] = vertex.getPosition().z;
 
-                Vector3f normal = calculateNormal(i, j, heightmap);
-                normals[vertexPointer * 3] = normal.x;
-                normals[vertexPointer * 3 + 1] = normal.y;
-                normals[vertexPointer * 3 + 2] = normal.z;
+            normals[vertexPointer * 3] = vertex.getNormal().x;
+            normals[vertexPointer * 3 + 1] = vertex.getNormal().y;
+            normals[vertexPointer * 3 + 2] = vertex.getNormal().z;
 
-                textureCoords[vertexPointer * 2] = (float) i / ((float) vertexCountX - 1);
-                textureCoords[vertexPointer * 2 + 1] = (float) j / ((float) vertexCountZ - 1);
-                vertexPointer++;
-            }
+            textureCoords[vertexPointer * 2] = vertex.getUvs().x;
+            textureCoords[vertexPointer * 2 + 1] = vertex.getUvs().y;
+
+            tangents[vertexPointer * 3] = vertex.getTangent().x;
+            tangents[vertexPointer * 3 + 1] = vertex.getTangent().y;
+            tangents[vertexPointer * 3 + 2] = vertex.getTangent().z;
+
+            bitangents[vertexPointer * 3] = vertex.getBitangent().x;
+            bitangents[vertexPointer * 3 + 1] = vertex.getBitangent().y;
+            bitangents[vertexPointer * 3 + 2] = vertex.getBitangent().z;
+            vertexPointer++;
         }
 
         // Create the indices and tangent/bitangents for this mesh.
@@ -60,8 +65,6 @@ public class TerrainMeshBuilder {
                 int topRight = topLeft + 1;
                 int bottomLeft = ((gx + 1) * vertexCountZ) + gz;
                 int bottomRight = bottomLeft + 1;
-                MeshUtils.calculateTangentBitangent(vertices, textureCoords, tangents, bitangents, topLeft, bottomLeft, topRight);
-                MeshUtils.calculateTangentBitangent(vertices, textureCoords, tangents, bitangents, topRight, bottomLeft, bottomRight);
 
                 indices[idxPointer++] = topLeft;
                 indices[idxPointer++] = topRight;
@@ -84,23 +87,6 @@ public class TerrainMeshBuilder {
         log.info("Terrain mesh created with " + vertexCount + " vertices.");
 
         return mesh;
-    }
-
-    private static Vector3f calculateNormal(int x, int z, float[][] heights) {
-        float heightL = getHeight(x - 1, z, heights);
-        float heightR = getHeight(x + 1, z, heights);
-        float heightD = getHeight(x, z - 1, heights);
-        float heightU = getHeight(x, z + 1, heights);
-        return new Vector3f(heightL - heightR, 2F, heightD - heightU).normalize();
-    }
-
-    private static float getHeight(int x, int z, float[][] heights) {
-       x = x < 0 ? 0 : x;
-       x = x >= heights.length ? heights.length - 1 : x;
-       z = z < 0 ? 0 : z;
-       z = z >= heights.length ? heights.length - 1 : z;
-
-       return heights[x][z];
     }
 
 }
