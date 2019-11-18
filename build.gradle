@@ -1,3 +1,4 @@
+import org.gradle.internal.os.OperatingSystem
 
 allprojects {
     apply plugin: 'java'
@@ -6,7 +7,23 @@ allprojects {
     group 'com.branwilliams.bundi'
     version '1.0-SNAPSHOT'
 
-    project.ext.lwjglVersion = "3.2.0"
+    project.ext.lwjglVersion = "3.2.3"
+    project.ext.jomlVersion = "1.9.19"
+
+    switch (OperatingSystem.current()) {
+        case OperatingSystem.LINUX:
+            def osArch = System.getProperty("os.arch")
+            project.ext.lwjglNatives = osArch.startsWith("arm") || osArch.startsWith("aarch64")
+                    ? "natives-linux-${osArch.contains("64") || osArch.startsWith("armv8") ? "arm64" : "arm32"}"
+                    : "natives-linux"
+            break
+        case OperatingSystem.MAC_OS:
+            project.ext.lwjglNatives = "natives-macos"
+            break
+        case OperatingSystem.WINDOWS:
+            project.ext.lwjglNatives = System.getProperty("os.arch").contains("64") ? "natives-windows" : "natives-windows-x86"
+            break
+    }
 }
 
 subprojects {
@@ -16,21 +33,22 @@ subprojects {
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.12'
+        implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
 
-        compile group: 'org.lwjgl', name: 'lwjgl',  version:lwjglVersion
-        compile group: 'org.lwjgl', name: 'lwjgl-opengl', version:lwjglVersion
-        compile group: 'org.lwjgl', name: 'lwjgl-glfw', version:lwjglVersion
-        compile group: 'org.lwjgl', name: 'lwjgl-openal', version:lwjglVersion
-        compile group: 'org.lwjgl', name: 'lwjgl-assimp', version:lwjglVersion
-        compile group: 'org.lwjgl', name: 'lwjgl-stb', version:lwjglVersion
-        compile group: 'org.lwjgl', name: 'lwjgl', version:lwjglVersion, classifier:'natives-windows'
-        compile group: 'org.lwjgl', name: 'lwjgl-opengl', version:lwjglVersion, classifier:'natives-windows'
-        compile group: 'org.lwjgl', name: 'lwjgl-glfw', version:lwjglVersion, classifier:'natives-windows'
-        compile group: 'org.lwjgl', name: 'lwjgl-openal', version:lwjglVersion, classifier:'natives-windows'
-        compile group: 'org.lwjgl', name: 'lwjgl-assimp', version:lwjglVersion, classifier:'natives-windows'
-        compile group: 'org.lwjgl', name: 'lwjgl-stb', version:lwjglVersion, classifier:'natives-windows'
+        implementation "org.lwjgl:lwjgl"
+        implementation "org.lwjgl:lwjgl-assimp"
+        implementation "org.lwjgl:lwjgl-glfw"
+        implementation "org.lwjgl:lwjgl-openal"
+        implementation "org.lwjgl:lwjgl-opengl"
+        implementation "org.lwjgl:lwjgl-stb"
+        runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+        runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+        runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+        runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+        runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+        runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+        implementation "org.joml:joml:${jomlVersion}"
 
-        compile 'org.joml:joml:1.5.0'
         compile 'com.google.code.gson:gson:2.8.2'
         compile 'org.reflections:reflections:0.9.11'
         compile 'org.slf4j:slf4j-api:1.7.15'
