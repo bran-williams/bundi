@@ -34,13 +34,13 @@ public class BasicRenderer extends RenderManager {
         this.setPopupRenderer(new BasicPopupRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Button.class, new ButtonRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Checkbox.class, new CheckboxRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
-        this.setRenderer(Container.class, new ContainerRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
+        this.setRenderer(Container.class, false, new ContainerRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(ScrollableContainer.class, false, new ScrollableContainerRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Slider.class, new SliderRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Label.class, new LabelRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(TextField.class, new TextFieldRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(ComboBox.class, new ComboBoxRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
-        this.setRenderer(Frame.class, false, new FrameRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
+        this.setRenderer(Frame.class, true, new FrameRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
     }
 
     public FontRenderer getFontRenderer() {

@@ -18,6 +18,7 @@ public enum XmlUtils {
             return defaultValue;
 
         try {
+
             return Color.decode(text);
         } catch (Exception e) {
             return defaultValue;

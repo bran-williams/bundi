@@ -51,7 +51,7 @@
         </Slider>
     </Frame>
 
-    <Frame tag="test" title="Test me bro" x="50" y="260" width="400" height="200">
+    <Frame tag="test" title="Test me bro" x="460" y="260" width="400" height="200">
         <ListLayout padding="1" componentPadding="2"/>
         <FontData font="Verdana" size="20" style="bold"/>
 
@@ -61,11 +61,11 @@
             <Container tag="invisible">
                 <GridLayout rows="1" columns="2" padding="0" componentPadding="2"/>
 
-                <Label tag="slider_title" text="Slider Name">
+                <Label tag="slider_title" text="Slider Name" color="#ffffff">
                     <FontData font="Arial" size="18" style="bold"/>
                 </Label>
 
-                <Label tag="slider_value"  text="1.0%" alignment="right">
+                <Label tag="slider_value"  text="1.0%" alignment="right" color="#ffffff">
                     <FontData font="Arial" size="18" style="plain"/>
                 </Label>
             </Container>
@@ -78,16 +78,16 @@
         <Container tag="invisible">
             <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>
 
-            <Label tag="slider_title" text="Slider Name">
+            <Label tag="slider_title" text="Slider Name" color="#ffffff">
                 <FontData font="Arial" size="18" style="bold"/>
             </Label>
 
-            <Slider tag="slider_itself" width="200" height="24">
+            <Slider tag="slider_itself" width="150" height="24">
                 <FontData font="Arial" size="18" style="bold"/>
             </Slider>
 
-            <Label tag="slider_value" text="100%" alignment="right">
-                <FontData font="Arial" size="18" style="bold"/>
+            <Label tag="slider_value" text="100%" alignment="right" color="#ffffff">
+                <FontData font="Arial" size="18" style="plain"/>
             </Label>
 
         </Container>

@@ -23,7 +23,7 @@ public class ContainerRenderer extends AbstractComponentRenderer<Container> {
     @Override
     public void render(Container container) {
         if (!container.getTag().equals("invisible")) {
-            shapeRenderer.drawRect(container.getArea(), toolbox.get(COLOR_SECONDARY_BACKGROUND) );
+            shapeRenderer.drawRect(container.getArea(), toolbox.get(COLOR_SECONDARY_BACKGROUND));
         }
         /*if (!container.getTag().equals("invisible")) {
             GLUtils.glColor(toolbox.get(COLOR_SECONDARY_BACKGROUND));

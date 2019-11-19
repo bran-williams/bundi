@@ -13,6 +13,7 @@ import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.terrain.builder.TerrainMeshBuilder;
 import com.branwilliams.terrain.generator.*;
+import com.branwilliams.terrain.render.LineGraphRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderer;
 
@@ -52,6 +53,7 @@ public class TerrainScene extends AbstractScene {
         RenderContext renderContext = new RenderContext(worldProjection);
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addLast(new TerrainRenderPass(this, this::getCamera));
+        renderPipeline.addLast(new LineGraphRenderPass(this));
         setRenderer(new TerrainRenderer(this, renderPipeline));
     }
 
