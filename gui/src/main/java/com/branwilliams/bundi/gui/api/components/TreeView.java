@@ -53,7 +53,7 @@ public class TreeView extends Component {
 
     @Override
     public String toString() {
-        return "TextView{" +
+        return "TreeView{" +
                 "highlight=" + highlight +
                 ", font=" + font +
                 ", tooltip='" + tooltip + '\'' +

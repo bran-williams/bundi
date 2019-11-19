@@ -38,12 +38,14 @@ public class UILoader {
 
     private void loadDefaultFactories(FontCache fontCache) {
         elementFactories.put("frame", new FrameFactory());
+        elementFactories.put("container", new ContainerFactory());
         elementFactories.put("button", new ButtonFactory());
         elementFactories.put("slider", new SliderFactory());
         elementFactories.put("checkbox", new CheckboxFactory());
         elementFactories.put("listlayout", new ListLayoutFactory());
         elementFactories.put("gridlayout", new GridLayoutFactory());
         elementFactories.put("fontdata", new FontDataFactory(fontCache));
+        elementFactories.put("label", new LabelFactory());
     }
 
     public List<Container> loadUI(File file) throws IOException, SAXException, ParserConfigurationException,

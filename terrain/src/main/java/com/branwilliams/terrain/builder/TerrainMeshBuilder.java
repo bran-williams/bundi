@@ -18,6 +18,7 @@ public class TerrainMeshBuilder {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     public Mesh buildTerrainMesh(TerrainTile terrainTile) {
+        log.info("Creating terrain mesh...");
         return rebuildTerrainMesh(new Mesh(), terrainTile);
     }
 
@@ -84,7 +85,7 @@ public class TerrainMeshBuilder {
         mesh.storeIndices(indices);
         mesh.unbind();
 
-        log.info("Terrain mesh created with " + vertexCount + " vertices.");
+        log.info("Terrain mesh updated with " + vertexCount + " vertices.");
         terrainTile.setMesh(mesh);
         return mesh;
     }

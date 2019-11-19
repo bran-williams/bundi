@@ -13,12 +13,30 @@ import com.branwilliams.bundi.gui.impl.AbstractComponentRenderer;
  */
 public class LabelRenderer extends AbstractComponentRenderer<Label> {
 
+    private static final float ALIGNMENT_PADDING = 2;
+
     public LabelRenderer(ShapeRenderer shapeRenderer, Toolbox toolbox, FontRenderer fontRenderer, ImageRenderer imageRenderer) {
         super(shapeRenderer, toolbox, fontRenderer, imageRenderer);
     }
 
     @Override
     public void render(Label label) {
-        fontRenderer.drawString(label.getFont(), label.getText(), label.getX(), label.getY(), label.getColor().getRGB());
+        float x = 0;
+
+        switch (label.getAlignment()) {
+            case LEFT:
+                x = label.getX();
+                break;
+            case RIGHT:
+                x = label.getX() + label.getWidth() - label.getTextWidth() - ALIGNMENT_PADDING;
+                break;
+            case CENTER:
+                x = label.getX() + (label.getWidth() * 0.5F) - (label.getTextWidth() * 0.5F);
+                break;
+            default:
+                System.out.println("wtf");
+        }
+
+        fontRenderer.drawString(label.getFont(), label.getText(), (int) x, label.getY(), label.getColor().getRGB());
     }
 }

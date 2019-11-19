@@ -17,66 +17,56 @@ import static com.branwilliams.bundi.engine.util.MeshUtils.calculateTangent;
  * Generates terrain meshes using a height generator. <br/>
  * Created by Brandon Williams on 12/28/2017.
  */
-public class TerrainGenerator {
+public class TerrainTileBuilder {
 
-    private static final Logger log = LoggerFactory.getLogger(TerrainGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(TerrainTileBuilder.class);
 
 
-    public TerrainTile generateTerrainTile(HeightGenerator heightGenerator, Material material, float amplitude,
+    public TerrainTile buildTerrainTile(HeightGenerator heightGenerator, Material material, float amplitude,
                                            float x, float z, int size, int vertexCountX,
                                            int vertexCountZ) {
         float[][] heights = heightGenerator.generateHeight(x, z, vertexCountX, vertexCountZ, amplitude);
         TerrainTile terrainTile = new TerrainTile(new Transformation().position(z * size, 0, x * size), material);
 
-        generateTerrainMesh(terrainTile, heights, size, vertexCountX, vertexCountZ);
-//        Mesh terrainMesh = generateTerrainMesh(terrainTile, heights, size, vertexCountX, vertexCountZ);
-//        terrainTile.setMesh(terrainMesh);
-
+        loadTerrainHeightmap(terrainTile, heights, size, vertexCountX, vertexCountZ);
         return terrainTile;
     }
 
-    public void generateTerrainMesh(TerrainTile terrainTile, float[][] heights, int size, int vertexCountX, int vertexCountZ) {
+    public void loadTerrainHeightmap(TerrainTile terrainTile, float[][] heights, int size, int vertexCountX, int vertexCountZ) {
         loadTerrainHeightmap(terrainTile, getHeightGenerator(heights), size, vertexCountX, vertexCountZ);
     }
 
-    public void generateTerrainMesh(TerrainTile terrainTile, HeightGenerator heightGenerator, float amplitude, float x, float z, int size,
-                                    int vertexCountX, int vertexCountZ) {
+    public void loadTerrainHeightmap(TerrainTile terrainTile, HeightGenerator heightGenerator, float amplitude, float x, float z, int size,
+                                     int vertexCountX, int vertexCountZ) {
         float[][] heights = heightGenerator.generateHeight(x, z, vertexCountX, vertexCountZ, amplitude);
-        generateTerrainMesh(terrainTile, heights, size, vertexCountX, vertexCountZ);
+        loadTerrainHeightmap(terrainTile, heights, size, vertexCountX, vertexCountZ);
     }
 
-//    /**
-//     * Generates a flat terrain mesh.
-//     * */
-//    public Mesh generateFlatTerrain(float amplitude, int size, int vertexCountX, int vertexCountZ) {
-//        Mesh mesh = loadTerrainMesh((x, z) -> amplitude, size, vertexCountX, vertexCountZ);
-//        return mesh;
-//    }
-
     /**
-     * Thank you to ThinMatrix for this lovely terrain loading code. This may only be temporary.
+     * This function will generate the vertex information for a terrain tile from a height generator.
+     *
+     * @param terrainTile The {@link TerrainTile} this heightmap will be generated for.
+     * @param heightGenerator The function used to query height values for each vertex.
+     * @param scale The scale of this terrain tile. This essentially scales the terrain vertices.
+     * @param vertexCountX The number of vertices in the X direction.
+     * @param vertexCountZ The number of vertices in the Z direction.
      * */
-    public void loadTerrainHeightmap(TerrainTile terrainTile, BiFunction<Integer, Integer, Float> heightGenerator, int size, int vertexCountX, int vertexCountZ) {
-        int increment = 1;
-        int actualVertexCountX = (vertexCountX - 1) / (increment) + 1;
-        int actualVertexCountZ = (vertexCountZ - 1) / (increment) + 1;
+    public void loadTerrainHeightmap(TerrainTile terrainTile, BiFunction<Integer, Integer, Float> heightGenerator, int scale, int vertexCountX, int vertexCountZ) {
+        int vertexCount = vertexCountX * vertexCountZ;
 
-        int count = actualVertexCountX * actualVertexCountZ;
-
-        TerrainVertex[] terrainVertices = new TerrainVertex[count];
-        log.info("Terrain mesh created with " + count + " vertices.");
+        TerrainVertex[] terrainVertices = new TerrainVertex[vertexCount];
 
         int vertexPointer = 0;
 
         // Iterate over the the actual vertex count so that the height generator uses the actual x,z positions instead
         // of the ones of the lower lod.
-        for (int i = 0; i < vertexCountX; i+=increment) {
-            for (int j = 0; j < vertexCountZ; j+=increment) {
+        for (int i = 0; i < vertexCountX; i++) {
+            for (int j = 0; j < vertexCountZ; j++) {
 
                 Vector3f position = new Vector3f();
-                position.x = (float) i / ((float) vertexCountX - 1) * size;
+                position.x = (float) i / ((float) vertexCountX - 1) * scale;
                 position.y = heightGenerator.apply(i, j);
-                position.z = (float) j / ((float) vertexCountZ - 1) * size;
+                position.z = (float) j / ((float) vertexCountZ - 1) * scale;
 
                 Vector3f normal = calculateNormal(i, j, heightGenerator);
 
@@ -90,11 +80,11 @@ public class TerrainGenerator {
         }
 
         // Create the indices and tangent/bitangents for this mesh.
-        for (int gx = 0; gx < actualVertexCountZ - 1; gx++) {
-            for (int gz = 0; gz < actualVertexCountX - 1; gz++) {
-                int topLeft = (gx * actualVertexCountX) + gz;
+        for (int gx = 0; gx < vertexCountZ - 1; gx++) {
+            for (int gz = 0; gz < vertexCountX - 1; gz++) {
+                int topLeft = (gx * vertexCountX) + gz;
                 int topRight = topLeft + 1;
-                int bottomLeft = ((gx + 1) * actualVertexCountZ) + gz;
+                int bottomLeft = ((gx + 1) * vertexCountZ) + gz;
                 int bottomRight = bottomLeft + 1;
 
                 TerrainVertex topLeftVertex = terrainVertices[topLeft];
@@ -107,10 +97,11 @@ public class TerrainGenerator {
             }
         }
 
+        log.info("Terrain heightmap created with " + vertexCount + " vertices.");
         terrainTile.setHeightmap(terrainVertices, vertexCountX, vertexCountZ);
     }
 
-    public static void calculateTangentBitangent(TerrainVertex vec0, TerrainVertex vec1, TerrainVertex vec2) {
+    private static void calculateTangentBitangent(TerrainVertex vec0, TerrainVertex vec1, TerrainVertex vec2) {
         // Create vectors to make this calculation a little easier to read.
         Vector3f v0 = vec0.getPosition();
         Vector3f v1 = vec1.getPosition();
@@ -133,16 +124,6 @@ public class TerrainGenerator {
         vec2.setBitangent(new Vector3f(bitangent));
     }
 
-    private BiFunction<Integer, Integer, Float> getHeightGenerator(final float[][] heights) {
-        return (x, z) -> {
-            x = x < 0 ? 0 : x;
-            x = x >= heights.length ? heights.length - 1 : x;
-            z = z < 0 ? 0 : z;
-            z = z >= heights.length ? heights.length - 1 : z;
-            return heights[z][x];
-        };
-    }
-
     private static Vector3f calculateNormal(int x, int z, BiFunction<Integer, Integer, Float> heightGenerator) {
         float heightL = heightGenerator.apply(x-1, z);
         float heightR = heightGenerator.apply(x+1, z);
@@ -151,4 +132,13 @@ public class TerrainGenerator {
         return new Vector3f(heightL - heightR, 2F, heightD - heightU).normalize();
     }
 
+    private static BiFunction<Integer, Integer, Float> getHeightGenerator(final float[][] heights) {
+        return (x, z) -> {
+            x = x < 0 ? 0 : x;
+            x = x >= heights.length ? heights.length - 1 : x;
+            z = z < 0 ? 0 : z;
+            z = z >= heights.length ? heights.length - 1 : z;
+            return heights[z][x];
+        };
+    }
 }

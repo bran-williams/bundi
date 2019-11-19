@@ -52,6 +52,16 @@ public class GridLayout implements Layout<Widget> {
         int[] rowHeight = new int[rows];
         int[] columnWidth = new int[columns];
 
+//        // Initialize the gridlayout to make each cell height uniform..
+//        int defaultRowHeight = container.getHeight() / (rows);
+//        for (int i = 0; i < rows; i++)
+//            rowHeight[i] = defaultRowHeight;
+//
+//        // Initialize the gridlayout to make each cell width uniform..
+//        int defaultColumnWidth = container.getWidth() / (columns);
+//        for (int i = 0; i < columns; i++)
+//            columnWidth[i] = defaultColumnWidth;
+
         for (int i = 0; i < components.size(); i++) {
             Widget component = components.get(i);
 

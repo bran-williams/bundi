@@ -1,5 +1,5 @@
 <UI>
-    <Frame tag="butt" title="Title here" x="50" y="50" width="400" height="200">
+    <Frame tag="first_guy" title="Title here" x="50" y="50" width="400" height="200">
         <ListLayout padding="1" componentPadding="2"/>
         <FontData font="Verdana" size="20" style="bold"/>
 
@@ -10,30 +10,87 @@
         <Button tag="test2" width="200" height="24" text="Button numero 2">
             <FontData font="Times New Roman" size="18" style="bold"/>
         </Button>
+
         <Button tag="bruh" width="200" height="24" text="Bruh">
             <FontData font="Trebuchet MS" size="18" style="bold"/>
         </Button>
+
+        <Checkbox tag="test3" width="200" height="24" text="Checkbox title">
+            <FontData font="Trebuchet MS" size="18" style="bold"/>
+        </Checkbox>
     </Frame>
 
-
-    <Frame tag="Ok" title="this is epic" x="460" y="50" width="400" height="200">
-        <GridLayout rows="2" columns="2" padding="1" componentPadding="2"/>
+    <Frame tag="checkboxes" title="Checkbox" x="460" y="50" width="400" height="200">
+        <ListLayout padding="1" componentPadding="2"/>
         <FontData font="Verdana" size="20" style="bold"/>
-
-        <Button tag="test" width="200" height="24" text="Here's a button">
-            <FontData font="Verdana" size="18" style="bold"/>
-        </Button>
-
-        <Button tag="test2" width="200" height="24" text="Button numero 2">
-            <FontData font="Times New Roman" size="18" style="bold"/>
-        </Button>
 
         <Checkbox tag="test3" width="200" height="24" text="Bruh">
             <FontData font="Trebuchet MS" size="18" style="bold"/>
         </Checkbox>
 
+    </Frame>
+
+    <Frame tag="sliders" title="Sliders" x="50" y="260" width="400" height="200">
+        <GridLayout rows="2" columns="2" padding="1" componentPadding="2"/>
+        <FontData font="Verdana" size="20" style="bold"/>
+
         <Slider tag="test3" width="200" height="24">
             <FontData font="Arial" size="18" style="bold"/>
         </Slider>
+
+        <Slider tag="test4" width="200" height="24">
+            <FontData font="Arial" size="18" style="bold"/>
+        </Slider>
+
+        <Slider tag="test5" width="200" height="24">
+            <FontData font="Arial" size="18" style="bold"/>
+        </Slider>
+
+        <Slider tag="test6" width="200" height="24">
+            <FontData font="Arial" size="18" style="bold"/>
+        </Slider>
+    </Frame>
+
+    <Frame tag="test" title="Test me bro" x="50" y="260" width="400" height="200">
+        <ListLayout padding="1" componentPadding="2"/>
+        <FontData font="Verdana" size="20" style="bold"/>
+
+        <Container tag="invisible">
+            <GridLayout rows="2" columns="1" padding="0" componentPadding="2"/>
+
+            <Container tag="invisible">
+                <GridLayout rows="1" columns="2" padding="0" componentPadding="2"/>
+
+                <Label tag="slider_title" text="Slider Name">
+                    <FontData font="Arial" size="18" style="bold"/>
+                </Label>
+
+                <Label tag="slider_value"  text="1.0%" alignment="right">
+                    <FontData font="Arial" size="18" style="plain"/>
+                </Label>
+            </Container>
+
+            <Slider tag="slider_itself" width="200" height="24">
+                <FontData font="Arial" size="18" style="bold"/>
+            </Slider>
+        </Container>
+
+        <Container tag="invisible">
+            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>
+
+            <Label tag="slider_title" text="Slider Name">
+                <FontData font="Arial" size="18" style="bold"/>
+            </Label>
+
+            <Slider tag="slider_itself" width="200" height="24">
+                <FontData font="Arial" size="18" style="bold"/>
+            </Slider>
+
+            <Label tag="slider_value" text="100%" alignment="right">
+                <FontData font="Arial" size="18" style="bold"/>
+            </Label>
+
+        </Container>
+
     </Frame>
 </UI>

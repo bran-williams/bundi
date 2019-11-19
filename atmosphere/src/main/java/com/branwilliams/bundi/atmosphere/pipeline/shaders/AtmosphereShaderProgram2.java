@@ -53,9 +53,9 @@ public class AtmosphereShaderProgram2 extends ShaderProgram {
         // Put contents of 'view matrix' into 'copy'.
         copy.set(camera.toViewMatrix());
         // Remove the translations, making it only the rotations.
-        copy.m30 = 0;
-        copy.m31 = 0;
-        copy.m32 = 0;
+        copy.m30(0);
+        copy.m31(0);
+        copy.m32(0);
         this.setUniform("viewMatrix", copy);
     }
 

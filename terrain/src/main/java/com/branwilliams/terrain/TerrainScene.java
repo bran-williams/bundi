@@ -15,13 +15,8 @@ import com.branwilliams.terrain.builder.TerrainMeshBuilder;
 import com.branwilliams.terrain.generator.*;
 import com.branwilliams.terrain.render.TerrainRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderer;
-import com.branwilliams.terrain.system.RotatingCameraSystem;
-import org.joml.Vector3f;
 
 import java.io.IOException;
-
-import static com.branwilliams.terrain.generator.HeightmapGenerator.GRAYSCALE_MAX_COLOR;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 /**
  * @author Brandon
@@ -29,13 +24,13 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
  */
 public class TerrainScene extends AbstractScene {
 
-    private static final int TERRAIN_TILE_SIZE = 128;
+    private static final int TERRAIN_TILE_SIZE = 256;
 
-    private static final int TERRAIN_TILE_VERTICES_X = 1024;
+    private static final int TERRAIN_TILE_VERTICES_X = 256;
 
-    private static final int TERRAIN_TILE_VERTICES_Z = 1024;
+    private static final int TERRAIN_TILE_VERTICES_Z = 256;
 
-    private static final float TERRAIN_TILE_AMPLITUDE = 32;
+    private static final float TERRAIN_TILE_AMPLITUDE = 128;
 
     private Camera camera;
 
@@ -66,20 +61,24 @@ public class TerrainScene extends AbstractScene {
         this.camera.move(0F, TERRAIN_TILE_AMPLITUDE, -4F);
         this.camera.lookAt(TERRAIN_TILE_SIZE * 0.5F, 0F, TERRAIN_TILE_SIZE * 0.5F);
 
+        // Create the material for the terrain
         TextureLoader textureLoader = new TextureLoader(engine.getContext());
         Material material = createTerrainMaterial(textureLoader);
 
-        TerrainGenerator terrainGenerator = new TerrainGenerator();
 
-        float[] frequencies = { 1F };
-        float[] percentages = { 1F };
+        // Create or load the height generator
+        float[] frequencies = { 1F, 2F, 4F, 8F };
+        float[] percentages = { 1F, 1F, 0.5F, 0.25F };
         HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
                 1F / TERRAIN_TILE_SIZE);
 //        HeightGenerator generator = new HeightmapGenerator(heightmap);
 
-        TerrainTile terrainTile = terrainGenerator.generateTerrainTile(generator, material, TERRAIN_TILE_AMPLITUDE,
+        // Create the tile builder
+        TerrainTileBuilder terrainTileBuilder = new TerrainTileBuilder();
+        TerrainTile terrainTile = terrainTileBuilder.buildTerrainTile(generator, material, TERRAIN_TILE_AMPLITUDE,
                 0, 0, TERRAIN_TILE_SIZE, TERRAIN_TILE_VERTICES_X, TERRAIN_TILE_VERTICES_Z);
 
+        // Create the mesh builder for that tile
         TerrainMeshBuilder terrainMeshBuilder = new TerrainMeshBuilder();
         terrainMeshBuilder.buildTerrainMesh(terrainTile);
 
