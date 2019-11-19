@@ -85,7 +85,7 @@ public class TerrainMeshBuilder {
         mesh.unbind();
 
         log.info("Terrain mesh created with " + vertexCount + " vertices.");
-
+        terrainTile.setMesh(mesh);
         return mesh;
     }
 

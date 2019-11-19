@@ -11,6 +11,7 @@ import com.branwilliams.bundi.engine.texture.ArrayTexture;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
+import com.branwilliams.terrain.builder.TerrainMeshBuilder;
 import com.branwilliams.terrain.generator.*;
 import com.branwilliams.terrain.render.TerrainRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderer;
@@ -78,6 +79,9 @@ public class TerrainScene extends AbstractScene {
 
         TerrainTile terrainTile = terrainGenerator.generateTerrainTile(generator, material, TERRAIN_TILE_AMPLITUDE,
                 0, 0, TERRAIN_TILE_SIZE, TERRAIN_TILE_VERTICES_X, TERRAIN_TILE_VERTICES_Z);
+
+        TerrainMeshBuilder terrainMeshBuilder = new TerrainMeshBuilder();
+        terrainMeshBuilder.buildTerrainMesh(terrainTile);
 
         es.entity("terrainTile").component(
                 terrainTile
