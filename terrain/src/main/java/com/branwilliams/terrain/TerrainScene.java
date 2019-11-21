@@ -12,6 +12,7 @@ import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.terrain.builder.TerrainMeshBuilder;
+import com.branwilliams.terrain.builder.TerrainTileBuilder;
 import com.branwilliams.terrain.generator.*;
 import com.branwilliams.terrain.render.LineGraphRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderPass;

@@ -1,8 +1,10 @@
-package com.branwilliams.terrain.generator;
+package com.branwilliams.terrain.builder;
 
 import com.branwilliams.bundi.engine.shader.Material;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.terrain.TerrainTile;
+import com.branwilliams.terrain.generator.HeightGenerator;
+import com.branwilliams.terrain.generator.TerrainVertex;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
@@ -23,8 +25,8 @@ public class TerrainTileBuilder {
 
 
     public TerrainTile buildTerrainTile(HeightGenerator heightGenerator, Material material, float amplitude,
-                                           float x, float z, int size, int vertexCountX,
-                                           int vertexCountZ) {
+                                        float x, float z, int size, int vertexCountX,
+                                        int vertexCountZ) {
         float[][] heights = heightGenerator.generateHeight(x, z, vertexCountX, vertexCountZ, amplitude);
         TerrainTile terrainTile = new TerrainTile(new Transformation().position(z * size, 0, x * size), material);
 
