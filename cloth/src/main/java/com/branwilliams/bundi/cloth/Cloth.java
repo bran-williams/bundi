@@ -1,7 +1,6 @@
 package com.branwilliams.bundi.cloth;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Particle;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -15,9 +14,9 @@ public class Cloth {
 
     private final ClothPhysicsParameters parameters;
 
-    private final int width;
+    private final int particleSizeX;
 
-    private final int height;
+    private final int particleSizeY;
 
     private ClothParticle[] particles;
 
@@ -25,50 +24,40 @@ public class Cloth {
 
     private Mesh mesh;
 
-    public Cloth(ClothPhysicsParameters parameters, int width, int height) {
+    public Cloth(ClothPhysicsParameters parameters, int width, int height, int particleSizeX, int particleSizeY) {
         this.parameters = parameters;
-        this.width = width;
-        this.height = height;
-        this.particles = new ClothParticle[width * height];
+        this.particleSizeX = particleSizeX;
+        this.particleSizeY = particleSizeY;
+        this.particles = new ClothParticle[particleSizeX * particleSizeY];
         this.constraints = new ArrayList<>();
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Vector3f position = new Vector3f(width * (x / (float) width), -height * (y / (float) height), 0);
-                particles[x + y * width] = (new ClothParticle(parameters, position));
+        for (int x = 0; x < particleSizeX; x++) {
+            for (int y = 0; y < particleSizeY; y++) {
+                Vector3f position = new Vector3f(width * (x / (float) particleSizeX), -height * (y / (float) particleSizeY), 0);
+                particles[x + y * particleSizeX] = (new ClothParticle(parameters, position));
             }
         }
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (x < width - 1) makeConstraint(getParticle(x, y), getParticle(x + 1, y));
-                if (y < height - 1) makeConstraint(getParticle(x, y), getParticle(x, y + 1));
-                if (x < width - 1 && y < height - 1) {
+        for (int x = 0; x < particleSizeX; x++) {
+            for (int y = 0; y < particleSizeY; y++) {
+                if (x < particleSizeX - 1) makeConstraint(getParticle(x, y), getParticle(x + 1, y));
+                if (y < particleSizeY - 1) makeConstraint(getParticle(x, y), getParticle(x, y + 1));
+                if (x < particleSizeX - 1 && y < particleSizeY - 1) {
                     makeConstraint(getParticle(x, y), getParticle(x + 1, y + 1));
                     makeConstraint(getParticle(x + 1, y), getParticle(x, y + 1));
                 }
-
             }
         }
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                if (x < width - 2) makeConstraint(getParticle(x, y), getParticle(x + 2, y));
-                if (y < height - 2) makeConstraint(getParticle(x, y), getParticle(x, y + 2));
-                if (x < width - 2 && y < height - 2) {
+        for (int x = 0; x < particleSizeX; x++) {
+            for (int y = 0; y < particleSizeY; y++) {
+                if (x < particleSizeX - 2) makeConstraint(getParticle(x, y), getParticle(x + 2, y));
+                if (y < particleSizeY - 2) makeConstraint(getParticle(x, y), getParticle(x, y + 2));
+                if (x < particleSizeX - 2 && y < particleSizeY - 2) {
                     makeConstraint(getParticle(x, y), getParticle(x + 2, y + 2));
                     makeConstraint(getParticle(x + 2, y), getParticle(x, y + 2));
                 }
             }
-        }
-
-        for (int i = 0; i < 3; i++) {
-            getParticle(i, 0).offsetPosition(new Vector3f(0.5F, 0F, 0F));
-            getParticle(i, 0).setMovable(false);
-
-            getParticle(i, 0).offsetPosition(new Vector3f(-0.5F, 0F, 0F));
-            getParticle(width - 1 - i, 0).setMovable(false);
-
         }
     }
 
@@ -86,21 +75,22 @@ public class Cloth {
 
     public void addForce(Vector3f force) {
         for (ClothParticle particle : particles) {
-            particle.addForce(force);
+            particle.addForce(force.mul(parameters.getTimeStepSize2()));
         }
     }
 
     public void addWindForce(Vector3f direction) {
-        for (int x = 0; x < width - 1; x++) {
-            for (int y = 0; y < height - 1; y++) {
-                addWindForcesForTriangle(getParticle(x + 1, y),getParticle(x, y),getParticle(x, y + 1),direction);
-                addWindForcesForTriangle(getParticle(x + 1, y + 1),getParticle(x + 1, y),getParticle(x, y + 1),direction);
+        direction.mul(parameters.getTimeStepSize2());
+        for (int x = 0; x < particleSizeX - 1; x++) {
+            for (int y = 0; y < particleSizeY - 1; y++) {
+                addWindForcesForTriangle(getParticle(x + 1, y),getParticle(x, y),getParticle(x, y + 1), direction);
+                addWindForcesForTriangle(getParticle(x + 1, y + 1),getParticle(x + 1, y),getParticle(x, y + 1), direction);
             }
         }
     }
 
     public ClothParticle getParticle(int x, int y) {
-        return particles[x + y * width];
+        return particles[x + y * particleSizeX];
     }
 
     public Vector3f calculateTriangleNormal(ClothParticle particle1, ClothParticle particle2, ClothParticle particle3) {
@@ -123,12 +113,22 @@ public class Cloth {
         constraints.add(new ClothConstraint(particle1, particle2));
     }
 
-    public int getWidth() {
-        return width;
+    public void collideWithSphere(Vector3f position, float radius) {
+        for (ClothParticle particle : particles) {
+            Vector3f difference = particle.getPosition().sub(position, new Vector3f());
+            float distance = difference.length();
+            if (distance < radius) {
+                particle.offsetPosition(difference.normalize().mul(radius - distance));
+            }
+        }
     }
 
-    public int getHeight() {
-        return height;
+    public int getParticleSizeX() {
+        return particleSizeX;
+    }
+
+    public int getParticleSizeY() {
+        return particleSizeY;
     }
 
     public ClothParticle[] getParticles() {
@@ -141,5 +141,9 @@ public class Cloth {
 
     public void setMesh(Mesh mesh) {
         this.mesh = mesh;
+    }
+
+    public ClothPhysicsParameters getParameters() {
+        return parameters;
     }
 }

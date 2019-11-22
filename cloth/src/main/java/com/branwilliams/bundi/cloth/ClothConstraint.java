@@ -21,7 +21,7 @@ public class ClothConstraint {
     }
 
     public void satisfyConstraint() {
-        Vector3f particle1ToParticle2 = particle1.getPosition().sub(particle2.getPosition(), new Vector3f());
+        Vector3f particle1ToParticle2 = particle2.getPosition().sub(particle1.getPosition(), new Vector3f());
         float currentDistance = particle1ToParticle2.length();
         Vector3f correctionVector = particle1ToParticle2.mul(1 - restDistance / currentDistance);
         Vector3f correctionVectorHalf = correctionVector.mul(0.5F);

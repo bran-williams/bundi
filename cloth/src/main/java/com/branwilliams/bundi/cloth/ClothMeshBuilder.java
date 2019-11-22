@@ -15,21 +15,22 @@ import static com.branwilliams.bundi.engine.util.MeshUtils.toArray3f;
 public class ClothMeshBuilder {
 
     public void buildMesh(Cloth cloth) {
-        rebuildMesh(cloth, new Mesh());
+        cloth.setMesh(new Mesh());
+        rebuildMesh(cloth);
     }
 
-    public void rebuildMesh(Cloth cloth, Mesh mesh) {
-        for (int x = 0; x < cloth.getWidth() - 1; x++) {
-            for (int y = 0; y < cloth.getHeight() - 1; y++) {
-                Vector3f normal = cloth.calculateTriangleNormal(cloth.getParticle(x+1,y),cloth.getParticle(x,y),cloth.getParticle(x,y+1));
-                cloth.getParticle(x+1,y).addToNormal(normal);
-                cloth.getParticle(x,y).addToNormal(normal);
-                cloth.getParticle(x,y+1).addToNormal(normal);
+    public void rebuildMesh(Cloth cloth) {
+        for (int x = 0; x < cloth.getParticleSizeX() - 1; x++) {
+            for (int y = 0; y < cloth.getParticleSizeY() - 1; y++) {
+                Vector3f normal = cloth.calculateTriangleNormal(cloth.getParticle(x + 1, y),cloth.getParticle(x, y),cloth.getParticle(x, y + 1));
+                cloth.getParticle(x + 1, y).addToNormal(normal);
+                cloth.getParticle(x, y).addToNormal(normal);
+                cloth.getParticle(x, y + 1).addToNormal(normal);
 
-                normal = cloth.calculateTriangleNormal(cloth.getParticle(x+1,y+1),cloth.getParticle(x+1,y),cloth.getParticle(x,y+1));
-                cloth.getParticle(x+1,y+1).addToNormal(normal);
-                cloth.getParticle(x+1,y).addToNormal(normal);
-                cloth.getParticle(x,y+1).addToNormal(normal);
+                normal = cloth.calculateTriangleNormal(cloth.getParticle(x + 1, y + 1),cloth.getParticle(x + 1, y),cloth.getParticle(x, y + 1));
+                cloth.getParticle(x + 1, y + 1).addToNormal(normal);
+                cloth.getParticle(x + 1, y).addToNormal(normal);
+                cloth.getParticle(x, y + 1).addToNormal(normal);
             }
         }
 
@@ -37,22 +38,18 @@ public class ClothMeshBuilder {
         List<Vector3f> positions = new ArrayList<>();
         List<Vector3f> normals = new ArrayList<>();
 
-        for (int x = 0; x < cloth.getWidth() - 1; x++) {
-            for (int y = 0; y < cloth.getHeight() - 1; y++) {
-                addVertex(positions, normals, cloth.getParticle(x+1,y),cloth.getParticle(x,y),cloth.getParticle(x,y+1));
-                addVertex(positions, normals, cloth.getParticle(x+1,y+1),cloth.getParticle(x+1,y),cloth.getParticle(x,y+1));
+        for (int x = 0; x < cloth.getParticleSizeX() - 1; x++) {
+            for (int y = 0; y < cloth.getParticleSizeY() - 1; y++) {
+                addVertex(positions, normals, cloth.getParticle(x + 1, y), cloth.getParticle(x, y), cloth.getParticle(x, y + 1));
+                addVertex(positions, normals, cloth.getParticle(x + 1, y + 1), cloth.getParticle(x + 1, y), cloth.getParticle(x, y + 1));
             }
         }
 
+        Mesh mesh = cloth.getMesh();
+
         mesh.bind();
-        if (mesh.hasAttribute(0))
-            mesh.updateAttribute(0, toArray3f(positions), 0);
-        else
-            mesh.storeAttribute(0, toArray3f(positions), 3);
-//        if (mesh.hasAttribute(1))
-//            mesh.updateAttribute(1, toArray3f(normals), 0);
-//        else
-//            mesh.storeAttribute(1, toArray3f(normals), 3);
+        mesh.storeAttribute(0, toArray3f(positions), 3);
+        mesh.setVertexCount(positions.size());
         mesh.unbind();
     }
 

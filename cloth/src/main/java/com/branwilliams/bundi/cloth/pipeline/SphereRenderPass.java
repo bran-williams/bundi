@@ -1,15 +1,16 @@
 package com.branwilliams.bundi.cloth.pipeline;
 
-import com.branwilliams.bundi.cloth.Cloth;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
+import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
+import org.joml.Spheref;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -19,36 +20,33 @@ import java.util.function.Supplier;
  * @author Brandon
  * @since November 20, 2019
  */
-public class ClothRenderPass extends RenderPass<RenderContext> {
+public class SphereRenderPass extends RenderPass<RenderContext> {
 
     private final Supplier<Camera> camera;
 
-    private final Supplier<Cloth> cloth;
+    private final Supplier<Spheref> sphere;
 
-    private ClothShaderProgram shaderProgram;
+    private DynamicShaderProgram shaderProgram;
+
+    private SphereMesh sphereMesh;
 
     private Transformable transformable = new Transformation();
 
+    private Vector4f color = new Vector4f(0F, 0F, 1.0F, 1.0F);
 
-    private DirectionalLight sun = new DirectionalLight(
-            new Vector3f(-0.2F, -1.0F, -0.3F), // direction
-            new Vector3f(0.4F),                      // ambient
-            new Vector3f(0.5F, 0.5F, 0.3F),    // diffuse
-            new Vector3f(0F));                       // specular
-
-    public ClothRenderPass(Supplier<Camera> camera, Supplier<Cloth> cloth) {
+    public SphereRenderPass(Supplier<Camera> camera, Supplier<Spheref> sphere) {
         this.camera = camera;
-        this.cloth = cloth;
+        this.sphere = sphere;
     }
 
     @Override
     public void init(RenderContext renderContext, Engine engine, Window window) throws InitializationException {
         try {
-            shaderProgram = new ClothShaderProgram(engine.getContext());
+            shaderProgram = new DynamicShaderProgram(VertexFormat.POSITION, DynamicShaderProgram.VIEW_MATRIX);
         } catch (ShaderInitializationException | ShaderUniformException e) {
             throw new InitializationException("Unable to create ClothShaderProgram: ", e);
         }
-
+        sphereMesh = new SphereMesh(1.0F, 90, 90, VertexFormat.POSITION);
     }
 
     @Override
@@ -56,9 +54,11 @@ public class ClothRenderPass extends RenderPass<RenderContext> {
         shaderProgram.bind();
         shaderProgram.setProjectionMatrix(renderContext.getProjection());
         shaderProgram.setViewMatrix(camera.get());
+        shaderProgram.setColor(color);
+        transformable.position(sphere.get().x, sphere.get().y, sphere.get().z).scale(sphere.get().r);
         shaderProgram.setModelMatrix(transformable);
-        shaderProgram.setLight(sun);
-        MeshRenderer.render(cloth.get().getMesh(), null);
+
+        MeshRenderer.render(sphereMesh, null);
 
         ShaderProgram.unbind();
     }

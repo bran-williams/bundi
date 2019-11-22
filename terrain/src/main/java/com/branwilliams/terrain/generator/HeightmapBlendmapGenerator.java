@@ -13,6 +13,8 @@ import static org.lwjgl.opengl.GL11.GL_RGBA;
  */
 public class HeightmapBlendmapGenerator implements BlendmapGenerator {
 
+    public static final int GRAYSCALE_MAX_COLOR = 0x1000000;
+
     @Override
     public TextureData generateBlendmap(BiFunction<Integer, Integer, Float> heightGenerator, int width, int height) {
         int channels = 4;
@@ -25,8 +27,10 @@ public class HeightmapBlendmapGenerator implements BlendmapGenerator {
                 byte b = 0;
                 byte a = 0;
 
-                float pixelValue = heightGenerator.apply(x, y);
-                float slope = g;
+                float pixel = heightGenerator.apply(x, y);
+                pixel += GRAYSCALE_MAX_COLOR * 0.5F;
+                float normalizedPixel = (float) pixel / (GRAYSCALE_MAX_COLOR * 0.5F);
+
                 //r = (byte) 255;
 
                 textureData.setPixel(x, y, r, g, b, a);
