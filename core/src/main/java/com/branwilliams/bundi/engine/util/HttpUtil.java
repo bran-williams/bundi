@@ -59,7 +59,7 @@ public enum HttpUtil {
             while ((length = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, length);
             }
-
+            outputStream.close();
             inputStream.close();
             return outputFile.getAbsolutePath();
         } catch (IOException | UncheckedIOException e) {
@@ -75,7 +75,11 @@ public enum HttpUtil {
     /**
      * Performs a GET request to the provided URL and consumes the webpage with the Jsoup parser.
      * */
-    public static void parsePage(String url, Consumer<String> consumer) {
+    public static void get(String url, Consumer<String> consumer) {
+        request("GET", url, consumer);
+    }
+
+    public static void request(String method, String url, Consumer<String> consumer) {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(url).openConnection();
@@ -85,7 +89,7 @@ public enum HttpUtil {
 
             connection.setConnectTimeout(4000);
             connection.setReadTimeout(4000);
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod(method);
             connection.setRequestProperty("User-Agent", USER_AGENT);
 
             BufferedReader br;
@@ -112,5 +116,4 @@ public enum HttpUtil {
             }
         }
     }
-
 }

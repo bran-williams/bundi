@@ -31,10 +31,10 @@ public class ClothRenderPass extends RenderPass<RenderContext> {
 
 
     private DirectionalLight sun = new DirectionalLight(
-            new Vector3f(-0.2F, -1.0F, -0.3F), // direction
-            new Vector3f(0.4F),                      // ambient
-            new Vector3f(0.5F, 0.5F, 0.3F),    // diffuse
-            new Vector3f(0F));                       // specular
+            new Vector3f(-0.2F, -1F, -0.3F), // direction
+            new Vector3f(0.5F),                      // ambient
+            new Vector3f(0.4F),    // diffuse
+            new Vector3f(0.5F));                       // specular
 
     public ClothRenderPass(Supplier<Camera> camera, Supplier<Cloth> cloth) {
         this.camera = camera;
@@ -58,7 +58,7 @@ public class ClothRenderPass extends RenderPass<RenderContext> {
         shaderProgram.setViewMatrix(camera.get());
         shaderProgram.setModelMatrix(transformable);
         shaderProgram.setLight(sun);
-        MeshRenderer.render(cloth.get().getMesh(), null);
+        MeshRenderer.render(cloth.get().getMesh(), cloth.get().getMaterial());
 
         ShaderProgram.unbind();
     }

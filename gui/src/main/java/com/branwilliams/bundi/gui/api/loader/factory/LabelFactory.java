@@ -18,6 +18,7 @@ public class LabelFactory implements UIElementFactory<Label> {
     @Override
     public Label createElement(Node node, NamedNodeMap attributes) {
         String tag = XmlUtils.getAttributeText(attributes, "tag", null);
+        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
 
         int x = XmlUtils.getAttributeInt(attributes, "x", 0);
         int y = XmlUtils.getAttributeInt(attributes, "y", 0);
@@ -28,6 +29,7 @@ public class LabelFactory implements UIElementFactory<Label> {
         Label.LabelAlignment alignment = Label.LabelAlignment.fromOrDefault(XmlUtils.getAttributeText(attributes, "alignment", ""), Label.LabelAlignment.LEFT);
 
         Label label = new Label(tag, text);
+        label.setTooltip(tooltip);
         label.setAlignment(alignment);
         label.setText(text);
         label.setColor(color);

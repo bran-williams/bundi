@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.impl;
 
+import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Nameable;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.gui.api.Toolbox;
@@ -18,10 +19,23 @@ public class BasicToolbox implements Toolbox {
 
     private final Map<String, Object> objects = new HashMap<>();
 
+    private final Engine engine;
+
     private final Window window;
 
-    public BasicToolbox(Window window) {
+    public BasicToolbox(Engine engine, Window window) {
+        this.engine = engine;
         this.window = window;
+    }
+
+    @Override
+    public Window getWindow() {
+        return window;
+    }
+
+    @Override
+    public Engine getEngine() {
+        return engine;
     }
 
     @Override

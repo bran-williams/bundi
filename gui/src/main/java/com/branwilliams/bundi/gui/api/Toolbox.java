@@ -1,12 +1,18 @@
 package com.branwilliams.bundi.gui.api;
 
+import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Nameable;
+import com.branwilliams.bundi.engine.core.Window;
 
 /**
  * Simple utility class used within the components system to perform simple calculations. <br/>
  * Created by Brandon Williams on 2/4/2017.
  */
 public interface Toolbox {
+
+    Window getWindow();
+
+    Engine getEngine();
 
     /**
      * @return The x position of the mouse.

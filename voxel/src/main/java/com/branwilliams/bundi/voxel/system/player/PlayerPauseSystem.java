@@ -64,7 +64,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
 
     @Override
     public void init(Engine engine, EntitySystemManager entitySystemManager, Window window) {
-        toolbox = new BasicToolbox(window);
+        toolbox = new BasicToolbox(engine, window);
         ColorPack.random().apply(toolbox);
 
         renderManager = new BasicRenderer(toolbox);
@@ -103,7 +103,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
                     ContainerManager containerManager = new ContainerManager(renderManager, toolbox);
 
                     try {
-                        List<Container> containers = uiLoader.loadUI(new File("./ui.xml"));
+                        List<Container> containers = uiLoader.loadUI(new File("./mcskin.xml"));
                         for (Container container : containers)
                             containerManager.add(container);
                     } catch (IOException | SAXException | ParserConfigurationException e) {

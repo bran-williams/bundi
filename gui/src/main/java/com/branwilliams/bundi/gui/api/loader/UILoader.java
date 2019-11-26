@@ -46,6 +46,7 @@ public class UILoader {
         elementFactories.put("gridlayout", new GridLayoutFactory());
         elementFactories.put("fontdata", new FontDataFactory(fontCache));
         elementFactories.put("label", new LabelFactory());
+        elementFactories.put("textfield", new TextFieldFactory());
     }
 
     public List<Container> loadUI(File file) throws IOException, SAXException, ParserConfigurationException,

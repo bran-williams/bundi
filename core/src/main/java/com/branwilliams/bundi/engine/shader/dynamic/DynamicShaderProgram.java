@@ -26,6 +26,8 @@ public class DynamicShaderProgram extends ShaderProgram {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
+    private float ALPHA_THRESHOLD = 0F;
+
     /**
      * Adds a view matrix to the shader program.
      * */
@@ -208,11 +210,19 @@ public class DynamicShaderProgram extends ShaderProgram {
      * */
     private String getFragmentShaderOutput(boolean hasColor, boolean hasTexture) throws ShaderInitializationException {
         if (hasColor && hasTexture) {
-            return "fragColor = passColor * texture(textureSampler, passTextureCoordinates);\n";
+            return "vec4 textureColor = texture(textureSampler, passTextureCoordinates);" +
+                    "if (textureColor.a <= " + ALPHA_THRESHOLD + ") {" +
+                    "    discard;" +
+                    "}" +
+                    "fragColor = passColor * textureColor;\n";
         } else if (hasColor) {
             return "fragColor = passColor;\n";
         } else if (hasTexture) {
-            return "fragColor = texture(textureSampler, passTextureCoordinates);\n";
+            return "vec4 textureColor = texture(textureSampler, passTextureCoordinates);" +
+                    "if (textureColor.a <= " + ALPHA_THRESHOLD + ") {" +
+                    "    discard;" +
+                    "}" +
+                    "fragColor = textureColor;\n";
         } else {
             return "fragColor = color;\n";
         }

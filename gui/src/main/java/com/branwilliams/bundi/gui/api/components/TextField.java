@@ -47,43 +47,50 @@ public class TextField extends Component {
         this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> typing = isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0);
 
         this.addListener(Actions.CHARACTER_TYPED, (CharacterTypedActionListener) characters -> {
-            if (validCharacters.contains(characters))
-                this.append(characters);
-            return true;
-        });
-
-        this.addListener(Actions.KEY_PRESS, (KeystrokeAction.KeystrokeActionListener) action -> {
             if (typing) {
-                switch (action.key) {
-                    case GLFW_KEY_BACKSPACE:
-                        backSpace();
-                        break;
-                    case GLFW_KEY_HOME:
-                        move(0);
-                        break;
-                    case GLFW_KEY_LEFT:
-                        this.moveDirection(-1);
-                        break;
-                    case GLFW_KEY_RIGHT:
-                        this.moveDirection(1);
-                        break;
-                    case GLFW_KEY_END:
-                        move(this.text.length());
-                        break;
-                    case GLFW_KEY_DELETE:
-                        forwardSpace();
-                        break;
-                    case GLFW_KEY_V:
-                        /*if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || Keyboard.isKeyDown(Keyboard.KEY_RCONTROL)) {
-                            this.append(toolbox.getClipboard());
-                        }*/
-                    default:
-                        break;
-                }
+                if (validCharacters.contains(characters))
+                    this.append(characters);
                 return true;
             }
+
             return false;
         });
+
+        this.addListener(Actions.KEY_HELD, (KeystrokeAction.KeystrokeActionListener) this::keystrokeAction);
+        this.addListener(Actions.KEY_PRESS, (KeystrokeAction.KeystrokeActionListener) this::keystrokeAction);
+    }
+
+    private boolean keystrokeAction(KeystrokeAction action) {
+        if (typing) {
+            switch (action.key) {
+                case GLFW_KEY_BACKSPACE:
+                    backSpace();
+                    break;
+                case GLFW_KEY_HOME:
+                    move(0);
+                    break;
+                case GLFW_KEY_LEFT:
+                    this.moveDirection(-1);
+                    break;
+                case GLFW_KEY_RIGHT:
+                    this.moveDirection(1);
+                    break;
+                case GLFW_KEY_END:
+                    move(this.text.length());
+                    break;
+                case GLFW_KEY_DELETE:
+                    forwardSpace();
+                    break;
+                case GLFW_KEY_V:
+                    if (toolbox.getWindow().isKeyPressed(GLFW_KEY_LEFT_CONTROL)
+                            || toolbox.getWindow().isKeyPressed(GLFW_KEY_RIGHT_CONTROL))
+                        this.append(toolbox.getClipboard());
+                default:
+                    break;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -94,7 +101,7 @@ public class TextField extends Component {
         if (text.concat(string).length() <= maxLength) {
             // If the pointer is at the end of the text, throw the new string onto the end.
             if (pointer >= this.text.length()) {
-                this.text = this.text.concat(string);
+                this.text = this.text + string;
             // If the pointer is not at the beginning of the text, throw the new string into the middle of our text.
             } else if (pointer > 0) {
                 this.text = this.text.substring(0, pointer) + string + this.text.substring(pointer, this.text.length());

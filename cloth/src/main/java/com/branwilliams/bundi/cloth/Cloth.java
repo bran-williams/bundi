@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.cloth;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
+import com.branwilliams.bundi.engine.shader.Material;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class Cloth {
     private ClothParticle[] particles;
 
     private List<ClothConstraint> constraints;
+
+    private Material material;
 
     private Mesh mesh;
 
@@ -74,8 +77,9 @@ public class Cloth {
     }
 
     public void addForce(Vector3f force) {
+        force.mul(parameters.getTimeStepSize2());
         for (ClothParticle particle : particles) {
-            particle.addForce(force.mul(parameters.getTimeStepSize2()));
+            particle.addForce(force);
         }
     }
 
@@ -114,6 +118,7 @@ public class Cloth {
     }
 
     public void collideWithSphere(Vector3f position, float radius) {
+        radius = radius + 0.15F;
         for (ClothParticle particle : particles) {
             Vector3f difference = particle.getPosition().sub(position, new Vector3f());
             float distance = difference.length();
@@ -121,6 +126,14 @@ public class Cloth {
                 particle.offsetPosition(difference.normalize().mul(radius - distance));
             }
         }
+    }
+
+    public Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(Material material) {
+        this.material = material;
     }
 
     public int getParticleSizeX() {

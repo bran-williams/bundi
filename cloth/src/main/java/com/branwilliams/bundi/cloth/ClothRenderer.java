@@ -22,7 +22,7 @@ public class ClothRenderer extends AbstractRenderer {
     public void init(Engine engine, Window window) throws Exception {
         super.init(engine, window);
         glClearColor(0F, 0.75F, 1F, 1F);
-        glDisable(GL_CULL_FACE);
+        glEnable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
 

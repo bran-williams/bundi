@@ -16,6 +16,7 @@ public class ContainerFactory implements UIElementFactory<Container> {
     @Override
     public Container createElement(Node node, NamedNodeMap attributes) {
         String tag = XmlUtils.getAttributeText(attributes, "tag", null);
+        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
 
         int x = XmlUtils.getAttributeInt(attributes, "x", 0);
         int y = XmlUtils.getAttributeInt(attributes, "y", 0);
@@ -26,7 +27,7 @@ public class ContainerFactory implements UIElementFactory<Container> {
         boolean layering = XmlUtils.getAttributeBoolean(attributes, "layering", false);
         boolean useLayoutSize = XmlUtils.getAttributeBoolean(attributes, "uselayoutsize", true);
         Container container = new Container(tag);
-
+        container.setTooltip(tooltip);
         container.setAlwaysLayoutChildren(alwaysLayoutChildren);
         container.setAutoLayout(autoLayout);
         container.setLayering(layering);

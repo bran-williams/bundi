@@ -10,6 +10,7 @@ import com.branwilliams.bundi.gui.api.render.RenderManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Manages containers. <br/>
@@ -33,6 +34,19 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
         this.toolbox = toolbox;
     }
 
+    public <T extends Component> T getByTag(String tag) {
+        for (Container container : containers) {
+            T res = container.getByTag(tag);
+            if (res != null)
+                return res;
+        }
+        return null;
+    }
+
+    public List<Container> getContainers() {
+        return containers;
+    }
+
     /**
      * Invoked to render the containers.
      * */
@@ -40,6 +54,7 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
         for (Container container : containers) {
             renderManager.render(container);
         }
+
         renderManager.getPopupRenderer().drawTooltip(tooltip, toolbox.getMouseX(), toolbox.getMouseY());
     }
 
@@ -154,6 +169,15 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
         KeystrokeAction keystrokeAction = new KeystrokeAction(key, scancode, mods);
         for (Container container : containers) {
             if (container.isActivated(Actions.KEY_RELEASE, keystrokeAction))
+                break;
+        }
+    }
+
+    @Override
+    public void keyHeld(Window window, int key, int scancode, int mods) {
+        KeystrokeAction keystrokeAction = new KeystrokeAction(key, scancode, mods);
+        for (Container container : containers) {
+            if (container.isActivated(Actions.KEY_HELD, keystrokeAction))
                 break;
         }
     }

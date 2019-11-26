@@ -2,7 +2,7 @@ package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.font.BasicFontRenderer;
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.api.ShapeRenderer;
+import com.branwilliams.bundi.gui.impl.render.ShapeRenderer;
 import com.branwilliams.bundi.gui.api.Container;
 import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.components.*;
@@ -20,7 +20,7 @@ public class BasicRenderer extends RenderManager {
 
     private final FontRenderer fontRenderer = new BasicFontRenderer();
     
-    private final ImageRenderer imageRenderer = new BasicImageRenderer();
+    private final ImageRenderer imageRenderer;
 
     private final Toolbox toolbox;
 
@@ -30,6 +30,7 @@ public class BasicRenderer extends RenderManager {
         super();
         this.toolbox = toolbox;
         this.shapeRenderer = new ShapeRenderer();
+        this.imageRenderer = new BasicImageRenderer();
 
         this.setPopupRenderer(new BasicPopupRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Button.class, new ButtonRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));

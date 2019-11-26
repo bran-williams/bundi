@@ -110,6 +110,11 @@ public class Window {
                         scene.getKeyListeners().get(i).keyPress(this, key, scancode, mods);
                     }
                     break;
+                case GLFW_REPEAT:
+                    for (int i = 0; i < scene.getKeyListeners().size(); i++) {
+                        scene.getKeyListeners().get(i).keyHeld(this, key, scancode, mods);
+                    }
+                    break;
             }
         });
 
@@ -439,6 +444,11 @@ public class Window {
          * Invoked when a key is released.
          * */
         void keyRelease(Window window, int key, int scancode, int mods);
+
+        /**
+         * Invoked when a key has been held down.
+         * */
+        default void keyHeld(Window window, int key, int scancode, int mods) {}
     }
 
     /**

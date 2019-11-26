@@ -3,6 +3,7 @@
 
 in vec3 passFragPos;
 in vec3 passNormal;
+in vec2 passTextureCoordinates;
 
 out vec4 fragColor;
 
@@ -17,14 +18,22 @@ struct DirLight {
 };
 
 uniform DirLight directionalLight;
+uniform sampler2D diffuse;
 
 uniform vec3 viewPos;
 
-const vec4 textureColor = vec4(1.0, 0, 0, 1.0);
-const vec4 specular = vec4(1.0);
+const vec4 specular = vec4(1, 1, 1, 1.0);
 const float shininess = 10;
 
+const float transparencyThreshold = 0.5;
+
 void main() {
+    vec4 textureColor = texture(diffuse, passTextureCoordinates);
+
+    // Allow transparency
+    if (textureColor.a < transparencyThreshold) {
+        discard;
+    }
 
     vec3 normal   = normalize(passNormal);
     vec3 viewDir  = normalize(viewPos - passFragPos);

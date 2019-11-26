@@ -104,6 +104,28 @@ public class Container extends Component {
     }
 
     /**
+     *
+     * */
+    public <T extends Component> T getByTag(String tag) {
+        if (getTag().equalsIgnoreCase(tag)) {
+            return (T) this;
+        }
+
+        for (Component component : components) {
+            if (component.getTag().equalsIgnoreCase(tag)) {
+                return (T) component;
+            }
+            if (component instanceof Container) {
+                T res = ((Container) component).getByTag(tag);
+                if (res != null) {
+                    return res;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Adds this component to this container.
      * */
     public boolean add(Component component) {

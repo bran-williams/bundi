@@ -2,7 +2,6 @@ package com.branwilliams.bundi.gui.impl.render;
 
 import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.api.ShapeRenderer;
 import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.components.TextField;
 import com.branwilliams.bundi.gui.api.render.ImageRenderer;
@@ -10,6 +9,7 @@ import com.branwilliams.bundi.gui.impl.AbstractComponentRenderer;
 
 import java.awt.*;
 
+import static com.branwilliams.bundi.engine.util.ColorUtils.getColorWithEffects;
 import static com.branwilliams.bundi.gui.impl.Pointers.*;
 
 /**
@@ -24,13 +24,18 @@ public class TextFieldRenderer extends AbstractComponentRenderer<TextField> {
 
     @Override
     public void render(TextField textField) {
-        /*if (textField.getTag().equals("lined")) {
-            GLUtils.glColor(GLUtils.getColorWithEffects(textField.isTyping() ? toolbox.get(COLOR_HIGHLIGHT) : toolbox.<Color>get(COLOR_DEFAULT).brighter(), textField.isHovered(), Mouse.isButtonDown(0)));
-            GLUtils.drawLine(1F, textField.getX(), textField.getY() + textField.getHeight() - 1F, textField.getX() + textField.getWidth(), textField.getY() + textField.getHeight() - 1F);
+        boolean mouseDown = toolbox.getWindow().isMouseButtonPressed(0);
+
+        if (textField.getTag().equals("lined")) {
+            Color lineColor = getColorWithEffects(textField.isTyping() ? toolbox.get(COLOR_HIGHLIGHT) : toolbox.<Color>get(COLOR_DEFAULT).brighter(), textField.isHovered(), mouseDown);
+            //shapeRenderer.drawLine(textField.getX(), textField.getY() + textField.getHeight() - 1, textField.getX() + textField.getWidth(), textField.getY() + textField.getHeight() - 1, lineColor);
+            shapeRenderer.drawRect(textField.getX(), textField.getY() + textField.getHeight() - 2, textField.getX() + textField.getWidth(), textField.getY() + textField.getHeight(), lineColor);
+
         } else {
-            GLUtils.glColor(GLUtils.getColorWithEffects(textField.isTyping() ? toolbox.<Color>get(COLOR_DEFAULT).brighter() : toolbox.get(COLOR_DEFAULT), textField.isHovered(), Mouse.isButtonDown(0)));
-            GLUtils.drawRect(textField.getArea());
-        }*/
+            Color backgroundColor = getColorWithEffects(textField.isTyping() ? toolbox.<Color>get(COLOR_DEFAULT).brighter() : toolbox.get(COLOR_DEFAULT), textField.isHovered(), mouseDown);
+            shapeRenderer.drawRect(textField.getArea(), backgroundColor);
+        }
+
         if (textField.hasText()) {
             int color = textField.isTyping() ? textField.getColor().getRGB() : textField.getColor().darker().getRGB();
             drawString(textField.getFont(), textField.getRenderText(textField.isTyping()), textField.getX(), textField.getY() + textField.getHeight() / 2, color);

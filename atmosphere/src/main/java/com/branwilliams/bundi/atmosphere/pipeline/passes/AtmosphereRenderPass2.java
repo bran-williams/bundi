@@ -29,6 +29,10 @@ public class AtmosphereRenderPass2 extends RenderPass<RenderContext> {
 
     private final Supplier<Material> atmosphereMaterial;
 
+    private final Supplier<Vector3f> sunPosition;
+
+    private final Supplier<Float> weather;
+
     private AtmosphereShaderProgram2 atmosphereShaderProgram;
 
     private Mesh renderPassMesh;
@@ -39,10 +43,13 @@ public class AtmosphereRenderPass2 extends RenderPass<RenderContext> {
 
     private float time = 0F;
 
-    public AtmosphereRenderPass2(Supplier<Material> atmosphereMaterial, Supplier<Camera> camera, Supplier<Skydome> skydome) {
+    public AtmosphereRenderPass2(Supplier<Material> atmosphereMaterial, Supplier<Camera> camera,
+                                 Supplier<Skydome> skydome, Supplier<Vector3f> sunPosition, Supplier<Float> weather) {
         this.atmosphereMaterial = atmosphereMaterial;
         this.camera = camera;
         this.skydome = skydome;
+        this.sunPosition = sunPosition;
+        this.weather = weather;
     }
 
     @Override
@@ -77,21 +84,22 @@ public class AtmosphereRenderPass2 extends RenderPass<RenderContext> {
 //        float stacks = 360;
 //        float slices = 360;
 
-        float rho = Mathf.PI * 0.5F;
-        float theta = 2F * Mathf.PI * 0.25F;
-        float radius = 250;
+//        float rho = Mathf.PI * 0.5F;
+//        float theta = 2F * Mathf.PI * 0.25F;
+//        float radius = 250;
 //        sunPos.x = (-Mathf.sin(theta) * Mathf.sin(rho)) * radius;
 //        sunPos.y = (Mathf.cos(theta) * Mathf.sin(rho)) * radius;
 //        sunPos.z = (Mathf.cos(rho)) * radius;
-        sunPos.set(-0.0625F, 0.125F, 0F);
-
+//        float sunY = Mathf.sin(0.1F);
+//        sunPos.set(-0.1625F, sunY, 0.3F);
+//        System.out.println("sunY=" + sunY);
         // Bind skydome shader program and render skydome.
         this.atmosphereShaderProgram.bind();
         this.atmosphereShaderProgram.setProjectionMatrix(renderContext.getProjection());
         this.atmosphereShaderProgram.setViewMatrix(camera.get());
-        this.atmosphereShaderProgram.setTime(time);
-        this.atmosphereShaderProgram.setWeather(0.5F);
-        this.atmosphereShaderProgram.setSunPos(sunPos);
+        this.atmosphereShaderProgram.setTime((float) engine.getTime());
+        this.atmosphereShaderProgram.setWeather(weather.get());
+        this.atmosphereShaderProgram.setSunPos(sunPosition.get());
         this.atmosphereShaderProgram.setRotStars(rotStars);
 
         MeshRenderer.render(skydome.get().getSkydomeMesh(), atmosphereMaterial.get());

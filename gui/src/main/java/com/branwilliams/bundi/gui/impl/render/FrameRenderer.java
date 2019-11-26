@@ -1,7 +1,6 @@
 package com.branwilliams.bundi.gui.impl.render;
 
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.gui.api.ShapeRenderer;
 import com.branwilliams.bundi.gui.api.Widget;
 import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.containers.Frame;

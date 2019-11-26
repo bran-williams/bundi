@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.engine.systems;
 
 import com.branwilliams.bundi.engine.core.Engine;
+import com.branwilliams.bundi.engine.core.Lockable;
 import com.branwilliams.bundi.engine.core.Scene;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
@@ -27,18 +28,26 @@ public class DebugCameraMoveSystem extends MouseControlSystem {
 
     private final float moveSpeed;
 
+    private  boolean alwaysRotate;
+
     private boolean rotating = false;
 
     public DebugCameraMoveSystem(Scene scene, Supplier<Camera> camera, float rotationSpeed, float moveSpeed) {
-        super(scene, new ClassComponentMatcher(Transformable.class));
+        this(scene, Lockable.unlocked(), camera, rotationSpeed, moveSpeed, false);
+    }
+
+    public DebugCameraMoveSystem(Scene scene, Lockable lockable, Supplier<Camera> camera, float rotationSpeed, float moveSpeed,
+                                 boolean alwaysRotate) {
+        super(scene, lockable, new ClassComponentMatcher(Transformable.class));
         this.camera = camera;
         this.rotationSpeed = rotationSpeed;
         this.moveSpeed = moveSpeed;
+        this.alwaysRotate = alwaysRotate;
     }
 
     @Override
     protected void mouseMove(Engine engine, EntitySystemManager entitySystemManager, double interval, float mouseX, float mouseY, float oldMouseX, float oldMouseY) {
-        if (rotating) {
+        if (rotating || alwaysRotate) {
             camera.get().rotate((mouseY - oldMouseY) * rotationSpeed, (mouseX - oldMouseX) * rotationSpeed, 0F);
         }
     }
@@ -46,7 +55,7 @@ public class DebugCameraMoveSystem extends MouseControlSystem {
     @Override
     public void press(Window window, float mouseX, float mouseY, int buttonId) {
         super.press(window, mouseX, mouseY, buttonId);
-        if (buttonId == 0) {
+        if (!getLockable().isLocked() && buttonId == 0 && !alwaysRotate) {
             rotating = true;
             window.disableCursor();
         }
@@ -55,7 +64,7 @@ public class DebugCameraMoveSystem extends MouseControlSystem {
     @Override
     public void release(Window window, float mouseX, float mouseY, int buttonId) {
         super.release(window, mouseX, mouseY, buttonId);
-        if (buttonId == 0) {
+        if (!getLockable().isLocked() && buttonId == 0 && !alwaysRotate) {
             rotating = false;
             window.showCursor();
         }
@@ -64,6 +73,9 @@ public class DebugCameraMoveSystem extends MouseControlSystem {
     @Override
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
         super.fixedUpdate(engine, entitySystemManager, deltaTime);
+        if (getLockable().isLocked())
+            return;
+
         float moveSpeed = this.moveSpeed * (float) deltaTime;
         Camera camera = this.camera.get();
 
@@ -90,5 +102,9 @@ public class DebugCameraMoveSystem extends MouseControlSystem {
         if (engine.getWindow().isKeyPressed(GLFW_KEY_D)) {
             camera.moveDirection(0F, -moveSpeed);
         }
+    }
+
+    public boolean isRotating() {
+        return rotating;
     }
 }

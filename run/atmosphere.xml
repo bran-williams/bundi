@@ -1,0 +1,75 @@
+<UI>
+    <Container tag="frame" title="Atmosphere Settings" x="50" y="50" width="400" height="200">
+<!--        <ListLayout padding="1" componentPadding="2"/>-->
+        <GridLayout rows="4" columns="3" padding="2" componentPadding="4"/>
+        <FontData font="Roboto" size="20" style="bold"/>
+
+<!--        <Container tag="invisible">-->
+<!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
+
+            <Label tag="x_title" text="x" color="#ffffff">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Label>
+
+            <Slider tag="x_slider" width="200" height="24">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Slider>
+
+            <Label tag="x_slider_value" text="0.01" alignment="left" color="#ffffff">
+                <FontData font="Roboto" size="18" style="plain"/>
+            </Label>
+
+<!--        </Container>-->
+
+<!--        <Container tag="invisible">-->
+<!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
+
+            <Label tag="y_title" text="y" color="#ffffff">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Label>
+
+            <Slider tag="y_slider" width="200" height="24">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Slider>
+
+            <Label tag="y_slider_value" text="0.01" alignment="center" color="#ffffff">
+                <FontData font="Roboto" size="18" style="plain"/>
+            </Label>
+
+<!--        </Container>-->
+
+<!--        <Container tag="invisible">-->
+<!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
+
+            <Label tag="z_title" text="z" color="#ffffff">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Label>
+
+            <Slider tag="z_slider" width="200" height="24">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Slider>
+
+            <Label tag="z_slider_value" text="0.01" alignment="right" color="#ffffff">
+                <FontData font="Roboto" size="18" style="plain"/>
+            </Label>
+
+<!--        </Container>-->
+
+<!--        <Container tag="invisible">-->
+<!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
+
+            <Label tag="weather_title" text="Weather" color="#ffffff">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Label>
+
+            <Slider tag="weather_slider" width="200" height="24">
+                <FontData font="Roboto" size="18" style="bold"/>
+            </Slider>
+
+            <Label tag="weather_slider_value" text="0.5" alignment="right" color="#ffffff">
+                <FontData font="Roboto" size="18" style="plain"/>
+            </Label>
+
+<!--        </Container>-->
+    </Container>
+</UI>

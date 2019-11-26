@@ -15,6 +15,7 @@ public class FrameFactory implements UIElementFactory<Frame> {
     @Override
     public Frame createElement(Node node, NamedNodeMap attributes) {
         String tag = XmlUtils.getAttributeText(attributes, "tag", null);
+        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
 
         int x = XmlUtils.getAttributeInt(attributes, "x", 0);
         int y = XmlUtils.getAttributeInt(attributes, "y", 0);
@@ -26,6 +27,7 @@ public class FrameFactory implements UIElementFactory<Frame> {
         boolean layering = XmlUtils.getAttributeBoolean(attributes, "layering", false);
         boolean useLayoutSize = XmlUtils.getAttributeBoolean(attributes, "uselayoutsize", true);
         Frame frame = new Frame(tag, title);
+        frame.setTooltip(tooltip);
 
         frame.setAlwaysLayoutChildren(alwaysLayoutChildren);
         frame.setAutoLayout(autoLayout);

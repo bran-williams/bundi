@@ -15,6 +15,7 @@ public class ButtonFactory implements UIElementFactory<Button> {
     @Override
     public Button createElement(Node node, NamedNodeMap attributes) {
         String tag = XmlUtils.getAttributeText(attributes, "tag", null);
+        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
 
         int x = XmlUtils.getAttributeInt(attributes, "x", 0);
         int y = XmlUtils.getAttributeInt(attributes, "y", 0);
@@ -24,6 +25,7 @@ public class ButtonFactory implements UIElementFactory<Button> {
         boolean highlight = XmlUtils.getAttributeBoolean(attributes, "highlight", false);
 
         Button button = new Button(tag, text);
+        button.setTooltip(tooltip);
         button.setHighlight(highlight);
         button.setX(x);
         button.setY(y);

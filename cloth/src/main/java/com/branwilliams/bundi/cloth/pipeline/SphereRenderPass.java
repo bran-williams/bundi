@@ -46,7 +46,7 @@ public class SphereRenderPass extends RenderPass<RenderContext> {
         } catch (ShaderInitializationException | ShaderUniformException e) {
             throw new InitializationException("Unable to create ClothShaderProgram: ", e);
         }
-        sphereMesh = new SphereMesh(1.0F, 90, 90, VertexFormat.POSITION);
+        sphereMesh = new SphereMesh(1.0F, 32, 32, VertexFormat.POSITION);
     }
 
     @Override

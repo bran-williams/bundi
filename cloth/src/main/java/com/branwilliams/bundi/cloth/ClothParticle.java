@@ -26,7 +26,7 @@ public class ClothParticle {
         this.parameters = parameters;
         this.position = position;
         this.movable = true;
-        this.mass = 1;
+        this.mass = 5;
         this.oldPosition = new Vector3f(position);
         this.acceleration = new Vector3f();
         this.accumulatedNormal = new Vector3f();

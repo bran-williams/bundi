@@ -15,6 +15,7 @@ public class SliderFactory implements UIElementFactory<Slider> {
     @Override
     public Slider createElement(Node node, NamedNodeMap attributes) {
         String tag = XmlUtils.getAttributeText(attributes, "tag", null);
+        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
 
         int x = XmlUtils.getAttributeInt(attributes, "x", 0);
         int y = XmlUtils.getAttributeInt(attributes, "y", 0);
@@ -23,6 +24,7 @@ public class SliderFactory implements UIElementFactory<Slider> {
         int barSize = XmlUtils.getAttributeInt(attributes, "barsize", 16);
         Slider slider = new Slider(tag, barSize);
 
+        slider.setTooltip(tooltip);
         slider.setX(x);
         slider.setY(y);
         slider.setWidth(width);

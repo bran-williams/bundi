@@ -5,5 +5,5 @@ package com.branwilliams.bundi.gui.api.actions;
  * Created by Brandon Williams on 2/10/2017.
  */
 public enum Actions {
-    KEY_PRESS, KEY_RELEASE, CHARACTER_TYPED, MOUSEWHEEL, MOUSE_PRESS, MOUSE_RELEASE, MOVE
+    KEY_PRESS, KEY_RELEASE, KEY_HELD, CHARACTER_TYPED, MOUSEWHEEL, MOUSE_PRESS, MOUSE_RELEASE, MOVE
 }

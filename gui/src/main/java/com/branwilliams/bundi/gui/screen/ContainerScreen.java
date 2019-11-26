@@ -45,6 +45,8 @@ public abstract class ContainerScreen implements GuiScreen {
         containerManager.release(window, mouseX, mouseY, buttonId);
     }
 
+
+
     @Override
     public void wheel(Window window, double xoffset, double yoffset) {
         containerManager.wheel(window, xoffset, yoffset);
@@ -58,6 +60,11 @@ public abstract class ContainerScreen implements GuiScreen {
     @Override
     public void keyRelease(Window window, int key, int scancode, int mods) {
         containerManager.keyRelease(window, key, scancode, mods);
+    }
+
+    @Override
+    public void keyHeld(Window window, int key, int scancode, int mods) {
+        containerManager.keyHeld(window, key, scancode, mods);
     }
 
     @Override

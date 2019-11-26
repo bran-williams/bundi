@@ -1,6 +1,8 @@
 package com.branwilliams.bundi.engine.mesh.primitive;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -14,6 +16,8 @@ import static org.lwjgl.opengl.GL11.GL_LINES;
  *
  */
 public class GridMesh extends Mesh {
+
+    public static final VertexFormat VERTEX_FORMAT = VertexFormat.POSITION_COLOR;
 
     /**
      *
@@ -55,8 +59,8 @@ public class GridMesh extends Mesh {
 
         setRenderMode(GL_LINES);
         bind();
-        storeAttribute(0, MeshUtils.toArray3f(vertices), 3);
-        storeAttribute(1, MeshUtils.toArray4f(colors), 4);
+        storeAttribute(0, MeshUtils.toArray3f(vertices), VertexElement.POSITION.size);
+        storeAttribute(1, MeshUtils.toArray4f(colors), VertexElement.COLOR.size);
         setVertexCount(vertices.size());
         unbind();
     }

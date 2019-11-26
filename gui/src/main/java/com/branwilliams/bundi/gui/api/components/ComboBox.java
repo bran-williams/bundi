@@ -10,6 +10,8 @@ import com.branwilliams.bundi.gui.api.actions.ClickAction;
  */
 public class ComboBox<I> extends Component {
 
+    private static final int ITEM_NAME_PADDING = 2;
+
     private I[] items;
 
     private boolean expanded = false;
@@ -45,6 +47,7 @@ public class ComboBox<I> extends Component {
 
     @Override
     public void update() {
+        itemHeight = ITEM_NAME_PADDING + font.getFontHeight() + ITEM_NAME_PADDING;
         // Update the height with the font height + font height * items length.
         setHeight(itemHeight + (expanded ? itemHeight * items.length : 0));
     }

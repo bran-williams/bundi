@@ -1,0 +1,22 @@
+<UI>
+    <Frame tag="frame" title="MC Skins" x="50" y="50" width="400" height="200">
+        <ListLayout padding="1" componentPadding="2"/>
+        <FontData font="Roboto" size="20" style="bold"/>
+
+        <Label tag="usernamelabel" text="Username">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Label>
+
+        <TextField tag="lined" width="200" height="24" defaultText="Username" tooltip="Enter the username of the account to steal a skin from!">
+            <FontData font="Roboto" size="18" style="plain"/>
+        </TextField>
+
+        <Button tag="submit" width="200" height="24" highlight="true" text="Load Skin" tooltip="Load the skin of the username.">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="fix" width="200" height="24" highlight="false" text="Fix" tooltip="Fixes the skin last downloaded.">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Button>
+    </Frame>
+</UI>

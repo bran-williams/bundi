@@ -26,6 +26,7 @@ public class ClothShaderProgram extends ShaderProgram {
         this.createUniform("modelMatrix");
 
         this.createUniform("viewPos");
+        this.createUniform("diffuse");
 
         this.createUniform("directionalLight.direction");
         this.createUniform("directionalLight.ambient");
@@ -40,7 +41,9 @@ public class ClothShaderProgram extends ShaderProgram {
 //        this.createUniform("material.shininess");
 
 
-//        this.bind();
+        this.bind();
+        this.setUniform("diffuse", 0);
+        ShaderProgram.unbind();
 //        this.setUniform("material.diffuse", 0);
 //        this.setUniform("material.specular", 1);
 //        this.setUniform("material.normal", 2);
