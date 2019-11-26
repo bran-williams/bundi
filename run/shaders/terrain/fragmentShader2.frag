@@ -8,8 +8,8 @@ const vec4 ROCK = vec4(0, 1, 0, 0);
 const vec4 SNOW = vec4(0, 0, 1, 0);
 
 const vec3 UP = vec3(0, 1, 0);
-const float MIN_GRASS_SLOPE = 0.2;
-const float MAX_GRASS_SLOPE = 0.7;
+const float MIN_GRASS_SLOPE = 0.2F;
+const float MAX_GRASS_SLOPE = PI * 0.25F;
 
 const float FADE_AMOUNT = 0.005;
 const float MAX_HEIGHT = 128;
@@ -50,34 +50,34 @@ vec4 getBlend(vec3 normal) {
     // Calculate the slope given the normal (assuming the UP vector)
     float height = passPosition.y / MAX_HEIGHT;
 
-    float slope = acos(dot(normal, UP)) / (2 * PI);
-
     vec4 flatColor = GRASS;
-    if (slope < MIN_GRASS_SLOPE) {
-        flatColor = mix(GRASS, ROCK, slope / MIN_GRASS_SLOPE);
-    } else if (slope >= MIN_GRASS_SLOPE && slope < MAX_GRASS_SLOPE) {
-        flatColor = mix(ROCK, GRASS, (slope - MIN_GRASS_SLOPE) * (1 / (MAX_GRASS_SLOPE - MIN_GRASS_SLOPE)));
-    } else if (slope >= MAX_GRASS_SLOPE) {
-        flatColor = GRASS;
-    }
-
-    vec4 blendColor = flatColor;
 
     // border between flat color and sand...
     if (height >= SAND_HEIGHT - FADE_AMOUNT && height <= SAND_HEIGHT + FADE_AMOUNT) {
         float blendFactor = 1 - ((height - SAND_HEIGHT + FADE_AMOUNT) / (2 * FADE_AMOUNT));
-        blendColor = mix(flatColor, SAND, blendFactor);
-    // anything below here is sand..
+        flatColor = mix(GRASS, SAND, blendFactor);
+        // anything below here is sand..
     } else if (height <= SAND_HEIGHT) {
-        blendColor = SAND;
+        flatColor = SAND;
     }
 
     // border between flat color and snow...
     if (height >= SNOW_HEIGHT - FADE_AMOUNT && height <= SNOW_HEIGHT + FADE_AMOUNT) {
         float blendFactor = (height - SNOW_HEIGHT + FADE_AMOUNT) / (2 * FADE_AMOUNT);
-            blendColor = mix(flatColor, SNOW, blendFactor);
+        flatColor = mix(GRASS, SNOW, blendFactor);
     } else if (height >= SNOW_HEIGHT) {
-        blendColor = SNOW;
+        flatColor = SNOW;
+    }
+
+    float slope = acos(dot(normal, UP)) / (2 * PI);
+
+    vec4 blendColor = flatColor;
+    if (slope < MIN_GRASS_SLOPE) {
+        blendColor = mix(flatColor, ROCK, slope / MIN_GRASS_SLOPE);
+    } else if (slope >= MIN_GRASS_SLOPE && slope < MAX_GRASS_SLOPE) {
+        blendColor = mix(ROCK, flatColor, (slope - MIN_GRASS_SLOPE) * (1 / (MAX_GRASS_SLOPE - MIN_GRASS_SLOPE)));
+    } else if (slope >= MAX_GRASS_SLOPE) {
+        blendColor = flatColor;
     }
 
     return blendColor;

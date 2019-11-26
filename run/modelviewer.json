@@ -1,0 +1,14 @@
+{
+  "windowTitle": "Model Viewer",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.bundi.model.ModelViewerScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+
+  "sceneDirectory": "com.branwilliams.bundi"
+}

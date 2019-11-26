@@ -9,4 +9,5 @@ include 'water'
 include 'atmosphere'
 include 'cloth'
 include 'mcskin'
+include 'modelviewer'
 

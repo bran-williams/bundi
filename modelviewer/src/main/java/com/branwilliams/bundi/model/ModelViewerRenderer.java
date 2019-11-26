@@ -1,4 +1,4 @@
-package com.branwilliams.bundi.pbr;
+package com.branwilliams.bundi.model;
 
 import com.branwilliams.bundi.engine.core.AbstractRenderer;
 import com.branwilliams.bundi.engine.core.Engine;
@@ -12,16 +12,16 @@ import static org.lwjgl.opengl.GL11.*;
  * @author Brandon
  * @since August 31, 2019
  */
-public class PbrRenderer extends AbstractRenderer {
+public class ModelViewerRenderer extends AbstractRenderer {
 
-    public PbrRenderer(Scene scene, RenderPipeline renderPipeline) {
-        super("PbrRenderer", scene, renderPipeline);
+    public ModelViewerRenderer(Scene scene, RenderPipeline renderPipeline) {
+        super("ModelViewerRenderer", scene, renderPipeline);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
         super.init(engine, window);
-        glClearColor(1F, 1F, 1F, 1F);
+        glClearColor(0F, 0F, 0F, 1F);
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);

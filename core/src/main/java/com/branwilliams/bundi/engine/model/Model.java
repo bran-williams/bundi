@@ -4,6 +4,8 @@ import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.shader.Material;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shape.AABB;
+import com.branwilliams.bundi.engine.shape.Shape3f;
 
 import java.util.*;
 
@@ -13,7 +15,6 @@ import java.util.*;
 public class Model implements Destructible {
 
     private Map<Material, List<Mesh>> data;
-
 
     public Model() {
         data = new HashMap<>();

@@ -64,6 +64,7 @@ public class ModelLoader {
                 aiProcess_ConvertToLeftHanded |
                 aiProcess_SortByPType |
                 aiProcess_PreTransformVertices); //aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
+
         if (scene == null) {
             throw new IOException(String.format("Unable to load model from location %s!", location));
         }
@@ -241,8 +242,9 @@ public class ModelLoader {
         Mesh mesh = new Mesh();
         mesh.bind();
 
+        List<Float> vertices;
         if (vertexFormat.hasElement(VertexElement.POSITION)) {
-            List<Float> vertices = new ArrayList<>();
+            vertices = new ArrayList<>();
             processVertices(aiMesh, vertices);
 
             if (vertices.size() <= 0) {
@@ -252,6 +254,9 @@ public class ModelLoader {
                 mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
             }
         }
+
+//        if (vertexFormat.hasElement(VertexElement.COLOR)) {
+//        }
 
         if (vertexFormat.hasElement(VertexElement.UV)) {
             List<Float> uvs = new ArrayList<>();
