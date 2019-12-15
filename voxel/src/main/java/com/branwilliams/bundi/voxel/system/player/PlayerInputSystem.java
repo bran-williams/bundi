@@ -46,6 +46,7 @@ public class PlayerInputSystem extends AbstractSystem implements Window.MouseLis
             MovementComponent movementComponent = entity.getComponent(MovementComponent.class);
             WalkComponent walkComponent = entity.getComponent(WalkComponent.class);
             PlayerControls playerControls = entity.getComponent(PlayerControls.class);
+            PlayerState playerState = entity.getComponent(PlayerState.class);
 
             float forwardSpeed = 0F, strafeSpeed = 0F, upwardSpeed = 0F;
 
@@ -63,11 +64,16 @@ public class PlayerInputSystem extends AbstractSystem implements Window.MouseLis
                 strafeSpeed = -1F;
             }
 
-            if (engine.getWindow().isKeyPressed(playerControls.getAscend())) {
-                upwardSpeed = 1F;
-            }
-            if (engine.getWindow().isKeyPressed(playerControls.getDescend())) {
-                upwardSpeed = -1F;
+//            if (engine.getWindow().isKeyPressed(playerControls.getAscend())) {
+//                upwardSpeed = 1F;
+//            }
+//            if (engine.getWindow().isKeyPressed(playerControls.getDescend())) {
+//                upwardSpeed = -1F;
+//            }
+
+            if (engine.getWindow().isKeyPressed(playerControls.getAscend()) && playerState.isOnGround()) {
+                upwardSpeed = 30F;
+                playerState.setOnGround(false);
             }
 
             if (engine.getWindow().isKeyPressed(playerControls.getUpdateSun())) {
@@ -87,6 +93,11 @@ public class PlayerInputSystem extends AbstractSystem implements Window.MouseLis
             movementComponent.getAcceleration().x = dx;
             movementComponent.getAcceleration().y = upwardSpeed;
             movementComponent.getAcceleration().z = dz;
+
+//            System.out.println("accelX=" + movementComponent.getAcceleration().x
+//                    + ", accelY=" + movementComponent.getAcceleration().y
+//                    + ", accelZ=" + movementComponent.getAcceleration().z);
+
         }
     }
 

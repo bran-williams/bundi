@@ -32,7 +32,7 @@ public class TextField extends Component {
 
     // This is the minimum amount of characters needed to be present before the pointer.
     // Used when calculating the render index.
-    private int renderOffset = 1;
+    private int renderOffset = 4;
 
     private boolean typing = false;
 
@@ -130,6 +130,7 @@ public class TextField extends Component {
      * Calculates the render index for this text field.
      * */
     private void calculateRenderIndex() {
+
         // LEFT CHECK
         // If the pointer is greater than or equal to the render offset and if the distance between
         // the pointer and the render index is less than the offset, we must move the render index left.
@@ -158,7 +159,7 @@ public class TextField extends Component {
             if (pointer >= this.text.length()) {
                 this.text = this.text.substring(0, this.text.length() - 1);
             } else if (pointer > 0) {
-                this.text = this.text.substring(0, pointer - 1) + this.text.substring(pointer, this.text.length());
+                this.text = this.text.substring(0, pointer - 1) + this.text.substring(pointer);
             }
             moveDirection(-1);
         }
@@ -202,6 +203,9 @@ public class TextField extends Component {
         } else if (pointer < 0) {
             pointer = 0;
         }
+        if (pointer == 0) {
+            renderIndex = pointer;
+        }
         this.calculateRenderIndex();
     }
 
@@ -209,7 +213,7 @@ public class TextField extends Component {
      * @return A string that can be rendered.
      * */
     public String getRenderText(boolean showPlacement) {
-        String text = showPlacement ? this.text.substring(renderIndex, pointer) + "|" + this.text.substring(pointer, this.text.length()) : this.text.substring(renderIndex);
+        String text = showPlacement ? this.text.substring(renderIndex, pointer) + "|" + this.text.substring(pointer) : this.text.substring(renderIndex);
         return font.trim(text, this.getWidth());
     }
 

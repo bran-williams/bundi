@@ -1,4 +1,4 @@
-package com.branwilliams.bundi.model;
+package com.branwilliams.cubes;
 
 import com.branwilliams.bundi.engine.core.AbstractRenderer;
 import com.branwilliams.bundi.engine.core.Engine;
@@ -10,19 +10,19 @@ import static org.lwjgl.opengl.GL11.*;
 
 /**
  * @author Brandon
- * @since August 31, 2019
+ * @since September 04, 2019
  */
-public class ModelViewerRenderer extends AbstractRenderer {
+public class CubesRenderer extends AbstractRenderer {
 
-    public ModelViewerRenderer(Scene scene, RenderPipeline renderPipeline) {
-        super("ModelViewerRenderer", scene, renderPipeline);
+    public CubesRenderer(Scene scene, RenderPipeline renderPipeline) {
+        super("clothRenderer", scene, renderPipeline);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
         super.init(engine, window);
-        glClearColor(0F, 0F, 0F, 1F);
-//        glEnable(GL_CULL_FACE);
+        glClearColor(0F, 0.75F, 1F, 1F);
+        glEnable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
 

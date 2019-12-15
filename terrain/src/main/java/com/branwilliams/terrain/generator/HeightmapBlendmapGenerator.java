@@ -28,10 +28,12 @@ public class HeightmapBlendmapGenerator implements BlendmapGenerator {
                 byte a = 0;
 
                 float pixel = heightGenerator.apply(x, y);
-                pixel += GRAYSCALE_MAX_COLOR * 0.5F;
-                float normalizedPixel = (float) pixel / (GRAYSCALE_MAX_COLOR * 0.5F);
-
-                //r = (byte) 255;
+                if (pixel >= 0.25F && pixel < 0.5F)
+                    r = (byte) 255;
+                else if (pixel >= 0.5F && pixel < 0.75F)
+                    g = (byte) 255;
+                else if (pixel >= 0.75F && pixel < 1F)
+                    b = (byte) 255;
 
                 textureData.setPixel(x, y, r, g, b, a);
             }

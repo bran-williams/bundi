@@ -16,6 +16,7 @@ import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.gui.api.Container;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 import com.branwilliams.bundi.gui.api.Toolbox;
+import com.branwilliams.bundi.gui.api.components.Button;
 import com.branwilliams.bundi.gui.api.loader.UILoader;
 import com.branwilliams.bundi.gui.impl.BasicRenderer;
 import com.branwilliams.bundi.gui.impl.BasicToolbox;
@@ -39,20 +40,11 @@ import static com.branwilliams.bundi.gui.impl.Pointers.FONT_TOOLTIP;
  * */
 public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListener {
 
-    private final FontCache fontCache = new FontCache();
-
-    private final UILoader uiLoader = new UILoader(fontCache);
-
     private final VoxelScene scene;
 
     private final Lockable lockable;
 
     private AudioSource source;
-
-    private Toolbox toolbox;
-
-    private BasicRenderer renderManager;
-
 
     public PlayerPauseSystem(VoxelScene scene, Lockable lockable) {
         super(new ClassComponentMatcher(PlayerControls.class));
@@ -64,15 +56,6 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
 
     @Override
     public void init(Engine engine, EntitySystemManager entitySystemManager, Window window) {
-        toolbox = new BasicToolbox(engine, window);
-        ColorPack.random().apply(toolbox);
-
-        renderManager = new BasicRenderer(toolbox);
-
-        FontData smallFont = fontCache.createFont("Verdana", Font.BOLD, 18, true);
-        renderManager.getFontRenderer().setFontData(smallFont);
-        toolbox.put(FONT_TOOLTIP, smallFont);
-
         AudioLoader audioLoader = new AudioLoader(engine.getContext().getAssetDirectory());
         AudioData audioData = audioLoader.loadAudio("sounds/hit1.ogg");
         Sound sound = new Sound(audioData);
@@ -97,26 +80,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
             PlayerControls playerControls = entity.getComponent(PlayerControls.class);
 
             if (playerControls.getPause().getKeyCode() == key) {
-                lockable.toggle();
-
-                if (lockable.isLocked()) {
-                    ContainerManager containerManager = new ContainerManager(renderManager, toolbox);
-
-                    try {
-                        List<Container> containers = uiLoader.loadUI(new File("./mcskin.xml"));
-                        for (Container container : containers)
-                            containerManager.add(container);
-                    } catch (IOException | SAXException | ParserConfigurationException e) {
-                        e.printStackTrace();
-                    }
-
-                    scene.setGuiScreen(new AbstractContainerScreen(containerManager));
-                    window.showCursor();
-                    window.centerCursor();
-                } else {
-                    scene.setGuiScreen(null);
-                    window.disableCursor();
-                }
+                togglePause(window);
             }
         }
     }
@@ -124,5 +88,32 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
     @Override
     public void keyRelease(Window window, int key, int scancode, int mods) {
 
+    }
+
+    private void togglePause(final Window window) {
+        lockable.toggle();
+
+        if (lockable.isLocked()) {
+            ContainerManager containerManager = scene.getGuiScreenManager().load("./ui/voxel-pause.xml");
+            Button resumeButton = containerManager.getByTag("resume_button");
+
+            resumeButton.onPressed(((button, clickAction) -> {
+                PlayerPauseSystem.this.togglePause(window);
+                source.play();
+                return true;
+            }));
+
+            Button quitButton = containerManager.getByTag("quit_button");
+            quitButton.onPressed(((button, clickAction) -> {
+                source.play();
+                scene.stop();
+                return true;
+            }));
+            window.showCursor();
+            window.centerCursor();
+        } else {
+            scene.setGuiScreen(null);
+            window.disableCursor();
+        }
     }
 }

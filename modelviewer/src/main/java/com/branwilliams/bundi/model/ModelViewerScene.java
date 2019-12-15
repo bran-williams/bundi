@@ -11,11 +11,15 @@ import com.branwilliams.bundi.engine.model.ModelLoader;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.skybox.Skybox;
+import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
+import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.model.pipeline.ModelRenderPass;
 import org.joml.Vector3f;
 
+
+import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
@@ -34,9 +38,9 @@ public class ModelViewerScene extends AbstractScene implements Window.KeyListene
 //
 //    private final String modelTextures = "models/cartoonland2/";
 
-    private final String modelLocation = "models/LibertyStatue/LibertStatue.obj";
+    private final String modelLocation = "models/white_oak/white_oak.obj";
 
-    private final String modelTextures = "models/LibertyStatue/";
+    private final String modelTextures = "models/white_oak/";
 
     private final VertexFormat vertexFormat = VertexFormat.POSITION_UV;
 
@@ -52,7 +56,7 @@ public class ModelViewerScene extends AbstractScene implements Window.KeyListene
 
     private Model model;
 
-    private Transformable modelTransform = new Transformation().position(0F, 0F, -3F).scale(5F);;
+    private Transformable modelTransform = new Transformation().position(0F, 0F, -3F).scale(0.125F);;
 
     public ModelViewerScene() {
         super("modelviewer_scene");
@@ -68,6 +72,7 @@ public class ModelViewerScene extends AbstractScene implements Window.KeyListene
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
         RenderContext renderContext = new RenderContext(worldProjection);
         RenderPipeline renderPipeline = new RenderPipeline<>(renderContext);
+        renderPipeline.addLast(new SkyboxRenderPass(this::getCamera, this::getSkybox));
         renderPipeline.addLast(new ModelRenderPass(this::getCamera, vertexFormat, this::getModelTransform, this::getModel));
         ModelViewerRenderer renderer = new ModelViewerRenderer(this, renderPipeline);
         setRenderer(renderer);
@@ -86,6 +91,14 @@ public class ModelViewerScene extends AbstractScene implements Window.KeyListene
         try {
             model = modelLoader.load(modelLocation, modelTextures, vertexFormat);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            TextureLoader textureLoader = new TextureLoader(engine.getContext());
+            CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/one.csv");
+            skybox = new Skybox(500, new Material(skyboxTexture));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

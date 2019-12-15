@@ -1,13 +1,14 @@
 {
-  "windowTitle": "Terrain",
+  "windowTitle": "Marching Cubes Demo",
   "windowWidth": 1600,
   "windowHeight": 900,
   "vsync": true,
   "keycodes": "./keycodes.json",
 
-  "launchScene": "com.branwilliams.terrain.TerrainScene",
+  "launchScene": "com.branwilliams.cubes.CubesScene",
 
   "assetDirectory": ".",
   "tempDirectory": "./temp",
-  "sceneDirectory": "com.branwilliams.terrain"
+
+  "sceneDirectory": "com.branwilliams.bundi"
 }

@@ -59,6 +59,8 @@ public class PhysicsSystem extends AbstractSystem {
             float moveY = (float) (movementComponent.getVelocity().y * movementComponent.getMovementSpeed() * deltaTime);
             float moveZ = (float) (movementComponent.getVelocity().z * movementComponent.getMovementSpeed() * deltaTime);
             Vector3f movement = new Vector3f(moveX, moveY, moveZ);
+//            System.out.println("moveX=" + moveX + ", moveY=" + moveY + ", moveZ=" + moveZ + "");
+//            System.out.println("gravityX=" + (float) (gravity.x * deltaTime) + ", gravityY=" + (float) (gravity.y * deltaTime) + ", gravityZ=" + (float) (gravity.z * deltaTime));
 
             // Add a little splash of gravity
             movement.add((float) (gravity.x * deltaTime), (float) (gravity.y * deltaTime), (float) (gravity.z * deltaTime));

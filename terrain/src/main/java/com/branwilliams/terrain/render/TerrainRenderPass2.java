@@ -6,12 +6,12 @@ import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
+import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
 import com.branwilliams.bundi.engine.shader.ShaderUniformException;
-import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.terrain.TerrainTile;
 
 import java.util.function.Supplier;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
 /**
  * Created by Brandon Williams on 9/25/2018.
  */
-public class TerrainRenderPass extends RenderPass<RenderContext> {
+public class TerrainRenderPass2 extends RenderPass<RenderContext> {
 
     private final Scene scene;
 
@@ -27,9 +27,9 @@ public class TerrainRenderPass extends RenderPass<RenderContext> {
 
     private final IComponentMatcher componentMatcher;
 
-    private TerrainShaderProgram terrainShaderProgram;
+    private TerrainShaderProgram2 terrainShaderProgram;
 
-    public TerrainRenderPass(Scene scene, Supplier<Camera> cameraSupplier) {
+    public TerrainRenderPass2(Scene scene, Supplier<Camera> cameraSupplier) {
         this.scene = scene;
         this.cameraSupplier = cameraSupplier;
         componentMatcher = scene.getEs().matcher(TerrainTile.class);
@@ -38,7 +38,7 @@ public class TerrainRenderPass extends RenderPass<RenderContext> {
     @Override
     public void init(RenderContext renderContext, Engine engine, Window window) throws InitializationException {
         try {
-            terrainShaderProgram = new TerrainShaderProgram(engine.getContext());
+            terrainShaderProgram = new TerrainShaderProgram2(engine.getContext());
         } catch (ShaderUniformException | ShaderInitializationException e) {
             System.err.println("Unable to create terrain shader program!");
             throw new InitializationException(e);

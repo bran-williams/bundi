@@ -106,7 +106,7 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     }
 
     private void loadUI() {
-        ContainerManager containerManager = guiScreenManager.load("./mcskin.xml");
+        ContainerManager containerManager = guiScreenManager.load("./ui/mcskin.xml");
 
         usernameField = containerManager.getByTag("lined");
         submitButton = containerManager.getByTag("submit");

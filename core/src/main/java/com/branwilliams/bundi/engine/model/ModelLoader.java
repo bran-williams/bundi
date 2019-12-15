@@ -8,6 +8,7 @@ import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
+import com.branwilliams.bundi.engine.util.TextureUtils;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -180,7 +181,7 @@ public class ModelLoader {
             }
         } else {
             TextureData textureData = textureLoader.loadTexture(Paths.get(textureLocation, path));
-//            ImageLoader.ImageData imageData = imageLoader.flip(imageLoader.loadImage(textureLocation + path));
+//            textureData = TextureUtils.flipVertical(textureData);
             return new Texture(textureData, true);
         }
     }
@@ -347,7 +348,7 @@ public class ModelLoader {
             AIVector3D uv = aiTextures.get();
             textures.add(uv.x());
 //            textures.add(uv.y());
-            textures.add(1F - uv.y());
+            textures.add(uv.y());
         }
     }
 

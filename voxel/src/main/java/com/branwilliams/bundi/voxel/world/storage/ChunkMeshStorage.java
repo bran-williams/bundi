@@ -45,35 +45,51 @@ public class ChunkMeshStorage implements Destructible {
 
     public void unloadChunkMesh(ChunkPos chunkPos) {
         ChunkMesh mesh = meshes.get(chunkPos);
-
         if (mesh != null) {
-            meshes.remove(chunkPos);
             mesh.unassign();
-            meshPool.returnMesh(mesh);
         }
+    }
+
+    public void unloadMeshes() {
+        List<ChunkPos> toRemove = new ArrayList<>();
+
+        for (Map.Entry<ChunkPos, ChunkMesh> entry : meshes.entrySet()) {
+            ChunkMesh mesh = entry.getValue();
+            if (mesh.getMeshState() == ChunkMesh.MeshState.UNASSIGNED && mesh.finishedAnimation()) {
+                System.out.println("removing mesh with mesh state=" + mesh.getMeshState().name());
+                toRemove.add(entry.getKey());
+                mesh.unload();
+                meshPool.returnMesh(mesh);
+            }
+        }
+
+        toRemove.forEach((chunkPosition) -> meshes.remove(chunkPosition));
     }
 
     public ChunkMesh getMesh(VoxelWorld voxelWorld, VoxelChunk voxelChunk) {
         ChunkMesh mesh = meshes.get(voxelChunk.chunkPos);
 
         if (mesh != null) {
+//            System.out.println("mesh state=" + mesh.getMeshState().name());
             switch (mesh.getMeshState()) {
                 case REASSIGNED:
                     if (meshCreationLimiter.reached()) {
-                        mesh.onMeshChangeState(ChunkMesh.MeshState.LOADED);
+                        mesh.load();
                         voxelMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
                         meshCreationLimiter.reset();
                         break;
                     } else {
                         return null;
                     }
-
+                case UNASSIGNED:
                 case LOADED:
                     if (voxelChunk.isDirty()) {
                         voxelMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
                         voxelChunk.markClean();
                     }
                     break;
+                default:
+                    return null;
             }
         }
 
@@ -93,7 +109,7 @@ public class ChunkMeshStorage implements Destructible {
             meshCreationLimiter.reset();
         }
 
-        mesh.onMeshChangeState(ChunkMesh.MeshState.LOADED);
+        mesh.load();
         voxelMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
         voxelChunk.markClean();
     }
@@ -102,6 +118,14 @@ public class ChunkMeshStorage implements Destructible {
     public void destroy() {
         meshPool.destroy();
         meshes.values().forEach(ChunkMesh::destroy);
+    }
+
+    public Set<ChunkPos> getChunkPositionsForMeshes() {
+        return meshes.keySet();
+    }
+
+    public Collection<ChunkMesh> getMeshes() {
+        return meshes.values();
     }
 
     private static class MeshPool implements Destructible {

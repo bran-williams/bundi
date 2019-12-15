@@ -109,7 +109,7 @@ public class AtmosphereScene extends AbstractScene implements Window.KeyListener
     }
 
     private void loadUI() {
-        ContainerManager containerManager = guiScreenManager.load("./atmosphere.xml");
+        ContainerManager containerManager = guiScreenManager.load("./ui/atmosphere.xml");
 
         final Label xLabel = containerManager.getByTag("x_slider_value");
         final Label yLabel = containerManager.getByTag("y_slider_value");

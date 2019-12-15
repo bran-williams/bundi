@@ -3,6 +3,7 @@ package com.branwilliams.bundi.voxel.render.pipeline.passes;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
+import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
@@ -11,6 +12,7 @@ import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.render.pipeline.shaders.ChunkShaderProgram;
+import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import com.branwilliams.bundi.voxel.world.chunk.ChunkPos;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;
 
@@ -59,23 +61,32 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
         this.chunkShaderProgram.setMaterial(material);
         this.chunkShaderProgram.setLight(scene.getSun());
 
-
         renderContext.getFrustum().update(renderContext.getProjection(), scene.getCamera());
 
-        for (ChunkPos chunkPos : scene.getVoxelWorld().getVisibleChunks()) {
-            VoxelChunk voxelChunk = scene.getVoxelWorld().getChunks().getChunk(chunkPos);
-            ChunkMesh chunkMesh = scene.getVoxelWorld().getChunkMesh(voxelChunk);
 
-            if (chunkMesh != null && chunkMesh.isRenderable() &&
-                    renderContext.getFrustum().insideFrustumAABB(voxelChunk.getAABB())) {
+        VoxelWorld world = scene.getVoxelWorld();
+        world.getChunkMeshStorage().unloadMeshes();
 
+        for (ChunkPos chunkPos : world.getChunkMeshStorage().getChunkPositionsForMeshes()) {
+            VoxelChunk chunk = world.getChunks().getChunk(chunkPos);
+            ChunkMesh chunkMesh = world.getChunkMesh(chunk);
+            if (chunkMesh != null && chunkMesh.getMeshState() == ChunkMesh.MeshState.UNASSIGNED) {
+                System.out.println("isRenderable=" + chunkMesh.isRenderable());
+                System.out.println("withinFrustum=" + renderContext.getFrustum().insideFrustumAABB(chunk.getAABB()));
+            }
+
+            if (shouldRenderMesh(renderContext, chunkMesh, chunk)) {
                 this.chunkShaderProgram.setModelMatrix(chunkMesh.getTransformable(CHUNK_ANIMATION_HEIGHT));
-
                 Mesh mesh = chunkMesh.getSolidMesh();
                 MeshRenderer.bind(mesh, material);
                 MeshRenderer.render(mesh);
                 MeshRenderer.unbind(mesh, material);
             }
         }
+    }
+
+    private boolean shouldRenderMesh(VoxelRenderContext renderContext, ChunkMesh chunkMesh, VoxelChunk voxelChunk) {
+        return chunkMesh != null && chunkMesh.isRenderable() &&
+                renderContext.getFrustum().insideFrustumAABB(voxelChunk.getAABB());
     }
 }

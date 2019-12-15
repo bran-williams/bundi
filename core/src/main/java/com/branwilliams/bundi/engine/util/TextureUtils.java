@@ -98,7 +98,7 @@ public enum TextureUtils {
             xoffset += img.getWidth() + padding;
         }
         buffer.clear();
-        return new TextureData(totalWidth, totalHeight, outputChannels, GL_RGBA, buffer);
+        return new TextureData(totalWidth, totalHeight, outputChannels, getFormatFromChannels(outputChannels), buffer);
     }
 
     public static TextureData flip(TextureData textureData) {
@@ -130,7 +130,9 @@ public enum TextureUtils {
             }
         }
         buffer.flip();
-        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), GL_RGBA, buffer);
+
+        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
+                getFormatFromChannels(textureData.getChannels()), buffer);
     }
 
 
@@ -162,7 +164,8 @@ public enum TextureUtils {
             }
         }
         buffer.flip();
-        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), GL_RGBA, buffer);
+        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
+                getFormatFromChannels(textureData.getChannels()), buffer);
     }
 
     public static TextureData flipVertical(TextureData textureData) {
@@ -193,7 +196,8 @@ public enum TextureUtils {
             }
         }
         buffer.flip();
-        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), GL_RGBA, buffer);
+        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
+                getFormatFromChannels(textureData.getChannels()), buffer);
     }
 
     public static TextureData modify(TextureData textureData, Function<Integer, Integer> modifier) {
@@ -221,7 +225,8 @@ public enum TextureUtils {
             }
         }
         buffer.flip();
-        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), GL_RGBA, buffer);
+        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
+                getFormatFromChannels(textureData.getChannels()), buffer);
     }
 
     /**

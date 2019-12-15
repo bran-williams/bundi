@@ -20,6 +20,8 @@ import com.branwilliams.terrain.render.TerrainRenderer;
 
 import java.io.IOException;
 
+import static com.branwilliams.terrain.generator.HeightmapBlendmapGenerator.GRAYSCALE_MAX_COLOR;
+
 /**
  * @author Brandon
  * @since August 30, 2019
@@ -28,11 +30,11 @@ public class TerrainScene extends AbstractScene {
 
     private static final int TERRAIN_TILE_SIZE = 256;
 
-    private static final int TERRAIN_TILE_VERTICES_X = 256;
+    private static final int TERRAIN_TILE_VERTICES_X = 1024;
 
-    private static final int TERRAIN_TILE_VERTICES_Z = 256;
+    private static final int TERRAIN_TILE_VERTICES_Z = 1024;
 
-    private static final float TERRAIN_TILE_AMPLITUDE = 128;
+    private static final float TERRAIN_TILE_AMPLITUDE = 16;
 
     private Camera camera;
 
@@ -70,11 +72,11 @@ public class TerrainScene extends AbstractScene {
 
 
         // Create or load the height generator
-        float[] frequencies = { 1F, 2F, 4F, 8F };
-        float[] percentages = { 1F, 1F, 0.5F, 0.25F };
-        HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
-                1F / TERRAIN_TILE_SIZE);
-//        HeightGenerator generator = new HeightmapGenerator(heightmap);
+//        float[] frequencies = { 1F, 2F, 4F, 8F };
+//        float[] percentages = { 1F, 1F, 0.5F, 0.25F };
+//        HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
+//                1F / TERRAIN_TILE_SIZE);
+        HeightGenerator generator = new HeightmapGenerator(heightmap);
 
         // Create the tile builder
         TerrainTileBuilder terrainTileBuilder = new TerrainTileBuilder();
@@ -117,13 +119,16 @@ public class TerrainScene extends AbstractScene {
             terrainMaterial.setTexture(1, normal);
             terrainMaterial.setProperty("hasNormalTexture", true);
 
-//            heightmap = textureLoader.loadTexture("textures/heightmap2.png");
+            
 
-            //TextureData blendmap = textureLoader.loadTexture("textures/blendmap0.png");
+            heightmap = textureLoader.loadTexture("textures/heightmap2.png");
 
-            //HeightmapBlendmapGenerator blendmapGenerator = new HeightmapBlendmapGenerator();
-            //TextureData blendmap = blendmapGenerator.generateBlendmap(heightmap, GRAYSCALE_MAX_COLOR);
-            //terrainMaterial.setTexture(2, new Texture(blendmap, true));
+//            TextureData blendmap = textureLoader.loadTexture("textures/blendmap0.png");
+
+            HeightmapBlendmapGenerator blendmapGenerator = new HeightmapBlendmapGenerator();
+            TextureData blendmap = blendmapGenerator.generateBlendmap(heightmap, GRAYSCALE_MAX_COLOR);
+
+            terrainMaterial.setTexture(2, new Texture(blendmap, true));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -20,7 +20,9 @@ public class ChunkMesh implements Destructible {
         /** This is used to differentiate between player modifications making a chunk dirty vs a chunk being new. */
         REASSIGNED,
         /** The mesh has been created and should animate into the scene. */
-        LOADED
+        LOADED,
+        /** The mesh has been completely unloaded and should be released to the mesh pool. */
+        UNLOADED
     }
 
     private MeshState meshState;
@@ -58,12 +60,27 @@ public class ChunkMesh implements Destructible {
      * */
     public void reassign(VoxelChunk voxelChunk) {
         this.voxelChunk = voxelChunk;
-        onMeshChangeState(MeshState.REASSIGNED);
+        setMeshState(MeshState.REASSIGNED);
     }
 
     public void unassign() {
+        setMeshState(MeshState.UNASSIGNED);
+    }
+
+    public void unload() {
         this.voxelChunk = null;
-        onMeshChangeState(MeshState.UNASSIGNED);
+        setMeshState(MeshState.UNLOADED);
+    }
+
+    public void load() {
+        setMeshState(MeshState.LOADED);
+    }
+
+    public void setMeshState(MeshState meshState) {
+        boolean changed = this.meshState != meshState;
+        this.meshState = meshState;
+        if (changed)
+            onMeshChangeState(meshState);
     }
 
     /**
@@ -71,7 +88,6 @@ public class ChunkMesh implements Destructible {
      * */
     public void onMeshChangeState(MeshState meshState) {
         changeTime = Timer.getSystemTime();
-        this.meshState = meshState;
     }
 
     /**
@@ -79,6 +95,11 @@ public class ChunkMesh implements Destructible {
      * */
     public Transformable getTransformable(float animationHeight) {
         float y = -animationHeight + (getAnimation() * animationHeight);
+        if (meshState == MeshState.UNASSIGNED) {
+            y = (getAnimation() * -animationHeight);
+            System.out.println("UNASSIGNED y= " + y);
+        }
+
         return transformable.position(voxelChunk.chunkPos.getRealX(), y, voxelChunk.chunkPos.getRealZ());
     }
 
@@ -87,7 +108,15 @@ public class ChunkMesh implements Destructible {
      * */
     public float getAnimation() {
         float animation = (float) (Timer.getSystemTime() - changeTime) / (float) VoxelConstants.CHUNK_ANIMATION_TIME_MS;
-        return Math.min(1F, animation);
+        animation = Math.min(1F, animation);
+//        if (animation != 1F)
+//            System.out.println("meshState=" + meshState.name() + ", animation=" + animation);
+//        if (meshState == MeshState.LOADED) {
+//            return animation;
+//        } else if (meshState == MeshState.UNASSIGNED) {
+//            return Math.max(0F, 1F - animation);
+//        }
+        return animation;
     }
 
     /**
@@ -101,7 +130,7 @@ public class ChunkMesh implements Destructible {
      *
      * */
     public boolean isRenderable() {
-        return meshState == MeshState.LOADED;
+        return meshState == MeshState.LOADED || meshState == MeshState.UNASSIGNED;
     }
 
     public MeshState getMeshState() {

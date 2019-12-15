@@ -36,6 +36,11 @@ public enum Mathf {
     private static final float degToIndex = SIN_COUNT / degFull;
     public static final float degreesToRadians = PI / 180;
 
+    public static float smoothstep(float edge0, float edge1, float x) {
+        float t = clamp((x - edge0) / (edge1 - edge0), 1.0F, 0.0F);
+        return t * t * (3.0F - 2.0F * t);
+    }
+
     public static int floor(double val) {
         return (int)(val + 1024.0D) - 1024;
     }
@@ -46,8 +51,6 @@ public enum Mathf {
         if (value < -180.0F) value += 360.0F;
         return value;
     }
-    
-    
 
     public static float wrapDegrees(double value) {
         return wrapDegrees((float)value);

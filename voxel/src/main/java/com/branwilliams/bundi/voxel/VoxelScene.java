@@ -2,7 +2,6 @@ package com.branwilliams.bundi.voxel;
 
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.context.EngineContext;
-import com.branwilliams.bundi.engine.core.event.LockableStateUpdateEvent;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.skybox.Skybox;
@@ -10,6 +9,7 @@ import com.branwilliams.bundi.engine.systems.LockableSystem;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
+import com.branwilliams.bundi.gui.impl.ColorPack;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.bundi.voxel.components.*;
@@ -78,6 +78,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     private DirectionalLight sun;
 
+    private boolean stop = false;
 
     public VoxelScene() {
         super("voxel_scene");
@@ -92,7 +93,11 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
+//        engine.setUpdateInterval(1 / 20D);
         guiScreenManager = new GuiScreenManager(this);
+        guiScreenManager.init(engine, window);
+        ColorPack.LIGHT_BLUE.apply(guiScreenManager.getToolbox());
+
         projection = new Projection(window, 70, 0.01F, 1000F);
         VoxelRenderPipeline voxelRenderPipeline = new VoxelRenderPipeline(this, projection);
         VoxelRenderer voxelRenderer = new VoxelRenderer(this, voxelRenderPipeline);
@@ -108,7 +113,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
         es.addSystem(new PlayerPauseSystem(this, this));
         es.addSystem(new LockableSystem(this, new ChunkLoadSystem(this)));
         es.addSystem(new LockableSystem(this, new PlayerInputSystem(this)));
-        es.addSystem(new LockableSystem(this, new PhysicsSystem(this)));
+        es.addSystem(new LockableSystem(this, new PhysicsSystem(this, new Vector3f(0F, -9.8F, 0F))));
         es.addSystem(new LockableSystem(this, new PlayerCollisionSystem(this)));
         es.addSystem(new PlayerCameraUpdateSystem(this)); // This system extends a system with lockable logic already.
         es.addSystem(new LockableSystem(this, new PlayerRaycastSystem(this)));
@@ -233,6 +238,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
     @Override
     public void update(Engine engine, double updateInterval) {
         super.update(engine, updateInterval);
+        if (stop)
+            engine.stop();
     }
 
     @Override
@@ -243,6 +250,10 @@ public class VoxelScene extends AbstractScene implements Lockable {
     @Override
     public void setLocked(boolean locked) {
         delegateLock.setLocked(locked);
+    }
+
+    public GuiScreenManager getGuiScreenManager() {
+        return guiScreenManager;
     }
 
     public Projection getProjection() {
@@ -299,5 +310,9 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     public GameSettings getGameSettings() {
         return gameSettings;
+    }
+
+    public void stop() {
+        stop = true;
     }
 }

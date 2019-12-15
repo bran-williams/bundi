@@ -107,12 +107,12 @@ public class Container extends Component {
      *
      * */
     public <T extends Component> T getByTag(String tag) {
-        if (getTag().equalsIgnoreCase(tag)) {
+        if (tag.equalsIgnoreCase(getTag())) {
             return (T) this;
         }
 
         for (Component component : components) {
-            if (component.getTag().equalsIgnoreCase(tag)) {
+            if (tag.equalsIgnoreCase(component.getTag())) {
                 return (T) component;
             }
             if (component instanceof Container) {

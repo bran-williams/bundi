@@ -10,4 +10,5 @@ include 'atmosphere'
 include 'cloth'
 include 'mcskin'
 include 'modelviewer'
+include 'marchingcubes'
 

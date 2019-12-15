@@ -85,4 +85,20 @@ public class GuiScreenManager {
         }
         this.guiScreen = guiScreen;
     }
+
+    public FontCache getFontCache() {
+        return fontCache;
+    }
+
+    public UILoader getUiLoader() {
+        return uiLoader;
+    }
+
+    public Toolbox getToolbox() {
+        return toolbox;
+    }
+
+    public BasicRenderer getRenderManager() {
+        return renderManager;
+    }
 }

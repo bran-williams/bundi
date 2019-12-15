@@ -1,0 +1,22 @@
+<UI>
+    <Container tag="pausemenu" x="4" y="4" width="600" height="800">
+        <GridLayout rows="4" columns="1" padding="2" componentPadding="4"/>
+<!--        <ListLayout padding="2" componentPadding="4"/>-->
+
+        <Label tag="menu_title" text="Paused" color="#ffffff" height="34" alignment="center">
+            <FontData font="Robot" size="24" style="bold"/>
+        </Label>
+
+        <Button tag="resume_button" text="Resume" width="150" height="24" highlight="true">
+            <FontData font="Robot" size="18" style="plain"/>
+        </Button>
+
+        <Button tag="load_button" text="Load..." width="150" height="24" highlight="true">
+            <FontData font="Robot" size="18" style="plain"/>
+        </Button>
+
+        <Button tag="quit_button" text="Quit" width="150" height="24" highlight="true">
+            <FontData font="Robot" size="18" style="plain"/>
+        </Button>
+    </Container>
+</UI>
