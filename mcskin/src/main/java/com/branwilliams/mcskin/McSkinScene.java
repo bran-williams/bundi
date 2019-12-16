@@ -24,6 +24,8 @@ import com.branwilliams.mcskin.steve.SteveModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -46,6 +48,10 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     private Lock guiLock = new Lock();
 
     private Path tempDirectory;
+
+    private final List<String> downloadedSkins = new CopyOnWriteArrayList<>();
+
+    private Lock downloadLock = new Lock();
 
     public McSkinScene() {
         super("mc skin");
@@ -131,11 +137,20 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     }
 
     private void downloadSkin(String username) {
-        DownloadSkinTask downloadSkinTask = new DownloadSkinTask(username, mcApi, tempDirectory, this::onSkinDownloaded);
-        downloadSkinTask.run();
+        if (!downloadLock.isLocked()) {
+            DownloadSkinTask downloadSkinTask = new DownloadSkinTask(username, mcApi, tempDirectory, this::onSkinDownloaded);
+            new Thread(downloadSkinTask).start();
+            downloadLock.setLocked(true);
+        }
     }
 
     private void onSkinDownloaded(String skinUrl) {
+        synchronized (downloadedSkins) {
+            downloadedSkins.add(skinUrl);
+        }
+    }
+
+    private void updateSkin(String skinUrl) {
         try {
             TextureData textureData = textureLoader.loadTexture(skinUrl);
             Texture texture = new Texture(textureData, false);
@@ -159,6 +174,18 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
         super.update(engine, deltaTime);
         if (guiScreenManager.getGuiScreen() != null)
             guiScreenManager.getGuiScreen().update();
+
+        synchronized (downloadedSkins) {
+            if (!downloadedSkins.isEmpty()) {
+                for (String skin : downloadedSkins) {
+                    updateSkin(skin);
+                }
+                downloadedSkins.clear();
+
+                if (downloadLock.isLocked())
+                    downloadLock.setLocked(false);
+            }
+        }
     }
 
     @Override
