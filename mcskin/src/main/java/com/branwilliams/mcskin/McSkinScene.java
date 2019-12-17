@@ -13,6 +13,7 @@ import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
+import com.branwilliams.bundi.engine.util.TextureUtils;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 import com.branwilliams.bundi.gui.api.components.Button;
 import com.branwilliams.bundi.gui.api.components.TextField;
@@ -43,6 +44,8 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     private MCModel mcModel;
 
     private TextureLoader textureLoader;
+
+    private TextureData overlay;
 
     private Lock guiLock = new Lock();
 
@@ -82,6 +85,7 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
         mcModel = new SteveModel(new Material(), 0F);
         mcApi = new McApi();
 
+        overlay = textureLoader.loadTexture("skinfixer/overlay.png");
     }
 
     private TextField usernameField;
@@ -98,7 +102,8 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
 
         // Initialize the default skin.
         try {
-            TextureData textureData = textureLoader.loadTexture("temp/skin.png");
+            TextureData textureData = textureLoader.loadTexture("skinfixer/skin.png");
+
             Texture texture = new Texture(textureData, false);
             texture.bind();
             texture.nearestFilter();
@@ -152,6 +157,11 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     private void updateSkin(String skinUrl) {
         try {
             TextureData textureData = textureLoader.loadTexture(skinUrl);
+
+            // overlay if the dimensions line up!
+            if (overlay.getWidth() == textureData.getWidth() && overlay.getHeight() == textureData.getHeight())
+                textureData = TextureUtils.combine(textureData, overlay, 4, this::combineOverlay);
+
             Texture texture = new Texture(textureData, false);
             texture.bind();
             texture.nearestFilter();
@@ -205,6 +215,14 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
                     guiScreenManager.setGuiScreen(null);
                 }
                 break;
+        }
+    }
+
+    private Integer combineOverlay(int skinARGB, int overlayARGB) {
+        if (overlayARGB == 0) {
+            return skinARGB;
+        } else {
+            return overlayARGB;
         }
     }
 

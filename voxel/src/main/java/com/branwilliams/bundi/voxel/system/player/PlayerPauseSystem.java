@@ -76,7 +76,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
         lockable.toggle();
 
         if (lockable.isLocked()) {
-            loadMainMenu(window);
+            loadPauseMenu(window);
             window.showCursor();
             window.centerCursor();
         } else {
@@ -104,7 +104,7 @@ public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListe
     }
 
     private void loadMainMenu(final Window window) {
-        ContainerManager containerManager = scene.getGuiScreenManager().loadAsGuiScreen("./ui/voxel-mainmenu.xml");
+        ContainerManager containerManager = scene.getGuiScreenManager().loadAsGuiScreen("./ui/voxel-main-menu.xml");
 //        Button resumeButton = containerManager.getByTag("resume_button");
 //
 //        resumeButton.onPressed(((button, clickAction) -> {

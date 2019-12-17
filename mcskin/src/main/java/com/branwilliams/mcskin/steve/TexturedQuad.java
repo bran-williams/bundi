@@ -21,7 +21,6 @@ public final class TexturedQuad {
         float s_ = (float) s / 64.0F - uOffset;
         float t_ = (float) t / 32.0F - vOffset;
 
-        // no more quads, triangles..
         vertices[0] = vertices[0].create(s_, v_);
         vertices[1] = vertices[1].create(u_, v_);
         vertices[2] = vertices[2].create(u_, t_);

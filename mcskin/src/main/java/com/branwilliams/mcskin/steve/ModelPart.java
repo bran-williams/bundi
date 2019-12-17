@@ -147,7 +147,9 @@ public final class ModelPart {
             indices.add(index + 0);
             indices.add(index + 2);
             indices.add(index + 3);
-            index += 4;
+
+            // quad.vertices.length = 4
+            index += quad.vertices.length;
         }
 
         mesh.bind();

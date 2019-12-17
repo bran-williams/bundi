@@ -11,7 +11,7 @@
             <FontData font="Robot" size="18" style="plain"/>
         </Button>
 
-        <Button tag="load_button" text="Load..." width="150" height="24" highlight="true">
+        <Button tag="new_world_button" text="New world" width="150" height="24" highlight="true">
             <FontData font="Robot" size="18" style="plain"/>
         </Button>
 

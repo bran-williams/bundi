@@ -80,17 +80,17 @@ public class VoxelTexturePack implements Destructible {
         // generated from it are the baseline for all other atlases.
         TextureAtlasProperties textureAtlasProperties = buildDiffuseTextureAtlas(textureLoader);
 
-        System.out.println("specular:");
+//        System.out.println("specular:");
         specularTextureAtlas = buildOptionalTextureAtlas(textureLoader, textureAtlasProperties,
                 VoxelFaceTexture::getSpecularPath,
                 defaultVoxelFaceTexture.getSpecular());
 
-        System.out.println("normal:");
+//        System.out.println("normal:");
         normalTextureAtlas = buildOptionalTextureAtlas(textureLoader, textureAtlasProperties,
                 VoxelFaceTexture::getNormalPath,
                 defaultVoxelFaceTexture.getNormal());
 
-        System.out.println("emission:");
+//        System.out.println("emission:");
         emissionTextureAtlas = buildOptionalTextureAtlas(textureLoader, textureAtlasProperties,
                 VoxelFaceTexture::getEmissionPath,
                 defaultVoxelFaceTexture.getEmission());

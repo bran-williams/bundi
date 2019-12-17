@@ -39,14 +39,18 @@ public class VoxelRegistry {
      * Initializes the mapping of voxel ids to voxel objects.
      * */
     public void initialize() {
+        // Build the Voxel objects from the properties and map them based on their identifiers.
         for (Map.Entry<String, VoxelProperties> voxelProperty : voxelProperties.entrySet()) {
             if (!voxels.containsKey(voxelProperty.getKey())) {
                 Voxel voxel = voxelBuilder.buildVoxel(voxelProperty.getKey(), voxelProperty.getValue());
                 voxels.put(voxelProperty.getKey(), voxel);
             }
         }
+
+        // Some voxels have implementations which differ from the default, so be sure to initialize those as well.
         Voxels.initializeVoxels(voxels);
 
+        // Create a sorted list of their identifiers for organizational purposes.
         sortedVoxelIdentifiers = voxels.keySet()
                 .stream()
                 .filter((v) -> !v.equalsIgnoreCase(VoxelIdentifiers.AIR.normalized()))

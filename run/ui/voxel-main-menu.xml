@@ -1,13 +1,13 @@
 <UI>
-    <Container tag="mainmenu" x="500" width="600" height="800">
-        <GridLayout rows="4" columns="1" padding="6" componentPadding="8"/>
-<!--        <ListLayout padding="2" componentPadding="4"/>-->
+    <Container tag="mainmenu" x="50" y="50" width="500" height="800">
+<!--        <GridLayout rows="4" columns="1" padding="6" componentPadding="8"/>-->
+        <ListLayout padding="2" componentPadding="4"/>
 
-        <Label tag="menu_title" text="Play" color="#ffffff" height="34" alignment="center">
+        <Label tag="menu_title" text="Mineman 2.0" color="#ffffff" height="34" alignment="center">
             <FontData font="Robot" size="24" style="bold"/>
         </Label>
 
-        <Button tag="load_button" text="Load..." width="150" height="24" highlight="false">
+        <Button tag="load_button" text="Play" width="150" height="24" highlight="true">
             <FontData font="Robot" size="18" style="plain"/>
         </Button>
 

@@ -63,7 +63,6 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
 
         renderContext.getFrustum().update(renderContext.getProjection(), scene.getCamera());
 
-
         VoxelWorld world = scene.getVoxelWorld();
         world.getChunkMeshStorage().unloadMeshes();
 

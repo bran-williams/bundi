@@ -178,6 +178,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
      * do not have textures. Finally, creates the texture pack using the previous two.
      * */
     public void loadVoxelData(JsonLoader jsonLoader, Path assetDirectory, Path voxels, Path defaultVoxelFaces) {
+
+        // Load the voxel definitions from the provided path.
         Type voxelPropertiesType = new TypeToken<Map<String, VoxelProperties>>() {}.getType();
         Map<String, VoxelProperties> properties = jsonLoader.loadObject(voxelPropertiesType, voxels);
 
@@ -216,11 +218,12 @@ public class VoxelScene extends AbstractScene implements Lockable {
         gameSettings = settingsLoader.loadGameSettings();
     }
 
-    private void loadWorld() {
+    public void loadWorld() {
         if (voxelWorld != null)
             voxelWorld.destroy();
 
         RateLimiter meshCreationLimiter = new RateLimiter(TimeUnit.MILLISECONDS, 50L);
+
         // Create chunk & chunk mesh storage
         ChunkMeshStorage chunkMeshStorage = new ChunkMeshStorage(voxelMeshBuilder, meshCreationLimiter);
         ChunkStorage chunkStorage = new HashChunkStorage();
