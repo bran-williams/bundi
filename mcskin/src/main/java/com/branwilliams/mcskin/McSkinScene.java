@@ -18,7 +18,6 @@ import com.branwilliams.bundi.gui.api.components.Button;
 import com.branwilliams.bundi.gui.api.components.TextField;
 import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
-import com.branwilliams.mcskin.steve.CreeperModel;
 import com.branwilliams.mcskin.steve.MCModel;
 import com.branwilliams.mcskin.steve.SteveModel;
 
@@ -112,7 +111,7 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     }
 
     private void loadUI() {
-        ContainerManager containerManager = guiScreenManager.load("./ui/mcskin.xml");
+        ContainerManager containerManager = guiScreenManager.loadAsGuiScreen("./ui/mcskin.xml");
 
         usernameField = containerManager.getByTag("lined");
         submitButton = containerManager.getByTag("submit");

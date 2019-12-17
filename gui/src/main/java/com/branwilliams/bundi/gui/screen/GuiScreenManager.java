@@ -56,19 +56,24 @@ public class GuiScreenManager {
         renderManager.getFontRenderer().setFontData(tooltipFont);
         toolbox.put(FONT_TOOLTIP, tooltipFont);
     }
-
     public ContainerManager load(String ui) {
         try {
             ContainerManager containerManager = new ContainerManager(renderManager, toolbox);
             List<Container> containers = uiLoader.loadUI(new File(ui));
             for (Container container : containers)
                 containerManager.add(container);
-            setGuiScreen(new AbstractContainerScreen(containerManager));
             return containerManager;
         } catch (IOException | SAXException | ParserConfigurationException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public ContainerManager loadAsGuiScreen(String ui) {
+        ContainerManager containerManager = load(ui);
+        if (containerManager != null)
+            setGuiScreen(new AbstractContainerScreen(containerManager));
+        return containerManager;
     }
 
     public GuiScreen getGuiScreen() {

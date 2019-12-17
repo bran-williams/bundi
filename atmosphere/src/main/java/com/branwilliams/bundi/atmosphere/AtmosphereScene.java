@@ -1,27 +1,17 @@
 package com.branwilliams.bundi.atmosphere;
 
-import com.branwilliams.bundi.atmosphere.pipeline.passes.AtmosphereRenderPass;
 import com.branwilliams.bundi.atmosphere.pipeline.passes.AtmosphereRenderPass2;
-import com.branwilliams.bundi.atmosphere.pipeline.passes.ModelRenderPass;
-import com.branwilliams.bundi.atmosphere.pipeline.passes.SkydomeRenderPass;
 import com.branwilliams.bundi.engine.core.*;
-import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
-import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
-import com.branwilliams.bundi.engine.model.ModelLoader;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.Camera;
-import com.branwilliams.bundi.engine.model.Model;
 import com.branwilliams.bundi.engine.shader.Material;
 import com.branwilliams.bundi.engine.shader.Projection;
-import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
-import com.branwilliams.bundi.engine.systems.LockableSystem;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
-import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 import com.branwilliams.bundi.gui.api.components.Label;
 import com.branwilliams.bundi.gui.api.components.Slider;
@@ -29,8 +19,6 @@ import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
@@ -109,7 +97,7 @@ public class AtmosphereScene extends AbstractScene implements Window.KeyListener
     }
 
     private void loadUI() {
-        ContainerManager containerManager = guiScreenManager.load("./ui/atmosphere.xml");
+        ContainerManager containerManager = guiScreenManager.loadAsGuiScreen("./ui/atmosphere.xml");
 
         final Label xLabel = containerManager.getByTag("x_slider_value");
         final Label yLabel = containerManager.getByTag("y_slider_value");
