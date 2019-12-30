@@ -15,7 +15,7 @@
             <FontData font="Roboto" size="18" style="bold"/>
         </Button>
 
-        <Button tag="fix" width="200" height="24" highlight="false" text="Fix" tooltip="Fixes the skin last downloaded.">
+        <Button tag="fix" width="200" height="24" highlight="true" text="Fix" tooltip="Fixes the skin last downloaded.">
             <FontData font="Roboto" size="18" style="bold"/>
         </Button>
 

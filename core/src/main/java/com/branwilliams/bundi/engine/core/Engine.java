@@ -114,18 +114,9 @@ public class Engine implements Runnable {
         log.info("OpenGL version: " + glGetString(GL_VERSION));
         log.info("Graphics card: " + glGetString(GL_RENDERER));
         log.info("Graphics card vendor: " + glGetString(GL_VENDOR));
+        log.info("Max texture (1D/2D) size: " + glGetInteger(GL_MAX_TEXTURE_SIZE));
 
-        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-        alDevice = alcOpenDevice(defaultDeviceName);
-
-        int[] attributes = {0};
-        alContext = alcCreateContext(alDevice, attributes);
-        if (!alcMakeContextCurrent(alContext)) {
-            throw new RuntimeException("Unable to make OpenAL context current");
-        }
-
-        ALCCapabilities alcCapabilities = ALC.createCapabilities(alDevice);
-        alCapabilities = AL.createCapabilities(alcCapabilities);
+        createALContext();
 
         // Set the clear color and initial viewport dimensions.
         glClearColor(0F, 0F, 0F, 0F);
@@ -193,6 +184,27 @@ public class Engine implements Runnable {
                 frameTime = currentTime;
             }
         }
+    }
+
+    /**
+     * Creates the OpenAL context using the default audio device.
+     *
+     * */
+    private void createALContext() {
+        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+
+        alDevice = alcOpenDevice(defaultDeviceName);
+
+        int[] attributes = {0};
+        alContext = alcCreateContext(alDevice, attributes);
+        if (!alcMakeContextCurrent(alContext)) {
+            throw new RuntimeException("Unable to create OpenAL context");
+        }
+
+        ALCCapabilities alcCapabilities = ALC.createCapabilities(alDevice);
+        alCapabilities = AL.createCapabilities(alcCapabilities);
+
+        log.info("OpenAL context created using default device");
     }
 
     /**

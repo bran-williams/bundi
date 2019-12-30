@@ -11,7 +11,6 @@ import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.mcskin.steve.MCModel;
 import com.branwilliams.mcskin.steve.ModelPart;
-import com.branwilliams.mcskin.steve.SteveModel;
 import org.joml.Matrix4f;
 
 import java.util.function.Supplier;

@@ -97,7 +97,6 @@ public class ChunkMesh implements Destructible {
         float y = -animationHeight + (getAnimation() * animationHeight);
         if (meshState == MeshState.UNASSIGNED) {
             y = (getAnimation() * -animationHeight);
-            System.out.println("UNASSIGNED y= " + y);
         }
 
         return transformable.position(voxelChunk.chunkPos.getRealX(), y, voxelChunk.chunkPos.getRealZ());
@@ -109,13 +108,6 @@ public class ChunkMesh implements Destructible {
     public float getAnimation() {
         float animation = (float) (Timer.getSystemTime() - changeTime) / (float) VoxelConstants.CHUNK_ANIMATION_TIME_MS;
         animation = Math.min(1F, animation);
-//        if (animation != 1F)
-//            System.out.println("meshState=" + meshState.name() + ", animation=" + animation);
-//        if (meshState == MeshState.LOADED) {
-//            return animation;
-//        } else if (meshState == MeshState.UNASSIGNED) {
-//            return Math.max(0F, 1F - animation);
-//        }
         return animation;
     }
 

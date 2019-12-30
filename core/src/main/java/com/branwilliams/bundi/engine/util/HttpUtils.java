@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * @author Brandon
  * @since May 19, 2019
  */
-public enum HttpUtil {
+public enum HttpUtils {
     INSTANCE;
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36";

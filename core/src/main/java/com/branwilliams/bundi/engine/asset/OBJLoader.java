@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+@Deprecated
 public class OBJLoader {
 
     public Mesh load(File directory, String location) {

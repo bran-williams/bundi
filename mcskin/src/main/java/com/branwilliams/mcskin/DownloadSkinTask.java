@@ -1,6 +1,6 @@
 package com.branwilliams.mcskin;
 
-import com.branwilliams.bundi.engine.util.HttpUtil;
+import com.branwilliams.bundi.engine.util.HttpUtils;
 import com.branwilliams.mcskin.model.McProfile;
 import com.branwilliams.mcskin.model.McProfileData;
 import com.branwilliams.mcskin.model.McProfileTextures;
@@ -51,7 +51,7 @@ public class DownloadSkinTask implements Runnable {
             skinConsumer.accept(file.getAbsolutePath());
         } else {
             String downloadUrl = (String) textures.getTextures().get("SKIN").get("url");
-            String fileURL = HttpUtil.downloadImage(tempDirectory, profileData.getId(), downloadUrl, true);
+            String fileURL = HttpUtils.downloadImage(tempDirectory, profileData.getId(), downloadUrl, true);
             sleep();
             skinConsumer.accept(fileURL);
         }

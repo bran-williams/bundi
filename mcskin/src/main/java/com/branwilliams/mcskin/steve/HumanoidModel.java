@@ -6,7 +6,7 @@ import com.branwilliams.bundi.engine.shader.Material;
  * @author Brandon
  * @since November 24, 2019
  */
-public class SteveModel extends MCModel {
+public class HumanoidModel extends MCModel {
 
     public ModelPart head;
     public ModelPart headwear;
@@ -16,11 +16,11 @@ public class SteveModel extends MCModel {
     public ModelPart rightLeg;
     public ModelPart leftLeg;
 
-    public SteveModel(Material material) {
+    public HumanoidModel(Material material) {
         this(material, 0.0F);
     }
 
-    public SteveModel(Material material, float scale) {
+    public HumanoidModel(Material material, float scale) {
         super(material);
 
         this.head = new ModelPart(material, 0, 0);

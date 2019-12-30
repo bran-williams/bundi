@@ -26,9 +26,10 @@ public class VoxelChunk implements Destructible {
     public VoxelChunk(ChunkPos chunkPos, Voxel[][][] kernel) {
         this.chunkPos = chunkPos;
         this.kernel = kernel;
-        this.aabb = new AABB(chunkPos.getRealX(), chunkPos.getRealX() + VoxelConstants.CHUNK_X_SIZE,
-                0F, VoxelConstants.CHUNK_Y_SIZE,
-                chunkPos.getRealZ(), chunkPos.getRealZ() + VoxelConstants.CHUNK_Z_SIZE);
+        this.aabb = new AABB(chunkPos.getRealX(), 0F, chunkPos.getRealZ(),
+                chunkPos.getRealX() + VoxelConstants.CHUNK_X_SIZE,
+                VoxelConstants.CHUNK_Y_SIZE,
+                chunkPos.getRealZ() + VoxelConstants.CHUNK_Z_SIZE);
     }
 
     /**

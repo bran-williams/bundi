@@ -1,6 +1,6 @@
 package com.branwilliams.mcskin;
 
-import com.branwilliams.bundi.engine.util.HttpUtil;
+import com.branwilliams.bundi.engine.util.HttpUtils;
 import com.branwilliams.mcskin.model.McProfile;
 import com.branwilliams.mcskin.model.McProfileData;
 import com.branwilliams.mcskin.model.McProfileProperty;
@@ -35,7 +35,7 @@ public class McApi {
     }
 
     public void findProfile(String username, Consumer<McProfile> profileConsumer) {
-        HttpUtil.get("https://api.mojang.com/users/profiles/minecraft/" + username,
+        HttpUtils.get("https://api.mojang.com/users/profiles/minecraft/" + username,
                 (response) -> {
             McProfile profile = gson.fromJson(response, McProfile.class);
             profileConsumer.accept(profile);
@@ -43,7 +43,7 @@ public class McApi {
     }
 
     public void getProfileData(McProfile profile, Consumer<McProfileData> profileDataConsumer) {
-        HttpUtil.get("https://sessionserver.mojang.com/session/minecraft/profile/" + profile.getId(),
+        HttpUtils.get("https://sessionserver.mojang.com/session/minecraft/profile/" + profile.getId(),
                 (response) -> {
             McProfileData profileData = gson.fromJson(response, McProfileData.class);
             profileDataConsumer.accept(profileData);

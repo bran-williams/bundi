@@ -24,9 +24,9 @@ public class Voxel {
     }
 
     public AABB getBoundingBox(int x, int y, int z) {
-        return new AABB(x, x + CUBE_SIZE,
-                y, y + CUBE_SIZE,
-                z, z + CUBE_SIZE);
+        return new AABB(x, y, z, x + CUBE_SIZE,
+                y + CUBE_SIZE,
+                z + CUBE_SIZE);
     }
 
     /**

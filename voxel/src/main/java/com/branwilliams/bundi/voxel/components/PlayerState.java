@@ -37,7 +37,7 @@ public class PlayerState {
         voxelInHand = Voxels.diamond_block;
         reachDistance = 6F;
         eyeOffset = new Vector3f(0F, 1.62F, 0F);
-        boundingBox = new AABB(-halfWidth, halfWidth, 0, height, -halfWidth, halfWidth);
+        boundingBox = new AABB(-halfWidth, 0, -halfWidth, halfWidth, height, halfWidth);
     }
 
     public Vector3f getEyePosition(Transformable transformable) {

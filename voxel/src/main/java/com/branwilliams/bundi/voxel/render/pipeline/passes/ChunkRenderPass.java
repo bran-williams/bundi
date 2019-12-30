@@ -69,10 +69,6 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
         for (ChunkPos chunkPos : world.getChunkMeshStorage().getChunkPositionsForMeshes()) {
             VoxelChunk chunk = world.getChunks().getChunk(chunkPos);
             ChunkMesh chunkMesh = world.getChunkMesh(chunk);
-            if (chunkMesh != null && chunkMesh.getMeshState() == ChunkMesh.MeshState.UNASSIGNED) {
-                System.out.println("isRenderable=" + chunkMesh.isRenderable());
-                System.out.println("withinFrustum=" + renderContext.getFrustum().insideFrustumAABB(chunk.getAABB()));
-            }
 
             if (shouldRenderMesh(renderContext, chunkMesh, chunk)) {
                 this.chunkShaderProgram.setModelMatrix(chunkMesh.getTransformable(CHUNK_ANIMATION_HEIGHT));

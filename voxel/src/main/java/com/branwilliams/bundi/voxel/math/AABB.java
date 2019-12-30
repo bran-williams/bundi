@@ -17,7 +17,7 @@ public class AABB {
 
     private float minZ, maxZ;
 
-    public AABB(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
+    public AABB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
         this.minX = minX;
         this.maxX = maxX;
         this.minY = minY;
@@ -47,7 +47,7 @@ public class AABB {
         if (zOffset < 0.0F) minZ += zOffset;
         if (zOffset > 0.0F) maxZ += zOffset;
 
-        return new AABB(minX, maxX, minY, maxY, minZ, maxZ);
+        return new AABB(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     public void move(float x, float y, float z) {

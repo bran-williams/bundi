@@ -20,7 +20,8 @@ import com.branwilliams.bundi.gui.api.components.TextField;
 import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.mcskin.steve.MCModel;
-import com.branwilliams.mcskin.steve.SteveModel;
+import com.branwilliams.mcskin.steve.HumanoidModel;
+import com.branwilliams.mcskin.steve.PlayerModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,7 +46,7 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
 
     private TextureLoader textureLoader;
 
-    private TextureData overlay;
+    private String skinUrl;
 
     private Lock guiLock = new Lock();
 
@@ -82,16 +83,12 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
         this.setRenderer(mcSkinRenderer);
 
         textureLoader = new TextureLoader(engine.getContext());
-        mcModel = new SteveModel(new Material(), 0F);
+        mcModel = new HumanoidModel(new Material(), 0F);
+//        mcModel = new PlayerModel(new Material(), 0F);
         mcApi = new McApi();
 
-        overlay = textureLoader.loadTexture("skinfixer/overlay.png");
+        skinUrl = "skinfixer/skin.png";
     }
-
-    private TextField usernameField;
-
-    private Button submitButton;
-    private Button fixButton;
 
     @Override
     public void play(Engine engine) {
@@ -102,18 +99,17 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
 
         // Initialize the default skin.
         try {
-            TextureData textureData = textureLoader.loadTexture("skinfixer/skin.png");
-
-            Texture texture = new Texture(textureData, false);
-            texture.bind();
-            texture.nearestFilter();
-            Texture.unbind(texture);
-
-            mcModel.setTexture(texture);
+            TextureData skinData = textureLoader.loadTexture(skinUrl);
+            setModelSkin(skinData);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private TextField usernameField;
+
+    private Button submitButton;
+    private Button fixButton;
 
     private void loadUI() {
         ContainerManager containerManager = guiScreenManager.loadAsGuiScreen("./ui/mcskin.xml");
@@ -124,7 +120,6 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
 
         fixButton = containerManager.getByTag("fix");
 
-
         submitButton.onPressed(((button, clickAction) -> {
             if (submitButton.isHighlight() && clickAction.buttonId == 0 && usernameField.hasText()) {
                 downloadSkin(usernameField.getText());
@@ -134,7 +129,12 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
 
         fixButton.onPressed(((button, clickAction) -> {
             if (fixButton.isHighlight() && clickAction.buttonId == 0) {
-                System.out.println("TODO implement me!");
+                try {
+                    TextureData skinData = textureLoader.loadTexture(skinUrl);
+                    setModelSkin(applyOverlay(skinData));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
             return true;
         }));
@@ -157,20 +157,41 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     private void updateSkin(String skinUrl) {
         try {
             TextureData textureData = textureLoader.loadTexture(skinUrl);
-
-            // overlay if the dimensions line up!
-            if (overlay.getWidth() == textureData.getWidth() && overlay.getHeight() == textureData.getHeight())
-                textureData = TextureUtils.combine(textureData, overlay, 4, this::combineOverlay);
-
-            Texture texture = new Texture(textureData, false);
-            texture.bind();
-            texture.nearestFilter();
-            Texture.unbind(texture);
-            mcModel.setTexture(texture);
+            setModelSkin(textureData);
+            this.skinUrl = skinUrl;
         } catch (IOException e) {
             e.printStackTrace();
         }
         fixButton.setHighlight(true);
+    }
+
+    /**
+     * Sets or replaces the skin assigned to the model.
+     * */
+    private void setModelSkin(TextureData textureData) {
+        Texture texture = new Texture(textureData, false);
+        texture.bind();
+        texture.nearestFilter();
+        Texture.unbind(texture);
+        mcModel.setTexture(texture);
+    }
+
+    /**
+     * Applies the overlay onto of the provided texture data only if they are the same dimensions.
+     * */
+    private TextureData applyOverlay(TextureData textureData) {
+        try {
+            TextureData overlayData = textureLoader.loadTexture("skinfixer/overlay.png");
+
+            // overlay if the dimensions line up!
+            if (overlayData.getWidth() == textureData.getWidth() && overlayData.getHeight() == textureData.getHeight())
+                textureData = TextureUtils.combine(textureData, overlayData, 4, this::combineOverlay);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        return textureData;
     }
 
     @Override

@@ -39,12 +39,13 @@ public class ChunkMeshStorage implements Destructible {
         if (mesh == null) {
             mesh = meshPool.borrowMesh();
             meshes.put(chunkPos, mesh);
-            mesh.reassign(voxelChunk);
         }
+        mesh.reassign(voxelChunk);
     }
 
     public void unloadChunkMesh(ChunkPos chunkPos) {
         ChunkMesh mesh = meshes.get(chunkPos);
+
         if (mesh != null) {
             mesh.unassign();
         }
@@ -56,7 +57,6 @@ public class ChunkMeshStorage implements Destructible {
         for (Map.Entry<ChunkPos, ChunkMesh> entry : meshes.entrySet()) {
             ChunkMesh mesh = entry.getValue();
             if (mesh.getMeshState() == ChunkMesh.MeshState.UNASSIGNED && mesh.finishedAnimation()) {
-                System.out.println("removing mesh with mesh state=" + mesh.getMeshState().name());
                 toRemove.add(entry.getKey());
                 mesh.unload();
                 meshPool.returnMesh(mesh);
@@ -150,6 +150,13 @@ public class ChunkMeshStorage implements Destructible {
         @Override
         public void destroy() {
             this.pool.forEach(ChunkMesh::destroy);
+        }
+
+        @Override
+        public String toString() {
+            return "MeshPool{" +
+                    "pool=" + pool +
+                    '}';
         }
     }
 

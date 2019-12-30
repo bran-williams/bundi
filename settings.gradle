@@ -11,4 +11,5 @@ include 'cloth'
 include 'mcskin'
 include 'modelviewer'
 include 'marchingcubes'
+include 'imageviewer'
 

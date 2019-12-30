@@ -64,12 +64,12 @@ public interface Transformable extends Cloneable {
     /**
      * Adds the provided position to this position.
      * */
-    default Transformable transform(Vector3f position) {
+    default Transformable move(Vector3f position) {
         this.getPosition().add(position);
         return this;
     }
 
-    default Transformable transform(float x, float y, float z) {
+    default Transformable move(float x, float y, float z) {
         this.getPosition().add(x, y, z);
         return this;
     }
@@ -148,6 +148,19 @@ public interface Transformable extends Cloneable {
      * Produces a copy of this transformable.
      * */
     Transformable copy();
+
+    /**
+     * Copies this transform and adds the provided transform to it.
+     * */
+    default Transformable add(Transformable transform) {
+        Transformable res = copy();
+
+        res.getPosition().add(transform.getPosition());
+        res.getRotation().add(transform.getRotation());
+        res.setScale(res.getScale() + transform.getScale());
+
+        return res;
+    }
 
     /**
      * Creates a transformable who has the position and rotation of {0, 0, 0} and scale of 1. The transform is also
