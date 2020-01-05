@@ -4,9 +4,9 @@ public class Card {
 
     private CardRank rank;
 
-    private CardSuit suite;
+    private CardSuite suite;
 
-    public Card(CardRank rank, CardSuit suite) {
+    public Card(CardRank rank, CardSuite suite) {
         this.rank = rank;
         this.suite = suite;
     }
@@ -19,11 +19,11 @@ public class Card {
         this.rank = rank;
     }
 
-    public CardSuit getSuite() {
+    public CardSuite getSuite() {
         return suite;
     }
 
-    public void setSuite(CardSuit suite) {
+    public void setSuite(CardSuite suite) {
         this.suite = suite;
     }
 
