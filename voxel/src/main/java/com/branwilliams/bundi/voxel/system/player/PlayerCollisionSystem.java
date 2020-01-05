@@ -48,7 +48,7 @@ public class PlayerCollisionSystem extends AbstractSystem {
     }
 
     protected void onEntityMove(PhysicsSystem.EntityMoveEvent event) {
-        if (event.getEntity().hasComponent(PlayerState.class)) {
+        if (this.getMatcher().matches(event.getEntity())) {
             PlayerState playerState = event.getEntity().getComponent(PlayerState.class);
             if (playerState.isNoClip()) {
                 return;

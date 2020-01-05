@@ -18,6 +18,8 @@ import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.voxels.*;
 import org.joml.Vector4f;
 
+import java.util.List;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -113,47 +115,39 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
     }
 
     private void drawVoxelSelection(VoxelRenderContext renderContext, Window window) {
-        Item heldItem = scene.getPlayerState().getInventory().getHeldItem();
-        if (heldItem instanceof VoxelItem) {
-            Voxel voxel = ((VoxelItem) heldItem).getVoxel();
 
-            texturedShaderProgram.bind();
-            texturedShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
-            texturedShaderProgram.setModelMatrix(Transformable.empty());
+        texturedShaderProgram.bind();
+        texturedShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
+        texturedShaderProgram.setModelMatrix(Transformable.empty());
 
-            float size = 32F;
-            float padding = 6F;
-            glActiveTexture(GL_TEXTURE0);
+        float size = 32F;
+        float padding = 6F;
+        glActiveTexture(GL_TEXTURE0);
+        scene.getTexturePack().getDiffuseTextureAtlas().bind();
+        texturedVao.begin();
 
-            scene.getTexturePack().getEmissionTextureAtlas().bind();
-            texturedVao.begin();
-            addVoxel(voxel,
-                    window.getWidth() * 0.5F, window.getHeight() - size - padding, size);
-            texturedVao.draw();
+        List<Item> items = scene.getPlayerState().getInventory().getItems();
 
-            scene.getTexturePack().getNormalTextureAtlas().bind();
-            texturedVao.begin();
-            addVoxel(voxel,
-                    window.getWidth() * 0.5F - (size + padding), window.getHeight() - size - padding, size);
-            texturedVao.draw();
+        float x = window.getWidth() * 0.5F - (items.size() * (size + padding)) * 0.5F;
+        float y = window.getHeight() - size - padding;
 
-            scene.getTexturePack().getSpecularTextureAtlas().bind();
-            texturedVao.begin();
-            addVoxel(voxel,
-                    window.getWidth() * 0.5F - (size + padding) * 2, window.getHeight() - size - padding, size);
-            texturedVao.draw();
-
-            scene.getTexturePack().getDiffuseTextureAtlas().bind();
-            texturedVao.begin();
-            addVoxel(voxel,
-                    window.getWidth() * 0.5F - (size + padding) * 3, window.getHeight() - size - padding, size);
-            texturedVao.draw();
+        for (Item item : scene.getPlayerState().getInventory().getItems()) {
+            drawItem(item, x, y, size);
+            x += size + padding;
         }
 
+        drawItem(scene.getPlayerState().getInventory().getHeldItem(),
+                window.getWidth() * 0.5F - size * 0.5F,
+                window.getHeight() - 2 * (size + padding),
+                size);
+        texturedVao.draw();
+    }
 
-//        drawMipmaps(Voxels.grass, 2, 2, 2, 64);
-
-//        drawTexture(mipmaps[mipLevel], 0, 0);
+    private void drawItem(Item item, float x, float y, float size) {
+        if (item instanceof VoxelItem) {
+            Voxel voxel = ((VoxelItem) item).getVoxel();
+            addVoxel(voxel, x, y, size);
+        }
     }
 
     private void addVoxel(Voxel voxel, float x, float y, float size) {
