@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.voxel.inventory;
 
+import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import org.joml.Vector3f;
@@ -19,8 +20,14 @@ public class VoxelItem implements Item {
 
     @Override
     public boolean place(VoxelWorld world, Vector3f blockPosition) {
-        world.getChunks().setVoxelAtPosition(voxel, blockPosition);
-        return true;
+        AABB voxelAABB = voxel.getBoundingBox(blockPosition);
+
+        if (world.canVoxelBePlaced(blockPosition,voxelAABB)) {
+            world.getChunks().setVoxelAtPosition(voxel, blockPosition);
+            return true;
+        }
+
+        return false;
     }
 
     public Voxel getVoxel() {

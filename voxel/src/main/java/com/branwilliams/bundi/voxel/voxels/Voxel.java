@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.voxel.voxels;
 
 import com.branwilliams.bundi.voxel.math.AABB;
+import org.joml.Vector3f;
 
 import static com.branwilliams.bundi.voxel.VoxelConstants.CUBE_SIZE;
 
@@ -21,6 +22,12 @@ public class Voxel {
     public Voxel(VoxelIdentifier id, boolean translucent) {
         this.id = id;
         this.translucent = translucent;
+    }
+
+    public AABB getBoundingBox(Vector3f position) {
+        return new AABB(position.x, position.y, position.z, position.x + CUBE_SIZE,
+                position.y + CUBE_SIZE,
+                position. z + CUBE_SIZE);
     }
 
     public AABB getBoundingBox(int x, int y, int z) {

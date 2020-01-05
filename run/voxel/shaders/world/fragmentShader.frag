@@ -1,9 +1,15 @@
 #version 330
 
+// constants
+const float transparencyThreshold = 0.5;
+//const vec4 fogColor = vec4(0.5, 0.5,0.5);
+const float FogDensity = 0.025;
+
 in vec3 passFragPos;
 in vec3 passNormal;
 in vec2 passTextureCoordinates;
 in vec3 passTangent;
+in vec4 passViewSpace;
 
 out vec4 fragColor;
 
@@ -26,9 +32,72 @@ struct Material {
 uniform Material material;
 uniform DirLight directionalLight;
 uniform vec3 viewPos;
+uniform vec4 fogColor;
+uniform float fogDistance;
 
-// constants
-const float transparencyThreshold = 0.5;
+//#if FOG_LINEAR
+//vec4 computeFog(vec4 lightColor, float dist) {
+//    // 20 - fog starts; 80 - fog ends
+//    float fogFactor = (80 - dist)/(80 - 20);
+//    fogFactor = clamp( fogFactor, 0.0, 1.0 );
+//
+//    //if you inverse color in glsl mix function you have to
+//    //put 1.0 - fogFactor
+//    return mix(fogColor, lightColor, fogFactor);
+//}
+//    #elif FOG_EXPONENTIAL_SQUARED
+//vec4 computeFog(vec4 lightColor, float dist) {
+//    float fogFactor = 1.0 /exp( (dist * FogDensity)* (dist * FogDensity));
+//    fogFactor = clamp( fogFactor, 0.0, 1.0 );
+//
+//    return mix(fogColor, lightColor, fogFactor);
+//}
+//    #elif FOG_EXPONENTIAL
+//vec4 computeFog(vec4 lightColor, float dist) {
+//    float fogFactor = 1.0 / exp(dist * FogDensity);
+//    fogFactor = clamp( fogFactor, 0.0, 1.0 );
+//
+//    // mix function fogColor⋅(1−fogFactor) + lightColor⋅fogFactor
+//    return mix(fogColor, lightColor, fogFactor);
+//}
+//    #endif
+
+
+
+//    #if FOG_PLANE_BASED
+//float computeDist(vec4 viewSpace) {
+//    return abs(viewSpace.z);
+//}
+//    #else
+//float computeDist(vec4 viewSpace) {
+//    return length(viewSpace);
+//}
+//    #endif
+
+//
+vec4 computeFog(vec3 lightDir, vec3 viewDir, vec4 lightColor, float dist) {
+//    float fogAmount = 1.0 - exp( -dist * FogDensity );
+//    vec4  fogColor  = vec4(0.5, 0.6, 0.7, 1.0);
+//    return mix( lightColor, fogColor, fogAmount );
+
+    float fogAmount = 1.0 - exp( -dist * FogDensity );
+    float sunAmount = max( dot( viewDir, -lightDir ), 0.0 );
+    vec4  fogColor  = mix( vec4(0.5, 0.6, 0.7, 1.0), // bluish
+    vec4(1.0, 0.9, 0.7, 1.0), // yellowish
+    pow(sunAmount, 8.0) );
+    return mix( lightColor, fogColor, fogAmount );
+
+//    float fogFactor = 1.0 / exp(dist * FogDensity);
+//     fogFactor = clamp( fogFactor, 0.0, 1.0 );
+//    // mix function fogColor⋅(1−fogFactor) + lightColor⋅fogFactor
+//    return mix(fogColor, lightColor, fogFactor);
+}
+
+// plane based distance.
+float computeDist(vec4 viewSpace) {
+    return -(viewSpace.z);
+    // return abs(viewSpace.z);
+}
 
 /**
  TBN calculation from
@@ -75,5 +144,11 @@ void main() {
 
     vec3 emission = texture(material.emission, passTextureCoordinates).rgb;
 
-    fragColor = vec4(ambient + diffuse + specular + emission, 1.0);
+    vec4 lightColor = vec4(ambient + diffuse + specular + emission, 1.0);
+
+    //distance
+    float dist = computeDist(passViewSpace);
+
+    fragColor = computeFog(lightDir, viewDir, lightColor, dist);
+
 }

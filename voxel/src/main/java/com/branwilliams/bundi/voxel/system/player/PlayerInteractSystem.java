@@ -8,6 +8,8 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.math.AABB;
+import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.voxels.Voxels;
 import org.joml.Vector3f;
 
@@ -104,9 +106,10 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
                 case MOUSE_RIGHT_CLICK:
                     Vector3f placePosition = new Vector3f(playerState.getRaycast().blockPosition);
                     placePosition.add(playerState.getRaycast().face);
-                    if (scene.getVoxelWorld().getChunks().getVoxelAtPosition(placePosition).isAir()) {
-                        scene.getVoxelWorld().getChunks().setVoxelAtPosition(playerState.getVoxelInHand(), placePosition);
-                        interactionDelay = TICKS_PER_INTERACTION;
+                    if (playerState.getInventory().hasHeldItem()) {
+                        boolean placed = playerState.getInventory().getHeldItem().place(scene.getVoxelWorld(), placePosition);
+                        if (placed)
+                            interactionDelay = TICKS_PER_INTERACTION;
                     }
                     break;
                 case NO_MOUSE:

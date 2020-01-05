@@ -236,7 +236,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
         // create generator and world
         VoxelChunkGenerator voxelChunkGenerator = new PerlinChunkGenerator();
-        voxelWorld = new VoxelWorld(voxelRegistry, voxelChunkGenerator, chunkStorage, chunkMeshStorage);
+        voxelWorld = new VoxelWorld(voxelRegistry, voxelChunkGenerator, chunkStorage, chunkMeshStorage, es);
 
         // load the chunks at a given position in a given radius
         Transformable transformable = player.getComponent(Transformable.class);

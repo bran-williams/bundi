@@ -1,7 +1,12 @@
 package com.branwilliams.bundi.voxel.world;
 
 import com.branwilliams.bundi.engine.core.Destructible;
+import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
+import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
+import com.branwilliams.bundi.engine.ecs.IEntity;
+import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.math.RaycastResult;
 import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
@@ -41,13 +46,19 @@ public class VoxelWorld implements Destructible {
 
     private Set<ChunkPos> visibleChunks;
 
+    private EntitySystemManager loadedEntities;
+
+    private IComponentMatcher playerMatcher;
+
     public VoxelWorld(VoxelRegistry voxelRegistry, VoxelChunkGenerator voxelChunkGenerator, ChunkStorage chunks,
-                      ChunkMeshStorage chunkMeshStorage) {
+                      ChunkMeshStorage chunkMeshStorage, EntitySystemManager loadedEntities) {
         this.voxelRegistry = voxelRegistry;
         this.voxelChunkGenerator = voxelChunkGenerator;
         this.chunks = chunks;
         this.chunkMeshStorage = chunkMeshStorage;
         this.visibleChunks = new HashSet<>();
+        this.loadedEntities = loadedEntities;
+        this.playerMatcher = this.loadedEntities.matcher(PlayerState.class, Transformable.class);
     }
 
     /**
@@ -120,9 +131,31 @@ public class VoxelWorld implements Destructible {
     }
 
     /**
+     * @return True if a voxel can be placed at the position provided.
+     * */
+    public boolean canVoxelBePlaced(Vector3f placePosition, AABB aabb) {
+        Voxel voxelAtPosition = chunks.getVoxelAtPosition(placePosition);
+        return voxelAtPosition.isAir() && getEntitiesWithinAABB(aabb, (e) -> true).isEmpty();
+    }
+
+    private List<IEntity> getEntitiesWithinAABB(AABB aabb, Predicate<IEntity> filter) {
+        List<IEntity> entities = new ArrayList<>();
+        for (IEntity player : loadedEntities.getEntities(playerMatcher)) {
+            if (filter.test(player)) {
+                PlayerState playerState = player.getComponent(PlayerState.class);
+
+                if (playerState.getBoundingBox().intersects(aabb)) {
+                    entities.add(player);
+                }
+            }
+        }
+        return entities;
+    }
+
+    /**
      *
      * */
-    public List<AABB> queryVoxelsWithinAABB(AABB aabb, Predicate<Voxel> filter) {
+    public List<AABB> getVoxelsWithinAABB(AABB aabb, Predicate<Voxel> filter) {
         List<AABB> voxels = new ArrayList<>();
 
         for (int x = Mathf.floor(aabb.getMinX()); x < Mathf.ceil(aabb.getMaxX()); x++) {

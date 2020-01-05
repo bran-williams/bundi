@@ -111,6 +111,12 @@ public class AABB {
         return za;
     }
 
+    public boolean intersects(AABB aabb) {
+        return (minX <= aabb.maxX && maxX >= aabb.minX) &&
+                (minY <= aabb.maxY && maxY >= aabb.minY) &&
+                (minZ <= aabb.maxZ && maxZ >= aabb.minZ);
+    }
+
     public void set(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
         this.minX = minX;
         this.maxX = maxX;

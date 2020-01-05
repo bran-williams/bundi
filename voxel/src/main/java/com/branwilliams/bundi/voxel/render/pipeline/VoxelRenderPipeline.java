@@ -17,7 +17,8 @@ public class VoxelRenderPipeline extends RenderPipeline<VoxelRenderContext> {
         super(new VoxelRenderContext(projection));
 
         this.addLast(new ChunkRenderPass(scene));
-        this.addLast(new SkyboxRenderPass<>(scene::getCamera, scene::getSkybox));
+        this.addLast(new AtmosphereRenderPass(scene));
+//        this.addLast(new SkyboxRenderPass<>(scene::getCamera, scene::getSkybox));
         this.addLast(new ChunkBorderRenderPass(scene));
         this.addLast(new VoxelSelectionRenderPass(scene));
         this.addLast(new VoxelHandRenderPass(scene));

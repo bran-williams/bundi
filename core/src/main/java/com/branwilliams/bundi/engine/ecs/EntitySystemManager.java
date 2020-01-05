@@ -147,6 +147,7 @@ public class EntitySystemManager implements Destructible {
     public IComponentMatcher matcher(Class<?>... components) {
         IComponentMatcher componentMatcher = new ClassComponentMatcher(components);
         this.addMatcher(componentMatcher);
+        this.updateGrouping(componentMatcher);
         return componentMatcher;
     }
 
@@ -174,8 +175,10 @@ public class EntitySystemManager implements Destructible {
             }
 
             entityListeners.forEach((l) -> l.onEntityAdd(entity));
+            return true;
+        } else {
+            return false;
         }
-        return added;
     }
 
     /**

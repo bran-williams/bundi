@@ -56,7 +56,7 @@ public class PlayerCollisionSystem extends AbstractSystem {
 
             AABB playerAABB = playerState.getBoundingBox();
 
-            List<AABB> voxels = scene.getVoxelWorld().queryVoxelsWithinAABB(playerAABB.expand(event.getMovement()),
+            List<AABB> voxels = scene.getVoxelWorld().getVoxelsWithinAABB(playerAABB.expand(event.getMovement()),
                     (v) -> !v.isAir());
 
             Vector3f movement = event.getMovement();

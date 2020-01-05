@@ -89,7 +89,7 @@ public class Engine implements Runnable {
             window.initialize();
             running = true;
             loop();
-            sceneCache.values().forEach(Scene::destroy);
+            closeScenes();
             alcDestroyContext(alContext);
             alcCloseDevice(alDevice);
             window.destroy();
@@ -184,6 +184,16 @@ public class Engine implements Runnable {
                 frameTime = currentTime;
             }
         }
+    }
+
+    private void closeScenes() {
+        try {
+            sceneCache.values().forEach(Scene::destroy);
+        } catch (Exception e) {
+            // TODO create an engine exception?
+            log.error("Unable to destroy remaining scenes.");
+        }
+
     }
 
     /**
