@@ -58,7 +58,7 @@ public class HeightmapBlendmapGenerator implements BlendmapGenerator {
     }
 
     private float getPercentage(float value, float min, float max) {
-        value = Mathf.clamp(value, max, min);
+        value = Mathf.clamp(value, min, max);
         return ( value - min ) / ( max - min );
     }
 }

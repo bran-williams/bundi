@@ -126,20 +126,25 @@ public class PlayerInputSystem extends AbstractSystem implements Window.MouseLis
         if (scene.isLocked())
             return;
 
-        selectedIdx += (yoffset > 0 ? 1 : -1);
-
-        List<String> sortedVoxelIdentifiers = scene.getVoxelRegistry().getSortedVoxelIdentifiers();
-
-        if (selectedIdx >= sortedVoxelIdentifiers.size()) {
-            selectedIdx = 0;
+        if (yoffset > 0) {
+            scene.getPlayerState().getInventory().nextItem();
+        } else {
+            scene.getPlayerState().getInventory().prevItem();
         }
-        if (selectedIdx < 0) {
-            selectedIdx = sortedVoxelIdentifiers.size() - 1;
-        }
-
-        String voxelIdentifier = sortedVoxelIdentifiers.get(selectedIdx);
-
-        scene.getPlayerState().setVoxelInHand(scene.getVoxelRegistry().getVoxel(voxelIdentifier));
+//        selectedIdx += (yoffset > 0 ? 1 : -1);
+//
+//        List<String> sortedVoxelIdentifiers = scene.getVoxelRegistry().getSortedVoxelIdentifiers();
+//
+//        if (selectedIdx >= sortedVoxelIdentifiers.size()) {
+//            selectedIdx = 0;
+//        }
+//        if (selectedIdx < 0) {
+//            selectedIdx = sortedVoxelIdentifiers.size() - 1;
+//        }
+//
+//        String voxelIdentifier = sortedVoxelIdentifiers.get(selectedIdx);
+//
+//        scene.getPlayerState().setVoxelInHand(scene.getVoxelRegistry().getVoxel(voxelIdentifier));
     }
 
     @Override

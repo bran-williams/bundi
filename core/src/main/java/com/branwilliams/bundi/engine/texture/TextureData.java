@@ -78,8 +78,8 @@ public class TextureData implements Destructible {
 
     public static int getIndex(int width, int height, int channels, int x, int y) {
         // Clamp pixel coordinates to the edges
-        x = Mathf.clamp(x, width - 1, 0);
-        y = Mathf.clamp(y, height - 1, 0);
+        x = Mathf.clamp(x, 0, width - 1);
+        y = Mathf.clamp(y, 0, height - 1);
         return (x + y * width) * channels;
     }
 
@@ -129,8 +129,8 @@ public class TextureData implements Destructible {
      * */
     public void setPixel(int x, int y, byte r, byte g, byte b, byte a) {
         // Clamp pixel coordinates to the edges
-        x = Mathf.clamp(x, width - 1, 0);
-        y = Mathf.clamp(y, height - 1, 0);
+        x = Mathf.clamp(x, 0, width - 1);
+        y = Mathf.clamp(y, 0, height - 1);
 
         int index = getIndex(x, y);
         switch (channels) {

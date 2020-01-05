@@ -55,9 +55,9 @@ public class VoxelChunk implements Destructible {
      * @return The {@link Voxel} stored within this chunks kernel at the kernel x, y, and z coordinates.
      * */
     public Voxel getVoxelAtPosition(int x, int y, int z) {
-        x = Mathf.clamp(x, kernel.length - 1,       0);
-        y = Mathf.clamp(y, kernel[0].length - 1,    0);
-        z = Mathf.clamp(z, kernel[0][0].length - 1, 0);
+        x = Mathf.clamp(x, 0, kernel.length - 1);
+        y = Mathf.clamp(y, 0, kernel[0].length - 1);
+        z = Mathf.clamp(z, 0, kernel[0][0].length - 1);
 
         return kernel[x][y][z];
     }
@@ -73,9 +73,9 @@ public class VoxelChunk implements Destructible {
      * @return True if any changes occurred to this chunk.
      * */
     public boolean setVoxelAtPosition(Voxel voxel, int x, int y, int z) {
-        x = Mathf.clamp(x, kernel.length - 1,       0);
-        y = Mathf.clamp(y, kernel[0].length - 1,    0);
-        z = Mathf.clamp(z, kernel[0][0].length - 1, 0);
+        x = Mathf.clamp(x, 0, kernel.length - 1);
+        y = Mathf.clamp(y, 0, kernel[0].length - 1);
+        z = Mathf.clamp(z, 0, kernel[0][0].length - 1);
 
         // Mark this chunk as dirty if any changes occurred.
         if (kernel[x][y][z] != voxel)

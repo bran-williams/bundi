@@ -37,7 +37,7 @@ public enum Mathf {
     public static final float degreesToRadians = PI / 180;
 
     public static float smoothstep(float edge0, float edge1, float x) {
-        float t = clamp((x - edge0) / (edge1 - edge0), 1.0F, 0.0F);
+        float t = clamp((x - edge0) / (edge1 - edge0), 0.0F, 1.0F);
         return t * t * (3.0F - 2.0F * t);
     }
 
@@ -124,13 +124,13 @@ public enum Mathf {
      * Clamps the given input between the maximum and -maximum
      */
     public static float clamp(float input, float max) {
-        return clamp(input, max, -max);
+        return clamp(input, -max, max);
     }
 
     /**
      * Clamps the input between the maximum and minimum values.
      * */
-    public static float clamp(float input, float max, float min) {
+    public static float clamp(float input, float min, float max) {
         return Math.max(Math.min(input, max), min);
     }
 
@@ -138,13 +138,13 @@ public enum Mathf {
      * Clamps the given input between the maximum and -maximum
      */
     public static double clamp(double input, double max) {
-        return clamp(input, max, -max);
+        return clamp(input, -max, max);
     }
 
     /**
      * Clamps the input between the maximum and minimum values.
      * */
-    public static double clamp(double input, double max, double min) {
+    public static double clamp(double input, double min, double max) {
         return Math.max(Math.min(input, max), min);
     }
 
@@ -152,12 +152,13 @@ public enum Mathf {
      * Clamps the given input between the maximum and -maximum
      */
     public static double clamp(int input, int max) {
-        return clamp(input, max, -max);
+        return clamp(input, -max, max);
     }
+
     /**
      * Clamps the input between the maximum and minimum values.
      * */
-    public static int clamp(int input, int max, int min) {
+    public static int clamp(int input, int min, int max) {
         return Math.max(Math.min(input, max), min);
     }
 

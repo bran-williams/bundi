@@ -251,6 +251,22 @@ public final class FontData implements Destructible {
             this.width = width;
             this.height = height;
         }
+
+        public float getU() {
+            return (float) x / FontData.this.texture.getWidth();
+        }
+
+        public float getV() {
+            return (float) y / FontData.this.texture.getHeight();
+        }
+
+        public float getS() {
+            return (float) (x + width) / FontData.this.texture.getWidth();
+        }
+
+        public float getT() {
+            return (float) (y + height) / FontData.this.texture.getHeight();
+        }
     }
 
 }

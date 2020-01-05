@@ -10,6 +10,8 @@ import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.inventory.Item;
+import com.branwilliams.bundi.voxel.inventory.VoxelItem;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import org.joml.Vector3f;
@@ -50,16 +52,22 @@ public class VoxelHandRenderPass extends RenderPass<VoxelRenderContext> {
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         Vector3f handPos = new Vector3f(0.5F, -0.4F, -0.5F);
+        Item heldItem = scene.getPlayerState().getInventory().getHeldItem();
 
-        shaderProgram.bind();
-        shaderProgram.setProjectionMatrix(renderContext.getProjection());
-        shaderProgram.setViewMatrix(staticCamera);
-        shaderProgram.setModelMatrix(transformable.position(handPos));
+        if (heldItem instanceof VoxelItem) {
+            Voxel voxel = ((VoxelItem) heldItem).getVoxel();
+            shaderProgram.bind();
+            shaderProgram.setProjectionMatrix(renderContext.getProjection());
+            shaderProgram.setViewMatrix(staticCamera);
+            shaderProgram.setModelMatrix(transformable.position(handPos));
 
-        updateCubeMesh(scene.getPlayerState().getVoxelInHand());
-        MeshRenderer.render(cubeMesh, scene.getTexturePack().getMaterial());
+            updateCubeMesh(voxel);
+            MeshRenderer.render(cubeMesh, scene.getTexturePack().getMaterial());
 
-        ShaderProgram.unbind();
+            ShaderProgram.unbind();
+        } else {
+            System.out.println("No held item!");
+        }
     }
 
     private void updateCubeMesh(Voxel voxel) {

@@ -13,6 +13,7 @@ import com.branwilliams.bundi.gui.impl.ColorPack;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.bundi.voxel.components.*;
+import com.branwilliams.bundi.voxel.inventory.ItemRegistry;
 import com.branwilliams.bundi.voxel.io.*;
 import com.branwilliams.bundi.voxel.io.SettingsLoader;
 import com.branwilliams.bundi.voxel.system.world.ChunkLoadSystem;
@@ -61,6 +62,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
     private Skybox skybox;
 
     private VoxelRegistry voxelRegistry;
+
+    private ItemRegistry itemRegistry;
 
     private VoxelWorld voxelWorld;
 
@@ -130,6 +133,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
         loadVoxelData(jsonLoader, assetDirectory, Paths.get("voxel_properties_hd.json"),
                 Paths.get("default_textures.json"));
 
+        itemRegistry = new ItemRegistry(voxelRegistry);
+
         loadSettings(jsonLoader);
 
         voxelMeshBuilder = new VoxelMeshBuilder(voxelRegistry, texturePack);
@@ -148,6 +153,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
         }
 
         playerState = new PlayerState();
+        playerState.getInventory().addItems(itemRegistry);
 
         player = es.entity("player")
                 .component(new CameraComponent(camera, 0.16F),

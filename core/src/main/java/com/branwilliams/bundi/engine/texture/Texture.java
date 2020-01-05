@@ -160,10 +160,10 @@ public class Texture implements Destructible {
      * @param mipmaps Creates mip maps for this image if true.
      * */
     public Texture(Vector4f color, int width, int height, boolean mipmaps) {
-        this(toByteBuffer((int) (Mathf.clamp(color.x * 255F, 255F, 0F)),
-                (int) (Mathf.clamp(color.y * 255F, 255F, 0F)),
-                (int) (Mathf.clamp(color.z * 255F, 255F, 0F)),
-                (int) (Mathf.clamp(color.w * 255F, 255F, 0F)), width, height),
+        this(toByteBuffer((int) (Mathf.clamp(color.x * 255F, 0F, 255F)),
+                (int) (Mathf.clamp(color.y * 255F, 0F, 255F)),
+                (int) (Mathf.clamp(color.z * 255F, 0F, 255F)),
+                (int) (Mathf.clamp(color.w * 255F, 0F, 255F)), width, height),
                 width, height, mipmaps, TextureType.COLOR);
     }
 

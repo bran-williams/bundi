@@ -1,6 +1,8 @@
 package com.branwilliams.bundi.voxel.components;
 
 import com.branwilliams.bundi.engine.shader.Transformable;
+import com.branwilliams.bundi.voxel.inventory.Inventory;
+import com.branwilliams.bundi.voxel.inventory.ItemRegistry;
 import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.math.RaycastResult;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
@@ -13,7 +15,7 @@ import org.joml.Vector3f;
  */
 public class PlayerState {
 
-    private Voxel voxelInHand;
+    private Inventory inventory;
 
     private RaycastResult raycast;
 
@@ -34,7 +36,7 @@ public class PlayerState {
     private float height = 1.8F;
 
     public PlayerState() {
-        voxelInHand = Voxels.diamond_block;
+        inventory = new Inventory();
         reachDistance = 6F;
         eyeOffset = new Vector3f(0F, 1.62F, 0F);
         boundingBox = new AABB(-halfWidth, 0, -halfWidth, halfWidth, height, halfWidth);
@@ -75,12 +77,12 @@ public class PlayerState {
         this.boundingBox = boundingBox;
     }
 
-    public Voxel getVoxelInHand() {
-        return voxelInHand;
+    public Inventory getInventory() {
+        return inventory;
     }
 
-    public void setVoxelInHand(Voxel voxelInHand) {
-        this.voxelInHand = voxelInHand;
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     public RaycastResult getRaycast() {

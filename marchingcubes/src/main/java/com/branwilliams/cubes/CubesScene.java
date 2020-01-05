@@ -11,6 +11,7 @@ import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
+import com.branwilliams.cubes.pipeline.GridCellRenderPass;
 
 /**
  * @author Brandon
@@ -21,6 +22,10 @@ public class CubesScene extends AbstractScene {
     private Camera camera;
 
     private boolean wireframe;
+
+    private GridCell gridCell;
+
+    private GridCellMesh gridCellMesh;
 
     public CubesScene() {
         super("cubes");
@@ -36,6 +41,7 @@ public class CubesScene extends AbstractScene {
 
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addLast(new EnableWireframeRenderPass(this::isWireframe));
+        renderPipeline.addLast(new GridCellRenderPass(this, this::getCamera));
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
         CubesRenderer renderer = new CubesRenderer(this, renderPipeline);
         setRenderer(renderer);
@@ -44,12 +50,28 @@ public class CubesScene extends AbstractScene {
     @Override
     public void play(Engine engine) {
         camera = new Camera();
-        camera.setPosition(40, 20, 100);
+        camera.setPosition(20, 20, 60);
+        camera.lookAt(16, 16, 16);
+
+        GridCellKernelBuilder gridCellKernelBuilder = new GridCellKernelBuilder();
+        GridCellBuilder gridCellBuilder = new GridCellBuilder(gridCellKernelBuilder);
+        gridCell = gridCellBuilder.buildGridCell(32, 32, 32, 0.25F);
+
+        GridCellMeshBuilder gridCellMeshBuilder = new GridCellMeshBuilder();
+        gridCellMesh = gridCellMeshBuilder.buildMesh(gridCell);
     }
 
     @Override
     public void pause(Engine engine) {
 
+    }
+
+    public GridCell getGridCell() {
+        return gridCell;
+    }
+
+    public GridCellMesh getGridCellMesh() {
+        return gridCellMesh;
     }
 
     public Camera getCamera() {

@@ -56,7 +56,7 @@ public class Slider extends Component {
         if (this.sliding) {
             float oldPercentage = this.sliderPercentage;
             this.sliderPercentage = Mathf.clamp((toolbox.getMouseX() - getX() - (getBarSize() / 2F)) / (getWidthForSlider()),
-            1F, 0F);
+                    0F, 1F);
             if (oldPercentage != sliderPercentage && valueChangeFunction != null) {
                 this.valueChangeFunction.accept(this);
             }
@@ -117,6 +117,6 @@ public class Slider extends Component {
     }
 
     public int getFormattedValue() {
-        return Mathf.clamp((int) (sliderPercentage * 100), 100, 0);
+        return Mathf.clamp((int) (sliderPercentage * 100), 0, 100);
     }
 }

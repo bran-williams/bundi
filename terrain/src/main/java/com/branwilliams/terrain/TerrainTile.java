@@ -52,11 +52,11 @@ public class TerrainTile implements Destructible {
 
     public int getIndex(int x, int z) {
         // clamp the x, z positions.
-        x = Mathf.clamp(x, width, 0);
-        z = Mathf.clamp(z, depth, 0);
+        x = Mathf.clamp(x, 0, width);
+        z = Mathf.clamp(z, 0, depth);
 
         int index = (x + z * width);
-        return Mathf.clamp(index, heightmap.length - 1, 0);
+        return Mathf.clamp(index, 0, heightmap.length - 1);
     }
 
     public TerrainVertex[] getHeightmap() {

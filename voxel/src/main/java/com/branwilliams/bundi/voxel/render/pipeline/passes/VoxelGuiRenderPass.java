@@ -12,6 +12,8 @@ import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.util.TextureUtils;
 import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.inventory.Item;
+import com.branwilliams.bundi.voxel.inventory.VoxelItem;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.voxels.*;
 import org.joml.Vector4f;
@@ -91,7 +93,6 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
             return;
         }
         drawCrosshair(renderContext);
-
         drawVoxelSelection(renderContext, window);
 
         ShaderProgram.unbind();
@@ -112,37 +113,43 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
     }
 
     private void drawVoxelSelection(VoxelRenderContext renderContext, Window window) {
-        texturedShaderProgram.bind();
-        texturedShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
-        texturedShaderProgram.setModelMatrix(Transformable.empty());
+        Item heldItem = scene.getPlayerState().getInventory().getHeldItem();
+        if (heldItem instanceof VoxelItem) {
+            Voxel voxel = ((VoxelItem) heldItem).getVoxel();
 
-        float size = 32F;
-        float padding = 6F;
-        glActiveTexture(GL_TEXTURE0);
+            texturedShaderProgram.bind();
+            texturedShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
+            texturedShaderProgram.setModelMatrix(Transformable.empty());
 
-        scene.getTexturePack().getEmissionTextureAtlas().bind();
-        texturedVao.begin();
-        addVoxel(scene.getPlayerState().getVoxelInHand(),
-                window.getWidth() * 0.5F, window.getHeight() - size - padding, size);
-        texturedVao.draw();
+            float size = 32F;
+            float padding = 6F;
+            glActiveTexture(GL_TEXTURE0);
 
-        scene.getTexturePack().getNormalTextureAtlas().bind();
-        texturedVao.begin();
-        addVoxel(scene.getPlayerState().getVoxelInHand(),
-                window.getWidth() * 0.5F - (size + padding), window.getHeight() - size - padding, size);
-        texturedVao.draw();
+            scene.getTexturePack().getEmissionTextureAtlas().bind();
+            texturedVao.begin();
+            addVoxel(voxel,
+                    window.getWidth() * 0.5F, window.getHeight() - size - padding, size);
+            texturedVao.draw();
 
-        scene.getTexturePack().getSpecularTextureAtlas().bind();
-        texturedVao.begin();
-        addVoxel(scene.getPlayerState().getVoxelInHand(),
-                window.getWidth() * 0.5F - (size + padding) * 2, window.getHeight() - size - padding, size);
-        texturedVao.draw();
+            scene.getTexturePack().getNormalTextureAtlas().bind();
+            texturedVao.begin();
+            addVoxel(voxel,
+                    window.getWidth() * 0.5F - (size + padding), window.getHeight() - size - padding, size);
+            texturedVao.draw();
 
-        scene.getTexturePack().getDiffuseTextureAtlas().bind();
-        texturedVao.begin();
-        addVoxel(scene.getPlayerState().getVoxelInHand(),
-                window.getWidth() * 0.5F - (size + padding) * 3, window.getHeight() - size - padding, size);
-        texturedVao.draw();
+            scene.getTexturePack().getSpecularTextureAtlas().bind();
+            texturedVao.begin();
+            addVoxel(voxel,
+                    window.getWidth() * 0.5F - (size + padding) * 2, window.getHeight() - size - padding, size);
+            texturedVao.draw();
+
+            scene.getTexturePack().getDiffuseTextureAtlas().bind();
+            texturedVao.begin();
+            addVoxel(voxel,
+                    window.getWidth() * 0.5F - (size + padding) * 3, window.getHeight() - size - padding, size);
+            texturedVao.draw();
+        }
+
 
 //        drawMipmaps(Voxels.grass, 2, 2, 2, 64);
 
