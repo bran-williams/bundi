@@ -16,6 +16,7 @@ import com.branwilliams.bundi.voxel.components.*;
 import com.branwilliams.bundi.voxel.inventory.ItemRegistry;
 import com.branwilliams.bundi.voxel.io.*;
 import com.branwilliams.bundi.voxel.io.SettingsLoader;
+import com.branwilliams.bundi.voxel.system.world.AtmosphereSystem;
 import com.branwilliams.bundi.voxel.system.world.ChunkLoadSystem;
 import com.branwilliams.bundi.voxel.system.world.PhysicsSystem;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelFaceTexture;
@@ -33,6 +34,7 @@ import com.branwilliams.bundi.voxel.world.storage.ChunkStorage;
 import com.branwilliams.bundi.voxel.world.storage.HashChunkStorage;
 import com.google.gson.reflect.TypeToken;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +81,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     private IEntity player;
 
-    private DirectionalLight sun;
+    private Atmosphere atmosphere;
 
     private boolean stop = false;
 
@@ -107,11 +109,6 @@ public class VoxelScene extends AbstractScene implements Lockable {
         setRenderer(voxelRenderer);
 
         camera = new Camera();
-        sun = new DirectionalLight(
-                new Vector3f(-0.2F, -1.0F, -0.3F), // direction
-                new Vector3f(0.5F),                      // ambient
-                new Vector3f(0.4F),                      // diffuse
-                new Vector3f(0.5F));                     // specular
 
         es.addSystem(new PlayerPauseSystem(this, this));
         es.addSystem(new LockableSystem(this, new ChunkLoadSystem(this)));
@@ -121,6 +118,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
         es.addSystem(new PlayerCameraUpdateSystem(this)); // This system extends a system with lockable logic already.
         es.addSystem(new LockableSystem(this, new PlayerRaycastSystem(this)));
         es.addSystem(new PlayerInteractSystem(this, this)); // This system implements its own lockable logic.
+        es.addSystem(new LockableSystem(this, new AtmosphereSystem()));
         es.initSystems(engine, window);
 
         window.disableCursor();
@@ -164,6 +162,26 @@ public class VoxelScene extends AbstractScene implements Lockable {
                         playerState
                 ).build();
         playerState.updateBoundingBox(player.getComponent(Transformable.class));
+
+        DirectionalLight sun = new DirectionalLight(
+                new Vector3f(-0.2F, -1.0F, -0.3F), // direction
+                new Vector3f(0.5F),                      // ambient
+                new Vector3f(0.4F),                      // diffuse
+                new Vector3f(0.5F));                     // specular
+
+        // blueish
+        Vector4f skyColor = new Vector4f(0.5F, 0.6F, 0.7F, 1.0F);
+
+        // yellowish
+        Vector4f sunColor = new Vector4f(1.0F, 0.9F, 0.7F, 1.0F);
+
+        // TODO flesh out the fog component.. make this part of the atmosphere module.
+        Fog fog = new Fog(0.025F);
+        atmosphere = new Atmosphere(sun, skyColor, sunColor, fog);
+
+        es.entity("atmosphere").component(
+                atmosphere
+        ).build();
 
         loadWorld();
     }
@@ -261,6 +279,10 @@ public class VoxelScene extends AbstractScene implements Lockable {
         delegateLock.setLocked(locked);
     }
 
+    public Atmosphere getAtmosphere() {
+        return atmosphere;
+    }
+
     public GuiScreenManager getGuiScreenManager() {
         return guiScreenManager;
     }
@@ -302,7 +324,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
     }
 
     public DirectionalLight getSun() {
-        return sun;
+        return atmosphere.getSun();
     }
 
     public IEntity getPlayer() {
@@ -321,6 +343,10 @@ public class VoxelScene extends AbstractScene implements Lockable {
         return gameSettings;
     }
 
+    /**
+     * Sets the boolean 'stop' to true, signaling to this scene to stop the engine, ultimately stopping this
+     * application.
+     * */
     public void stop() {
         stop = true;
     }

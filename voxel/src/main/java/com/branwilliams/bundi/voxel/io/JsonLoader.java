@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.voxel.io;
 
 import com.branwilliams.bundi.engine.core.Keycode;
+import com.branwilliams.bundi.engine.deserializers.KeycodeDeserializer;
 import com.branwilliams.bundi.engine.core.Keycodes;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelProperties;
@@ -29,7 +30,7 @@ public class JsonLoader {
         GsonBuilder gsonBuilder = new GsonBuilder().enableComplexMapKeySerialization()
                 .setPrettyPrinting();
         gsonBuilder.registerTypeAdapter(VoxelProperties.class, new VoxelProperties.VoxelPropertiesDeserializer());
-        gsonBuilder.registerTypeAdapter(Keycode.class, new Keycode.KeycodeDeserializer(keycodes));
+        gsonBuilder.registerTypeAdapter(Keycode.class, new KeycodeDeserializer(keycodes));
         gson = gsonBuilder.create();
     }
 

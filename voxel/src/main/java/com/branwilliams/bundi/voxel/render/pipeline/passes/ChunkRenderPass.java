@@ -60,6 +60,7 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
         this.chunkShaderProgram.setViewMatrix(scene.getCamera());
         this.chunkShaderProgram.setMaterial(material);
         this.chunkShaderProgram.setLight(scene.getSun());
+        this.chunkShaderProgram.setAtmosphere(scene.getAtmosphere());
 
         renderContext.getFrustum().update(renderContext.getProjection(), scene.getCamera());
 

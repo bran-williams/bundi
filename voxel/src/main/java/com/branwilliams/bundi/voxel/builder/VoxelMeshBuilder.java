@@ -43,6 +43,39 @@ public class VoxelMeshBuilder {
         return rebuildVoxelMesh(voxel, minX, maxX, minY, maxY, minZ, maxZ, new Mesh());
     }
 
+//    public Mesh rebuildVoxelIcon(Voxel voxel, float minX, float maxX, float minY, float maxY, float minZ, float maxZ, Mesh mesh) {
+//        VoxelProperties voxelProperties = voxelRegistry.getVoxelProperties(voxel.id);
+//
+//        List<Float> vertices = new ArrayList<>();
+//        List<Float> uvs = new ArrayList<>();
+//        List<Integer> indices = new ArrayList<>();
+//
+//        int index = 0;
+//
+//        for (VoxelFace face : VoxelFace.values()) {
+//            vertices.addAll(VoxelFace.positions(face, minX, minY, minZ, maxX, maxY, maxZ));
+//
+//            Vector4f textureCoordinates = voxelTexturePack.getTextureCoordinates(voxelProperties.getTexturePath(face));
+//            uvs.addAll(VoxelMeshBuilder.createFaceUVs(textureCoordinates));
+//
+//            indices.add(index);
+//            indices.add(index + 1);
+//            indices.add(index + 2);
+//            indices.add(index + 2);
+//            indices.add(index + 3);
+//            indices.add(index);
+//            index += 4;
+//        }
+//
+//        mesh.bind();
+//        mesh.storeAttribute(0, toArrayf(vertices), 3);
+//        mesh.storeAttribute(1, toArrayf(uvs), 2);
+//        mesh.storeIndices(toArrayi(indices));
+//        mesh.unbind();
+//
+//        return mesh;
+//    }
+
     public Mesh rebuildVoxelMesh(Voxel voxel, float minX, float maxX, float minY, float maxY, float minZ, float maxZ, Mesh mesh) {
         VoxelProperties voxelProperties = voxelRegistry.getVoxelProperties(voxel.id);
 
@@ -51,8 +84,9 @@ public class VoxelMeshBuilder {
         List<Integer> indices = new ArrayList<>();
 
         int index = 0;
-
-        for (VoxelFace face : VoxelFace.values()) {
+//        VoxelFace[] faces = { VoxelFace.BOTTOM, VoxelFace.FRONT, VoxelFace.LEFT};
+        VoxelFace[] faces = { VoxelFace.TOP, VoxelFace.BACK, VoxelFace.RIGHT};
+        for (VoxelFace face : faces) {
             vertices.addAll(VoxelFace.positions(face, minX, minY, minZ, maxX, maxY, maxZ));
 
             Vector4f textureCoordinates = voxelTexturePack.getTextureCoordinates(voxelProperties.getTexturePath(face));

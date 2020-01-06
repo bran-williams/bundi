@@ -50,7 +50,7 @@ public class AtmosphereRenderPass extends RenderPass<VoxelRenderContext> {
         this.atmosphereShaderProgram.bind();
         this.atmosphereShaderProgram.setProjectionMatrix(renderContext.getProjection());
         this.atmosphereShaderProgram.setViewMatrix(this.scene.getCamera());
-        this.atmosphereShaderProgram.setLight(this.scene.getSun());
+        this.atmosphereShaderProgram.setAtmosphere(this.scene.getAtmosphere());
         Skybox skybox = this.scene.getSkybox();
         MeshRenderer.render(skybox.getMesh(), skybox.getMaterial());
     }

@@ -385,6 +385,9 @@ public class Engine implements Runnable {
         return alCapabilities;
     }
 
+    /**
+     * This utility class is used to translate error codes from OpenGL to their plain English counterparts.
+     * */
     private static class ErrorUtils {
 
         private static void setupDebugMessageCallback(Logger log) {

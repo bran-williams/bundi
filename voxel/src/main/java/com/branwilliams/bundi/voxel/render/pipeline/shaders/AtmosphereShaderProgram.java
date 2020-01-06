@@ -3,6 +3,7 @@ package com.branwilliams.bundi.voxel.render.pipeline.shaders;
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.util.IOUtils;
+import com.branwilliams.bundi.voxel.components.Atmosphere;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -27,14 +28,11 @@ public class AtmosphereShaderProgram extends ShaderProgram {
         this.createUniform("viewMatrix");
 
         this.createUniform("directionalLight.direction");
-
+        this.createUniform("fogDensity");
+        this.createUniform("skyColor");
+        this.createUniform("sunColor");
 
         this.validate();
-    }
-
-    public void setLight(DirectionalLight light) {
-        this.setUniform("directionalLight.direction", light.getDirection());
-//        this.setUniform("fogColor", fogColor);
     }
 
     public void setProjectionMatrix(Projection projection) {
@@ -49,5 +47,12 @@ public class AtmosphereShaderProgram extends ShaderProgram {
         copy.m31(0);
         copy.m32(0);
         this.setUniform("viewMatrix", copy);
+    }
+
+    public void setAtmosphere(Atmosphere atmosphere) {
+        this.setUniform("directionalLight.direction", atmosphere.getSun().getDirection());
+        this.setUniform("fogDensity", atmosphere.getFog().getDensity());
+        this.setUniform("skyColor", atmosphere.getSkyColor());
+        this.setUniform("sunColor", atmosphere.getSunColor());
     }
 }

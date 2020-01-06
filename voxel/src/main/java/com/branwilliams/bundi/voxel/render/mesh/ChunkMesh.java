@@ -109,11 +109,7 @@ public class ChunkMesh implements Destructible {
     public float getAnimation() {
         float animation = (float) (Timer.getSystemTime() - changeTime) / (float) VoxelConstants.CHUNK_ANIMATION_TIME_MS;
         animation = Math.min(1F, animation);
-
         float eased = Math.min(1F, Easings.cubicEaseIn(animation, 0.645F, 0.045F, 0.355F));
-        if (animation != 1F)
-            System.out.println(eased);
-
         return eased;
 //        return animation;
     }

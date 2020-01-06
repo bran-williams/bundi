@@ -5,6 +5,7 @@ import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.engine.util.ShaderUtils;
+import com.branwilliams.bundi.voxel.components.Atmosphere;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
@@ -44,8 +45,11 @@ public class ChunkShaderProgram extends ShaderProgram {
         this.createUniform("material.specular");
         this.createUniform("material.normal");
         this.createUniform("material.emission");
-
         this.createUniform("material.shininess");
+
+        this.createUniform("fogDensity");
+        this.createUniform("skyColor");
+        this.createUniform("sunColor");
 
 //        this.createUniform("fogColor");
 
@@ -69,6 +73,12 @@ public class ChunkShaderProgram extends ShaderProgram {
         this.setUniform("directionalLight.diffuse", light.getDiffuse());
         this.setUniform("directionalLight.specular", light.getSpecular());
 //        this.setUniform("fogColor", fogColor);
+    }
+
+    public void setAtmosphere(Atmosphere atmosphere) {
+        this.setUniform("fogDensity", atmosphere.getFog().getDensity());
+        this.setUniform("skyColor", atmosphere.getSkyColor());
+        this.setUniform("sunColor", atmosphere.getSunColor());
     }
 
     public void setProjectionMatrix(Projection projection) {

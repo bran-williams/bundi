@@ -32,8 +32,10 @@ struct Material {
 uniform Material material;
 uniform DirLight directionalLight;
 uniform vec3 viewPos;
-uniform vec4 fogColor;
-uniform float fogDistance;
+
+uniform vec4 sunColor;
+uniform vec4 skyColor;
+uniform float fogDensity;
 
 //#if FOG_LINEAR
 //vec4 computeFog(vec4 lightColor, float dist) {
@@ -80,11 +82,11 @@ vec4 computeFog(vec3 lightDir, vec3 viewDir, vec4 lightColor, float dist) {
 //    vec4  fogColor  = vec4(0.5, 0.6, 0.7, 1.0);
 //    return mix( lightColor, fogColor, fogAmount );
 
-    float fogAmount = 1.0 - exp( -dist * FogDensity );
+    float fogAmount = 1.0 - exp( -dist * fogDensity );
     float sunAmount = max( dot( viewDir, -lightDir ), 0.0 );
-    vec4  fogColor  = mix( vec4(0.5, 0.6, 0.7, 1.0), // bluish
-    vec4(1.0, 0.9, 0.7, 1.0), // yellowish
-    pow(sunAmount, 8.0) );
+    vec4  fogColor  = mix( skyColor,
+    sunColor, // yellowish
+    pow(sunAmount, 64.0) );
     return mix( lightColor, fogColor, fogAmount );
 
 //    float fogFactor = 1.0 / exp(dist * FogDensity);

@@ -26,18 +26,4 @@ public class Keycode {
         this.keyCode = keyCode;
     }
 
-    public static class KeycodeDeserializer implements JsonDeserializer<Keycode> {
-
-        private final Keycodes keycodes;
-
-        public KeycodeDeserializer(Keycodes keycodes) {
-            this.keycodes = keycodes;
-        }
-
-        @Override
-        public Keycode deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-            String keyCode = json.getAsString().toLowerCase();
-            return new Keycode(keycodes.getKeycode(keyCode));
-        }
-    }
 }

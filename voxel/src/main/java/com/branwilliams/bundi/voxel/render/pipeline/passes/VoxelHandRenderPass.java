@@ -16,6 +16,8 @@ import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import org.joml.Vector3f;
 
+import static org.lwjgl.opengl.GL11.*;
+
 /**
  * @author Brandon
  * @since August 10, 2019
@@ -46,15 +48,20 @@ public class VoxelHandRenderPass extends RenderPass<VoxelRenderContext> {
             e.printStackTrace();
         }
 
+//        transformable.rotate(10, -45, 170);
+        transformable.rotate(30, 225, 0);
         cubeMesh = new Mesh();
     }
 
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
-        Vector3f handPos = new Vector3f(0.5F, -0.4F, -0.5F);
+        Vector3f handPos = new Vector3f(0.3F, -0.4F, -0.5F);
         Item heldItem = scene.getPlayerState().getInventory().getHeldItem();
 
         if (heldItem instanceof VoxelItem) {
+            glDisable(GL_DEPTH_TEST);
+            glDepthMask(false);
+
             Voxel voxel = ((VoxelItem) heldItem).getVoxel();
             shaderProgram.bind();
             shaderProgram.setProjectionMatrix(renderContext.getProjection());
@@ -65,8 +72,9 @@ public class VoxelHandRenderPass extends RenderPass<VoxelRenderContext> {
             MeshRenderer.render(cubeMesh, scene.getTexturePack().getMaterial());
 
             ShaderProgram.unbind();
-        } else {
-            System.out.println("No held item!");
+
+            glEnable(GL_DEPTH_TEST);
+            glDepthMask(true);
         }
     }
 

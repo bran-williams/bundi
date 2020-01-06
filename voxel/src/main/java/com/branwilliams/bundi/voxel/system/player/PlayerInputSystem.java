@@ -77,7 +77,7 @@ public class PlayerInputSystem extends AbstractSystem implements Window.MouseLis
             }
 
             if (engine.getWindow().isKeyPressed(playerControls.getUpdateSun())) {
-                scene.getSun().setDirection(scene.getCamera().getDirection());
+                scene.getSun().setDirection(scene.getCamera().getDirection().negate());
             }
 
             forwardSpeed *= walkComponent.getAccelerationFactor();

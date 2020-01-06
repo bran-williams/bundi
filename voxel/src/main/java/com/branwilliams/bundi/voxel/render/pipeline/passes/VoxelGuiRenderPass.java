@@ -66,6 +66,7 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }
+
         shapeVao = new DynamicVAO(VertexFormat.POSITION);
         crosshairTransform.position(window.getWidth() * 0.5F, window.getHeight() * 0.5F, 0F);
         buildCrosshair();
@@ -94,8 +95,10 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
             ShaderProgram.unbind();
             return;
         }
+
         drawCrosshair(renderContext);
-        drawVoxelSelection(renderContext, window);
+
+        drawPlayerInventory(renderContext, window);
 
         ShaderProgram.unbind();
     }
@@ -114,7 +117,7 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
         shapeVao.draw(GL_LINES);
     }
 
-    private void drawVoxelSelection(VoxelRenderContext renderContext, Window window) {
+    private void drawPlayerInventory(VoxelRenderContext renderContext, Window window) {
 
         texturedShaderProgram.bind();
         texturedShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
@@ -122,6 +125,7 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
 
         float size = 32F;
         float padding = 6F;
+
         glActiveTexture(GL_TEXTURE0);
         scene.getTexturePack().getDiffuseTextureAtlas().bind();
         texturedVao.begin();
@@ -156,23 +160,23 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
                 textureCoordinates.x, textureCoordinates.y, textureCoordinates.z, textureCoordinates.w);
     }
 
-    private void drawMipmaps(Voxel voxel, int x, int y, int padding, int size) {
-        for (int i = 0; i < mipmaps.length; i++) {
-            mipmaps[i].bind();
-            texturedVao.begin();
-            addVoxel(voxel, x + (padding + size) * i, y, size);
-            texturedVao.draw();
-        }
-    }
-
-    private void drawTexture(Texture texture, int x, int y) {
-        texturedVao.begin();
-        texture.bind();
-        int width = scene.getTexturePack().getDiffuseTextureAtlas().getWidth();
-        int height = scene.getTexturePack().getDiffuseTextureAtlas().getHeight();
-        addRect(texturedVao, x, y, x + width, y + height, 0, 0, 1, 1);
-        texturedVao.draw();
-    }
+//    private void drawMipmaps(Voxel voxel, int x, int y, int padding, int size) {
+//        for (int i = 0; i < mipmaps.length; i++) {
+//            mipmaps[i].bind();
+//            texturedVao.begin();
+//            addVoxel(voxel, x + (padding + size) * i, y, size);
+//            texturedVao.draw();
+//        }
+//    }
+//
+//    private void drawTexture(Texture texture, int x, int y) {
+//        texturedVao.begin();
+//        texture.bind();
+//        int width = scene.getTexturePack().getDiffuseTextureAtlas().getWidth();
+//        int height = scene.getTexturePack().getDiffuseTextureAtlas().getHeight();
+//        addRect(texturedVao, x, y, x + width, y + height, 0, 0, 1, 1);
+//        texturedVao.draw();
+//    }
 
     /**
      * Adds a textured rectangle at the provided positions.
