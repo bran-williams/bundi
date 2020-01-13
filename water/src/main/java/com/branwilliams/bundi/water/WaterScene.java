@@ -34,44 +34,15 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
 
     public static final int WATER_PLANE_LENGTH = 128;
 
-    private final Water water = createWater(0.3F, WATER_PLANE_LENGTH);
+    private final Water water = createFlatWater(WATER_PLANE_LENGTH);
+
+//    private final Water water = createWater(0.24F, WATER_PLANE_LENGTH);
 
     private Camera camera;
 
     private Skybox skybox;
 
     private boolean wireframe;
-
-    private Water createWater(float overallSteepness, int planeLength) {
-        Wave[] normalWaves = {
-                new Wave(0.05F, 0.02F, 0.3F, overallSteepness / (0.3F * 0.02F * Water.NUMBERWAVES),
-                        new Vector2f(1F, 1.5F)),
-
-                new Wave(0.1F, 0.01F, 0.4F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
-                        new Vector2f(0.8F, 0.2F)),
-
-                new Wave(0.04F, 0.035F, 0.1F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
-                        new Vector2f(-0.2F, -0.1F)),
-
-                new Wave(0.05F, 0.007F, 0.2F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
-                        new Vector2f(-0.4F, -0.3F)),
-        };
-
-        Wave[] surfaceWaves = {
-                new Wave(1F, 0.01F, 4F, overallSteepness / (4F * 0.01F * Water.NUMBERWAVES),
-                        new Vector2f(1F, 1F)),
-
-                new Wave(0.5F, 0.02F, 3F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
-                        new Vector2f(1F, 0F)),
-
-                new Wave(0.1F, 0.015F, 2F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
-                        new Vector2f(-0.1F, -0.2F)),
-
-                new Wave(1.1F, 0.008F, 1F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
-                        new Vector2f(-0.2F, -0.1F)),
-        };
-        return new Water(normalWaves, surfaceWaves, planeLength);
-    }
 
     public WaterScene() {
         super("water_scene");
@@ -113,7 +84,8 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
             skybox = new Skybox(500, new Material(environment));
 
             water.initialize(environment, 1024, 1024);
-            water.setColor(new Vector4f(0F, 0.01F, 0.075F, 0F));
+//            water.setColor(new Vector4f(0F, 0.01F, 0.075F, 0F));
+            water.setColor(new Vector4f(0F, 0F, 0F, 0F));
 //            water.setColor(new Vector4f(0F, 0.10F, 0.01F, 0F));
             water.getTransformable().position(-WATER_PLANE_LENGTH * 0.5F, 0F, -WATER_PLANE_LENGTH);
             es.entity("waterTile").component(
@@ -122,6 +94,54 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Water createFlatWater(int planeLength) {
+        Wave[] normalWaves = {
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+        };
+
+        Wave[] surfaceWaves = {
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+                new Wave(0F, 0F, 1F, 0f, new Vector2f(1F)),
+        };
+        return new Water(normalWaves, surfaceWaves, planeLength);
+    }
+
+    public static Water createWater(float overallSteepness, int planeLength) {
+        Wave[] normalWaves = {
+                new Wave(0.05F, 0.02F, 0.3F, overallSteepness / (0.3F * 0.02F * Water.NUMBERWAVES),
+                        new Vector2f(1F, 1.5F)),
+
+                new Wave(0.1F, 0.01F, 0.4F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
+                        new Vector2f(0.8F, 0.2F)),
+
+                new Wave(0.04F, 0.035F, 0.1F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
+                        new Vector2f(-0.2F, -0.1F)),
+
+                new Wave(0.05F, 0.007F, 0.2F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
+                        new Vector2f(-0.4F, -0.3F)),
+        };
+
+        Wave[] surfaceWaves = {
+                new Wave(1F, 0.01F, 4F, overallSteepness / (4F * 0.01F * Water.NUMBERWAVES),
+                        new Vector2f(1F, 1F)),
+
+                new Wave(0.5F, 0.02F, 3F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
+                        new Vector2f(1F, 0F)),
+
+                new Wave(0.1F, 0.015F, 2F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
+                        new Vector2f(-0.1F, -0.2F)),
+
+                new Wave(1.1F, 0.008F, 1F, overallSteepness / (3F * 0.02F * Water.NUMBERWAVES),
+                        new Vector2f(-0.2F, -0.1F)),
+        };
+        return new Water(normalWaves, surfaceWaves, planeLength);
     }
 
     @Override

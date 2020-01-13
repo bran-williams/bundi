@@ -1,0 +1,32 @@
+{
+  "textures": [
+    {
+      "name": "grass",
+      "textureData": {
+        "diffuse" : "textures/grass/grass01.png",
+        "normal": "textures/grass/grass01_n.png"
+      }
+    },
+    {
+      "name": "sand",
+      "textureData": {
+        "diffuse" : "textures/sand/sand_color.jpg",
+        "normal": "textures/sand/sand_norm.jpg"
+      }
+    },
+    {
+      "name": "rock",
+      "textureData": {
+        "diffuse" : "textures/rock/rock_color.jpg",
+        "normal": "textures/rock/rock_norm.jpg"
+      }
+    },
+    {
+      "name": "snow",
+      "textureData": {
+        "diffuse" : "textures/snow/snow_color.jpg",
+        "normal": "textures/snow/snow_norm.jpg"
+      }
+    }
+  ]
+}

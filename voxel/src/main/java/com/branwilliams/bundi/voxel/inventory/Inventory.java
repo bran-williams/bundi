@@ -5,11 +5,20 @@ import java.util.List;
 
 public class Inventory {
 
+    public static final int DEFAULT_MAX_INVENTORY_ITEMS = 64;
+
     private List<Item> items;
 
     private int heldItem;
 
+    private int maxItems;
+
     public Inventory() {
+        this(DEFAULT_MAX_INVENTORY_ITEMS);
+    }
+
+    public Inventory(int maxItems) {
+        this.maxItems = maxItems;
         this.items = new ArrayList<>();
     }
 
@@ -20,12 +29,18 @@ public class Inventory {
 
     public void addItems(Inventory inventory) {
         for (Item item : inventory.getItems()) {
-            this.items.add(item);
+            this.addItem(item);
         }
     }
 
     public boolean addItem(Item item) {
+        if (isFull())
+            return false;
         return this.items.add(item);
+    }
+
+    public Item removeItem(int index) {
+        return index < 0 || index >= this.items.size() ? null : this.items.remove(index);
     }
 
     public boolean removeItem(Item item) {
@@ -61,5 +76,17 @@ public class Inventory {
             heldItem = 0;
         }
         return getHeldItem();
+    }
+
+    public boolean isFull() {
+        return this.getNumItems() >= this.getMaxItems();
+    }
+
+    public int getMaxItems() {
+        return maxItems;
+    }
+
+    public int getNumItems() {
+        return items.size();
     }
 }

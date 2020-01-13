@@ -1,0 +1,13 @@
+{
+  "windowTitle": "Mountain",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.demo.mountain.MountainScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+  "sceneDirectory": "com.branwilliams.demo.mountain"
+}

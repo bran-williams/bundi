@@ -11,14 +11,26 @@ import com.branwilliams.bundi.engine.texture.ArrayTexture;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
+import com.branwilliams.bundi.engine.util.GsonUtils;
+import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.terrain.builder.TerrainMeshBuilder;
 import com.branwilliams.terrain.builder.TerrainTileBuilder;
+import com.branwilliams.terrain.component.TerrainMaterial;
+import com.branwilliams.terrain.component.TerrainTexture;
+import com.branwilliams.terrain.component.TerrainTextureData;
 import com.branwilliams.terrain.generator.*;
 import com.branwilliams.terrain.render.LineGraphRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderPass;
+import com.branwilliams.terrain.render.TerrainRenderPass2;
 import com.branwilliams.terrain.render.TerrainRenderer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.branwilliams.terrain.generator.HeightmapBlendmapGenerator.GRAYSCALE_MAX_COLOR;
 
@@ -68,7 +80,8 @@ public class TerrainScene extends AbstractScene {
 
         // Create the material for the terrain
         TextureLoader textureLoader = new TextureLoader(engine.getContext());
-        Material material = createTerrainMaterial(textureLoader);
+        TerrainMaterial terrainMaterial = loadTerrainMaterial("terrain/terrain_material.json");
+        Material material = createTerrainMaterial(textureLoader, 16, 100F, terrainMaterial);
 
 
         // Create or load the height generator
@@ -76,7 +89,7 @@ public class TerrainScene extends AbstractScene {
         float[] percentages = { 1F, 1F, 0.5F, 0.25F };
         HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
                 1F / TERRAIN_TILE_SIZE);
-//        HeightGenerator generator = new HeightmapGenerator(heightmap);
+//        HeightGenerator generator = new HeightmapGenerator(terrainMaterial.getHeightmapTextureData());
 
         // Create the tile builder
         TerrainTileBuilder terrainTileBuilder = new TerrainTileBuilder();
@@ -96,42 +109,52 @@ public class TerrainScene extends AbstractScene {
         ).build();
     }
 
-    private Material createTerrainMaterial(TextureLoader textureLoader) {
+    public static Material createTerrainMaterial(TextureLoader textureLoader, int tiling, float materialShininess, TerrainMaterial terrainMaterial_) {
         Material terrainMaterial = new Material();
-        terrainMaterial.setProperty("tiling", 16);
-        terrainMaterial.setProperty("materialShininess", 100F);
+        terrainMaterial.setProperty("tiling", tiling);
+        terrainMaterial.setProperty("materialShininess", materialShininess);
+
+        List<TextureData> diffuseTextureData = new ArrayList<>();
+        List<TextureData> normalTextureData = new ArrayList<>();
 
         try {
-            TextureData diffuse0 = textureLoader.loadTexture("textures/grass/grass01.png");
-            TextureData diffuse1 = textureLoader.loadTexture("textures/sand/sand_color.jpg");
-            TextureData diffuse2 = textureLoader.loadTexture("textures/rock/rock_color.jpg");
-            TextureData diffuse3 = textureLoader.loadTexture("textures/snow/snow_color.jpg");
-
-            ArrayTexture diffuse = new ArrayTexture(Texture.TextureType.COLOR8, diffuse0, diffuse1, diffuse2, diffuse3);
-            terrainMaterial.setTexture(0, diffuse);
-
-            TextureData normal0 = textureLoader.loadTexture("textures/grass/grass01_n.png");
-            TextureData normal1 = textureLoader.loadTexture("textures/sand/sand_norm.jpg");
-            TextureData normal2 = textureLoader.loadTexture("textures/rock/rock_norm.jpg");
-            TextureData normal3 = textureLoader.loadTexture("textures/snow/snow_norm.jpg");
-
-            ArrayTexture normal = new ArrayTexture(Texture.TextureType.COLOR8, normal0, normal1, normal2, normal3);
-            terrainMaterial.setTexture(1, normal);
-            terrainMaterial.setProperty("hasNormalTexture", true);
-
-            
-
-//            heightmap = textureLoader.loadTexture("textures/heightmap2.png");
-
-            TextureData blendmap = textureLoader.loadTexture("textures/blendmap0.png");
-
-//            HeightmapBlendmapGenerator blendmapGenerator = new HeightmapBlendmapGenerator();
-//            TextureData blendmap = blendmapGenerator.generateBlendmap(heightmap, GRAYSCALE_MAX_COLOR);
-
-            terrainMaterial.setTexture(2, new Texture(blendmap, true));
+            terrainMaterial_.load(textureLoader);
         } catch (IOException e) {
             e.printStackTrace();
+            return null;
         }
+
+        for (TerrainTexture terrainTexture : terrainMaterial_.getTextures()) {
+            diffuseTextureData.add(terrainTexture.getTextureData().getDiffuseTextureData());
+            normalTextureData.add(terrainTexture.getTextureData().getNormalTextureData());
+        }
+        ArrayTexture diffuse = new ArrayTexture(Texture.TextureType.COLOR8, diffuseTextureData.toArray(new TextureData[0]));
+        terrainMaterial.setTexture(0, diffuse);
+
+        ArrayTexture normal = new ArrayTexture(Texture.TextureType.COLOR8, normalTextureData.toArray(new TextureData[0]));
+        terrainMaterial.setTexture(1, normal);
+        terrainMaterial.setProperty("hasNormalTexture", true);
+
+        if (terrainMaterial_.getBlendmap() != null) {
+            terrainMaterial.setTexture(2, new Texture(terrainMaterial_.getBlendmapTextureData(), true));
+        }
+//        TextureData blendmap = textureLoader.loadTexture("textures/blendmap0.png");
+//        HeightmapBlendmapGenerator blendmapGenerator = new HeightmapBlendmapGenerator();
+//        TextureData blendmap = blendmapGenerator.generateBlendmap(heightmap, GRAYSCALE_MAX_COLOR);
+        return terrainMaterial;
+    }
+
+//    private List<TerrainTexture> loadTerrainTextures(TextureLoader textureLoader, String path) {
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        String fileContents = IOUtils.readFile(path, "");
+//        List<TerrainTexture> terrainTextures = gson.fromJson(fileContents, GsonUtils.arrayListType(TerrainTexture.class));
+//        return terrainTextures;
+//    }
+
+    public static TerrainMaterial loadTerrainMaterial(String path) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String fileContents = IOUtils.readFile(path, "");
+        TerrainMaterial terrainMaterial = gson.fromJson(fileContents, TerrainMaterial.class);
         return terrainMaterial;
     }
 

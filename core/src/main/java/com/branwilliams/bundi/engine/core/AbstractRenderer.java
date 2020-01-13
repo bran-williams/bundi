@@ -1,17 +1,18 @@
 package com.branwilliams.bundi.engine.core;
 
+import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 
 /**
  * Created by Brandon Williams on 7/1/2018.
  */
-public abstract class AbstractRenderer implements Renderer, Window.WindowListener {
+public abstract class AbstractRenderer <Context extends RenderContext> implements Renderer, Window.WindowListener {
 
     private final String name;
 
-    protected RenderPipeline renderPipeline;
+    protected RenderPipeline<Context> renderPipeline;
 
-    public AbstractRenderer(String name, Scene scene, RenderPipeline renderPipeline) {
+    public AbstractRenderer(String name, Scene scene, RenderPipeline<Context> renderPipeline) {
         this.name = name;
         this.renderPipeline = renderPipeline;
         scene.addWindowListener(this);
@@ -37,11 +38,11 @@ public abstract class AbstractRenderer implements Renderer, Window.WindowListene
         renderPipeline.resize(window, width, height);
     }
 
-    public RenderPipeline getRenderPipeline() {
+    public RenderPipeline<Context> getRenderPipeline() {
         return renderPipeline;
     }
 
-    public void setRenderPipeline(RenderPipeline renderPipeline) {
+    public void setRenderPipeline(RenderPipeline<Context> renderPipeline) {
         this.renderPipeline = renderPipeline;
     }
 

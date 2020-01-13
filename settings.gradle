@@ -12,4 +12,6 @@ include 'mcskin'
 include 'modelviewer'
 include 'marchingcubes'
 include 'imageviewer'
+include 'demo-template-3d'
+include 'mountain'
 

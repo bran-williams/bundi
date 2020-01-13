@@ -30,7 +30,7 @@ void main() {
     vec3 objectNormal = textureToNormal(texture(normalMap, texCoord));
 
     // These three vectors span a basis depending on the world transformations e.g. the waves.
-    mat3 objectToWorldMatrix = mat3(normalize(bitangent), normalize(tangent), normalize(normal));
+    mat3 objectToWorldMatrix = mat3( normalize(tangent), normalize(bitangent), normalize(normal));
 
     vec3 worldNormal = objectToWorldMatrix * objectNormal;
 
@@ -45,6 +45,7 @@ void main() {
     float fresnel = Eta + (1.0 - Eta) * pow(max(0.0, 1.0 - dot(-worldIncident, worldNormal)), 5.0);
 
     vec4 color = mix(refractionColor, reflectionColor, fresnel) + waterColor;
+//    vec4 color = reflectionColor + waterColor;
 
     fragColor = color;
 }

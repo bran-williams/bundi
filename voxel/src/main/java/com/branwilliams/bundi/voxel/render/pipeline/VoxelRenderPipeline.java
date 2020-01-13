@@ -23,6 +23,7 @@ public class VoxelRenderPipeline extends RenderPipeline<VoxelRenderContext> {
         this.addLast(new VoxelSelectionRenderPass(scene));
         this.addLast(new VoxelHandRenderPass(scene));
         this.addLast(new VoxelGuiRenderPass(scene));
+        this.addLast(new HotbarRenderPass(scene));
         this.addLast(new VoxelDebugRenderPass(scene));
     }
 }

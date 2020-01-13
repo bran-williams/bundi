@@ -78,27 +78,17 @@ uniform float fogDensity;
 
 //
 vec4 computeFog(vec3 lightDir, vec3 viewDir, vec4 lightColor, float dist) {
-//    float fogAmount = 1.0 - exp( -dist * FogDensity );
-//    vec4  fogColor  = vec4(0.5, 0.6, 0.7, 1.0);
-//    return mix( lightColor, fogColor, fogAmount );
-
-    float fogAmount = 1.0 - exp( -dist * fogDensity );
+//    float c = 1F;
+//    float fogAmount = c * exp(-viewPos.y*fogDensity) * (1.0-exp( -dist*viewDir.y*fogDensity ))/viewDir.y;
+     float fogAmount = 1.0 - exp( -dist * fogDensity );
     float sunAmount = max( dot( viewDir, -lightDir ), 0.0 );
-    vec4  fogColor  = mix( skyColor,
-    sunColor, // yellowish
-    pow(sunAmount, 64.0) );
+    vec4  fogColor  = mix( skyColor, sunColor, pow(sunAmount, 64.0) );
     return mix( lightColor, fogColor, fogAmount );
-
-//    float fogFactor = 1.0 / exp(dist * FogDensity);
-//     fogFactor = clamp( fogFactor, 0.0, 1.0 );
-//    // mix function fogColor⋅(1−fogFactor) + lightColor⋅fogFactor
-//    return mix(fogColor, lightColor, fogFactor);
 }
 
 // plane based distance.
 float computeDist(vec4 viewSpace) {
     return -(viewSpace.z);
-    // return abs(viewSpace.z);
 }
 
 /**

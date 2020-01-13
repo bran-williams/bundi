@@ -35,6 +35,8 @@ public class Water implements Destructible {
 
     private Wave[] surfaceWaves;
 
+    private boolean isCopy;
+
     public Water(Wave[] normalWaves, Wave[] surfaceWaves, int planeLength) {
         if (normalWaves.length != NUMBERWAVES || surfaceWaves.length != NUMBERWAVES) {
             throw new IllegalArgumentException("Water tiles must have " + NUMBERWAVES + " waves.");
@@ -51,6 +53,20 @@ public class Water implements Destructible {
 
         material = new Material(environment, normalBuffer.getNormal());
         waterMesh = new PlaneMesh(planeLength);
+    }
+
+    public Water copy() {
+        Water water = new Water(this.normalWaves, this.surfaceWaves, this.planeLength);
+        water.normalBuffer = this.normalBuffer;
+        water.material = this.material;
+        water.waterMesh = this.waterMesh;
+        water.color = this.color;
+        water.isCopy = true;
+        return water;
+    }
+
+    public boolean isCopy() {
+        return isCopy;
     }
 
     public WaterNormalBuffer getNormalBuffer() {

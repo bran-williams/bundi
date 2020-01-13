@@ -67,15 +67,16 @@ public class WaterNormalRenderPass extends RenderPass<RenderContext> {
 
         for (IEntity entity : scene.getEs().getEntities(matcher)) {
             Water water = entity.getComponent(Water.class);
+            if (!water.isCopy()) {
+                WaterNormalBuffer normalBuffer = water.getNormalBuffer();
+                glViewport(0, 0, normalBuffer.getWidth(), normalBuffer.getHeight());
+                normalBuffer.bind();
+                glClear(GL_COLOR_BUFFER_BIT);
 
-            WaterNormalBuffer normalBuffer = water.getNormalBuffer();
-            glViewport(0, 0, normalBuffer.getWidth(), normalBuffer.getHeight());
-            normalBuffer.bind();
-            glClear(GL_COLOR_BUFFER_BIT);
+                shaderProgram.setWater(water);
 
-            shaderProgram.setWater(water);
-
-            MeshRenderer.render(waterTileMesh, null);
+                MeshRenderer.render(waterTileMesh, null);
+            }
         }
 
         ShaderProgram.unbind();
