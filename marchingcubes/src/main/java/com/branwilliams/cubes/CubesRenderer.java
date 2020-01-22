@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class CubesRenderer extends AbstractRenderer {
 
     public CubesRenderer(Scene scene, RenderPipeline renderPipeline) {
-        super("clothRenderer", scene, renderPipeline);
+        super("cubesRenderer", scene, renderPipeline);
     }
 
     @Override

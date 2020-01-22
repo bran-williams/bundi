@@ -26,7 +26,7 @@ public class DynamicShaderProgram extends ShaderProgram {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private float ALPHA_THRESHOLD = 0F;
+    private static final float ALPHA_THRESHOLD = 0F;
 
     /**
      * Adds a view matrix to the shader program.

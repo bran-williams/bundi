@@ -1,14 +1,16 @@
 package com.branwilliams.cubes;
 
 import com.branwilliams.bundi.engine.util.Mathf;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.function.Function;
 
 /**
  * @author Brandon
  * @since November 30, 2019
  */
-public class GridCellKernel <T> {
+public class Grid3f<T> implements Iterable<T> {
 
     private T[] kernel;
 
@@ -20,7 +22,7 @@ public class GridCellKernel <T> {
 
     private boolean dirty;
 
-    public GridCellKernel(Function<Integer, T[]> kernelBuilder, int width, int height, int depth) {
+    public Grid3f(Function<Integer, T[]> kernelBuilder, int width, int height, int depth) {
         this.kernel = kernelBuilder.apply(width * height * depth);
         this.width = width;
         this.height = height;
@@ -67,5 +69,33 @@ public class GridCellKernel <T> {
 
     public boolean isDirty() {
         return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+
+            private int i;
+
+            @Override
+            public boolean hasNext() {
+                return i < Grid3f.this.getKernel().length;
+            }
+
+            @Override
+            public T next() {
+                if (hasNext()) {
+                    T val = Grid3f.this.getKernel()[i];
+                    i++;
+                    return val;
+                }
+                return null;
+            }
+        };
     }
 }

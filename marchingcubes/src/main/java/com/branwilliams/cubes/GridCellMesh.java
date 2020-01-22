@@ -16,7 +16,6 @@ public class GridCellMesh {
         this.mesh = new Mesh();
         this.mesh.bind();
         this.mesh.initializeAttribute(0, 3, 3 * 4);
-        this.mesh.setRenderMode(GL_POINTS);
         this.mesh.unbind();
     }
 
