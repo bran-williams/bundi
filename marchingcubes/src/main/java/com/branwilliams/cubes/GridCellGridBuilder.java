@@ -1,5 +1,6 @@
 package com.branwilliams.cubes;
 
+import com.branwilliams.bundi.engine.util.Grid3f;
 import com.branwilliams.bundi.engine.util.noise.Noise;
 import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 import org.joml.Vector3f;

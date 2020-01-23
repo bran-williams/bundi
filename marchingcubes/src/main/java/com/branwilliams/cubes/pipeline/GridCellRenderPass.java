@@ -9,11 +9,7 @@ import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.cubes.CubesScene;
-import com.branwilliams.cubes.Grid3f;
-import com.branwilliams.cubes.GridCell;
 import com.branwilliams.cubes.GridCellMesh;
 import org.joml.Vector4f;
 

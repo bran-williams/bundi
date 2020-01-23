@@ -12,6 +12,7 @@ import com.branwilliams.bundi.engine.shader.DirectionalLight;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
+import com.branwilliams.bundi.engine.util.Grid3f;
 import com.branwilliams.cubes.pipeline.GridCellRenderPass;
 import org.joml.Vector3f;
 
@@ -71,42 +72,35 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilder(CELL_SIZE);
         GridCellMeshBuilder gridCellMeshBuilder = new GridCellMeshBuilder();
 
-//        Vector3f offset = new Vector3f(0, 0, 0);
-//        Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(offset,
-//                GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z);
-//        GridCellMesh gridCellMesh = gridCellMeshBuilder.buildMesh(gridCellGrid);
-//
-//        es.entity("grid")
-//                .component(
-//                        new Transformation().position(offset),
-//                        gridCellMesh)
-//                .build();
-
-
+//        buildGrid(gridCellGridBuilder, gridCellMeshBuilder, "grid", new Vector3f());
         buildGridOfGrids(gridCellGridBuilder, gridCellMeshBuilder, 4);
     }
+
 
     private void buildGridOfGrids(GridCellGridBuilder gridCellGridBuilder, GridCellMeshBuilder gridCellMeshBuilder,
                                   int numGrids) {
         int halfNumGrids = numGrids / 2;
-
         for (int i = -halfNumGrids; i < halfNumGrids; i++) {
             for (int j = -halfNumGrids; j < halfNumGrids; j++) {
                 Vector3f offset = new Vector3f(i * GRID_CELL_SIZE_X, 0, j * GRID_CELL_SIZE_Z);
-
-                Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(offset,
-                        GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z);
-
-                GridCellMesh gridCellMesh = gridCellMeshBuilder.buildMesh(gridCellGrid);
-
-                es.entity("grid-" + i + ":" + j)
-                        .component(
-                                new Transformation().position(offset),
-                                gridCellMesh)
-                        .build();
+                buildGrid(gridCellGridBuilder, gridCellMeshBuilder, "grid-" + i + ":" + j, offset);
             }
         }
     }
+
+    private void buildGrid(GridCellGridBuilder gridCellGridBuilder, GridCellMeshBuilder gridCellMeshBuilder,
+                           String name, Vector3f offset) {
+        Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(offset,
+                GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z);
+        GridCellMesh gridCellMesh = gridCellMeshBuilder.buildMesh(gridCellGrid);
+
+        es.entity(name)
+                .component(
+                        new Transformation().position(offset),
+                        gridCellMesh)
+                .build();
+    }
+
 
     @Override
     public void pause(Engine engine) {

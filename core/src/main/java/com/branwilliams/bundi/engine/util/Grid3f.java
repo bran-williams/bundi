@@ -1,6 +1,5 @@
-package com.branwilliams.cubes;
+package com.branwilliams.bundi.engine.util;
 
-import com.branwilliams.bundi.engine.util.Mathf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
