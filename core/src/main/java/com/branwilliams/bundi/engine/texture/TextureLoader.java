@@ -1,11 +1,10 @@
 package com.branwilliams.bundi.engine.texture;
 
-import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.util.ColorUtils;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.util.PerlinNoise;
+import com.branwilliams.bundi.engine.util.noise.PerlinNoise;
 
 import static com.branwilliams.bundi.engine.util.TextureUtils.getFormatFromChannels;
 import static org.lwjgl.opengl.GL11.*;

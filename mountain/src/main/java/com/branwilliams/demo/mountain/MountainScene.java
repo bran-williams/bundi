@@ -25,8 +25,7 @@ import com.branwilliams.terrain.builder.TerrainTileBuilder;
 import com.branwilliams.terrain.component.TerrainMaterial;
 import com.branwilliams.terrain.generator.HeightGenerator;
 import com.branwilliams.terrain.generator.HeightmapGenerator;
-import com.branwilliams.terrain.generator.PerlinNoiseGenerator;
-import com.branwilliams.terrain.render.TerrainRenderPass;
+import com.branwilliams.terrain.generator.NoiseGenerator;
 import com.branwilliams.terrain.render.TerrainRenderPass2;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -123,7 +122,7 @@ public class MountainScene extends AbstractScene {
         } else {
             float[] frequencies = { 1F, 2F, 4F, 8F, 16F };
             float[] percentages = { 1F, 1F, 0.5F, 0.25F, 0.5F };
-            heightGenerator = new PerlinNoiseGenerator(1024, frequencies, percentages,
+            heightGenerator = new NoiseGenerator(1024, frequencies, percentages,
                     1F / TERRAIN_TILE_SIZE);
         }
 

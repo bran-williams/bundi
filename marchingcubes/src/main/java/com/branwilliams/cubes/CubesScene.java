@@ -71,19 +71,19 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilder(CELL_SIZE);
         GridCellMeshBuilder gridCellMeshBuilder = new GridCellMeshBuilder();
 
-        Vector3f offset = new Vector3f(0, 0, 0);
-        Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(offset,
-                GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z);
-        GridCellMesh gridCellMesh = gridCellMeshBuilder.buildMesh(gridCellGrid);
+//        Vector3f offset = new Vector3f(0, 0, 0);
+//        Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(offset,
+//                GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z);
+//        GridCellMesh gridCellMesh = gridCellMeshBuilder.buildMesh(gridCellGrid);
+//
+//        es.entity("grid")
+//                .component(
+//                        new Transformation().position(offset),
+//                        gridCellMesh)
+//                .build();
 
-        es.entity("grid")
-                .component(
-                        new Transformation().position(offset),
-                        gridCellMesh)
-                .build();
 
-
-//        buildGridOfGrids(gridCellGridBuilder, gridCellMeshBuilder, 4);
+        buildGridOfGrids(gridCellGridBuilder, gridCellMeshBuilder, 4);
     }
 
     private void buildGridOfGrids(GridCellGridBuilder gridCellGridBuilder, GridCellMeshBuilder gridCellMeshBuilder,

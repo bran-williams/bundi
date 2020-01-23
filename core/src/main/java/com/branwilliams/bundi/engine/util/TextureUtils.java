@@ -42,7 +42,7 @@ public enum TextureUtils {
      * */
     public static TextureData stitchedTextures(int padding, TextureData... images) {
         if (images == null || images.length < 2) {
-            throw new IllegalArgumentException("The number of pngs must be at least two!");
+            throw new IllegalArgumentException("The number of textures must be at least two!");
         }
 
         int totalWidth = 0;
@@ -51,8 +51,8 @@ public enum TextureUtils {
 
         // Find a total width and height for the stitched png.
         for (TextureData img : images) {
-            if (img.getChannels() < 3) {
-                throw new IllegalArgumentException("All pngs must have at least 3 channels!");
+            if (img.getChannels() != channels) {
+                throw new IllegalArgumentException("All textures must have the same number of channels!");
             }
             totalWidth += img.getWidth() + padding;
             if (img.getHeight() > totalHeight) {
@@ -70,7 +70,7 @@ public enum TextureUtils {
             for (int x = 0; x < img.getWidth(); x++) {
                 for (int y = 0; y < img.getHeight(); y++) {
                     int imageIndex = (x + y * img.getWidth()) * img.getChannels();
-                    int stitchedIndex = ((xoffset + x) + y * totalWidth) * channels;
+                    int stitchedIndex = ((xoffset + x) + y * totalWidth) * outputChannels;
 
                     byte r = imageBuffer.get(imageIndex);
                     byte g = imageBuffer.get(imageIndex + 1);
@@ -88,7 +88,7 @@ public enum TextureUtils {
             // Put padding
             for (int y = 0; y < totalHeight; y++) {
                 for (int i = 0; i < padding; i++) {
-                    int stitchedIndex = ((xoffset + (img.getWidth() - 1) + i) + y * totalWidth) * channels;
+                    int stitchedIndex = ((xoffset + (img.getWidth() - 1) + i) + y * totalWidth) * outputChannels;
                     buffer.put(stitchedIndex, (byte) 0);
                     buffer.put(stitchedIndex + 1, (byte) 0);
                     buffer.put(stitchedIndex + 2, (byte) 0);
@@ -101,102 +101,6 @@ public enum TextureUtils {
         return new TextureData(totalWidth, totalHeight, outputChannels, getFormatFromChannels(outputChannels), buffer);
     }
 
-//    public static TextureData flip(TextureData textureData) {
-//        if (textureData == null) {
-//            throw new IllegalArgumentException("ImageData must not be null!");
-//        }
-//
-//        ByteBuffer buffer = MemoryUtil.memAlloc(textureData.getChannels() * textureData.getWidth() * textureData.getHeight());
-//
-//        int pixelIndex;
-//
-//        for (int x = textureData.getWidth() - 1; x >= 0; x--) {
-//            for (int y = textureData.getHeight() - 1; y >= 0; y--) {
-//
-//                // Calculate the index and r,g,b,a values for the image.
-//                pixelIndex = textureData.getIndex(x, y);
-//
-//                byte r = textureData.getData().get(pixelIndex);
-//                byte g = textureData.getData().get(pixelIndex + 1);
-//                byte b = textureData.getData().get(pixelIndex + 2);
-//                byte a = (byte) 0;
-//                if (textureData.getChannels() == 4)
-//                    a = textureData.getData().get(pixelIndex + 3);
-//
-//                // imageIndex = (x + y * imageData.getWidth()) * imageData.getChannels();
-//
-//                buffer.put(r);
-//                buffer.put(g);
-//                buffer.put(b);
-//                if (textureData.getChannels() == 4)
-//                    buffer.put(a);
-//            }
-//        }
-//        buffer.flip();
-//
-//        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
-//                getFormatFromChannels(textureData.getChannels()), buffer);
-//    }
-//
-//
-//    public static TextureData flipHorizontal(TextureData textureData) {
-//        if (textureData == null) {
-//            throw new IllegalArgumentException("ImageData must not be null!");
-//        }
-//
-//        ByteBuffer buffer = MemoryUtil.memAlloc(textureData.getChannels() * textureData.getWidth() * textureData.getHeight());
-//
-//        int pixelIndex;
-//        for (int x = textureData.getWidth() - 1; x >= 0; x--) {
-//            for (int y = 0; y < textureData.getHeight(); y++) {
-//
-//                // Calculate the index and r,g,b,a values for the image.
-//                pixelIndex = textureData.getIndex(x, y);
-//                byte r = textureData.getData().get(pixelIndex);
-//                byte g = textureData.getData().get(pixelIndex + 1);
-//                byte b = textureData.getData().get(pixelIndex + 2);
-//                byte a = (byte) 0;
-//                if (textureData.getChannels() == 4)
-//                    a = textureData.getData().get(pixelIndex + 3);
-//
-//                putARGB(buffer, pixelIndex, r, g, b, a, textureData.getChannels());
-//
-//            }
-//        }
-//        buffer.flip();
-//        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
-//                getFormatFromChannels(textureData.getChannels()), buffer);
-//    }
-//
-//    public static TextureData flipVertical(TextureData textureData) {
-//        if (textureData == null) {
-//            throw new IllegalArgumentException("ImageData must not be null!");
-//        }
-//
-//        ByteBuffer buffer = MemoryUtil.memAlloc(textureData.getChannels() * textureData.getWidth() * textureData.getHeight());
-//
-//        int pixelIndex;
-//        for (int x = 0; x < textureData.getWidth(); x++) {
-//            for (int y = textureData.getHeight() - 1; y >= 0; y--) {
-//
-//                // Calculate the index and r,g,b,a values for the image.
-//                pixelIndex = textureData.getIndex(x, y);
-//
-//                byte r = textureData.getData().get(pixelIndex);
-//                byte g = textureData.getData().get(pixelIndex + 1);
-//                byte b = textureData.getData().get(pixelIndex + 2);
-//                byte a = (byte) 0;
-//                if (textureData.getChannels() == 4)
-//                    a = textureData.getData().get(pixelIndex + 3);
-//
-//                putARGB(buffer, pixelIndex, r, g, b, a, textureData.getChannels());
-//            }
-//        }
-//        buffer.flip();
-//        return new TextureData(textureData.getWidth(), textureData.getHeight(), textureData.getChannels(),
-//                getFormatFromChannels(textureData.getChannels()), buffer);
-//    }
-
     /**
      * Creates a new {@link TextureData} with each pixel replaced by the function modifier. Note: the input texture data
      * will not be destroyed, so take special consideration of this when using this function.
@@ -208,7 +112,7 @@ public enum TextureUtils {
      * */
     public static TextureData modify(TextureData textureData, Function<Integer, Integer> modifier) {
         if (textureData == null) {
-            throw new IllegalArgumentException("ImageData must not be null!");
+            throw new IllegalArgumentException("TextureData must not be null!");
         }
 
         ByteBuffer buffer = MemoryUtil.memAlloc(textureData.getChannels() * textureData.getWidth() * textureData.getHeight());
@@ -241,7 +145,7 @@ public enum TextureUtils {
      * */
     public static TextureData combine(TextureData first, TextureData second, int desiredChannels, BiFunction<Integer, Integer, Integer> combiner) {
         if (first == null || second == null) {
-            throw new IllegalArgumentException("ImageData must not be null!");
+            throw new IllegalArgumentException("TextureData must not be null!");
         }
         if (first.getWidth() != second.getWidth() && first.getHeight() != second.getHeight()) {
             throw new IllegalArgumentException("Both ImageData must have the same dimensions!");

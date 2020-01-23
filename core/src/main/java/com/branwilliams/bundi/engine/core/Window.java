@@ -91,9 +91,9 @@ public class Window {
         // Just in case lol
         glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
-        glfwSetErrorCallback((error, description) -> {
-            throw new IllegalStateException(GLFWErrorCallback.getDescription(description));
-        });
+//        glfwSetErrorCallback((error, description) -> {
+//            throw new IllegalStateException(GLFWErrorCallback.getDescription(description));
+//        });
 
         // Allows for listeners to recieved key events.
         glfwSetKeyCallback(windowId, (windowId, key, scancode, action, mods) -> {

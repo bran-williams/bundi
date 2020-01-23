@@ -11,28 +11,20 @@ import com.branwilliams.bundi.engine.texture.ArrayTexture;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
-import com.branwilliams.bundi.engine.util.GsonUtils;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.terrain.builder.TerrainMeshBuilder;
 import com.branwilliams.terrain.builder.TerrainTileBuilder;
 import com.branwilliams.terrain.component.TerrainMaterial;
 import com.branwilliams.terrain.component.TerrainTexture;
-import com.branwilliams.terrain.component.TerrainTextureData;
 import com.branwilliams.terrain.generator.*;
-import com.branwilliams.terrain.render.LineGraphRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderPass;
-import com.branwilliams.terrain.render.TerrainRenderPass2;
 import com.branwilliams.terrain.render.TerrainRenderer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.branwilliams.terrain.generator.HeightmapBlendmapGenerator.GRAYSCALE_MAX_COLOR;
 
 /**
  * @author Brandon
@@ -46,7 +38,7 @@ public class TerrainScene extends AbstractScene {
 
     private static final int TERRAIN_TILE_VERTICES_Z = 256;
 
-    private static final float TERRAIN_TILE_AMPLITUDE = 16;
+    private static final float TERRAIN_TILE_AMPLITUDE = 48;
 
     private Camera camera;
 
@@ -87,7 +79,7 @@ public class TerrainScene extends AbstractScene {
         // Create or load the height generator
         float[] frequencies = { 1F, 2F, 4F, 8F };
         float[] percentages = { 1F, 1F, 0.5F, 0.25F };
-        HeightGenerator generator = new PerlinNoiseGenerator(1024, frequencies, percentages,
+        HeightGenerator generator = new NoiseGenerator(1024, frequencies, percentages,
                 1F / TERRAIN_TILE_SIZE);
 //        HeightGenerator generator = new HeightmapGenerator(terrainMaterial.getHeightmapTextureData());
 

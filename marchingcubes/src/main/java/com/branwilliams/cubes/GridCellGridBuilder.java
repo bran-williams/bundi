@@ -1,6 +1,7 @@
 package com.branwilliams.cubes;
 
-import com.branwilliams.bundi.engine.util.PerlinNoise;
+import com.branwilliams.bundi.engine.util.noise.Noise;
+import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 import org.joml.Vector3f;
 
 /**
@@ -10,12 +11,12 @@ import org.joml.Vector3f;
 public class GridCellGridBuilder {
     private static final float NOISE_SCALE = 0.1F;
 
-    private final PerlinNoise perlinNoise;
+    private final Noise noise;
 
     private final float cellSize;
 
     public GridCellGridBuilder(float cellSize) {
-        this.perlinNoise = new PerlinNoise();
+        this.noise = new OpenSimplexNoise();
         this.cellSize = cellSize;
     }
 
@@ -36,7 +37,7 @@ public class GridCellGridBuilder {
                         float x = (offset.x + points[l].x) * NOISE_SCALE;
                         float y = (offset.y + points[l].y) * NOISE_SCALE;
                         float z = (offset.z + points[l].z) * NOISE_SCALE;
-                        float e = (float) perlinNoise.noise(x, y, z);
+                        float e = (float) noise.noise(x, y, z);
                         gridCell.getIsoValues()[l] = e;
                     }
 

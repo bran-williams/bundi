@@ -1,17 +1,19 @@
-package com.branwilliams.bundi.engine.util;
+package com.branwilliams.bundi.engine.util.noise;
 
-import org.joml.Vector2d;
-import org.joml.Vector2f;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 
 import java.util.Random;
-import java.util.function.Consumer;
 
 /**
- * Created by Brandon Williams on 10/25/2018.
+ * COPYRIGHT 2002 KEN PERLIN.
+ *
+ * From: https://mrl.nyu.edu/~perlin/noise/
+ * Paper: https://mrl.nyu.edu/~perlin/paper445.pdf
+ * <br/> <br/>
+ * Added by Brandon Williams on 10/25/2018.
  */
-public class PerlinNoise {
+public class PerlinNoise implements Noise {
 
     // Permutation array. Random numbers from 0 ~ 256
     private final int p[] = new int[512];
@@ -56,60 +58,6 @@ public class PerlinNoise {
         }
     }
 
-    public void noiseLoop2d(Vector2f start, Vector2f end, Vector2f increment, float z, Consumer<Double> noiseConsumer) {
-        noiseLoop2d(start.x, start.y, end.x, end.y, increment.x, increment.y, z, noiseConsumer);
-    }
-
-    public void noiseLoop2d(Vector2f start, Vector2f end, Vector2f increment, Consumer<Double> noiseConsumer) {
-        noiseLoop2d(start.x, start.y, end.x, end.y, increment.x, increment.y, noiseConsumer);
-    }
-    
-    public void noiseLoop2d(Vector2d start, Vector2d end, Vector2d increment, double z, Consumer<Double> noiseConsumer) {
-        noiseLoop2d(start.x, start.y, end.x, end.y, increment.x, increment.y, z, noiseConsumer);
-    }
-
-    public void noiseLoop2d(Vector2d start, Vector2d end, Vector2d increment, Consumer<Double> noiseConsumer) {
-        noiseLoop2d(start.x, start.y, end.x, end.y, increment.x, increment.y, noiseConsumer);
-    }
-
-
-    public void noiseLoop2d(double startX, double startY, double endX, double endY,
-                      double incrementX, double incrementY, double z, Consumer<Double> noiseConsumer) {
-        for (double i = startX; i < endX; i+=incrementX) {
-            for (double j = startY; j < endY; j+=incrementY) {
-                    noiseConsumer.accept(noise(i, j, z));
-            }
-        }
-    }
-    public void noiseLoop2d(double startX, double startY, double endX, double endY,
-                        double incrementX, double incrementY, Consumer<Double> noiseConsumer) {
-        noiseLoop2d(startX, startY, endX, endY, incrementX, incrementY, 0F, noiseConsumer);
-    }
-
-    public void noiseLoop2d(Vector3f start, Vector3f end, Vector3f increment, Consumer<Double> noiseConsumer) {
-        noiseLoop3d(start.x, start.y, start.z,
-                end.x, end.y, end.z, increment.x,
-                increment.y, increment.z, noiseConsumer);
-    }
-
-
-    public void noiseLoop3d(Vector3d start, Vector3d end, Vector3d increment, Consumer<Double> noiseConsumer) {
-        noiseLoop3d(start.x, start.y, start.z,
-                end.x, end.y, end.z, increment.x,
-                increment.y, increment.z, noiseConsumer);
-    }
-
-    public void noiseLoop3d(double startX, double startY, double startZ, double endX, double endY, double endZ,
-                      double incrementX, double incrementY, double incrementZ, Consumer<Double> noiseConsumer) {
-        for (double i = startX; i < endX; i+=incrementX) {
-            for (double j = startY; j < endY; j+=incrementY) {
-                for (double k = startZ; k < endZ; k+=incrementZ) {
-                    noiseConsumer.accept(noise(i, j, k));
-                }
-            }
-        }         
-    }
-
     public double noise(Vector3f position) {
         return noise(position.x, position.y, position.z);
     }
@@ -118,11 +66,17 @@ public class PerlinNoise {
         return noise(position.x, position.y, position.z);
     }
 
+    @Override
+    public double noise(double x, double y) {
+        return noise(x, y, 0);
+    }
+
     /**
      * Something to note: all integer values may produce zero.
      * Credits go to Ken Perlin for his noise function implementation.
      * Produces values between -1 ~ 1.
      * */
+    @Override
     public double noise(double x, double y, double z) {
         int X = (int)Math.floor(x) & 255,                  // FIND UNIT CUBE THAT
                 Y = (int)Math.floor(y) & 255,              // CONTAINS POINT.

@@ -1,38 +1,39 @@
 package com.branwilliams.terrain.generator;
 
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.util.PerlinNoise;
+import com.branwilliams.bundi.engine.util.noise.Noise;
+import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 
 /**
  * Created by Brandon Williams on 10/29/2018.
  */
-public class PerlinNoiseGenerator implements HeightGenerator {
+public class NoiseGenerator implements HeightGenerator {
 
     public static final float DEFAULT_NOISE_SCALE = 0.01F;
 
-    private final PerlinNoise perlinNoise;
+    private final Noise noise;
 
     private final float[] frequencies;
     private final float[] percentages;
     private final float noiseScale;
 
-    public PerlinNoiseGenerator(long seed, float[] frequencies, float[] percentages) {
+    public NoiseGenerator(long seed, float[] frequencies, float[] percentages) {
         this(seed, frequencies, percentages, DEFAULT_NOISE_SCALE);
     }
 
-    public PerlinNoiseGenerator(float[] frequencies, float[] percentages) {
+    public NoiseGenerator(float[] frequencies, float[] percentages) {
         this(frequencies, percentages, DEFAULT_NOISE_SCALE);
     }
 
-    public PerlinNoiseGenerator(float[] frequencies, float[] percentages, float noiseScale) {
-        this.perlinNoise = new PerlinNoise();
+    public NoiseGenerator(float[] frequencies, float[] percentages, float noiseScale) {
+        this.noise = new OpenSimplexNoise();
         this.frequencies = frequencies;
         this.percentages = percentages;
         this.noiseScale = noiseScale;
     }
 
-    public PerlinNoiseGenerator(long seed, float[] frequencies, float[] percentages, float noiseScale) {
-        this.perlinNoise = new PerlinNoise(seed);
+    public NoiseGenerator(long seed, float[] frequencies, float[] percentages, float noiseScale) {
+        this.noise = new OpenSimplexNoise(seed);
         this.frequencies = frequencies;
         this.percentages = percentages;
         this.noiseScale = noiseScale;
@@ -60,7 +61,7 @@ public class PerlinNoiseGenerator implements HeightGenerator {
                 float e = 0F;
                 for (int k = 0; k < frequencies.length; k++) {
                     float frequency = frequencies[k];
-                    e += (float) perlinNoise.noise(frequency * nx, frequency * ny, 0F) * percentages[k];
+                    e += (float) noise.noise(frequency * nx, frequency * ny, 0F) * percentages[k];
                 }
 
                 heights[i][j] = ((Mathf.clamp(e, 1F) + 1F) * 0.5F) * amplitude;

@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.voxel.world.generator;
 
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.util.PerlinNoise;
+import com.branwilliams.bundi.engine.util.noise.PerlinNoise;
 import com.branwilliams.bundi.voxel.VoxelConstants;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
