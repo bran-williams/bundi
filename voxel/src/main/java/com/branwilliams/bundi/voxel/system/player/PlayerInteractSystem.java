@@ -1,5 +1,9 @@
 package com.branwilliams.bundi.voxel.system.player;
 
+import com.branwilliams.bundi.engine.audio.AudioData;
+import com.branwilliams.bundi.engine.audio.AudioLoader;
+import com.branwilliams.bundi.engine.audio.AudioSource;
+import com.branwilliams.bundi.engine.audio.Sound;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Lockable;
 import com.branwilliams.bundi.engine.core.Window;
@@ -36,6 +40,10 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
 
     private int interactionState = NO_MOUSE;
 
+    private Sound bonk;
+
+    private AudioSource bonkSource;
+
     public PlayerInteractSystem(VoxelScene scene) {
         this(scene, Lockable.unlocked());
     }
@@ -49,7 +57,10 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
 
     @Override
     public void init(Engine engine, EntitySystemManager entitySystemManager, Window window) {
-
+        AudioLoader audioLoader = new AudioLoader(engine.getContext());
+        AudioData audioData = audioLoader.loadAudio("sounds/bonk.ogg");
+        Sound bonkSound = new Sound(audioData);
+        bonkSource = new AudioSource(bonkSound);
     }
 
     @Override
@@ -102,6 +113,7 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
                 case MOUSE_LEFT_CLICK:
                     scene.getVoxelWorld().getChunks().setVoxelAtPosition(Voxels.air, playerState.getRaycast().blockPosition);
                     interactionDelay = TICKS_PER_INTERACTION;
+                    bonkSource.play();
                     break;
                 case MOUSE_RIGHT_CLICK:
                     Vector3f placePosition = new Vector3f(playerState.getRaycast().blockPosition);
