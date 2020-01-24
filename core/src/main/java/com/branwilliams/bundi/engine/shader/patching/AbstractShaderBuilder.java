@@ -44,6 +44,24 @@ public class AbstractShaderBuilder implements ShaderBuilder {
     }
 
     @Override
+    public ShaderBuilder geometryShader(String code) throws ShaderInitializationException {
+        shaderProgram.setGeometryShader(code);
+        return this;
+    }
+
+    @Override
+    public ShaderBuilder tessellationControlShader(String code) throws ShaderInitializationException {
+        shaderProgram.setTessellationControlShader(code);
+        return this;
+    }
+
+    @Override
+    public ShaderBuilder tessellationEvaluationShader(String code) throws ShaderInitializationException {
+        shaderProgram.setTessellationEvaluationShader(code);
+        return this;
+    }
+
+    @Override
     public ShaderProgram build() throws ShaderInitializationException {
         shaderProgram.link();
         ShaderProgram shaderProgram_ = shaderProgram;

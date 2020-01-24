@@ -12,5 +12,11 @@ public interface ShaderBuilder {
 
     ShaderBuilder fragmentShader(String code) throws ShaderInitializationException;
 
+    ShaderBuilder geometryShader(String code) throws ShaderInitializationException;
+
+    ShaderBuilder tessellationControlShader(String code) throws ShaderInitializationException;
+
+    ShaderBuilder tessellationEvaluationShader(String code) throws ShaderInitializationException;
+
     ShaderProgram build() throws ShaderInitializationException;
 }

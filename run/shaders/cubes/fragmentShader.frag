@@ -39,7 +39,7 @@ void main() {
     vec3 diffuse  = directionalLight.diffuse  * diff * textureColor.rgb;
     vec3 specular = directionalLight.specular * spec * specular.rgb;
 
-    vec3 emission = vec3(0);
+    /*emission*/
 
     fragColor = vec4(ambient + diffuse + specular + emission, 1.0);
 }

@@ -27,7 +27,7 @@ public class ChunkShaderProgram extends ShaderProgram {
         super();
         Path directory = engineContext.getAssetDirectory();
         this.setVertexShader(IOUtils.readFile(directory, "voxel/shaders/world/vertexShader.vert", null));
-        this.setFragmentShader(ShaderUtils.addDefines(fragmentShaderDefines, IOUtils.readFile(directory, "voxel/shaders/world/fragmentShader.frag", null)));
+        this.setFragmentShader(ShaderUtils.addDefines(IOUtils.readFile(directory, "voxel/shaders/world/fragmentShader.frag", null), fragmentShaderDefines));
         this.link();
 
         this.createUniform("projectionMatrix");
