@@ -26,10 +26,8 @@ public class CubesShaderProgram extends ShaderProgram {
         String fragmentShaderCode = IOUtils.readFile(directory, "shaders/cubes/fragmentShader.frag", null);
 
         fragmentShaderCode = ShaderUtils.replaceComment(fragmentShaderCode,
-                Pattern.compile("emission"),
-                (comment) -> "vec3 emission = vec3(0, 1, 0);");
-
-        System.out.println(fragmentShaderCode);
+                "emission",
+                (comment) -> "vec3 emission = vec3(0);");
 
         this.setFragmentShader(fragmentShaderCode);
         this.link();

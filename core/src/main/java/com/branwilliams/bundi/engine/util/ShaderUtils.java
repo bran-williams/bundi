@@ -21,16 +21,18 @@ public class ShaderUtils {
         return versionDefine + "\n" + defines + "\n" + code;
     }
 
-    public static String replaceComment(String code, Pattern commentPattern, Function<String, String> lineModifier) {
+    public static String replaceComment(String code, String commentRegex, Function<String, String> commentModifier) {
         Matcher commentMatcher = C_STYLE_COMMENT_PATTERN.matcher(code);
         if (!commentMatcher.find()) {
             throw new IllegalStateException("No match found");
         }
 
+        Pattern commentPattern = Pattern.compile(commentRegex);
+
         for (int i = 0; i < commentMatcher.groupCount(); i++) {
             String text = commentMatcher.group(i);
             if (commentPattern.matcher(text).find()) {
-                code = code.substring(0, code.indexOf(text)) + lineModifier.apply(text) +  code.substring(code.indexOf(text) + text.length());
+                code = code.substring(0, code.indexOf(text)) + commentModifier.apply(text) +  code.substring(code.indexOf(text) + text.length());
             }
         }
 
