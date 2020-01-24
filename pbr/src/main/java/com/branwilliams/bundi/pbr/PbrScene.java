@@ -9,6 +9,7 @@ import com.branwilliams.bundi.engine.model.Model;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.skybox.Skybox;
+import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.IOUtils;
@@ -35,10 +36,14 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
     private final Vector3f objectPosition = new Vector3f(0F, 0F, -2F);
 
-    /**
-     * Change me in order to view another material!
-     * */
-    private final String material = "pbr/rustediron.json";
+    private int materialIndex = 0;
+
+    private final String[] materials = {
+            "pbr/bamboo.json",
+            "pbr/fabric5.json",
+            "pbr/metal_rust.json",
+            "pbr/rustediron.json"
+    };
 
     private final float exposure = 1F;
 
@@ -66,8 +71,8 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
         PbrRenderPipeline renderPipeline = new PbrRenderPipeline(this, this::getCamera, this::getExposure, worldProjection);
-//        renderPipeline.addFirst(new SkyboxRenderPass(this::getCamera, this::getSkybox));
-        renderPipeline.addLast(new PbrDebugRenderPass());
+        renderPipeline.addFirst(new SkyboxRenderPass<>(this::getCamera, this::getSkybox));
+        renderPipeline.addLast(new PbrDebugRenderPass(this));
         PbrRenderer renderer = new PbrRenderer(this, renderPipeline);
         setRenderer(renderer);
 
@@ -81,13 +86,12 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
         camera.lookAt(objectPosition);
 
         try {
-            PbrMaterial material = readMaterial(assetDirectory, this.material);
-            SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
-            Model sphereModel = new Model(sphereMesh, material.createMaterial(textureLoader));
+
             sphereEntity = es.entity("sphere").component(
-                    new Transformation().position(objectPosition).rotate(90F, 0F, 0F),
-                    sphereModel
+                    new Transformation().position(objectPosition).rotate(90F, 0F, 0F)
             ).build();
+
+            loadMaterial();
 
             CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/ame.csv");
             skybox = new Skybox(500, new Material(skyboxTexture));
@@ -159,20 +163,49 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
             model.destroy();
             sphereEntity.removeComponent(model);
 
-
-            try {
-                PbrMaterial material = readMaterial(assetDirectory, this.material);
-                SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
-                Model newModel = new Model(sphereMesh, material.createMaterial(textureLoader));
-                sphereEntity.addComponent(newModel);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            nextMaterial();
+            loadMaterial();
         }
     }
 
     @Override
     public void keyRelease(Window window, int key, int scancode, int mods) {
 
+    }
+
+    private void loadMaterial() {
+        try {
+            Model model = sphereEntity.getComponent(Model.class);
+            if (model != null) {
+                model.destroy();
+                sphereEntity.removeComponent(model);
+            }
+
+            PbrMaterial material = readMaterial(assetDirectory, this.materials[materialIndex]);
+            SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
+            Model sphereModel = new Model(sphereMesh, material.createMaterial(textureLoader));
+            sphereEntity.addComponent(sphereModel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void nextMaterial() {
+        materialIndex++;
+        if (materialIndex >= materials.length) {
+            materialIndex = 0;
+        }
+    }
+
+    public int getMaterialIndex() {
+        return materialIndex;
+    }
+
+    public void setMaterialIndex(int materialIndex) {
+        this.materialIndex = materialIndex;
+    }
+
+    public String[] getMaterials() {
+        return materials;
     }
 }

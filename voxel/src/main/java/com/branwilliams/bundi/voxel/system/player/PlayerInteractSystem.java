@@ -44,6 +44,10 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
 
     private AudioSource bonkSource;
 
+    private Sound slip;
+
+    private AudioSource slipSource;
+
     public PlayerInteractSystem(VoxelScene scene) {
         this(scene, Lockable.unlocked());
     }
@@ -58,9 +62,14 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
     @Override
     public void init(Engine engine, EntitySystemManager entitySystemManager, Window window) {
         AudioLoader audioLoader = new AudioLoader(engine.getContext());
-        AudioData audioData = audioLoader.loadAudio("sounds/bonk.ogg");
-        Sound bonkSound = new Sound(audioData);
-        bonkSource = new AudioSource(bonkSound);
+
+        AudioData bonkData = audioLoader.loadAudio("sounds/bonk1.ogg");
+        bonk = new Sound(bonkData);
+        bonkSource = new AudioSource(bonk);
+
+        AudioData flipData = audioLoader.loadAudio("sounds/slip1.ogg");
+        slip = new Sound(flipData);
+        slipSource = new AudioSource(slip);
     }
 
     @Override
@@ -120,8 +129,10 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.Mouse
                     placePosition.add(playerState.getRaycast().face);
                     if (playerState.getInventory().hasHeldItem()) {
                         boolean placed = playerState.getInventory().getHeldItem().place(scene.getVoxelWorld(), placePosition);
-                        if (placed)
+                        if (placed) {
                             interactionDelay = TICKS_PER_INTERACTION;
+                            slipSource.play();
+                        }
                     }
                     break;
                 case NO_MOUSE:

@@ -54,7 +54,7 @@ public class HotbarRenderPass extends RenderPass<VoxelRenderContext> {
         shaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
         drawHotbar(scene.getPlayerState().getInventory(), window);
         ShaderProgram.unbind();
-        System.out.println(transformable);
+//        System.out.println(transformable);
     }
 
     public void drawHotbar(Inventory inventory, Window window) {

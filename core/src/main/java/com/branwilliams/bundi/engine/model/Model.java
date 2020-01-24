@@ -48,7 +48,6 @@ public class Model implements Destructible {
                 mesh.destroy();
             }
         }
-        System.out.println("hey i was destroyed :)");
     }
 
 }

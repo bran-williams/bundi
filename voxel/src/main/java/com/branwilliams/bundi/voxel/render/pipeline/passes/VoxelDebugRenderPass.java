@@ -91,13 +91,7 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> impleme
         fontRenderer.drawStringWithShadow(title, x, y, color);
         y += fontRenderer.getFontData().getFontHeight();
 
-        fontRenderer.drawStringWithShadow(String.format("\tx = %.3f", vector.x), x, y, color);
-        y += fontRenderer.getFontData().getFontHeight();
-
-        fontRenderer.drawStringWithShadow(String.format("\ty = %.3f", vector.y), x, y, color);
-        y += fontRenderer.getFontData().getFontHeight();
-
-        fontRenderer.drawStringWithShadow(String.format("\tz = %.3f", vector.z), x, y, color);
+        fontRenderer.drawStringWithShadow(String.format("\tx=%.3f y=%.3f z=%.3f", vector.x, vector.y, vector.z), x, y, color);
         y += fontRenderer.getFontData().getFontHeight();
 
         return y;

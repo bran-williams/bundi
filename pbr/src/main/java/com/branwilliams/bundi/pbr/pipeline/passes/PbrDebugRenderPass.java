@@ -12,6 +12,7 @@ import com.branwilliams.bundi.engine.shader.ShaderProgram;
 import com.branwilliams.bundi.engine.shader.ShaderUniformException;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
+import com.branwilliams.bundi.pbr.PbrScene;
 import com.branwilliams.bundi.pbr.pipeline.PbrRenderContext;
 
 /**
@@ -20,9 +21,15 @@ import com.branwilliams.bundi.pbr.pipeline.PbrRenderContext;
  */
 public class PbrDebugRenderPass extends RenderPass<PbrRenderContext> {
 
+    private final PbrScene scene;
+
     private DynamicShaderProgram shaderProgram;
 
     private FontRenderer fontRenderer;
+
+    public PbrDebugRenderPass(PbrScene scene) {
+        this.scene = scene;
+    }
 
     @Override
     public void init(PbrRenderContext renderContext, Engine engine, Window window) throws InitializationException {
@@ -48,6 +55,13 @@ public class PbrDebugRenderPass extends RenderPass<PbrRenderContext> {
         shaderProgram.setModelMatrix(Transformable.empty());
 
         fontRenderer.drawString("Press R to reload the material", 2, 2, 0xFFFFFFFF);
+        int materialIndex = scene.getMaterialIndex();
+        String[] materials = scene.getMaterials();
+        fontRenderer.drawString(String.format("material=%s (%d/%d)",
+                materials[materialIndex],
+                materialIndex + 1,
+                materials.length),
+                2, 2 + fontRenderer.getFontData().getFontHeight(), 0xFFFFFFFF);
 
         ShaderProgram.unbind();
     }

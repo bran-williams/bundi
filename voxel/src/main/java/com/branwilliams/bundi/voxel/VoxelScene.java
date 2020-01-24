@@ -9,6 +9,8 @@ import com.branwilliams.bundi.engine.systems.LockableSystem;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
+import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
+import com.branwilliams.bundi.engine.util.noise.PerlinNoise;
 import com.branwilliams.bundi.gui.impl.ColorPack;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
@@ -24,6 +26,7 @@ import com.branwilliams.bundi.voxel.voxels.model.VoxelProperties;
 import com.branwilliams.bundi.voxel.render.VoxelRenderer;
 import com.branwilliams.bundi.voxel.system.player.*;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
+import com.branwilliams.bundi.voxel.world.generator.NoiseChunkGenerator;
 import com.branwilliams.bundi.voxel.world.generator.PerlinChunkGenerator;
 import com.branwilliams.bundi.voxel.world.generator.VoxelChunkGenerator;
 import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilder;
@@ -253,7 +256,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
         ChunkStorage chunkStorage = new HashChunkStorage();
 
         // create generator and world
-        VoxelChunkGenerator voxelChunkGenerator = new PerlinChunkGenerator();
+        VoxelChunkGenerator voxelChunkGenerator = new NoiseChunkGenerator(new PerlinNoise());
         voxelWorld = new VoxelWorld(voxelRegistry, voxelChunkGenerator, chunkStorage, chunkMeshStorage, es);
 
         // load the chunks at a given position in a given radius
