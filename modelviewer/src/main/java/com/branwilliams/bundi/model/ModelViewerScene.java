@@ -35,12 +35,13 @@ public class ModelViewerScene extends AbstractScene implements Window.KeyListene
      * Change me in order to view another model
      * */
 //    private final String modelLocation = "models/cartoonland2/cartoonland2.obj";
-//
 //    private final String modelTextures = "models/cartoonland2/";
 
     private final String modelLocation = "models/white_oak/white_oak.obj";
-
     private final String modelTextures = "models/white_oak/";
+
+//    private final String modelLocation = "models/logo2/logo2.obj";
+//    private final String modelTextures = "models/logo2/";
 
     private final VertexFormat vertexFormat = VertexFormat.POSITION_UV;
 

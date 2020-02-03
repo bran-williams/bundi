@@ -10,14 +10,17 @@ import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.cubes.CubesScene;
-import com.branwilliams.cubes.GridCellMesh;
+import com.branwilliams.cubes.world.MarchingCubeChunk;
 import org.joml.Vector4f;
 
 import java.util.function.Supplier;
 
+import static com.branwilliams.bundi.engine.util.ColorUtils.*;
+import static com.branwilliams.cubes.CubesScene.WORLD_COLOR;
+
 public class GridCellRenderPass extends RenderPass<RenderContext> {
 
-    private final Vector4f color = new Vector4f(1F, 0F, 0F, 1F);
+    private final Vector4f color = toVector4(WORLD_COLOR);
 
     private final CubesScene scene;
 
@@ -33,7 +36,7 @@ public class GridCellRenderPass extends RenderPass<RenderContext> {
         this.scene = scene;
         this.sun = sun;
         this.camera = camera;
-        this.componentMatcher = scene.getEs().matcher(Transformable.class, GridCellMesh.class);
+        this.componentMatcher = scene.getEs().matcher(Transformable.class, MarchingCubeChunk.class);
     }
 
     @Override
@@ -56,9 +59,9 @@ public class GridCellRenderPass extends RenderPass<RenderContext> {
 
         for (IEntity entity : scene.getEs().getEntities(componentMatcher)) {
             Transformable transformable = entity.getComponent(Transformable.class);
-            GridCellMesh mesh = entity.getComponent(GridCellMesh.class);
+            MarchingCubeChunk chunk = entity.getComponent(MarchingCubeChunk.class);
             shaderProgram.setModelMatrix(transformable);
-            MeshRenderer.render(mesh.getMesh(), null);
+            MeshRenderer.render(chunk.getGridCellMesh().getMesh(), null);
         }
     }
 }

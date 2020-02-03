@@ -22,7 +22,13 @@ public class Grid3f<T> implements Iterable<T> {
     private boolean dirty;
 
     public Grid3f(Function<Integer, T[]> kernelBuilder, int width, int height, int depth) {
-        this.kernel = kernelBuilder.apply(width * height * depth);
+        this(kernelBuilder.apply(width * height * depth), width, height, depth);
+    }
+
+    public Grid3f(T[] kernel, int width, int height, int depth) {
+        if (width * height * depth != kernel.length)
+            throw new IllegalArgumentException("Kernel must have the dimensions of width * height * depth");
+        this.kernel = kernel;
         this.width = width;
         this.height = height;
         this.depth = depth;
@@ -77,9 +83,17 @@ public class Grid3f<T> implements Iterable<T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        return new Iterator<T>() {
+        class Grid3fIterator implements Iterator<T> {
 
             private int i;
+
+            private Grid3fIterator() {
+                if (hasNext() && Grid3f.this.getKernel()[i] == null) {
+                    do {
+                        i++;
+                    } while (hasNext() && Grid3f.this.getKernel()[i] == null);
+                }
+            }
 
             @Override
             public boolean hasNext() {
@@ -90,11 +104,16 @@ public class Grid3f<T> implements Iterable<T> {
             public T next() {
                 if (hasNext()) {
                     T val = Grid3f.this.getKernel()[i];
-                    i++;
+
+                    do {
+                        i++;
+                    } while (hasNext() && Grid3f.this.getKernel()[i] == null);
+
                     return val;
                 }
                 return null;
             }
-        };
+        }
+        return new Grid3fIterator();
     }
 }

@@ -1,0 +1,14 @@
+{
+  "worldDimensions": {
+    "x": 4,
+    "y": 1,
+    "z": 4
+  },
+  "chunkDimensions": {
+    "x": 32,
+    "y": 32,
+    "z": 32
+  },
+  "cubeSize": 1,
+  "isoLevel": 0.25
+}

@@ -1,21 +1,41 @@
 package com.branwilliams.cubes;
 
-import com.branwilliams.bundi.engine.core.AbstractScene;
-import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
+import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.DirectionalLight;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.util.Grid3f;
+import com.branwilliams.bundi.engine.util.IOUtils;
+import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
+import com.branwilliams.cubes.builder.*;
+import com.branwilliams.cubes.builder.evaluators.NoiseIsoEvaluator;
+import com.branwilliams.cubes.builder.evaluators.SphereIsoEvaluator;
+import com.branwilliams.cubes.math.RaycastResult;
 import com.branwilliams.cubes.pipeline.GridCellRenderPass;
+import com.branwilliams.cubes.pipeline.RaycastResultRenderPass;
+import com.branwilliams.cubes.system.PlayerInteractSystem;
+import com.branwilliams.cubes.world.MarchingCubeChunk;
+import com.branwilliams.cubes.world.MarchingCubeWorld;
+import com.branwilliams.cubes.world.WorldProperties;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
+import java.awt.Color;
+import java.lang.reflect.Type;
+import java.util.List;
+
+import static com.branwilliams.bundi.engine.util.ColorUtils.fromHex;
+import static com.branwilliams.bundi.engine.util.ColorUtils.toVector3;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
 /**
@@ -24,23 +44,48 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
  */
 public class CubesScene extends AbstractScene implements Window.KeyListener {
 
-    private static final int CELL_SIZE = 1;
+    public static final Color WORLD_COLOR = fromHex("#573B0C");
+
+    // play vars
+
+    private static final float RAYCAST_DISTANCE  = 8F;
+
+    private static final int NUM_CHUNKS_XZ = 8;
+
+    private static final int NUM_CHUNKS_Y = 1;
+
+
+    // world vars
+
+    private static final int MAX_NUM_CHUNKS_X = 8;
+
+    private static final int MAX_NUM_CHUNKS_Y = 1;
+
+    private static final int MAX_NUM_CHUNKS_Z = 8;
+
+    private static final int CUBE_SIZE = 1;
 
     private static final int GRID_CELL_SIZE_X = 32;
 
-    private static final int GRID_CELL_SIZE_Y = 64;
+    private static final int GRID_CELL_SIZE_Y = 32;
 
     private static final int GRID_CELL_SIZE_Z = 32;
 
-    private Camera camera;
+    private static final float ISO_LEVEL = 0.25F;
 
-    private DirectionalLight sun = new DirectionalLight(
+    private final DirectionalLight sun = new DirectionalLight(
             new Vector3f(-0.2F, -1F, -0.3F), // direction
             new Vector3f(0.5F),  // ambient
             new Vector3f(0.4F),  // diffuse
-            new Vector3f(0.5F)); // specular
+            toVector3(WORLD_COLOR.brighter())); // specular
+
+    private Camera camera;
+
+    private RaycastResult raycast;
 
     private boolean wireframe;
+
+    private MarchingCubeWorld world;
 
     public CubesScene() {
         super("cubes");
@@ -50,6 +95,7 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
     @Override
     public void init(Engine engine, Window window) throws Exception {
         es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 16F));
+        es.addSystem(new PlayerInteractSystem(this, this::getRaycastDistance));
         es.initSystems(engine, window);
 
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
@@ -58,6 +104,7 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addLast(new EnableWireframeRenderPass(this::isWireframe));
         renderPipeline.addLast(new GridCellRenderPass(this, this::getSun, this::getCamera));
+        renderPipeline.addLast(new RaycastResultRenderPass(this, this::getCamera));
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
         CubesRenderer renderer = new CubesRenderer(this, renderPipeline);
         setRenderer(renderer);
@@ -69,42 +116,97 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         camera.setPosition(20, 20, 60);
         camera.lookAt(16, 16, 16);
 
-        GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilder(CELL_SIZE);
-        GridCellMeshBuilder gridCellMeshBuilder = new GridCellMeshBuilder();
+//        GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilderImpl(
+//                new NoiseIsoEvaluator(new OpenSimplexNoise(), 0.1F)
+//                        .andThen(new GradientIsoEvaluator(GRID_CELL_SIZE_Y)));
 
-//        buildGrid(gridCellGridBuilder, gridCellMeshBuilder, "grid", new Vector3f());
-        buildGridOfGrids(gridCellGridBuilder, gridCellMeshBuilder, 4);
+        GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilderImpl(
+                new NoiseIsoEvaluator(new OpenSimplexNoise(), 0.1F)
+                        .andThen(new SphereIsoEvaluator(new Vector3f(GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y * 0.5F, GRID_CELL_SIZE_Z), 16)));
+
+//        GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilderImpl(
+//                new NoiseIsoEvaluator(new OpenSimplexNoise(), 0.1F)
+//                        .andThen(new TorusIsoEvaluator(new Vector3f(GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y * 0.5F, GRID_CELL_SIZE_Z),
+//                                new Torus(8, 4))));
+
+        GridCellMeshBuilder gridCellMeshBuilder = new GridCellMeshBuilderImpl();
+
+        WorldProperties worldProperties = new WorldProperties(
+                new Vector3i(MAX_NUM_CHUNKS_X, MAX_NUM_CHUNKS_Y, MAX_NUM_CHUNKS_Z),
+                new Vector3i(GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z), CUBE_SIZE, ISO_LEVEL);
+
+        world = new MarchingCubeWorld(worldProperties,
+                gridCellGridBuilder, gridCellMeshBuilder);
+        world.loadAllChunks();
+
+        loadFromFile("cubes/world_properties.json", "cubes/world00.json");
+        buildWorld(NUM_CHUNKS_XZ, NUM_CHUNKS_Y);
     }
 
 
-    private void buildGridOfGrids(GridCellGridBuilder gridCellGridBuilder, GridCellMeshBuilder gridCellMeshBuilder,
-                                  int numGrids) {
-        int halfNumGrids = numGrids / 2;
-        for (int i = -halfNumGrids; i < halfNumGrids; i++) {
-            for (int j = -halfNumGrids; j < halfNumGrids; j++) {
-                Vector3f offset = new Vector3f(i * GRID_CELL_SIZE_X, 0, j * GRID_CELL_SIZE_Z);
-                buildGrid(gridCellGridBuilder, gridCellMeshBuilder, "grid-" + i + ":" + j, offset);
+    private void buildWorld(int numChunks, int numChunksY) {
+        int halfNumChunksXZ = numChunks / 2;
+        numChunksY = Math.max(1, numChunksY / 2);
+
+        for (int i = -halfNumChunksXZ; i < halfNumChunksXZ; i++) {
+            for (int j = 0; j < numChunksY; j++) {
+                for (int k = -halfNumChunksXZ; k < halfNumChunksXZ; k++) {
+                    if (world.loadChunk(i, j, k)) {
+                        MarchingCubeChunk chunk = world.getChunk(i, j, k);
+
+                        IEntity entity = es.entity("chunk-(x=" + i + ",y=" + j + ",z=" + k + ")")
+                                .component(
+                                        new Transformation().position(chunk.getOffset()),
+                                        chunk)
+                                .build();
+                    }
+                }
             }
         }
     }
 
-    private void buildGrid(GridCellGridBuilder gridCellGridBuilder, GridCellMeshBuilder gridCellMeshBuilder,
-                           String name, Vector3f offset) {
-        Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(offset,
-                GRID_CELL_SIZE_X, GRID_CELL_SIZE_Y, GRID_CELL_SIZE_Z);
-        GridCellMesh gridCellMesh = gridCellMeshBuilder.buildMesh(gridCellGrid);
+    private void loadFromFile(String worldProperties, String worldDir) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-        es.entity(name)
-                .component(
-                        new Transformation().position(offset),
-                        gridCellMesh)
-                .build();
+        String propertiesContent = IOUtils.readFile(worldProperties, null);
+        WorldProperties worldProperties_ = gson.fromJson(propertiesContent, WorldProperties.class);
+
+        Type chunkDataType = new TypeToken<Grid3f<Float>>(){}.getType();
+        Type listOfChunks = new TypeToken<List<Grid3f<Float>>>(){}.getType();
+
+        String worldDataContent = IOUtils.readFile(worldDir, null);
+        Grid3f<Float> chunkData = gson.fromJson(worldDataContent, chunkDataType);
     }
 
+    private void toGrid3f() {
+        
+    }
 
     @Override
     public void pause(Engine engine) {
 
+    }
+
+    @Override
+    public void update(Engine engine, double deltaTime) {
+        super.update(engine, deltaTime);
+        world.update(engine, deltaTime);
+    }
+
+    @Override
+    public void keyPress(Window window, int key, int scancode, int mods) {
+        if (key == GLFW_KEY_R) {
+            wireframe = !wireframe;
+        }
+    }
+
+    @Override
+    public void keyRelease(Window window, int key, int scancode, int mods) {
+
+    }
+
+    public float getRaycastDistance() {
+        return RAYCAST_DISTANCE;
     }
 
     public DirectionalLight getSun() {
@@ -119,15 +221,15 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         return wireframe;
     }
 
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-        if (key == GLFW_KEY_R) {
-            wireframe = !wireframe;
-        }
+    public MarchingCubeWorld getWorld() {
+        return world;
     }
 
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
+    public RaycastResult getRaycast() {
+        return raycast;
+    }
 
+    public void setRaycast(RaycastResult raycast) {
+        this.raycast = raycast;
     }
 }

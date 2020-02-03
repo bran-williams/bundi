@@ -13,6 +13,10 @@ public enum ColorUtils {
 
     private ColorUtils() {}
 
+    public static Color fromHex(String hex) {
+        return Color.decode(hex.toLowerCase());
+    }
+
     /**
      * @return A {@link Color} object with effects applied to it based on the boolean values given.
      * */

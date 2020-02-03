@@ -206,6 +206,29 @@ public enum MeshUtils {
     }
 
     /**
+     * Formula for the normal of a triangle from <a
+     * href="https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal">Khronos - Calculating a Surface
+     * Normal</a>
+     *
+     * @return The normal for a triangle made by the three points.
+     *
+     * */
+    public static Vector3f calculateNormal(Vector3f p1, Vector3f p2, Vector3f p3) {
+//        Vector3f p1p2 = p2.sub(p1, new Vector3f());
+//        Vector3f p3p2 = p3.sub(p1, new Vector3f());
+//        Vector3f normal = p1p2.cross(p3p2, new Vector3f());
+//        return normal;
+        Vector3f normal = new Vector3f();
+        Vector3f u = new Vector3f(p2).sub(p1);
+        Vector3f v = new Vector3f(p3).sub(p1);
+
+        normal.x = (u.y * v.z) - (u.z * v.y);
+        normal.y = (u.z * v.x) - (u.x * v.z);
+        normal.z = (u.x * v.y) - (u.y * v.x);
+        return normal;
+    }
+
+    /**
      * Converts a given list of vectors to an array of floats.
      * */
     public static float[] toArray4f(List<Vector4f> vectors) {
@@ -275,4 +298,5 @@ public enum MeshUtils {
 
         return res;
     }
+
 }

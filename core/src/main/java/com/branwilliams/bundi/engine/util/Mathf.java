@@ -36,7 +36,40 @@ public enum Mathf {
     private static final float degToIndex = SIN_COUNT / degFull;
     public static final float degreesToRadians = PI / 180;
 
-    public static float smoothstep(float edge0, float edge1, float x) {
+    /**
+     * Example usage
+     * <pre>
+     * getTwosPower(-1) = -1
+     * getTwosPower(0) = -1
+     * getTwosPower(1) = 0
+     * getTwosPower(2) = 1
+     * getTwosPower(4) = 2
+     * getTwosPower(8) = 3
+     * ... etc
+     * </pre>
+     * @return -1 if the value is equal to or below zero, otherwise the minimum two's power that can encompass the input
+     * value.
+     * */
+    public static int getTwosPower(float n) {
+        int val = (int) n;
+
+        if (val <= 0)
+            return -1;
+
+        int pow = -1;
+        while (val != 0) {
+            val = val / 2;
+            pow++;
+        }
+
+        return pow;
+    }
+
+    public static boolean isPowerOfTwo(int n) {
+        return n > 0 && (n & (n - 1)) == 0;
+    }
+
+    public static float smoothStep(float edge0, float edge1, float x) {
         float t = clamp((x - edge0) / (edge1 - edge0), 0.0F, 1.0F);
         return t * t * (3.0F - 2.0F * t);
     }
