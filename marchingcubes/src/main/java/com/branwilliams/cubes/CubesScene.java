@@ -18,6 +18,7 @@ import com.branwilliams.cubes.builder.*;
 import com.branwilliams.cubes.builder.evaluators.NoiseIsoEvaluator;
 import com.branwilliams.cubes.builder.evaluators.SphereIsoEvaluator;
 import com.branwilliams.cubes.math.RaycastResult;
+import com.branwilliams.cubes.pipeline.DebugOriginRenderPass;
 import com.branwilliams.cubes.pipeline.GridCellRenderPass;
 import com.branwilliams.cubes.pipeline.RaycastResultRenderPass;
 import com.branwilliams.cubes.system.PlayerInteractSystem;
@@ -50,9 +51,9 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
 
     private static final float RAYCAST_DISTANCE  = 8F;
 
-    private static final int NUM_CHUNKS_XZ = 8;
+    private static final int NUM_CHUNKS_XZ = 4;
 
-    private static final int NUM_CHUNKS_Y = 1;
+    private static final int NUM_CHUNKS_Y = 2;
 
 
     // world vars
@@ -106,6 +107,7 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         renderPipeline.addLast(new GridCellRenderPass(this, this::getSun, this::getCamera));
         renderPipeline.addLast(new RaycastResultRenderPass(this, this::getCamera));
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
+        renderPipeline.addLast(new DebugOriginRenderPass(this, this::getCamera));
         CubesRenderer renderer = new CubesRenderer(this, renderPipeline);
         setRenderer(renderer);
     }
@@ -113,8 +115,13 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
     @Override
     public void play(Engine engine) {
         camera = new Camera();
-        camera.setPosition(20, 20, 60);
-        camera.lookAt(16, 16, 16);
+        camera.setPosition(-10, 2, -10);
+        camera.lookAt(0, 0, 0);
+
+
+        DebugOriginMeshBuilderImpl debugOriginMeshBuilder = new DebugOriginMeshBuilderImpl();
+        DebugOriginMesh mesh = debugOriginMeshBuilder.buildMesh(new Vector3f(), 10);
+        es.entity("origin_mesh").component(mesh).build();
 
 //        GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilderImpl(
 //                new NoiseIsoEvaluator(new OpenSimplexNoise(), 0.1F)

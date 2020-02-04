@@ -228,6 +228,18 @@ public enum MeshUtils {
         return normal;
     }
 
+    public static float[] toArray4f(Vector4f[] vectors) {
+        float[] array = new float[vectors.length * 4];
+        for (int i = 0; i < vectors.length; i++) {
+            Vector4f vector = vectors[i];
+            array[i * 4] = vector.x;
+            array[i * 4 + 1] = vector.y;
+            array[i * 4 + 2] = vector.z;
+            array[i * 4 + 3] = vector.w;
+        }
+        return array;
+    }
+
     /**
      * Converts a given list of vectors to an array of floats.
      * */

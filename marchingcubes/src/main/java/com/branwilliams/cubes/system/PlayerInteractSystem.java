@@ -49,6 +49,8 @@ public class PlayerInteractSystem extends AbstractSystem implements Window.KeyLi
 //                scene.getCamera().getDirection(),
 //                raycastDistance.get());
 //        scene.setRaycast(result);
+
+        Vector3f ray = scene.getCamera().getDirection().mul(raycastDistance.get());
         if (scene.getRaycast() != null && pressed != -1 && shouldEdit) {
             MarchingCubeChunk chunk = scene.getWorld().getChunk(scene.getRaycast().position);
             if (chunk != null) {
