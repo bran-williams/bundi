@@ -94,4 +94,18 @@ public class WorldProperties {
     public int getDepthBitshift() {
         return depthBitshift;
     }
+
+
+    @Override
+    public String toString() {
+        return "WorldProperties{" +
+                "worldDimensions=" + worldDimensions +
+                ", chunkDimensions=" + chunkDimensions +
+                ", cubeSize=" + cubeSize +
+                ", isoLevel=" + isoLevel +
+                ", widthBitshift=" + widthBitshift +
+                ", heightBitshift=" + heightBitshift +
+                ", depthBitshift=" + depthBitshift +
+                '}';
+    }
 }

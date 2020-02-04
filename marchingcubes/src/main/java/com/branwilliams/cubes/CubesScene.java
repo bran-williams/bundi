@@ -57,11 +57,11 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
 
     // world vars
 
-    private static final int MAX_NUM_CHUNKS_X = 8;
+    private static final int MAX_NUM_CHUNKS_X = NUM_CHUNKS_XZ;
 
-    private static final int MAX_NUM_CHUNKS_Y = 1;
+    private static final int MAX_NUM_CHUNKS_Y = NUM_CHUNKS_Y;
 
-    private static final int MAX_NUM_CHUNKS_Z = 8;
+    private static final int MAX_NUM_CHUNKS_Z = NUM_CHUNKS_XZ;
 
     private static final int CUBE_SIZE = 1;
 
@@ -139,29 +139,18 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
                 gridCellGridBuilder, gridCellMeshBuilder);
         world.loadAllChunks();
 
-        loadFromFile("cubes/world_properties.json", "cubes/world00.json");
-        buildWorld(NUM_CHUNKS_XZ, NUM_CHUNKS_Y);
+//        loadFromFile("cubes/world_properties.json", "cubes/world00.json");
+        buildWorld();
     }
 
 
-    private void buildWorld(int numChunks, int numChunksY) {
-        int halfNumChunksXZ = numChunks / 2;
-        numChunksY = Math.max(1, numChunksY / 2);
-
-        for (int i = -halfNumChunksXZ; i < halfNumChunksXZ; i++) {
-            for (int j = 0; j < numChunksY; j++) {
-                for (int k = -halfNumChunksXZ; k < halfNumChunksXZ; k++) {
-                    if (world.loadChunk(i, j, k)) {
-                        MarchingCubeChunk chunk = world.getChunk(i, j, k);
-
-                        IEntity entity = es.entity("chunk-(x=" + i + ",y=" + j + ",z=" + k + ")")
-                                .component(
-                                        new Transformation().position(chunk.getOffset()),
-                                        chunk)
-                                .build();
-                    }
-                }
-            }
+    private void buildWorld() {
+        for (MarchingCubeChunk chunk : world.getChunks()) {
+            IEntity entity = es.entity("chunk-(" + chunk.getOffset() + ")")
+                    .component(
+                            new Transformation().position(chunk.getOffset()),
+                            chunk)
+                    .build();
         }
     }
 
