@@ -85,4 +85,10 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
         return chunkMesh != null && chunkMesh.isRenderable() &&
                 renderContext.getFrustum().insideFrustumAABB(voxelChunk.getAABB());
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.chunkShaderProgram.destroy();
+    }
 }

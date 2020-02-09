@@ -77,4 +77,11 @@ public class VoxelSelectionRenderPass extends RenderPass<VoxelRenderContext> {
 
         ShaderProgram.unbind();
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.dynamicVAO.destroy();
+    }
 }

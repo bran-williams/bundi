@@ -259,4 +259,11 @@ public class RaycastResultRenderPass extends RenderPass<RenderContext> {
             return null;
         }
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.sphereMesh.destroy();
+    }
 }

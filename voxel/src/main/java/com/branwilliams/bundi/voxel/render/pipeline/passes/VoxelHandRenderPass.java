@@ -95,4 +95,11 @@ public class VoxelHandRenderPass extends RenderPass<VoxelRenderContext> {
 
         scene.getVoxelMeshBuilder().rebuildVoxelMesh(currentVoxel, minX, maxX, minY, maxY, minZ, maxZ, cubeMesh);
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.cubeMesh.destroy();
+    }
 }

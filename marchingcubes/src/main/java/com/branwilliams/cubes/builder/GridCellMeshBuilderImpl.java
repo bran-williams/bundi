@@ -1,5 +1,6 @@
 package com.branwilliams.cubes.builder;
 
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
 import com.branwilliams.bundi.engine.util.Grid3f;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 import com.branwilliams.cubes.GridCell;
@@ -42,8 +43,8 @@ public class GridCellMeshBuilderImpl implements GridCellMeshBuilder {
         }
 
         gridCellMesh.getMesh().bind();
-        gridCellMesh.getMesh().storeAttribute(0, toArray3f(positions), 3);
-        gridCellMesh.getMesh().storeAttribute(1, toArray3f(normals), 3);
+        gridCellMesh.getMesh().storeAttribute(0, toArray3f(positions), VertexElement.POSITION.size);
+        gridCellMesh.getMesh().storeAttribute(1, toArray3f(normals), VertexElement.NORMAL.size);
         gridCellMesh.getMesh().setVertexCount(positions.size());
         gridCellMesh.getMesh().unbind();
 

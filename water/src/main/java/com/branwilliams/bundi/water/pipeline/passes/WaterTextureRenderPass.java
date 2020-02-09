@@ -62,4 +62,11 @@ public class WaterTextureRenderPass extends RenderPass<RenderContext> {
 
         ShaderProgram.unbind();
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.dynamicVAO.destroy();
+    }
 }

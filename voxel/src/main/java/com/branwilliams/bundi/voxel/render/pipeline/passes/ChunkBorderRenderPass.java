@@ -66,4 +66,11 @@ public class ChunkBorderRenderPass extends RenderPass<VoxelRenderContext> {
         dynamicVAO.draw(GL_LINES);
         ShaderProgram.unbind();
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.dynamicVAO.destroy();
+    }
 }

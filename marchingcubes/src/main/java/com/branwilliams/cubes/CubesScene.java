@@ -18,7 +18,7 @@ import com.branwilliams.cubes.builder.*;
 import com.branwilliams.cubes.builder.evaluators.NoiseIsoEvaluator;
 import com.branwilliams.cubes.builder.evaluators.SphereIsoEvaluator;
 import com.branwilliams.cubes.math.RaycastResult;
-import com.branwilliams.cubes.pipeline.DebugOriginRenderPass;
+import com.branwilliams.cubes.pipeline.DebugRenderPass;
 import com.branwilliams.cubes.pipeline.GridCellRenderPass;
 import com.branwilliams.cubes.pipeline.RaycastResultRenderPass;
 import com.branwilliams.cubes.system.PlayerInteractSystem;
@@ -107,7 +107,7 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         renderPipeline.addLast(new GridCellRenderPass(this, this::getSun, this::getCamera));
         renderPipeline.addLast(new RaycastResultRenderPass(this, this::getCamera));
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
-        renderPipeline.addLast(new DebugOriginRenderPass(this, this::getCamera));
+        renderPipeline.addLast(new DebugRenderPass(this, this::getCamera));
         CubesRenderer renderer = new CubesRenderer(this, renderPipeline);
         setRenderer(renderer);
     }
@@ -118,10 +118,6 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         camera.setPosition(-10, 2, -10);
         camera.lookAt(0, 0, 0);
 
-
-        DebugOriginMeshBuilderImpl debugOriginMeshBuilder = new DebugOriginMeshBuilderImpl();
-        DebugOriginMesh mesh = debugOriginMeshBuilder.buildMesh(new Vector3f(), 10);
-        es.entity("origin_mesh").component(mesh).build();
 
 //        GridCellGridBuilder gridCellGridBuilder = new GridCellGridBuilderImpl(
 //                new NoiseIsoEvaluator(new OpenSimplexNoise(), 0.1F)

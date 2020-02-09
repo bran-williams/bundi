@@ -95,4 +95,12 @@ public class HotbarRenderPass extends RenderPass<VoxelRenderContext> {
         shaderProgram.setModelMatrix(transformable.position(x, y, 0F));
         MeshRenderer.render(mesh, null);
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.itemMeshes.forEach((item, mesh) -> mesh.destroy());
+        this.itemMeshes.clear();
+    }
 }

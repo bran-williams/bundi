@@ -8,21 +8,20 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
+import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
+import com.branwilliams.bundi.engine.mesh.primitive.GridMesh;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.cubes.CubesScene;
+import com.branwilliams.cubes.DebugGridMesh;
 import com.branwilliams.cubes.DebugOriginMesh;
-import com.branwilliams.cubes.world.MarchingCubeChunk;
-import org.joml.Vector4f;
+import com.branwilliams.cubes.builder.DebugOriginMeshBuilderImpl;
+import org.joml.Vector3f;
 
 import java.util.function.Supplier;
 
-import static com.branwilliams.bundi.engine.util.ColorUtils.toVector4;
-import static com.branwilliams.cubes.CubesScene.WORLD_COLOR;
-
-public class DebugOriginRenderPass extends RenderPass<RenderContext> {
+public class DebugRenderPass extends RenderPass<RenderContext> {
 
     private final Scene scene;
 
@@ -34,7 +33,11 @@ public class DebugOriginRenderPass extends RenderPass<RenderContext> {
 
     private Transformable transformable = new Transformation();
 
-    public DebugOriginRenderPass(Scene scene, Supplier<Camera> camera) {
+    private DebugOriginMesh originMesh;
+
+    private DebugGridMesh gridMesh;
+
+    public DebugRenderPass(Scene scene, Supplier<Camera> camera) {
         this.scene = scene;
         this.camera = camera;
         this.componentMatcher = scene.getEs().matcher(DebugOriginMesh.class);
@@ -44,6 +47,10 @@ public class DebugOriginRenderPass extends RenderPass<RenderContext> {
     public void init(RenderContext renderContext, Engine engine, Window window) throws InitializationException {
         try {
             shaderProgram = new DynamicShaderProgram(VertexFormat.POSITION_COLOR, DynamicShaderProgram.VIEW_MATRIX);
+
+            DebugOriginMeshBuilderImpl debugOriginMeshBuilder = new DebugOriginMeshBuilderImpl();
+            originMesh = debugOriginMeshBuilder.buildMesh(new Vector3f(0, 0.01F,0), 10);
+            gridMesh = new DebugGridMesh(new Vector3f(), 256, 1);
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }
@@ -54,11 +61,16 @@ public class DebugOriginRenderPass extends RenderPass<RenderContext> {
         shaderProgram.bind();
         shaderProgram.setProjectionMatrix(renderContext.getProjection());
         shaderProgram.setViewMatrix(camera.get());
-        for (IEntity entity : scene.getEs().getEntities(componentMatcher)) {
-            DebugOriginMesh debugOriginMesh = entity.getComponent(DebugOriginMesh.class);
-            shaderProgram.setModelMatrix(Transformable.empty());
-//            shaderProgram.setModelMatrix(transformable.position(debugOriginMesh.getOrigin()));
-            MeshRenderer.render(debugOriginMesh.getMesh(), null);
-        }
+        shaderProgram.setModelMatrix(Transformable.empty());
+        MeshRenderer.render(gridMesh, null);
+        MeshRenderer.render(originMesh.getMesh(), null);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+        this.gridMesh.destroy();
+        this.originMesh.destroy();
     }
 }

@@ -56,6 +56,13 @@ public class GuiScreenManager {
         renderManager.getFontRenderer().setFontData(tooltipFont);
         toolbox.put(FONT_TOOLTIP, tooltipFont);
     }
+
+    public void update() {
+        if (this.guiScreen != null) {
+            this.guiScreen.update();
+        }
+    }
+
     public ContainerManager load(String ui) {
         try {
             ContainerManager containerManager = new ContainerManager(renderManager, toolbox);

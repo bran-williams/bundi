@@ -42,7 +42,7 @@ public class TemplateScene extends AbstractScene {
         renderPipeline.addLast(new EnableWireframeRenderPass(this::isWireframe));
         // Add render passes here.
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
-        TemplateRenderer renderer = new TemplateRenderer(this, renderPipeline);
+        TemplateRenderer<RenderContext> renderer = new TemplateRenderer<>(this, renderPipeline);
         setRenderer(renderer);
     }
 

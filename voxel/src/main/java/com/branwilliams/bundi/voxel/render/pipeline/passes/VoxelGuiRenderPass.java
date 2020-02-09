@@ -200,4 +200,14 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
         shapeVao.position(CROSSHAIR_SIZE, 0F, 0).endVertex();
         shapeVao.compile();
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shapeShaderProgram.destroy();
+        this.dynamicShaderProgram.destroy();
+        this.texturedShaderProgram.destroy();
+        this.shapeVao.destroy();
+        this.texturedVao.destroy();
+    }
 }

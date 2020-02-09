@@ -62,4 +62,10 @@ public class WaterRenderPass extends RenderPass<RenderContext> {
 
         ShaderProgram.unbind();
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+    }
 }

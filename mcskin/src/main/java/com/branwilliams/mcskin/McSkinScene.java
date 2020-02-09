@@ -202,8 +202,7 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
     @Override
     public void update(Engine engine, double deltaTime) {
         super.update(engine, deltaTime);
-        if (guiScreenManager.getGuiScreen() != null)
-            guiScreenManager.getGuiScreen().update();
+        guiScreenManager.update();
 
         synchronized (downloadedSkins) {
             if (!downloadedSkins.isEmpty()) {

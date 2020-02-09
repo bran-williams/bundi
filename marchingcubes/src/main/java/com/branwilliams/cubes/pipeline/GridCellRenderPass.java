@@ -66,4 +66,10 @@ public class GridCellRenderPass extends RenderPass<RenderContext> {
             }
         }
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.shaderProgram.destroy();
+    }
 }

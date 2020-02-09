@@ -54,4 +54,10 @@ public class AtmosphereRenderPass extends RenderPass<VoxelRenderContext> {
         Skybox skybox = this.scene.getSkybox();
         MeshRenderer.render(skybox.getMesh(), skybox.getMaterial());
     }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.atmosphereShaderProgram.destroy();
+    }
 }

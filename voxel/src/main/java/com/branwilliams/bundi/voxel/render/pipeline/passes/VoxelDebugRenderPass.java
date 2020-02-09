@@ -101,4 +101,11 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> impleme
     public void resize(Window window, int width, int height) {
     }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+        this.dynamicShaderProgram.destroy();
+        this.fontRenderer.destroy();
+    }
+
 }
