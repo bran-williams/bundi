@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -228,7 +229,18 @@ public enum MeshUtils {
         return normal;
     }
 
-    public static float[] toArray4f(Vector4f[] vectors) {
+    /**
+     * Converts an array of {@link org.joml.Vector4f} into an array of floats. e.g.
+     * <pre>
+     * Vector4f[] myVectors = { new Vector4f(1, 2, 3, 4), new Vector4f(5, 6, 7, 8) };
+     * float[] myValues = toArray4f(myVectors); // = { 1, 2, 3, 4, 5, 6, 7, 8 }
+     * </pre>
+     *
+     * @param vectors The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, z0, w0, x1 y1, z1, w1, ... xN, yN,
+     * zN, wN.
+     * */
+    public static float[] toArray4f(Vector4f... vectors) {
         float[] array = new float[vectors.length * 4];
         for (int i = 0; i < vectors.length; i++) {
             Vector4f vector = vectors[i];
@@ -241,7 +253,17 @@ public enum MeshUtils {
     }
 
     /**
-     * Converts a given list of vectors to an array of floats.
+     * Converts a list of {@link org.joml.Vector4f} into an array of floats. e.g.
+     * <pre>
+     * List<Vector4f> myVectors = new ArrayList();
+     * myVectors.add(new Vector4f(1, 2, 3, 4));
+     * myVectors.add(new Vector4f(5, 6, 7, 8));
+     * float[] myValues = toArray4f(myVectors); // = { 1, 2, 3, 4, 5, 6, 7, 8 }
+     * </pre>
+     *
+     * @param vectors The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, z0, w0, x1 y1, z1, w1, ... xN, yN,
+     * zN, wN.
      * */
     public static float[] toArray4f(List<Vector4f> vectors) {
         float[] array = new float[vectors.size() * 4];
@@ -256,7 +278,17 @@ public enum MeshUtils {
         return array;
     }
 
-    public static float[] toArray3f(Vector3f[] vectors) {
+    /**
+     * Converts an array of {@link org.joml.Vector3f} into an array of floats. e.g.
+     * <pre>
+     * Vector3f[] myVectors = { new Vector3f(1, 2, 3), new Vector3f(4, 5, 6) };
+     * float[] myValues = toArray3f(myVectors); // = { 1, 2, 3, 4, 5, 6 }
+     * </pre>
+     *
+     * @param vectors The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, z0, x1 y1, z1, ... xN, yN, zN.
+     * */
+    public static float[] toArray3f(Vector3f... vectors) {
         float[] array = new float[vectors.length * 3];
         for (int i = 0; i < vectors.length; i++) {
             Vector3f vector = vectors[i];
@@ -267,9 +299,18 @@ public enum MeshUtils {
         return array;
     }
 
-        /**
-         * Converts a given list of vectors to an array of floats.
-         * */
+    /**
+     * Converts a list of {@link org.joml.Vector3f} into an array of floats. e.g.
+     * <pre>
+     * List<Vector3f> myVectors = new ArrayList();
+     * myVectors.add(new Vector3f(1, 2, 3));
+     * myVectors.add(new Vector3f(4, 5, 6));
+     * float[] myValues = toArray3f(myVectors); // = { 1, 2, 3, 4, 5, 6 }
+     * </pre>
+     *
+     * @param vectors The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, z0, x1 y1, z1, ... xN, yN, zN.
+     * */
     public static float[] toArray3f(List<Vector3f> vectors) {
         float[] array = new float[vectors.size() * 3];
         for (int i = 0; i < vectors.size(); i++) {
@@ -282,7 +323,36 @@ public enum MeshUtils {
     }
 
     /**
-     * Converts a given list of vectors to an array of floats.
+     * Converts an array of {@link org.joml.Vector2f} into an array of floats. e.g.
+     * <pre>
+     * Vector2f[] myVectors = { new Vector2f(1, 2), new Vector2f(3, 4) };
+     * float[] myValues = toArray2f(myVectors); // = { 1, 2, 3, 4 }
+     * </pre>
+     *
+     * @param vectors The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, x1 y1, ... xN, yN.
+     * */
+    public static float[] toArray2f(Vector2f... vectors) {
+        float[] array = new float[vectors.length * 2];
+        for (int i = 0; i < vectors.length; i++) {
+            Vector2f vector = vectors[i];
+            array[i * 2] = vector.x;
+            array[i * 2 + 1] = vector.y;
+        }
+        return array;
+    }
+
+    /**
+     * Converts a list of {@link org.joml.Vector2f} into an array of floats. e.g.
+     * <pre>
+     * List<Vector2f> myVectors = new ArrayList();
+     * myVectors.add(new Vector2f(1, 2));
+     * myVectors.add(new Vector2f(3, 4));
+     * float[] myValues = toArray2f(myVectors); // = { 1, 2, 3, 4 }
+     * </pre>
+     *
+     * @param vectors The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, x1 y1, ... xN, yN.
      * */
     public static float[] toArray2f(List<Vector2f> vectors) {
         float[] array = new float[vectors.size() * 2];
@@ -311,4 +381,9 @@ public enum MeshUtils {
         return res;
     }
 
+    public static float[] arrayOfSize(int size, float value) {
+        float[] array = new float[size];
+        Arrays.fill(array, value);
+        return array;
+    }
 }

@@ -9,7 +9,7 @@ import java.util.function.Function;
  * @author Brandon
  * @since November 30, 2019
  */
-public class Grid3f<T> implements Iterable<T> {
+public class Grid3i<T> implements Iterable<T> {
 
     private T[] kernel;
 
@@ -21,11 +21,11 @@ public class Grid3f<T> implements Iterable<T> {
 
     private boolean dirty;
 
-    public Grid3f(Function<Integer, T[]> kernelBuilder, int width, int height, int depth) {
+    public Grid3i(Function<Integer, T[]> kernelBuilder, int width, int height, int depth) {
         this(kernelBuilder.apply(width * height * depth), width, height, depth);
     }
 
-    public Grid3f(T[] kernel, int width, int height, int depth) {
+    public Grid3i(T[] kernel, int width, int height, int depth) {
         if (width * height * depth != kernel.length)
             throw new IllegalArgumentException("Kernel must have the dimensions of width * height * depth");
         this.kernel = kernel;
@@ -88,26 +88,26 @@ public class Grid3f<T> implements Iterable<T> {
             private int i;
 
             private Grid3fIterator() {
-                if (hasNext() && Grid3f.this.getKernel()[i] == null) {
+                if (hasNext() && Grid3i.this.getKernel()[i] == null) {
                     do {
                         i++;
-                    } while (hasNext() && Grid3f.this.getKernel()[i] == null);
+                    } while (hasNext() && Grid3i.this.getKernel()[i] == null);
                 }
             }
 
             @Override
             public boolean hasNext() {
-                return i < Grid3f.this.getKernel().length;
+                return i < Grid3i.this.getKernel().length;
             }
 
             @Override
             public T next() {
                 if (hasNext()) {
-                    T val = Grid3f.this.getKernel()[i];
+                    T val = Grid3i.this.getKernel()[i];
 
                     do {
                         i++;
-                    } while (hasNext() && Grid3f.this.getKernel()[i] == null);
+                    } while (hasNext() && Grid3i.this.getKernel()[i] == null);
 
                     return val;
                 }

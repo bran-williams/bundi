@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 /**
  * Created by Brandon Williams on 10/31/2018.
  */
-public class HeightmapGenerator implements HeightGenerator {
+public class HeightmapHeightGenerator implements HeightGenerator {
 
     public static final int GRAYSCALE_MAX_COLOR = 0x1000000;
 
@@ -20,26 +20,26 @@ public class HeightmapGenerator implements HeightGenerator {
 
     private int height;
 
-    public HeightmapGenerator(TextureData textureData) {
+    public HeightmapHeightGenerator(TextureData textureData) {
         this(textureData.getData(), textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), GRAYSCALE_MAX_COLOR);
     }
 
-    public HeightmapGenerator(TextureData textureData, int maxColor) {
+    public HeightmapHeightGenerator(TextureData textureData, int maxColor) {
         this(textureData.getData(), textureData.getWidth(), textureData.getHeight(), textureData.getChannels(), maxColor);
     }
 
-    public HeightmapGenerator(int[] pixels, int width, int height) {
+    public HeightmapHeightGenerator(int[] pixels, int width, int height) {
         this(pixels, width, height, GRAYSCALE_MAX_COLOR);
     }
 
-    public HeightmapGenerator(int[] pixels, int width, int height, int maxColor) {
+    public HeightmapHeightGenerator(int[] pixels, int width, int height, int maxColor) {
         this.pixels = pixels;
         this.width = width;
         this.height = height;
         this.maxColor = maxColor;
     }
 
-    public HeightmapGenerator(ByteBuffer buffer, int width, int height, int channels, int maxColor) {
+    public HeightmapHeightGenerator(ByteBuffer buffer, int width, int height, int channels, int maxColor) {
         if (buffer.capacity() % channels != 0) {
             throw new IllegalStateException("ByteBuffer must be in the formats: rgba or rgb");
         }

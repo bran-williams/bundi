@@ -1,6 +1,6 @@
 package com.branwilliams.cubes.world;
 
-import com.branwilliams.bundi.engine.util.Grid3f;
+import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.cubes.GridCell;
 import com.branwilliams.cubes.GridCellMesh;
 import org.joml.Vector3f;
@@ -13,13 +13,13 @@ public class MarchingCubeChunk {
 
     private final Vector3f offset;
 
-    private Grid3f<GridCell> gridCells;
+    private Grid3i<GridCell> gridCells;
 
     private GridCellMesh gridCellMesh;
 
     private boolean dirty;
 
-    public MarchingCubeChunk(Vector3f offset, Grid3f<GridCell> gridCells, GridCellMesh gridCellMesh) {
+    public MarchingCubeChunk(Vector3f offset, Grid3i<GridCell> gridCells, GridCellMesh gridCellMesh) {
         this.offset = offset;
         this.gridCells = gridCells;
         this.gridCellMesh = gridCellMesh;
@@ -33,11 +33,11 @@ public class MarchingCubeChunk {
         return gridCells.getValue(gridX, gridY, griZ);
     }
 
-    public Grid3f<GridCell> getGridCells() {
+    public Grid3i<GridCell> getGridCells() {
         return gridCells;
     }
 
-    public void setGridCells(Grid3f<GridCell> gridCells) {
+    public void setGridCells(Grid3i<GridCell> gridCells) {
         this.gridCells = gridCells;
     }
 

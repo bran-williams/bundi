@@ -9,6 +9,7 @@ import com.branwilliams.bundi.engine.systems.LockableSystem;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
+import com.branwilliams.bundi.engine.util.noise.LayeredNoise;
 import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 import com.branwilliams.bundi.engine.util.noise.PerlinNoise;
 import com.branwilliams.bundi.gui.impl.ColorPack;
@@ -256,7 +257,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
         ChunkStorage chunkStorage = new HashChunkStorage();
 
         // create generator and world
-        VoxelChunkGenerator voxelChunkGenerator = new NoiseChunkGenerator(new PerlinNoise());
+//        VoxelChunkGenerator voxelChunkGenerator = new NoiseChunkGenerator(new PerlinNoise());
+        VoxelChunkGenerator voxelChunkGenerator = new NoiseChunkGenerator(new LayeredNoise(new OpenSimplexNoise(), 5));
         voxelWorld = new VoxelWorld(voxelRegistry, voxelChunkGenerator, chunkStorage, chunkMeshStorage, es);
 
         // load the chunks at a given position in a given radius

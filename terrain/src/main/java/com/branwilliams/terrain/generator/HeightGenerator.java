@@ -7,6 +7,7 @@ public interface HeightGenerator {
 
     /**
      * Creates the heights of a terrain mesh for the given position and size.
+     *
      * @return An array of the heights for a terrain mesh.
      * @param x The x position of the mesh.
      * @param z The z position of the mesh.

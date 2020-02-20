@@ -12,12 +12,16 @@ import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.IOUtils;
+import com.branwilliams.bundi.engine.util.noise.LayeredNoise;
+import com.branwilliams.bundi.engine.util.noise.Noise;
+import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 import com.branwilliams.terrain.builder.TerrainMeshBuilder;
 import com.branwilliams.terrain.builder.TerrainTileBuilder;
 import com.branwilliams.terrain.component.TerrainMaterial;
 import com.branwilliams.terrain.component.TerrainTexture;
 import com.branwilliams.terrain.generator.*;
 import com.branwilliams.terrain.render.TerrainRenderPass;
+import com.branwilliams.terrain.render.TerrainRenderPass2;
 import com.branwilliams.terrain.render.TerrainRenderer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,7 +42,7 @@ public class TerrainScene extends AbstractScene {
 
     private static final int TERRAIN_TILE_VERTICES_Z = 256;
 
-    private static final float TERRAIN_TILE_AMPLITUDE = 48;
+    private static final float TERRAIN_TILE_AMPLITUDE = 128;
 
     private Camera camera;
 
@@ -59,7 +63,7 @@ public class TerrainScene extends AbstractScene {
 
         RenderContext renderContext = new RenderContext(worldProjection);
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
-        renderPipeline.addLast(new TerrainRenderPass(this, this::getCamera));
+        renderPipeline.addLast(new TerrainRenderPass2(this, this::getCamera));
 //        renderPipeline.addLast(new LineGraphRenderPass(this));
         setRenderer(new TerrainRenderer(this, renderPipeline));
     }
@@ -75,13 +79,29 @@ public class TerrainScene extends AbstractScene {
         TerrainMaterial terrainMaterial = loadTerrainMaterial("terrain/terrain_material.json");
         Material material = createTerrainMaterial(textureLoader, 16, 100F, terrainMaterial);
 
-
+        float defaultScale = 1F / TERRAIN_TILE_SIZE;
         // Create or load the height generator
-        float[] frequencies = { 1F, 2F, 4F, 8F };
-        float[] percentages = { 1F, 1F, 0.5F, 0.25F };
-        HeightGenerator generator = new NoiseGenerator(1024, frequencies, percentages,
-                1F / TERRAIN_TILE_SIZE);
+
+//        float[] frequencies = { 1F, 2F, 4F, 8F };
+//        float[] percentages = { 1F, 1F, 0.5F, 0.25F };
+//        float[] noiseScales = { defaultScale, defaultScale, defaultScale, defaultScale };
+
+//        float[] frequencies = { 1.0F,          1.0F       };
+//        float[] percentages = { 1.0F,          0.1F       };
+//        float[] noiseScales = { 1.0F / 128.0F, 1.0F / 16.0F };
+
+//        float[] frequencies = { 1.0F };
+//        float[] percentages = { 1.0F };
+//        float[] noiseScales = { defaultScale };
+//        HeightGenerator generator = new NoiseGenerator(1024, frequencies, percentages,
+//                noiseScales);
+
 //        HeightGenerator generator = new HeightmapGenerator(terrainMaterial.getHeightmapTextureData());
+
+        Noise heightNoise = new LayeredNoise(new OpenSimplexNoise(1024), 5);
+//        Noise heightNoise = new OpenSimplexNoise(1024);
+
+        HeightGenerator generator = new NoiseHeightGenerator(heightNoise, 1F / TERRAIN_TILE_SIZE);
 
         // Create the tile builder
         TerrainTileBuilder terrainTileBuilder = new TerrainTileBuilder();

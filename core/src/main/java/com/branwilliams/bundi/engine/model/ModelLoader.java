@@ -252,6 +252,14 @@ public class ModelLoader {
                 mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), VertexElement.POSITION.size, VertexElement.POSITION.size);
             } else {
                 float[] verticesArray = toArrayf(vertices);
+
+                // Compute the radius of this mesh.
+                for (int i = 0; i < verticesArray.length; i++) {
+                    if (Math.abs(verticesArray[i]) > mesh.getRadius()) {
+                        mesh.setRadius(Math.abs(verticesArray[i]));
+                    }
+                }
+
                 mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
             }
         }

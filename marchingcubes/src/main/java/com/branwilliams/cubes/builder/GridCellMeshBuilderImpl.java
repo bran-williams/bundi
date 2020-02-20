@@ -1,7 +1,7 @@
 package com.branwilliams.cubes.builder;
 
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
-import com.branwilliams.bundi.engine.util.Grid3f;
+import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 import com.branwilliams.cubes.GridCell;
 import com.branwilliams.cubes.GridCellMesh;
@@ -16,14 +16,14 @@ import static com.branwilliams.bundi.engine.util.MeshUtils.toArray3f;
 public class GridCellMeshBuilderImpl implements GridCellMeshBuilder {
 
     @Override
-    public GridCellMesh buildMesh(MarchingCubeWorld world, Grid3f<GridCell> gridCellGrid) {
+    public GridCellMesh buildMesh(MarchingCubeWorld world, Grid3i<GridCell> gridCellGrid) {
         GridCellMesh gridCellMesh = new GridCellMesh();
         gridCellMesh.init();
         return rebuildMesh(world, gridCellMesh, gridCellGrid);
     }
 
     @Override
-    public GridCellMesh rebuildMesh(MarchingCubeWorld world, GridCellMesh gridCellMesh, Grid3f<GridCell> gridCellGrid) {
+    public GridCellMesh rebuildMesh(MarchingCubeWorld world, GridCellMesh gridCellMesh, Grid3i<GridCell> gridCellGrid) {
         List<Vector3f> positions = new ArrayList<>();
         for (GridCell gridCell : gridCellGrid) {
             gridCell.getTriangles(world.getIsoLevel(), positions);

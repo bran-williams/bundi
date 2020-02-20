@@ -38,6 +38,8 @@ public class Mesh implements Destructible {
 
     private int renderMode = GL_TRIANGLES;
 
+    private float radius;
+
     public Mesh() {
         // Create the vao to store the vbos within.
         vao = new VertexArrayObject();
@@ -231,6 +233,14 @@ public class Mesh implements Destructible {
 
     public void setRenderMode(int renderMode) {
         this.renderMode = renderMode;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
     }
 
     public void bind() {
