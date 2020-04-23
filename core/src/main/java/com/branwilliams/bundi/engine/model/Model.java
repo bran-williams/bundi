@@ -16,6 +16,8 @@ public class Model implements Destructible {
 
     private Map<Material, List<Mesh>> data;
 
+    private float radius;
+
     public Model() {
         data = new HashMap<>();
     }
@@ -29,6 +31,16 @@ public class Model implements Destructible {
 
     public Model(Map<Material, List<Mesh>> data) {
         this.data = data;
+        this.computeRadius();
+    }
+
+    private void computeRadius() {
+        for (List<Mesh> meshes : data.values()) {
+            for (Mesh mesh : meshes) {
+                if (mesh.getRadius() > this.radius)
+                    this.radius = mesh.getRadius();
+            }
+        }
     }
 
 //    public void addMesh(Material material, Mesh mesh) {

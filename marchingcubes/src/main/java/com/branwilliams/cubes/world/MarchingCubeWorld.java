@@ -1,22 +1,13 @@
 package com.branwilliams.cubes.world;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.util.Grid3f;
-import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.cubes.GridCell;
 import com.branwilliams.cubes.GridCellMesh;
 import com.branwilliams.cubes.builder.GridCellGridBuilder;
 import com.branwilliams.cubes.builder.GridCellMeshBuilder;
-import com.branwilliams.cubes.math.RaycastResult;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.branwilliams.bundi.engine.util.Mathf.getTwosPower;
-import static com.branwilliams.bundi.engine.util.Mathf.isPowerOfTwo;
-import static com.branwilliams.bundi.engine.util.MeshUtils.calculateNormal;
 
 /**
  * @author Brandon
@@ -24,7 +15,7 @@ import static com.branwilliams.bundi.engine.util.MeshUtils.calculateNormal;
  */
 public class MarchingCubeWorld {
 
-    private final Grid3f<MarchingCubeChunk> chunks;
+    private final Grid3i<MarchingCubeChunk> chunks;
 
     private final WorldProperties worldProperties;
 
@@ -39,7 +30,7 @@ public class MarchingCubeWorld {
         this.gridCellGridBuilder = gridCellGridBuilder;
         this.gridCellMeshBuilder = gridCellMeshBuilder;
 
-        this.chunks = new Grid3f<>(MarchingCubeChunk[]::new, worldProperties.getWorldDimensions().x,
+        this.chunks = new Grid3i<>(MarchingCubeChunk[]::new, worldProperties.getWorldDimensions().x,
                 worldProperties.getWorldDimensions().y, worldProperties.getWorldDimensions().z);
     }
 
@@ -86,7 +77,7 @@ public class MarchingCubeWorld {
                     chunkY * worldProperties.getChunkDimensions().y,
                     chunkZ * worldProperties.getChunkDimensions().z);
 
-            Grid3f<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(this, offset,
+            Grid3i<GridCell> gridCellGrid = gridCellGridBuilder.buildGridCellGrid(this, offset,
                     worldProperties.getChunkDimensions().x, worldProperties.getChunkDimensions().y,
                     worldProperties.getChunkDimensions().z);
 
@@ -335,7 +326,7 @@ public class MarchingCubeWorld {
         return worldProperties.getCubeSize();
     }
 
-    public Grid3f<MarchingCubeChunk> getChunks() {
+    public Grid3i<MarchingCubeChunk> getChunks() {
         return chunks;
     }
 

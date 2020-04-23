@@ -11,7 +11,7 @@ import com.branwilliams.bundi.engine.shader.DirectionalLight;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
-import com.branwilliams.bundi.engine.util.Grid3f;
+import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 import com.branwilliams.cubes.builder.*;
@@ -163,11 +163,11 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         String propertiesContent = IOUtils.readFile(worldProperties, null);
         WorldProperties worldProperties_ = gson.fromJson(propertiesContent, WorldProperties.class);
 
-        Type chunkDataType = new TypeToken<Grid3f<Float>>(){}.getType();
-        Type listOfChunks = new TypeToken<List<Grid3f<Float>>>(){}.getType();
+        Type chunkDataType = new TypeToken<Grid3i<Float>>(){}.getType();
+        Type listOfChunks = new TypeToken<List<Grid3i<Float>>>(){}.getType();
 
         String worldDataContent = IOUtils.readFile(worldDir, null);
-        Grid3f<Float> chunkData = gson.fromJson(worldDataContent, chunkDataType);
+        Grid3i<Float> chunkData = gson.fromJson(worldDataContent, chunkDataType);
     }
 
     private void toGrid3f() {

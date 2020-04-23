@@ -24,6 +24,22 @@ public enum TextureUtils {
     INSTANCE;
 
     /**
+     *
+     * */
+    public static <T> TextureData createTexture(Grid2i<T> grid2i, int channels, Function<T, Integer> createPixel) {
+        TextureData textureData = new TextureData(grid2i.getWidth(), grid2i.getHeight(), channels,
+                TextureUtils.getFormatFromChannels(channels));
+
+        for (int i = 0; i < grid2i.getWidth(); i++) {
+            for (int j = 0; j < grid2i.getHeight(); j++) {
+                Integer pixel = createPixel.apply(grid2i.getValue(i, j));
+                textureData.setPixel(i, j, red(pixel), green(pixel), blue(pixel), alpha(pixel));
+            }
+        }
+        return textureData;
+    }
+
+    /**
      * Stitches the provided {@link TextureData ImageDatas} horizontally with no padding.
      *
      * @see TextureUtils#stitchedTextures(int, TextureData...)

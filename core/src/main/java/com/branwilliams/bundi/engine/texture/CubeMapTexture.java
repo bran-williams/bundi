@@ -14,7 +14,6 @@ public class CubeMapTexture extends Texture {
         this(width, height, null, textureData);
     }
 
-
     public CubeMapTexture(int width, int height, CubeMapPosition[] positions, TextureData... textureData) {
         super(GL_TEXTURE_CUBE_MAP);
 
@@ -41,7 +40,10 @@ public class CubeMapTexture extends Texture {
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
         unbind(this);
     }
-    
+
+    /**
+     * These values represent the faces of a cubemap. The OpenGL target is provided for each face.
+     * */
     public enum CubeMapPosition {
         RIGHT_FACE(GL_TEXTURE_CUBE_MAP_POSITIVE_X),
         LEFT_FACE(GL_TEXTURE_CUBE_MAP_NEGATIVE_X),

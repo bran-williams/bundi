@@ -1,6 +1,6 @@
 package com.branwilliams.cubes.builder;
 
-import com.branwilliams.bundi.engine.util.Grid3f;
+import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.cubes.GridCell;
 import com.branwilliams.cubes.builder.evaluators.IsoEvaluator;
 import com.branwilliams.cubes.world.MarchingCubeWorld;
@@ -23,21 +23,21 @@ public class GridCellGridBuilderImpl implements GridCellGridBuilder {
     }
 
     @Override
-    public Grid3f<GridCell> buildGridCellGrid(MarchingCubeWorld world, Vector3f offset, int width, int height, int depth) {
-        Grid3f<GridCell> grid3f = new Grid3f<>(GridCell[]::new, width, height, depth);
-        return rebuildGridCellGrid(world, offset, grid3f);
+    public Grid3i<GridCell> buildGridCellGrid(MarchingCubeWorld world, Vector3f offset, int width, int height, int depth) {
+        Grid3i<GridCell> grid3i = new Grid3i<>(GridCell[]::new, width, height, depth);
+        return rebuildGridCellGrid(world, offset, grid3i);
     }
 
     @Override
-    public Grid3f<GridCell> rebuildGridCellGrid(MarchingCubeWorld world, Vector3f offset, Grid3f<GridCell> grid3f) {
-        for (int i = 0; i < grid3f.getWidth(); i++) {
-            for (int j = 0; j < grid3f.getHeight(); j++) {
-                for (int k = 0; k < grid3f.getDepth(); k++) {
-                    GridCell gridCell = grid3f.getValue(i, j, k);
+    public Grid3i<GridCell> rebuildGridCellGrid(MarchingCubeWorld world, Vector3f offset, Grid3i<GridCell> grid3i) {
+        for (int i = 0; i < grid3i.getWidth(); i++) {
+            for (int j = 0; j < grid3i.getHeight(); j++) {
+                for (int k = 0; k < grid3i.getDepth(); k++) {
+                    GridCell gridCell = grid3i.getValue(i, j, k);
 
                     if (gridCell == null) {
                         gridCell = new GridCell(new Vector3f(i, j, k), world.getCubeSize());
-                        grid3f.setValue(gridCell, i, j, k);
+                        grid3i.setValue(gridCell, i, j, k);
                     }
 
                     Vector3f[] points = gridCell.getPoints();
@@ -54,7 +54,7 @@ public class GridCellGridBuilderImpl implements GridCellGridBuilder {
             }
         }
 
-        return grid3f;
+        return grid3i;
     }
 
 }
