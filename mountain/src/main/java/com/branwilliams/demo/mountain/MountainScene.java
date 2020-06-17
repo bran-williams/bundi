@@ -8,7 +8,7 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
 import com.branwilliams.bundi.engine.shader.Camera;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;

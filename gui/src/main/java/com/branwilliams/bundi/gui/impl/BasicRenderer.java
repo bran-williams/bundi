@@ -2,6 +2,7 @@ package com.branwilliams.bundi.gui.impl;
 
 import com.branwilliams.bundi.engine.font.BasicFontRenderer;
 import com.branwilliams.bundi.engine.font.FontRenderer;
+import com.branwilliams.bundi.gui.api.PopupContainer;
 import com.branwilliams.bundi.gui.impl.render.ShapeRenderer;
 import com.branwilliams.bundi.gui.api.Container;
 import com.branwilliams.bundi.gui.api.Toolbox;
@@ -37,11 +38,14 @@ public class BasicRenderer extends RenderManager {
         this.setRenderer(Checkbox.class, new CheckboxRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Container.class, false, new ContainerRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(ScrollableContainer.class, false, new ScrollableContainerRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
+        this.setRenderer(PopupContainer.class, false, new PopupContainerRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Slider.class, new SliderRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Label.class, new LabelRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(TextField.class, new TextFieldRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(ComboBox.class, new ComboBoxRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Frame.class, true, new FrameRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
+        this.setRenderer(Image.class, true, new com.branwilliams.bundi.gui.impl.render.ImageRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
+
     }
 
     public FontRenderer getFontRenderer() {

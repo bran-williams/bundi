@@ -27,6 +27,7 @@ public abstract class AbstractScene implements Scene {
     private final List<Window.MouseListener> mouseListeners = new ArrayList<>();
     private final List<Window.KeyListener> keyListeners = new ArrayList<>();
     private final List<Window.CharacterListener> characterListeners = new ArrayList<>();
+    private final List<Window.JoystickListener> joystickListeners = new ArrayList<>();
 
     public AbstractScene(String name) {
         this(name, null);
@@ -72,7 +73,7 @@ public abstract class AbstractScene implements Scene {
 
     @Override
     public void addWindowListener(Window.WindowListener windowListener) {
-        this.windowListeners.add(windowListener);
+        windowListeners.add(windowListener);
     }
 
     @Override
@@ -124,6 +125,21 @@ public abstract class AbstractScene implements Scene {
     @Override
     public boolean removeCharacterListener(Window.CharacterListener characterListener) {
         return characterListeners.remove(characterListener);
+    }
+
+    @Override
+    public List<Window.JoystickListener> getJoystickListeners() {
+        return joystickListeners;
+    }
+
+    @Override
+    public void addJoystickListener(Window.JoystickListener joystickListener) {
+        this.joystickListeners.add(joystickListener);
+    }
+
+    @Override
+    public boolean removeJoystickListener(Window.JoystickListener joystickListener) {
+        return joystickListeners.remove(joystickListener);
     }
 
     @Override

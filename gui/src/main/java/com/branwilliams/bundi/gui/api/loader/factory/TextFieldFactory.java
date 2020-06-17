@@ -1,7 +1,8 @@
 package com.branwilliams.bundi.gui.api.loader.factory;
 
-import com.branwilliams.bundi.gui.api.components.Checkbox;
+import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.components.TextField;
+import com.branwilliams.bundi.gui.api.loader.ComponentFactory;
 import com.branwilliams.bundi.gui.api.loader.UIElementFactory;
 import com.branwilliams.bundi.gui.api.loader.UIElementType;
 import com.branwilliams.bundi.gui.util.XmlUtils;
@@ -11,26 +12,14 @@ import org.w3c.dom.Node;
 /**
  * Created by Brandon Williams on 10/1/2019.
  */
-public class TextFieldFactory implements UIElementFactory<TextField> {
+public class TextFieldFactory extends ComponentFactory<TextField> {
 
     @Override
-    public TextField createElement(Node node, NamedNodeMap attributes) {
-        String tag = XmlUtils.getAttributeText(attributes, "tag", null);
-        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
-
-        int x = XmlUtils.getAttributeInt(attributes, "x", 0);
-        int y = XmlUtils.getAttributeInt(attributes, "y", 0);
-        int width = XmlUtils.getAttributeInt(attributes, "width", 100);
-        int height = XmlUtils.getAttributeInt(attributes, "height", 20);
+    public TextField createComponent(Toolbox toolbox, Node node, NamedNodeMap attributes) {
         String text = XmlUtils.getAttributeText(attributes, "text", "");
         String defaultText = XmlUtils.getAttributeText(attributes, "defaulttext", "");
 
-        TextField textField = new TextField(tag, text, defaultText);
-        textField.setTooltip(tooltip);
-        textField.setX(x);
-        textField.setY(y);
-        textField.setWidth(width);
-        textField.setHeight(height);
+        TextField textField = new TextField(text, defaultText);
         return textField;
     }
 
@@ -39,4 +28,8 @@ public class TextFieldFactory implements UIElementFactory<TextField> {
         return UIElementType.COMPONENT;
     }
 
+    @Override
+    public String getName() {
+        return "textfield";
+    }
 }

@@ -1,47 +1,80 @@
 <UI>
-    <Container tag="mainmenu" x="50" y="50" width="500" height="800">
-<!--        <GridLayout rows="4" columns="1" padding="6" componentPadding="8"/>-->
-        <ListLayout padding="2" componentPadding="4"/>
+    <Import file="ui/variables.xml"/>
+    <Import file="ui/element.xml"/>
 
-        <Label tag="menu_title" text="static" color="#ffffff" height="34" alignment="left">
-            <FontData font="Robot" size="24" style="bold"/>
+
+
+    <Frame tag="templated" title="Templated" x="460" y="50" width="400" height="200">
+        <ListLayout padding="1" componentPadding="2"/>
+
+        <FontData font="Verdana" size="20" style="bold"/>
+
+        <Label tag="popup_label" text="line frwee" color="#0000ff" style="shadow">
+            <FontData font="Verdana" size="24" style="bold"/>
+
+            <Popup>
+                <ListLayout padding="2"/>
+                <Image tag="img" width="841" height="431"
+                       url="https://cdn.crunchify.com/wp-content/uploads/2017/12/How-to-Create-Temporary-File-in-Java.png"
+                       altText="missing">
+                    <FontData font="Trebuchet MS" size="18" style="bold"/>
+                </Image>
+            </Popup>
+
         </Label>
 
-        <Button tag="load_button" text="Play" width="150" height="24" highlight="true">
-            <FontData font="Robot" size="18" style="plain"/>
-        </Button>
 
-        <Button tag="quit_button" text="Quit" width="150" height="24" highlight="true">
-            <FontData font="Robot" size="18" style="plain"/>
-        </Button>
-    </Container>
 
-    <Frame tag="window" x="50" y="50" width="500" height="800">
-        <!--        <GridLayout rows="4" columns="1" padding="6" componentPadding="8"/>-->
-        <ListLayout padding="2" componentPadding="4"/>
+        <Image tag="img" width="200" height="200" asset="textures/usa.png" altText="missing">
+            <FontData font="Trebuchet MS" size="18" style="bold"/>
+        </Image>
 
-        <Label tag="menu_title" text="moveable" color="#ffffff" height="34" alignment="left">
-            <FontData font="Robot" size="24" style="bold"/>
+        <IF var="taco">
+            <Label tag="taco_slider" text="{{ taco_text }}" color="{{ taco_color }}">
+                <FontData font="Roboto" size="18" style="plain"/>
+            </Label>
+
+            <Checkbox tag="test3" width="200" height="24" text="{{ taco_checkbox }}">
+                <FontData font="Trebuchet MS" size="18" style="bold"/>
+            </Checkbox>
+        </IF>
+
+        <FOR list="myList" var="i">
+            <Checkbox tag="test3" width="200" height="24" text="{{ i }}">
+                <FontData font="Trebuchet MS" size="18" style="bold"/>
+            </Checkbox>
+        </FOR>
+
+        <Label tag="monkey_label" text="{{ monkey }}" color="{{ monkey_color }}">
+            <FontData font="Roboto" size="18" style="plain"/>
         </Label>
 
-        <Button tag="load_button" text="Play" width="150" height="24" highlight="true">
-            <FontData font="Robot" size="18" style="plain"/>
-        </Button>
-
-        <Label tag="z_title" text="z" color="#ffffff">
-            <FontData font="Roboto" size="18" style="bold"/>
+        <Label tag="dog_label" text="{{ dog }}" color="{{ dog_color }}">
+            <FontData font="Roboto" size="18" style="plain"/>
         </Label>
-
-        <Slider tag="z_slider" width="200" height="24">
-            <FontData font="Roboto" size="18" style="bold"/>
-        </Slider>
-
-        <Label tag="z_slider_value" text="0.01" alignment="right" color="#ffffff">
+        <Label tag="cat_label" text="{{ cat }}" color="{{ cat_color }}">
             <FontData font="Roboto" size="18" style="plain"/>
         </Label>
     </Frame>
 
-    <Frame tag="first_guy" title="Title here" x="50" y="50" width="400" height="200">
+
+    <Container tag="mainmenu" x="50" y="50" width="0" height="0" opacity="0">
+        <ListLayout padding="2" componentPadding="4"/>
+
+        <Label tag="menu_title" text="Main menu" color="#ffffff" height="70" alignment="left" style="shadow">
+            <FontData font="Roboto" size="68" style="bold"/>
+        </Label>
+
+        <Button tag="load_button" text="Play" width="150" height="24" highlight="true">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="quit_button" text="Quit" width="150" height="24" highlight="true">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Button>
+    </Container>
+
+    <Frame tag="buttons" title="Buttons and Checkbox" x="50" y="50" width="400" height="200">
         <ListLayout padding="1" componentPadding="2"/>
         <FontData font="Verdana" size="20" style="bold"/>
 
@@ -60,16 +93,6 @@
         <Checkbox tag="test3" width="200" height="24" text="Checkbox title">
             <FontData font="Trebuchet MS" size="18" style="bold"/>
         </Checkbox>
-    </Frame>
-
-    <Frame tag="checkboxes" title="Checkbox" x="460" y="50" width="400" height="200">
-        <ListLayout padding="1" componentPadding="2"/>
-        <FontData font="Verdana" size="20" style="bold"/>
-
-        <Checkbox tag="test3" width="200" height="24" text="Bruh">
-            <FontData font="Trebuchet MS" size="18" style="bold"/>
-        </Checkbox>
-
     </Frame>
 
     <Frame tag="sliders" title="Sliders" x="50" y="260" width="400" height="200">
@@ -91,48 +114,5 @@
         <Slider tag="test6" width="200" height="24">
             <FontData font="Arial" size="18" style="bold"/>
         </Slider>
-    </Frame>
-
-    <Frame tag="test" title="Test me bro" x="460" y="260" width="400" height="200">
-        <ListLayout padding="1" componentPadding="2"/>
-        <FontData font="Verdana" size="20" style="bold"/>
-
-        <Container tag="invisible">
-            <GridLayout rows="2" columns="1" padding="0" componentPadding="2"/>
-
-            <Container tag="invisible">
-                <GridLayout rows="1" columns="2" padding="0" componentPadding="2"/>
-
-                <Label tag="slider_title" text="Slider Name" color="#ffffff">
-                    <FontData font="Arial" size="18" style="bold"/>
-                </Label>
-
-                <Label tag="slider_value"  text="1.0%" alignment="right" color="#ffffff">
-                    <FontData font="Arial" size="18" style="plain"/>
-                </Label>
-            </Container>
-
-            <Slider tag="slider_itself" width="200" height="24">
-                <FontData font="Arial" size="18" style="bold"/>
-            </Slider>
-        </Container>
-
-        <Container tag="invisible">
-            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>
-
-            <Label tag="slider_title" text="Slider Name" color="#ffffff">
-                <FontData font="Arial" size="18" style="bold"/>
-            </Label>
-
-            <Slider tag="slider_itself" width="150" height="24">
-                <FontData font="Arial" size="18" style="bold"/>
-            </Slider>
-
-            <Label tag="slider_value" text="100%" alignment="right" color="#ffffff">
-                <FontData font="Arial" size="18" style="plain"/>
-            </Label>
-
-        </Container>
-
     </Frame>
 </UI>

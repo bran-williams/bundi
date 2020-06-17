@@ -9,27 +9,55 @@ import java.util.regex.Pattern;
  */
 public class CommentShaderPatch implements ShaderPatch {
 
-    public static final Pattern COMMENT_PATTERN = Pattern.compile("\\/\\*(\\*(?!\\/)|[^*])*\\*\\/");
+    public static final Pattern COMMENT_PATTERN = Pattern.compile("/\\*((?:.|[\\r\\n])*?)\\*/");
 
     private final Pattern linePattern;
 
     private final Function<String, String> lineModifier;
 
+    private final ModificationType modificationType;
+
+    public enum ModificationType {
+        REPLACE,
+        PREPEND;
+    }
     public CommentShaderPatch(Pattern linePattern, Function<String, String> lineModifier) {
+        this(linePattern, lineModifier, ModificationType.REPLACE);
+    }
+
+    public CommentShaderPatch(Pattern linePattern, Function<String, String> lineModifier,
+                              ModificationType modificationType) {
         this.linePattern = linePattern;
         this.lineModifier = lineModifier;
+        this.modificationType = modificationType;
     }
 
     @Override
     public String patch(String code) {
         Matcher commentMatcher = COMMENT_PATTERN.matcher(code);
-        for (int i = 0; i < commentMatcher.groupCount(); i++) {
-            String comment = commentMatcher.group(i);
+        while (commentMatcher.find()) {
+
+            String comment = commentMatcher.group();
+//            System.out.println("comment=" + comment);
             if (linePattern.matcher(comment).find()) {
-                code = code.substring(0, code.indexOf(comment)) + lineModifier.apply(comment) +  code.substring(code.indexOf(comment));
+                System.out.println("match found: comment=" + comment);
+                switch (modificationType) {
+                    case PREPEND:
+                        return code.substring(0, code.indexOf(comment)) + lineModifier.apply(comment) + code.substring(code.indexOf(comment));
+                    case REPLACE:
+                        return code.substring(0, code.indexOf(comment)) + lineModifier.apply(comment) + code.substring(code.indexOf(comment) + comment.length());
+                    default:
+                }
             }
         }
         return code;
     }
 
+    @Override
+    public String toString() {
+        return "CommentShaderPatch{" +
+                "linePattern=" + linePattern +
+                ", modificationType=" + modificationType +
+                '}';
+    }
 }

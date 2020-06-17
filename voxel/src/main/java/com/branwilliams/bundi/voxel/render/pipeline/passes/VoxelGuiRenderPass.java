@@ -98,7 +98,7 @@ public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implement
 
         drawCrosshair(renderContext);
 
-//        drawPlayerInventory(renderContext, window);
+        drawPlayerInventory(renderContext, window);
 
         ShaderProgram.unbind();
     }

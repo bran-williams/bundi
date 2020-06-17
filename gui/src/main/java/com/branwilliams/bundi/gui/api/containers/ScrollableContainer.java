@@ -4,8 +4,8 @@ import com.branwilliams.bundi.gui.api.*;
 import com.branwilliams.bundi.gui.api.layouts.PaddedLayout;
 import com.branwilliams.bundi.gui.api.layouts.ScrollableLayout;
 import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
-import com.branwilliams.bundi.gui.api.actions.Direction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
+import com.branwilliams.bundi.gui.api.actions.MouseWheelDirection;
 import com.branwilliams.bundi.gui.api.actions.WheelActionListener;
 
 /**
@@ -16,22 +16,26 @@ public class ScrollableContainer extends Container {
 
     private Scrollbar verticalScrollbar, horizontalScrollbar;
 
-    public ScrollableContainer(String tag) {
-        super(tag);
+    public ScrollableContainer() {
+        super();
         this.verticalScrollbar = new Scrollbar(toolbox, 8);
         this.horizontalScrollbar = new Scrollbar(toolbox, false,8);
         this.setLayout(new PaddedLayout());
+
         // Sets the SCROLLBAR activated
-        this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> updateMouseClick(action.x, action.y));
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event ->
+                updateMouseClick(event.x, event.y));
+
         // Sets scrolling to false once the mouse button is released.
-        this.addListener(Actions.MOUSE_RELEASE, (ClickAction.ClickActionListener) action -> {
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event -> {
             verticalScrollbar.setScrolling(false);
             horizontalScrollbar.setScrolling(false);
             return false;
         });
 
         // Scrolls when the mouse wheel is moved.
-        this.addListener(Actions.MOUSEWHEEL, (WheelActionListener) direction -> updateMouseWheel(direction == Direction.UP ? -1 : 1));
+        this.addListener(MouseWheelDirection.class, (WheelActionListener) mouseWheelDirection ->
+                                updateMouseWheel(mouseWheelDirection.toInt()));
     }
 
     @Override

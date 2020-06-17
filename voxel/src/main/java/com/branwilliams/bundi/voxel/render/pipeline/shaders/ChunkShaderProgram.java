@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.voxel.render.pipeline.shaders;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.Mathf;

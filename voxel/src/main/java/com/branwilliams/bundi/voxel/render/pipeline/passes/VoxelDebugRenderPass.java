@@ -32,7 +32,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  * @author Brandon
  * @since August 10, 2019
  */
-public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> implements Window.WindowListener {
+public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> {
 
     private final VoxelScene scene;
 
@@ -41,7 +41,6 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> impleme
     private FontRenderer fontRenderer;
 
     public VoxelDebugRenderPass(VoxelScene scene) {
-        scene.addWindowListener(this);
         this.scene = scene;
     }
 
@@ -70,14 +69,14 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> impleme
         PlayerState playerState = scene.getPlayerState();
         Transformable playerTransform = scene.getPlayer().getComponent(Transformable.class);
         MovementComponent movementComponent = scene.getPlayer().getComponent(MovementComponent.class);
+
         int y = 2;
 
-        if (playerState.isOnGround()) {
-            fontRenderer.drawStringWithShadow("onGround=True", 2, y, 0xFF339900);
-        } else {
-            fontRenderer.drawStringWithShadow("onGround=False", 2, y, 0xFF990000);
-        }
+        fontRenderer.drawStringWithShadow("FPS: " + engine.getFrames(), 2, y, 0xFFFFFFFF);
+        y += fontRenderer.getFontData().getFontHeight();
 
+        int onGroundColor = playerState.isOnGround() ? 0xFF339900 : 0xFF990000;
+        fontRenderer.drawStringWithShadow("onGround=True", 2, y, onGroundColor);
         y += fontRenderer.getFontData().getFontHeight();
 
         y = drawVector("Position", playerTransform.getPosition(), 2, y, 0xFFFFFFFF);
@@ -95,10 +94,6 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> impleme
         y += fontRenderer.getFontData().getFontHeight();
 
         return y;
-    }
-
-    @Override
-    public void resize(Window window, int width, int height) {
     }
 
     @Override

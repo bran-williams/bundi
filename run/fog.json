@@ -1,0 +1,13 @@
+{
+  "windowTitle": "Fog",
+  "windowWidth": 1600,
+  "windowHeight": 900,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.fog.FogScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+  "sceneDirectory": "com.branwilliams.fog"
+}

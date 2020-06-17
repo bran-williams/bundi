@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.voxel.components;
 
 import com.branwilliams.bundi.engine.shader.DirectionalLight;
+import com.branwilliams.bundi.engine.shader.Fog;
 import org.joml.Vector4f;
 
 public class Atmosphere {

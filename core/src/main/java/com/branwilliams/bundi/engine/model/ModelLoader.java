@@ -1,14 +1,16 @@
 package com.branwilliams.bundi.engine.model;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
+import com.branwilliams.bundi.engine.material.MaterialElement;
+import com.branwilliams.bundi.engine.material.MaterialElementType;
+import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
-import com.branwilliams.bundi.engine.util.TextureUtils;
 import org.joml.Vector4f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -37,13 +39,17 @@ import static org.lwjgl.assimp.Assimp.*;
  */
 public class ModelLoader {
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    private static final Vector4f DEFAULT_AMBIENT = new Vector4f(1);
+
+    private static final Vector4f DEFAULT_DIFFUSE = new Vector4f(1);
+
+    private static final Vector4f DEFAULT_SPECULAR = new Vector4f(1);
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Path assetDirectory;
 
     private final TextureLoader textureLoader;
-
-    private Vector4f DEFAULT_COLOUR = new Vector4f(1);
 
     public ModelLoader(EngineContext context, TextureLoader textureLoader) {
         this(context.getAssetDirectory(), textureLoader);
@@ -83,7 +89,7 @@ public class ModelLoader {
             processMaterial(scene, aiMaterial, (materials[i] = new Material()), textureLocation);
         }
 
-        Map<Material, List<Mesh>> data = new HashMap<>();
+        Map<Material, List<Mesh>> modelData = new HashMap<>();
 
         int	numMeshes =	scene.mNumMeshes();
         PointerBuffer aiMeshes = scene.mMeshes();
@@ -94,75 +100,102 @@ public class ModelLoader {
             Mesh mesh =	processMesh(aiMesh,	vertexFormat);
 
             int materialIdx = aiMesh.mMaterialIndex();
-            data.computeIfAbsent(materials[materialIdx], (k) -> new ArrayList<>()).add(mesh);
+            modelData.computeIfAbsent(materials[materialIdx], (k) -> new ArrayList<>()).add(mesh);
         }
         aiReleaseImport(scene);
 
-        return new Model(data);
+        return new Model(modelData);
     }
 
     private void processMaterial(AIScene scene, AIMaterial aiMaterial, Material material, String textureLocation) throws IOException {
         AIColor4D color = AIColor4D.create();
         AIString path = AIString.calloc();
+        MaterialFormat materialFormat = new MaterialFormat();
 
-        // Create color texture
+        int textureIndex = 0;
+
+        // Create diffuse texture
         aiGetMaterialTexture(aiMaterial, aiTextureType_DIFFUSE,0, path, (IntBuffer) null, null, null, null, null,null);
-        String colorPath = path.dataString();
-        Texture colorTexture = null;
-        if (colorPath != null && colorPath.length() > 0) {
-            log.debug("Material diffuse created from path " + colorPath);
-            colorTexture = createTexture(scene, aiMaterial, textureLocation, colorPath);
+        String diffusePath = path.dataString();
+        if (diffusePath != null && diffusePath.length() > 0) {
+            log.info("Material diffuse created from path " + diffusePath);
+
+            Texture diffuseTexture = createTexture(scene, aiMaterial, textureLocation, diffusePath);
+
+            material.setTexture(textureIndex, diffuseTexture);
+            materialFormat.addElement(MaterialElement.DIFFUSE, MaterialElementType.SAMPLER_2D, "diffuse");
+
+            textureIndex++;
         } else {
-            log.debug("No diffuse texture.");
+            log.info("No diffuse texture found. Trying to get the diffuse color vector!.");
+
+            int result = aiGetMaterialColor(aiMaterial,	AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color);
+            if (result == 0) {
+                Vector4f diffuse = new Vector4f(color.r(), color.g(), color.b(), color.a());
+                log.info("Diffuse vector: " + diffuse);
+
+                material.setProperty("diffuse", diffuse);
+                materialFormat.addElement(MaterialElement.DIFFUSE, MaterialElementType.VEC4, "diffuse");
+            }
         }
 
         path.free();
         path = AIString.calloc();
 
+        // Create color texture
+        aiGetMaterialTexture(aiMaterial, aiTextureType_SPECULAR,0, path, (IntBuffer) null, null, null, null, null,null);
+        String specularPath = path.dataString();
+        if (specularPath != null && specularPath.length() > 0) {
+            log.info("Material specular created from path " + diffusePath);
+
+            Texture specularTexture = createTexture(scene, aiMaterial, textureLocation, diffusePath);
+
+            material.setTexture(textureIndex, specularTexture);
+            materialFormat.addElement(MaterialElement.SPECULAR, MaterialElementType.SAMPLER_2D, "specular");
+
+            textureIndex++;
+        } else {
+            log.info("No specular texture found. Trying to get the specular color vector!.");
+
+            int result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
+            if (result == 0) {
+                Vector4f specular = new Vector4f(color.r(), color.g(), color.b(), color.a());
+                log.info("Specular vector: " + specular);
+
+                material.setProperty("specular", specular);
+                materialFormat.addElement(MaterialElement.SPECULAR, MaterialElementType.VEC4, "specular");
+            }
+
+        }
+
+        path.free();
+        path = AIString.calloc();
+
+
         // Create normal texture
         aiGetMaterialTexture(aiMaterial, aiTextureType_NORMALS,0, path, (IntBuffer) null, null, null, null, null,null);
         String normalPath = path.dataString();
-        Texture normal = null;
         if (normalPath != null && normalPath.length() > 0)	{
-            log.debug("Material normal created from path " + normalPath);
-            normal = createTexture(scene, aiMaterial, textureLocation, normalPath);
+            log.info("Material normal created from path " + normalPath);
+
+            Texture normal = createTexture(scene, aiMaterial, textureLocation, normalPath);
+
+            material.setTexture(textureIndex, normal);
+            materialFormat.addElement(MaterialElement.NORMAL, MaterialElementType.SAMPLER_2D, "normal");
+            textureIndex++;
+
         } else {
-            log.debug("No normal texture.");
+            log.info("No normal texture.");
         }
         path.free();
 
-        Vector4f ambient = DEFAULT_COLOUR;
-        int	result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
-        if (result == 0) {
-            ambient	= new Vector4f(color.r(), color.g(), color.b(), color.a());
-            log.debug("Ambient: " + ambient);
-        }
-        Vector4f diffuse = DEFAULT_COLOUR;
-        result = aiGetMaterialColor(aiMaterial,	AI_MATKEY_COLOR_DIFFUSE, aiTextureType_NONE, 0, color);
-        if (result == 0) {
-            diffuse	= new Vector4f(color.r(), color.g(), color.b(), color.a());
-            log.debug("Diffuse: " + diffuse);
-        }
-        Vector4f specular = DEFAULT_COLOUR;
-        result = aiGetMaterialColor(aiMaterial,	AI_MATKEY_COLOR_SPECULAR, aiTextureType_NONE, 0, color);
-        if (result == 0) {
-            specular = new Vector4f(color.r(),	color.g(),	color.b(),	color.a());
-            log.debug("Specular: " + specular);
-        }
-
-
-        if (colorTexture != null) {
-            material.setTexture(0, colorTexture);
-        } else {
-            Texture diffuseTexture = new Texture(ambient.add(diffuse), 1, 1, false);
-            material.setTexture(0, diffuseTexture);
-        }
-
-        if (normal != null) {
-            material.setTexture(1, normal);
-            material.setProperty("hasNormalTexture", true);
-            log.debug(String.format("With normal texture %d", normal.getId()));
-        }
+//        Vector4f ambient = DEFAULT_COLOUR;
+//        int	result = aiGetMaterialColor(aiMaterial, AI_MATKEY_COLOR_AMBIENT, aiTextureType_NONE, 0, color);
+//        if (result == 0) {
+//            ambient	= new Vector4f(color.r(), color.g(), color.b(), color.a());
+//            log.info("Ambient: " + ambient);
+//        }
+        material.setMaterialFormat(materialFormat);
     }
 
     /**
@@ -236,6 +269,92 @@ public class ModelLoader {
      * Creates a mesh object given the AIMesh to process.
      *
      * @param aiMesh AIMesh to process into a mesh object.
+     * */
+    private static Mesh processMesh(AIMesh aiMesh) {
+
+        int elementIndex = 0;
+        List<VertexElements> vertexElements = new ArrayList<>();
+
+        Mesh mesh = new Mesh();
+        mesh.bind();
+
+        List<Float> vertices = new ArrayList<>();
+        processVertices(aiMesh, vertices);
+
+        if (vertices.size() > 0) {
+            float[] verticesArray = toArrayf(vertices);
+            // Compute the radius of this mesh.
+            for (int i = 0; i < verticesArray.length; i++) {
+                if (Math.abs(verticesArray[i]) > mesh.getRadius()) {
+                    mesh.setRadius(Math.abs(verticesArray[i]));
+                }
+            }
+
+            mesh.storeAttribute(elementIndex, verticesArray, VertexElements.POSITION.getSize());
+
+            vertexElements.add(VertexElements.POSITION);
+            elementIndex++;
+        }
+
+//        if (vertexFormat.hasElement(VertexElement.COLOR)) {
+//        }
+
+        List<Float> uvs = new ArrayList<>();
+        processUVs(aiMesh, uvs);
+
+        if (uvs.size() > 0) {
+            float[] uvsArray = toArrayf(uvs);
+            mesh.storeAttribute(elementIndex, uvsArray, VertexElements.UV.getSize());
+            vertexElements.add(VertexElements.UV);
+            elementIndex++;
+        }
+
+        List<Float> normals = new ArrayList<>();
+        processNormals(aiMesh, normals);
+
+        if (normals.size() > 0) {
+            float[] normalsArray = toArrayf(normals);
+            mesh.storeAttribute(elementIndex, normalsArray, VertexElements.NORMAL.getSize());
+            vertexElements.add(VertexElements.NORMAL);
+            elementIndex++;
+        }
+
+        List<Float> tangents = new ArrayList<>();
+        processTangents(aiMesh, tangents);
+
+        if (tangents.size() > 0) {
+            float[] tangentsArray = toArrayf(tangents);
+            mesh.storeAttribute(elementIndex, tangentsArray, VertexElements.TANGENT.getSize());
+            vertexElements.add(VertexElements.TANGENT);
+            elementIndex++;
+        }
+
+        List<Float> bitangents = new ArrayList<>();
+        processBitangents(aiMesh, bitangents);
+
+        if (bitangents.size() > 0) {
+            float[] bitangentsArray = toArrayf(bitangents);
+            mesh.storeAttribute(elementIndex, bitangentsArray, VertexElements.BITANGENT.getSize());
+            vertexElements.add(VertexElements.BITANGENT);
+            elementIndex++;
+        }
+
+
+        List<Integer> indices = new ArrayList<>();
+        processIndices(aiMesh, indices);
+        int[] indicesArray = toArrayi(indices);
+        mesh.storeIndices(indicesArray);
+
+        mesh.unbind();
+
+        VertexFormat vertexFormat = new VertexFormat(vertexElements);
+        return mesh;
+    }
+
+    /**
+     * Creates a mesh object given the AIMesh to process.
+     *
+     * @param aiMesh AIMesh to process into a mesh object.
      * @param vertexFormat The {@link VertexFormat} this mesh should be processed into.
      * */
     private static Mesh processMesh(AIMesh aiMesh, VertexFormat vertexFormat) {
@@ -244,12 +363,13 @@ public class ModelLoader {
         mesh.bind();
 
         List<Float> vertices;
-        if (vertexFormat.hasElement(VertexElement.POSITION)) {
+        if (vertexFormat.hasElement(VertexElements.POSITION)) {
             vertices = new ArrayList<>();
             processVertices(aiMesh, vertices);
 
             if (vertices.size() <= 0) {
-                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), VertexElement.POSITION.size, VertexElement.POSITION.size);
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElements.POSITION),
+                        VertexElements.POSITION.getSize(), VertexElements.POSITION.getSize());
             } else {
                 float[] verticesArray = toArrayf(vertices);
 
@@ -260,58 +380,67 @@ public class ModelLoader {
                     }
                 }
 
-                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElements.POSITION), verticesArray,
+                        VertexElements.POSITION.getSize());
             }
         }
 
 //        if (vertexFormat.hasElement(VertexElement.COLOR)) {
 //        }
 
-        if (vertexFormat.hasElement(VertexElement.UV)) {
+        if (vertexFormat.hasElement(VertexElements.UV)) {
             List<Float> uvs = new ArrayList<>();
             processUVs(aiMesh, uvs);
 
             if (uvs.size() <= 0) {
-                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.UV), VertexElement.UV.size, VertexElement.UV.size);
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElements.UV),
+                        VertexElements.UV.getSize(), VertexElements.UV.getSize());
             } else {
                 float[] uvsArray = toArrayf(uvs);
-                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.UV), uvsArray, VertexElement.UV.size);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElements.UV), uvsArray,
+                        VertexElements.UV.getSize());
             }
         }
 
-        if (vertexFormat.hasElement(VertexElement.NORMAL)) {
+        if (vertexFormat.hasElement(VertexElements.NORMAL)) {
             List<Float> normals = new ArrayList<>();
             processNormals(aiMesh, normals);
 
             if (normals.size() <= 0) {
-                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), VertexElement.NORMAL.size, VertexElement.NORMAL.size);
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElements.NORMAL),
+                        VertexElements.NORMAL.getSize(), VertexElements.NORMAL.getSize());
             } else {
                 float[] normalsArray = toArrayf(normals);
-                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), normalsArray, VertexElement.NORMAL.size);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElements.NORMAL), normalsArray,
+                        VertexElements.NORMAL.getSize());
             }
         }
 
-        if (vertexFormat.hasElement(VertexElement.TANGENT)) {
+        if (vertexFormat.hasElement(VertexElements.TANGENT)) {
             List<Float> tangents = new ArrayList<>();
             processTangents(aiMesh, tangents);
 
             if (tangents.size() <= 0) {
-                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), VertexElement.TANGENT.size, VertexElement.TANGENT.size);
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElements.TANGENT),
+                        VertexElements.TANGENT.getSize(), VertexElements.TANGENT.getSize());
             } else {
                 float[] tangentsArray = toArrayf(tangents);
-                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), tangentsArray, VertexElement.TANGENT.size);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElements.TANGENT), tangentsArray,
+                        VertexElements.TANGENT.getSize());
             }
         }
 
-        if (vertexFormat.hasElement(VertexElement.BITANGENT)) {
+        if (vertexFormat.hasElement(VertexElements.BITANGENT)) {
             List<Float> bitangents = new ArrayList<>();
             processBitangents(aiMesh, bitangents);
 
             if (bitangents.size() <= 0) {
-                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), VertexElement.BITANGENT.size, VertexElement.BITANGENT.size);
+                mesh.initializeAttribute(vertexFormat.getElementIndex(VertexElements.BITANGENT),
+                        VertexElements.BITANGENT.getSize(), VertexElements.BITANGENT.getSize());
             } else {
                 float[] bitangentsArray = toArrayf(bitangents);
-                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), bitangentsArray, VertexElement.BITANGENT.size);
+                mesh.storeAttribute(vertexFormat.getElementIndex(VertexElements.BITANGENT), bitangentsArray,
+                        VertexElements.BITANGENT.getSize());
             }
         }
 

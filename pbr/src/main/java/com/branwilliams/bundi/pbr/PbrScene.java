@@ -4,6 +4,7 @@ import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
 import com.branwilliams.bundi.engine.model.Model;
 import com.branwilliams.bundi.engine.shader.*;
@@ -24,6 +25,7 @@ import org.joml.Vector3f;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
 /**
@@ -88,7 +90,7 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
         try {
 
             sphereEntity = es.entity("sphere").component(
-                    new Transformation().position(objectPosition).rotate(90F, 0F, 0F)
+                    new Transformation().position(objectPosition).rotateFromEuler(90F, 0F, 0F)
             ).build();
 
             loadMaterial();
@@ -165,6 +167,8 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
             nextMaterial();
             loadMaterial();
+        } else if (key == GLFW_KEY_F12) {
+            textureLoader.screenshot();
         }
     }
 

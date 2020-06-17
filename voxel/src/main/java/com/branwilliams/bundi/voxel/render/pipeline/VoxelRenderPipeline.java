@@ -4,6 +4,7 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
+import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.passes.*;
 
@@ -21,9 +22,9 @@ public class VoxelRenderPipeline extends RenderPipeline<VoxelRenderContext> {
 //        this.addLast(new SkyboxRenderPass<>(scene::getCamera, scene::getSkybox));
 //        this.addLast(new ChunkBorderRenderPass(scene));
         this.addLast(new VoxelSelectionRenderPass(scene));
-        this.addLast(new VoxelHandRenderPass(scene));
+//        this.addLast(new VoxelHandRenderPass(scene));
         this.addLast(new VoxelGuiRenderPass(scene));
-        this.addLast(new HotbarRenderPass(scene));
+//        this.addLast(new HotbarRenderPass(scene));
         this.addLast(new VoxelDebugRenderPass(scene));
     }
 }

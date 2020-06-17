@@ -4,16 +4,29 @@ import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.Transformation;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Timer;
 import com.branwilliams.bundi.voxel.VoxelConstants;
+import com.branwilliams.bundi.voxel.builder.ChunkMeshVertex;
 import com.branwilliams.bundi.voxel.util.Easings;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.branwilliams.bundi.engine.util.MeshUtils.*;
 
 /**
  * @author Brandon
  * @since August 13, 2019
  */
 public class ChunkMesh implements Destructible {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public enum MeshState {
         /** This is the state of a mesh which has not been assigned to any chunk. */
@@ -34,6 +47,10 @@ public class ChunkMesh implements Destructible {
 
     private Mesh solidMesh;
 
+    private List<ChunkMeshVertex> vertices;
+
+    private List<Integer> indices;
+
     /** Time (in ms) when this mesh state has been changed. */
     private long changeTime;
 
@@ -52,6 +69,38 @@ public class ChunkMesh implements Destructible {
         this.solidMesh.initializeAttribute(2, 3, vertexCount * 3);
         this.solidMesh.initializeAttribute(3, 3, vertexCount * 3);
         this.solidMesh.unbind();
+    }
+
+    public synchronized void setMeshData(List<ChunkMeshVertex> vertices, List<Integer> indices) {
+        this.vertices = vertices;
+        this.indices = indices;
+    }
+
+    public synchronized void loadMeshData() {
+        if (this.vertices == null || this.indices == null) {
+            log.info("Unable to load mesh data: No vertices or indices set.");
+            return;
+        }
+
+        this.solidMesh.setVertexFormat(VertexFormat.POSITION_UV_NORMAL_TANGENT);
+        this.solidMesh.bind();
+        this.solidMesh.storeAttribute(0,
+                toArray3f(vertices.stream().map((v) -> v.vertex).collect(Collectors.toList())),
+                VertexElements.POSITION.getSize());
+        this.solidMesh.storeAttribute(1,
+                toArray2f(vertices.stream().map((v) -> v.uv).collect(Collectors.toList())),
+                VertexElements.UV.getSize());
+        this.solidMesh.storeAttribute(2,
+                toArray3f(vertices.stream().map((v) -> v.normal).collect(Collectors.toList())),
+                VertexElements.NORMAL.getSize());
+        this.solidMesh.storeAttribute(3,
+                toArray3f(vertices.stream().map((v) -> v.tangent).collect(Collectors.toList())),
+                VertexElements.TANGENT.getSize());
+        this.solidMesh.storeIndices(toArrayi(indices));
+        this.solidMesh.unbind();
+
+        this.vertices = null;
+        this.indices = null;
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.api.layouts;
 
+import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.Widget;
 import com.branwilliams.bundi.gui.api.Layout;
 import com.branwilliams.bundi.gui.api.containers.ScrollableContainer;
@@ -10,7 +11,7 @@ import java.util.List;
  * Layout made to update scrollable containers with a nested layout.
  *
  * */
-public class ScrollableLayout implements Layout<ScrollableContainer> {
+public class ScrollableLayout implements Layout<ScrollableContainer, Component> {
 
     private Layout layout;
 
@@ -19,7 +20,7 @@ public class ScrollableLayout implements Layout<ScrollableContainer> {
     }
 
     @Override
-    public int[] layout(ScrollableContainer container, List<Widget> components) {
+    public int[] layout(ScrollableContainer container, List<Component> components) {
         // Ensure the scroll bars are positioned accurately.
         container.getHorizontalScrollbar().updatePosition(container);
         container.getVerticalScrollbar().updatePosition(container);

@@ -1,0 +1,16 @@
+<UI>
+    <Container tag="frame" title="screen" x="25" y="25" width="400" height="200">
+        <ListLayout padding="2" componentPadding="4"/>
+        <FontData font="Roboto" size="20" style="bold"/>
+
+        <Label tag="x_title" text="Galleries" color="#ffffff">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Label>
+
+        <FOR list="galleries" var="text" index="i">
+            <Button tag="gallery{{ i }}" width="200" height="24" text="{{ text }}">
+                <FontData font="Trebuchet MS" size="18" style="bold"/>
+            </Button>
+        </FOR>
+    </Container>
+</UI>

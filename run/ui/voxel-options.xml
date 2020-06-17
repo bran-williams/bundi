@@ -1,0 +1,46 @@
+<UI>
+    <Container tag="optionsmenu" autolayout="true" x="50" y="50" width="100" height="100" opacity="0">
+        <GridLayout rows="6" columns="1" padding="2" componentPadding="12"/>
+        <!--        <ListLayout padding="2" componentPadding="4"/>-->
+
+        <Label tag="menu_title" text="Options" color="#ffffff" height="70" alignment="left">
+            <FontData font="Roboto" size="68" style="bold"/>
+        </Label>
+
+        <Container tag="menu_body">
+            <ListLayout padding="0" componentPadding="0"/>
+
+            <Checkbox tag="toggle_vsync" text="Vsync" width="300" height="36" enabled="false">
+                <FontData font="Roboto" size="24" style="plain"/>
+            </Checkbox>
+
+            <Container tag="music_volume_container" opacity="0">
+                <GridLayout rows="3" columns="1" horizontalpadding="2" componentPadding="2"/>
+
+                <Checkbox tag="play_music_checkbox" text="Play Music" width="300" height="36" enabled="false">
+                    <FontData font="Roboto" size="24" style="plain"/>
+                </Checkbox>
+
+                <Container opacity="0" autolayout="true">
+                    <GridLayout rows="1" columns="2" padding="0" componentPadding="2"/>
+
+                    <Label tag="music_volume_title" text="Music Volume" height="36">
+                        <FontData font="Roboto" size="24" style="bold"/>
+                    </Label>
+
+                    <Label tag="music_volume_value" text="100%" height="36" alignment="right" color="#aaaaaa">
+                        <FontData font="Roboto" size="24" style="plain"/>
+                    </Label>
+                </Container>
+
+                <Slider tag="music_volume_slider" width="296" height="32">
+                    <FontData font="Roboto" size="24" style="bold"/>
+                </Slider>
+            </Container>
+        </Container>
+
+        <Button tag="previous_button" text="Previous" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
+        </Button>
+    </Container>
+</UI>

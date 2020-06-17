@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.scenegraph;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
+import com.branwilliams.bundi.engine.core.Updateable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author Brandon
  * @since December 27, 2019
  */
-public abstract class SceneNode implements Destructible {
+public abstract class SceneNode implements Destructible, Updateable {
 
     private SceneNode parent;
 
@@ -19,8 +20,6 @@ public abstract class SceneNode implements Destructible {
     public SceneNode() {
         this.children = new ArrayList<>();
     }
-
-    public abstract void update(Engine engine, double deltaTime);
 
     /**
      * This function should only be invoked when this node is added to or removed from a parent.

@@ -33,7 +33,7 @@ public class SteveRenderPass extends RenderPass<RenderContext> {
 
     private Matrix4f tempMatrix = new Matrix4f();
 
-    private Transformable baseTransform = new Transformation().position(0F, 0F, 0F).rotate(180, 0, 0).scale(0.25F);
+    private Transformable baseTransform = new Transformation().position(0F, 0F, 0F).rotateFromEuler(180, 0, 0).scale(0.25F);
 
     private Matrix4f modelMatrix = new Matrix4f();
 

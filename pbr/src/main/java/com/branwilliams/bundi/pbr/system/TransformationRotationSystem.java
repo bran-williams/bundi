@@ -7,7 +7,6 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.systems.MouseControlSystem;
-import com.branwilliams.bundi.pbr.PbrScene;
 
 import java.util.function.Supplier;
 
@@ -34,8 +33,8 @@ public class TransformationRotationSystem extends MouseControlSystem {
                              float mouseX, float mouseY, float oldMouseX, float oldMouseY) {
         if (rotating) {
             Transformable transformable = this.transformable.get();
-            transformable.getRotation().y += (mouseX - oldMouseX) * rotationSpeed;
-            transformable.getRotation().x += (mouseY - oldMouseY) * rotationSpeed;
+            transformable.getRotationAsEuler().y += (mouseX - oldMouseX) * rotationSpeed;
+            transformable.getRotationAsEuler().x += (mouseY - oldMouseY) * rotationSpeed;
         }
     }
 

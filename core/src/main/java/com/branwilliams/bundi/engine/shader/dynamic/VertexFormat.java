@@ -5,10 +5,9 @@ import java.util.List;
 
 /**
  * Represents the format for a vertex within a mesh.
- * Contains a list of {@link VertexElement VertexElements} which are the different elements of a vertex.
- * These VertexElements are stored in a specific order within a list and their indices correspond to the indices of the
- * {@link com.branwilliams.bundi.engine.shader.VertexBufferObject VBOs} for each element within some
- * {@link com.branwilliams.bundi.engine.shader.VertexArrayObject VAO}.
+ * Contains a list of {@link VertexElements VertexElements} which are the different parts of the vertex format (i.e.
+ * position, uv, color,...). These VertexElements are stored in a specific order within a list and their indices
+ * correspond to the indices of a {@link com.branwilliams.bundi.engine.shader.VertexArrayObject VAO}s attributes.
  *
  * @author Brandon
  * @since April 11, 2019
@@ -17,53 +16,62 @@ public class VertexFormat {
 
     public static final VertexFormat NONE = new VertexFormat();
 
-    public static final VertexFormat POSITION_UV_COLOR = new VertexFormat(VertexElement.POSITION, VertexElement.UV,
-            VertexElement.COLOR);
+    public static final VertexFormat POSITION = new VertexFormat(VertexElements.POSITION);
 
-    public static final VertexFormat POSITION_COLOR = new VertexFormat(VertexElement.POSITION, VertexElement.COLOR);
+    public static final VertexFormat POSITION_COLOR = new VertexFormat(VertexElements.POSITION, VertexElements.COLOR);
 
-    public static final VertexFormat POSITION_UV = new VertexFormat(VertexElement.POSITION, VertexElement.UV);
+    public static final VertexFormat POSITION_UV = new VertexFormat(VertexElements.POSITION, VertexElements.UV);
 
-    public static final VertexFormat POSITION_UV_NORMAL = new VertexFormat(VertexElement.POSITION, VertexElement.UV,
-            VertexElement.NORMAL);
+    public static final VertexFormat POSITION_NORMAL = new VertexFormat(VertexElements.POSITION, VertexElements.NORMAL);
 
-    public static final VertexFormat POSITION_NORMAL = new VertexFormat(VertexElement.POSITION, VertexElement.NORMAL);
+    public static final VertexFormat POSITION_UV_COLOR = new VertexFormat(VertexElements.POSITION, VertexElements.UV,
+            VertexElements.COLOR);
 
-    public static final VertexFormat POSITION = new VertexFormat(VertexElement.POSITION);
+    public static final VertexFormat POSITION_UV_NORMAL = new VertexFormat(VertexElements.POSITION, VertexElements.UV,
+            VertexElements.NORMAL);
 
-    public static final VertexFormat POSITION_2D = new VertexFormat(VertexElement.POSITION_2D);
+    public static final VertexFormat POSITION_UV_COLOR_NORMAL = new VertexFormat(VertexElements.POSITION, VertexElements.UV,
+            VertexElements.COLOR, VertexElements.NORMAL);
 
-    public static final VertexFormat POSITION_UV_NORMAL_TANGENT_BITANGENT = new VertexFormat(VertexElement.POSITION,
-            VertexElement.UV, VertexElement.NORMAL, VertexElement.TANGENT, VertexElement.BITANGENT);
+    public static final VertexFormat POSITION_UV_NORMAL_TANGENT = new VertexFormat(VertexElements.POSITION,
+            VertexElements.UV, VertexElements.NORMAL, VertexElements.TANGENT);
 
-    public static final VertexFormat POSITION_2D_UV_COLOR = new VertexFormat(VertexElement.POSITION_2D, VertexElement.UV,
-            VertexElement.COLOR);
+    public static final VertexFormat POSITION_UV_NORMAL_TANGENT_BITANGENT = new VertexFormat(VertexElements.POSITION,
+            VertexElements.UV, VertexElements.NORMAL, VertexElements.TANGENT, VertexElements.BITANGENT);
 
-    public static final VertexFormat POSITION_2D_COLOR = new VertexFormat(VertexElement.POSITION_2D, VertexElement.COLOR);
+    public static final VertexFormat POSITION_2D = new VertexFormat(VertexElements.POSITION_2D);
 
-    public static final VertexFormat POSITION_2D_UV = new VertexFormat(VertexElement.POSITION_2D, VertexElement.UV);
+    public static final VertexFormat POSITION_2D_COLOR = new VertexFormat(VertexElements.POSITION_2D, VertexElements.COLOR);
 
+    public static final VertexFormat POSITION_2D_UV = new VertexFormat(VertexElements.POSITION_2D, VertexElements.UV);
+
+    public static final VertexFormat POSITION_2D_UV_COLOR = new VertexFormat(VertexElements.POSITION_2D, VertexElements.UV,
+            VertexElements.COLOR);
 
     /**
      * The list of elements this vertex format contains.
      * */
-    private final List<VertexElement> vertexElements;
+    private final List<VertexElements> vertexElements;
 
     /**
      * The total size of the vertex this format represents.
      * */
     private final int elementSize;
 
-    public VertexFormat(VertexElement... vertexElements) {
-        this.vertexElements = Arrays.asList(vertexElements);
+    public VertexFormat(List<VertexElements> vertexElements) {
+        this.vertexElements = vertexElements;
 
         elementSize = this.vertexElements.stream()
-                .mapToInt(e -> e.size)
+                .mapToInt(e -> e.getSize())
                 .sum();
     }
 
+    public VertexFormat(VertexElements... vertexElements) {
+        this(Arrays.asList(vertexElements));
+    }
+
     /**
-     * @return True if there are no {@link VertexElement VertexElements} within this vertex format.
+     * @return True if there are no {@link VertexElements VertexElements} within this vertex format.
      * */
     public boolean isEmpty() {
         return elementSize == 0;
@@ -82,39 +90,47 @@ public class VertexFormat {
     public int getElementOffset(int index) {
         int offset = 0;
         for (int i = 0; i < index && i < vertexElements.size(); i++) {
-            offset += vertexElements.get(i).size;
+            offset += vertexElements.get(i).getSize();
         }
         return offset;
     }
 
+    public int getVertexSizeInBytes() {
+        int size = 0;
+        for (VertexElement vertexElement : this.vertexElements) {
+            size += Float.SIZE * vertexElement.getSize();
+        }
+        return size >> 4;
+    }
+
     /**
-     * @return True if this vertex format contains a {@link VertexElement#POSITION} or {@link VertexElement#POSITION_2D}
+     * @return True if this vertex format contains a {@link VertexElements#POSITION} or {@link VertexElements#POSITION_2D}
      * vertex element.
      * */
     public boolean hasPositionElement() {
-        return hasElement(VertexElement.POSITION) || hasElement(VertexElement.POSITION_2D);
+        return hasElement(VertexElements.POSITION) || hasElement(VertexElements.POSITION_2D);
     }
 
     /**
      * @return The VertexElement at the index provided.
      * */
-    public VertexElement getElement(int index) {
+    public VertexElements getElement(int index) {
         return vertexElements.get(index);
     }
 
     /**
      * @return The index for the provided VertexElement.
      * */
-    public int getElementIndex(VertexElement vertexElement) {
-        return vertexElements.indexOf(vertexElement);
+    public int getElementIndex(VertexElements vertexElements) {
+        return this.vertexElements.indexOf(vertexElements);
     }
 
-    public List<VertexElement> getVertexElements() {
+    public List<VertexElements> getVertexElements() {
         return vertexElements;
     }
 
-    public boolean hasElement(VertexElement vertexElement) {
-        return vertexElements.contains(vertexElement);
+    public boolean hasElement(VertexElements vertexElements) {
+        return this.vertexElements.contains(vertexElements);
     }
 
     public int getElementCount() {

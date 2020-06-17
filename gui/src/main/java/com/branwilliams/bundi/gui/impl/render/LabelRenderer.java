@@ -35,7 +35,13 @@ public class LabelRenderer extends AbstractComponentRenderer<Label> {
             default:
                 System.out.println("wtf");
         }
-
-        fontRenderer.drawString(label.getFont(), label.getText(), (int) x, label.getY(), label.getColor().getRGB());
+        switch (label.getRenderStyle()) {
+            case NONE:
+                fontRenderer.drawString(label.getFont(), label.getText(), (int) x, label.getY(), label.getColor().getRGB());
+                break;
+            case SHADOW:
+                fontRenderer.drawStringWithShadow(label.getFont(), label.getText(), (int) x, label.getY(), label.getColor().getRGB());
+                break;
+        }
     }
 }

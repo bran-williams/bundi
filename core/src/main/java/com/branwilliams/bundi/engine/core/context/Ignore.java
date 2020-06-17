@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to signal to the launcher that this class should be ignored when finding available scenes.
+ *
  * @author Brandon
  * @since May 02, 2019
  */

@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.api.loader.factory;
 
+import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.layouts.ListLayout;
 import com.branwilliams.bundi.gui.api.loader.UIElementFactory;
 import com.branwilliams.bundi.gui.api.loader.UIElementType;
@@ -12,7 +13,7 @@ import org.w3c.dom.Node;
  */
 public class ListLayoutFactory implements UIElementFactory<ListLayout> {
     @Override
-    public ListLayout createElement(Node node, NamedNodeMap attributes) {
+    public ListLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
         int padding = XmlUtils.getAttributeInt(attributes, "padding", 0);
         int componentPadding = XmlUtils.getAttributeInt(attributes, "componentPadding", padding);
         boolean vertical = XmlUtils.getAttributeBoolean(attributes, "vertical", true);
@@ -24,5 +25,10 @@ public class ListLayoutFactory implements UIElementFactory<ListLayout> {
     @Override
     public UIElementType getType() {
         return UIElementType.LAYOUT;
+    }
+
+    @Override
+    public String getName() {
+        return "listlayout";
     }
 }

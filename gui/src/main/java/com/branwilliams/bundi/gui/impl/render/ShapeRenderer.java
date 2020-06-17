@@ -77,6 +77,13 @@ public class ShapeRenderer {
         dynamicVAO.draw();
     }
 
+    public void drawRect(Texture texture, int[] area, int color) {
+        texture.bind();
+        dynamicVAO.begin();
+        addRect(area, color);
+        dynamicVAO.draw();
+    }
+
     public void addRect(int[] area, Color color) {
         addRect(area, color.getRGB());
     }

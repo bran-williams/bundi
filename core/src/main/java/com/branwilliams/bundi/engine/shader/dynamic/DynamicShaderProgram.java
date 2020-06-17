@@ -1,7 +1,6 @@
 package com.branwilliams.bundi.engine.shader.dynamic;
 
 import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.bundi.engine.util.Mathf;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
@@ -60,6 +59,17 @@ public class DynamicShaderProgram extends ShaderProgram {
      * */
     public static final int CYLINDRICAL_BILLBOARDING = 0x00000004;
 
+
+    /**
+     *
+     * */
+    public static final int FOG = 0x00000008;
+
+    /**
+     *
+     * */
+    public static final int SUN = 0x00000010;
+
     private final Matrix4f modelMatrix = new Matrix4f();
 
     /** The {@link VertexFormat} this shader program accepts. */
@@ -67,6 +77,8 @@ public class DynamicShaderProgram extends ShaderProgram {
 
     /** The masks specified to this constructor. */
     private final int mode;
+
+    private Fog fog;
 
     public DynamicShaderProgram() throws ShaderInitializationException, ShaderUniformException {
         this(0);
@@ -89,8 +101,8 @@ public class DynamicShaderProgram extends ShaderProgram {
             this.destroy();
             throw new ShaderInitializationException("Vertex Format must have a position element!");
         }
-        boolean hasTexture = vertexFormat.hasElement(VertexElement.UV);
-        boolean hasColor = vertexFormat.hasElement(VertexElement.COLOR);
+        boolean hasTexture = vertexFormat.hasElement(VertexElements.UV);
+        boolean hasColor = vertexFormat.hasElement(VertexElements.COLOR);
         boolean hasUniformColor = !hasTexture && !hasColor;
 
         StringBuilder vertexShader = new StringBuilder();
@@ -98,27 +110,33 @@ public class DynamicShaderProgram extends ShaderProgram {
 
         // Create input lines.
         for (int i = 0; i < vertexFormat.getVertexElements().size(); i++) {
-            VertexElement vertexElement = vertexFormat.getVertexElements().get(i);
+            VertexElements vertexElements = vertexFormat.getVertexElements().get(i);
             vertexShader.append(createLayout(i, "in "
-                    + vertexElement.type
+                    + vertexElements.getType()
                     + " "
-                    + vertexElement.variableName
+                    + vertexElements.getVariableName()
                     + ";"));
         }
 
         vertexShader.append((hasTexture ? "out vec2 passTextureCoordinates;\n" : "\n"))
                 .append((hasColor ? "out vec4 passColor;\n" : "\n"))
+                .append((hasBit(mode, FOG) ? "out vec4 passViewSpace;\n": "\n"))
+                .append("\n")
                 .append("uniform mat4 projectionMatrix;\n")
                 .append("uniform mat4 modelMatrix;\n")
                 .append(hasBit(mode, VIEW_MATRIX) ? "uniform mat4 viewMatrix;\n" : "\n")
+                .append("\n")
                 .append("void main() {\n")
                 .append(getVertexShaderOutput(vertexFormat, mode));
 
         if (hasTexture)
-            vertexShader.append("    passTextureCoordinates = " + VertexElement.UV.variableName + ";\n");
+            vertexShader.append("    passTextureCoordinates = " + VertexElements.UV.getVariableName() + ";\n");
 
         if (hasColor)
-            vertexShader.append("    passColor = " + VertexElement.COLOR.variableName + ";\n");
+            vertexShader.append("    passColor = " + VertexElements.COLOR.getVariableName() + ";\n");
+
+        if (hasBit(mode, FOG))
+            vertexShader.append(getFogVertEval());
 
         vertexShader.append("}");
         //System.out.println(vertexShader.toString());
@@ -129,9 +147,14 @@ public class DynamicShaderProgram extends ShaderProgram {
         fragmentShader.append("#version 330\n")
                 .append((hasTexture ? "in vec2 passTextureCoordinates;\n" : "\n"))
                 .append((hasColor ? "in vec4 passColor;\n" : "\n"))
-                .append((hasUniformColor ? "uniform vec4 color;\n" : "\n"))
+                .append(hasBit(mode, FOG) ? "in vec4 passViewSpace;\n" : "\n")
+                .append("\n")
                 .append("out vec4 fragColor;\n")
+
+                .append((hasUniformColor ? "uniform vec4 color;\n" : "\n"))
                 .append((hasTexture ? "uniform sampler2D textureSampler;\n" : "\n"))
+                .append(getFogFragUniforms())
+                .append(getFogFragFunctions())
                 .append("void main() {\n")
                 .append("    ").append(getFragmentShaderOutput(hasColor, hasTexture))
                 .append("}");
@@ -157,8 +180,53 @@ public class DynamicShaderProgram extends ShaderProgram {
             ShaderProgram.unbind();
         }
 
+        if (hasBit(mode, FOG)) {
+            this.createUniform("fogDensity");
+            this.createUniform("fogColor");
+        }
+
         this.validate();
         log.info("Dynamic Shader Program created with mode: " + mode);
+
+//        System.out.println("vertexShader=");
+//        System.out.println(vertexShader);
+//        System.out.println("fragmentShader=");
+//        System.out.println(fragmentShader);
+    }
+
+    private String getFogVertEval() {
+        String position = vertexFormat.hasElement(VertexElements.POSITION_2D) ?
+                "vec4(position, 0.0, 1.0)" : "vec4(position, 1.0)";
+        String worldSpacePosition = "modelMatrix * " + position;
+
+        return "passViewSpace = viewMatrix * " + worldSpacePosition + ";\n";
+    }
+
+    private String getFogFragUniforms() {
+        String uniforms = "";
+        if (hasBit(mode, FOG)) {
+            uniforms += "uniform vec4 fogColor;\n"
+                    + "\n"
+                    + "uniform float fogDensity;\n"
+                    + "\n";
+        }
+        return uniforms;
+    }
+
+    private String getFogFragFunctions() {
+        String functions = "";
+        if (hasBit(mode, FOG)) {
+            functions += "vec4 computeFog(vec4 pixelColor, float dist) {\n" +
+                    "float fogAmount = 1.0 - exp( -dist * fogDensity );\n" +
+                    "    return mix( pixelColor, fogColor, fogAmount );\n" +
+                    "}\n" +
+                    "\n" +
+                    "// plane based distance.\n" +
+                    "float computeDist(vec4 viewSpace) {\n" +
+                    "    return -(viewSpace.z);\n" +
+                    "}\n";
+        }
+        return functions;
     }
 
     /**
@@ -172,7 +240,7 @@ public class DynamicShaderProgram extends ShaderProgram {
      * @return The vertex shader output determined by the matrix mode.
      * */
     private String getVertexShaderOutput(VertexFormat vertexFormat, int mode) {
-        String position = vertexFormat.hasElement(VertexElement.POSITION_2D) ?
+        String position = vertexFormat.hasElement(VertexElements.POSITION_2D) ?
                 "vec4(position, 0.0, 1.0)" : "vec4(position, 1.0)";
 
         if (hasBit(mode, VIEW_MATRIX)) {
@@ -214,17 +282,25 @@ public class DynamicShaderProgram extends ShaderProgram {
                     "if (textureColor.a <= " + ALPHA_THRESHOLD + ") {" +
                     "    discard;" +
                     "}" +
-                    "fragColor = passColor * textureColor;\n";
+                    "fragColor = " + applyFog("passColor * textureColor") + ";\n";
         } else if (hasColor) {
-            return "fragColor = passColor;\n";
+            return "fragColor = " + applyFog("passColor") + ";\n";
         } else if (hasTexture) {
             return "vec4 textureColor = texture(textureSampler, passTextureCoordinates);" +
                     "if (textureColor.a <= " + ALPHA_THRESHOLD + ") {" +
                     "    discard;" +
                     "}" +
-                    "fragColor = textureColor;\n";
+                    "fragColor = " + applyFog("textureColor") + ";\n";
         } else {
-            return "fragColor = color;\n";
+            return "fragColor = " + applyFog("color") + ";\n";
+        }
+    }
+
+    private String applyFog(String colorVec4) {
+        if (hasBit(mode, FOG)) {
+            return String.format("computeFog(%s, computeDist(passViewSpace));", colorVec4);
+        } else {
+            return colorVec4;
         }
     }
 
@@ -244,7 +320,7 @@ public class DynamicShaderProgram extends ShaderProgram {
     }
 
     public void setModelMatrix(Transformable transformable) {
-        this.setModelMatrix(Mathf.toModelMatrix(modelMatrix, transformable));
+        this.setModelMatrix(transformable.toMatrix(modelMatrix));
     }
 
     public void setModelMatrix(Matrix4f matrix) {
@@ -260,6 +336,11 @@ public class DynamicShaderProgram extends ShaderProgram {
      * */
     public void setColor(Vector4f color) {
         this.setUniform("color", color);
+    }
+
+    public void setFog(Fog fog) {
+        this.setUniform("fogDensity", fog.getDensity());
+        this.setUniform("fogColor", fog.getColor());
     }
 
     public VertexFormat getVertexFormat() {

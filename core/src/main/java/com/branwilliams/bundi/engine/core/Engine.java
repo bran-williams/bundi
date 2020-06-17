@@ -148,7 +148,7 @@ public class Engine implements Runnable {
 
                 // Invokes the update function as many times as necessary. This is done at a fixed interval.
                 while (elapsed >= updateInterval) {
-                    current.fixedUpdate(this, updateInterval);
+                    current.fixedUpdate(this, Math.min(updateInterval, elapsed));
                     elapsed -= updateInterval;
                 }
 

@@ -1,9 +1,7 @@
 package com.branwilliams.bundi.engine.skybox;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.mesh.primitive.CubeMesh;
-import com.branwilliams.bundi.engine.shader.Material;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
+import com.branwilliams.bundi.engine.material.Material;
 
 /**
  * Created by Brandon Williams on 7/18/2018.

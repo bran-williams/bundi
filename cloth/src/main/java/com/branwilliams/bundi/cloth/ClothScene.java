@@ -10,7 +10,7 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
 import com.branwilliams.bundi.engine.shader.Camera;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
@@ -20,8 +20,6 @@ import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.util.Timer;
-import org.joml.Planef;
 import org.joml.Spheref;
 import org.joml.Vector3f;
 
@@ -34,7 +32,9 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since November 20, 2019
  */
-public class ClothScene extends AbstractScene {
+public class ClothScene extends AbstractScene implements Window.KeyListener {
+
+    private TextureLoader textureLoader;
 
     private Camera camera;
 
@@ -50,6 +50,7 @@ public class ClothScene extends AbstractScene {
 
     public ClothScene() {
         super("cloth");
+        this.addKeyListener(this);
     }
 
     @Override
@@ -84,7 +85,7 @@ public class ClothScene extends AbstractScene {
             cloth.getParticle(2, i).setMovable(false);
         }
 
-        TextureLoader textureLoader = new TextureLoader(engine.getContext());
+        textureLoader = new TextureLoader(engine.getContext());
         try {
             TextureData textureData = textureLoader.loadTexture("textures/usa.png");
             Texture texture = new Texture(textureData, true);
@@ -199,4 +200,15 @@ public class ClothScene extends AbstractScene {
     }
 
 
+    @Override
+    public void keyPress(Window window, int key, int scancode, int mods) {
+        if (key == GLFW_KEY_F5) {
+            textureLoader.screenshot();
+        }
+    }
+
+    @Override
+    public void keyRelease(Window window, int key, int scancode, int mods) {
+
+    }
 }

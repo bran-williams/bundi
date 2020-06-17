@@ -3,6 +3,7 @@ package com.branwilliams.bundi.gui.api;
 import com.branwilliams.bundi.gui.api.actions.Actions;
 import com.branwilliams.bundi.gui.api.layouts.PaddedLayout;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,9 @@ public class Container extends Component {
     // Always calls 'alwaysLayoutChildren' when layout is invoked.
     private boolean alwaysLayoutChildren = true;
 
-    public Container(String tag) {
-        super(tag);
-    }
+    private float opacity = 1F;
+
+    private Color backgroundColor;
 
     @Override
     public void update() {
@@ -58,7 +59,7 @@ public class Container extends Component {
     }
 
     @Override
-    public boolean isActivated(Actions type, Object data) {
+    public <T> boolean isActivated(Class<T> type, T data) {
         // Update all component's mouse clicks.
         for (int i = components.size() - 1; i >= 0; i--) {
             Component component = components.get(i);
@@ -74,22 +75,17 @@ public class Container extends Component {
         return super.isActivated(type, data);
     }
 
-    @Override
-    public String getTooltip() {
-        return tooltip;
-    }
-
     /**
      * Lays out each component within the container according to the layout specified.
      * */
     public void layout() {
+        if (alwaysLayoutChildren)
+            this.layoutChildren();
         int[] size = this.layout.layout(this, components);
         if (useLayoutSize) {
             this.setSize(size[0], size[1]);
             //System.out.println(getTag() + " getting size " + size[0] + ", " + size[1]);
         }
-        if (alwaysLayoutChildren)
-            this.layoutChildren();
     }
 
     /**
@@ -213,5 +209,21 @@ public class Container extends Component {
 
     public void setAlwaysLayoutChildren(boolean alwaysLayoutChildren) {
         this.alwaysLayoutChildren = alwaysLayoutChildren;
+    }
+
+    public float getOpacity() {
+        return opacity;
+    }
+
+    public void setOpacity(float opacity) {
+        this.opacity = opacity;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

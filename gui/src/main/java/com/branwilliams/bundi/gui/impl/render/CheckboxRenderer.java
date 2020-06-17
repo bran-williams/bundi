@@ -12,8 +12,7 @@ import java.awt.*;
 import static com.branwilliams.bundi.engine.util.ColorUtils.getColorWithEffects;
 import static com.branwilliams.bundi.gui.api.components.Checkbox.CHECKBOX_PADDING;
 import static com.branwilliams.bundi.gui.api.components.Checkbox.CHECKBOX_TEXT_PADDING;
-import static com.branwilliams.bundi.gui.impl.Pointers.COLOR_DEFAULT;
-import static com.branwilliams.bundi.gui.impl.Pointers.COLOR_HIGHLIGHT;
+import static com.branwilliams.bundi.gui.impl.Pointers.*;
 
 /**
  * Basic checkbox renderer. <br/>
@@ -46,6 +45,6 @@ public class CheckboxRenderer extends AbstractComponentRenderer<Checkbox> {
             GLUtils.glColor(GLUtils.getColorWithEffects(checkbox.isEnabled() ? toolbox.get(COLOR_HIGHLIGHT) : toolbox.get(COLOR_DEFAULT), checkbox.isHovered(), Mouse.isButtonDown(0)));
             GLUtils.drawRect(new int[] { checkbox.getX() + 2, checkbox.getY() + 2, 8, 8 });
         }*/
-        fontRenderer.drawString(checkbox.getFont(), checkbox.getText(), checkbox.getX() + checkbox.getCheckboxSize() + CHECKBOX_TEXT_PADDING, checkbox.getY(), 0xFFFFFFFF);
+        fontRenderer.drawString(checkbox.getFont(), checkbox.getText(), checkbox.getX() + checkbox.getCheckboxSize() + CHECKBOX_TEXT_PADDING, checkbox.getY(), toolbox.<Color>get(COLOR_DISABLED_TEXT).getRGB());
     }
 }

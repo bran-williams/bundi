@@ -45,7 +45,7 @@ public class HotbarRenderPass extends RenderPass<VoxelRenderContext> {
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }
-        transformable.rotate(30, 225, 0);
+        transformable.rotateFromEuler(30, 225, 0);
     }
 
     @Override
@@ -84,7 +84,8 @@ public class HotbarRenderPass extends RenderPass<VoxelRenderContext> {
 
                 float minZ = -0.25F;
                 float maxZ = 0.25F;
-                mesh = scene.getVoxelMeshBuilder().buildVoxelMesh(((VoxelItem) item).getVoxel(), minX, maxX, minY, maxY, minZ, maxZ);
+                mesh = scene.getVoxelMeshBuilder().buildVoxelMesh(((VoxelItem) item).getVoxel(),
+                        minX, maxX, minY, maxY, minZ, maxZ);
                 itemMeshes.put(item, mesh);
             }
         }
@@ -93,7 +94,7 @@ public class HotbarRenderPass extends RenderPass<VoxelRenderContext> {
 
     private void drawItemMesh(Mesh mesh, float x, float y) {
         shaderProgram.setModelMatrix(transformable.position(x, y, 0F));
-        MeshRenderer.render(mesh, null);
+        MeshRenderer.render(mesh, scene.getTexturePack().getMaterial());
     }
 
     @Override

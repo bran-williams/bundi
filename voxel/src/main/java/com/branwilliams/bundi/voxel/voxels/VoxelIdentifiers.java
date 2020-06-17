@@ -13,12 +13,14 @@ public enum VoxelIdentifiers implements VoxelIdentifier {
     BRICKS,
     COBBLESTONE,
     MOSSY_COBBLESTONE,
-    OAK_PLANKS,
     SAND,
     DIAMOND_BLOCK,
     GOLD_BLOCK,
     IRON_BLOCK,
     GLASS,
+
+    OAK_PLANKS,
+    OAK_LOG,
     OAK_LEAVES;
 
     @Override

@@ -3,7 +3,14 @@ package com.branwilliams.bundi.engine.core;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import org.lwjgl.glfw.*;
+import org.lwjgl.stb.STBImage;
 
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.branwilliams.bundi.engine.util.IOUtils.ioResourceToByteBuffer;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -16,6 +23,8 @@ import static org.lwjgl.system.MemoryUtil.*;
  * Created by Brandon on 9/4/2016.
  */
 public class Window {
+
+    public static final String DEFAULT_ICON_PATH = "icons/favicon-32x32.png";
 
     private long windowId = -1;
 
@@ -44,6 +53,8 @@ public class Window {
     private boolean hasInitialized = false;
 
     private Keycodes keycodes;
+
+    private List<Joystick> connectedJoysticks = new ArrayList<>();
 
     public Window(String title, int width, int height, boolean vsync, boolean fullscreen, Keycodes keycodes) {
         this.title = title;
@@ -82,6 +93,8 @@ public class Window {
 
         // Actually creates the window.
         windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
+
+        setIcon(DEFAULT_ICON_PATH);
 
         // This will help make sure we don't miss a key press or key release.
         // if we choose to use glfwPollEvents()
@@ -180,6 +193,27 @@ public class Window {
             }
         });
 
+        glfwSetJoystickCallback((joystickId, action) -> {
+            Joystick joystick = Joystick.get(joystickId);
+
+            if (action == GLFW_CONNECTED) {
+                connectedJoysticks.add(joystick);
+
+                for (JoystickListener joystickListener : this.scene.getJoystickListeners()) {
+                    joystickListener.onJoystickConnected(joystick);
+                }
+
+            } else if (action == GLFW_DISCONNECTED) {
+                connectedJoysticks.remove(joystick);
+
+                for (JoystickListener joystickListener : this.scene.getJoystickListeners()) {
+                    joystickListener.onJoystickDisconnected(joystick);
+                }
+                joystick.destroy();
+            }
+
+        });
+
         // Positions the window using information provided by the vidmode.
         GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         if (vidmode != null)
@@ -196,6 +230,15 @@ public class Window {
 
         // Shows the window.
         glfwShowWindow(windowId);
+
+        // Initially connected joysticks...
+        for (Joystick.JoystickId joystickId : Joystick.JoystickId.values()) {
+            Joystick joystick = new Joystick(joystickId);
+
+            if (joystick.isConnected()) {
+                connectedJoysticks.add(joystick);
+            }
+        }
     }
 
     /**
@@ -216,6 +259,56 @@ public class Window {
     public void update() {
         glfwSwapBuffers(windowId);
         glfwPollEvents();
+    }
+
+    /**
+     *
+     * */
+    public void setIcon(String path) {
+        IntBuffer w = memAllocInt(1);
+        IntBuffer h = memAllocInt(1);
+        IntBuffer comp = memAllocInt(1);
+
+        // Icons
+        ByteBuffer icon16;
+        ByteBuffer icon32;
+
+        try {
+            icon16 = ioResourceToByteBuffer(path, 2048);
+            icon32 = ioResourceToByteBuffer(path, 4096);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        try (GLFWImage.Buffer icons = GLFWImage.malloc(2)) {
+
+            ByteBuffer pixels16 = STBImage.stbi_load_from_memory(icon16, w, h, comp, 4);
+            icons.position(0)
+                    .width(w.get(0))
+                    .height(h.get(0))
+                    .pixels(pixels16);
+
+            ByteBuffer pixels32 = STBImage.stbi_load_from_memory(icon32, w, h, comp, 4);
+            icons.position(1)
+                    .width(w.get(0))
+                    .height(h.get(0))
+                    .pixels(pixels32);
+
+            icons.position(0);
+
+            glfwSetWindowIcon(windowId, icons);
+
+            STBImage.stbi_image_free(pixels32);
+            STBImage.stbi_image_free(pixels16);
+        }
+
+        memFree(comp);
+        memFree(h);
+        memFree(w);
+    }
+
+    public List<Joystick> getConnectedJoysticks() {
+        return connectedJoysticks;
     }
 
     /**
@@ -246,6 +339,10 @@ public class Window {
      * */
     public void setCursorPosition(float x, float y) {
         glfwSetCursorPos(windowId, x, y);
+    }
+
+    public boolean isCursorVisible() {
+        return getCursorMode() == GLFW_CURSOR_NORMAL;
     }
 
     /**
@@ -330,31 +427,52 @@ public class Window {
         glfwSetWindowPos(windowId, (vidmode.width() - width) / 2, (vidmode.height() - height) / 2);
     }
 
+    /**
+     * @return The width of this window in pixels.
+     * */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * @return The height of this window in pixels.
+     * */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * @return True if vsync is enabled for this window.
+     * */
     public boolean isVsync() {
         return vsync;
     }
 
+    /**
+     * Enables vsync for this window.
+     * */
     public void setVsync(boolean vsync) {
         glfwSwapInterval(vsync ? 1 : 0);
         this.vsync = vsync;
     }
 
+    /**
+     * @return The last x position of the mouse.
+     * */
     public float getMouseX() {
         return mouseX;
     }
 
+    /**
+     * @return The last y position of the mouse.
+     * */
     public float getMouseY() {
         return mouseY;
     }
 
+    /**
+     * @return True if the mouse is within this window.
+     * */
     public boolean isMouseInside() {
         return mouseInside;
     }
@@ -459,6 +577,13 @@ public class Window {
          * Invoked when a character is typed.
          * */
         void charTyped(Window window, String characters);
+    }
+
+    public interface JoystickListener {
+
+        void onJoystickConnected(Joystick joystick);
+
+        void onJoystickDisconnected(Joystick joystick);
     }
 
     /**

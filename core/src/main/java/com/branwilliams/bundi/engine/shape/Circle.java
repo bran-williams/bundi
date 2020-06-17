@@ -26,10 +26,10 @@ public class Circle implements Shape2f {
             Circle otherCircle = (Circle) other;
             float dist = otherCircle.getCenter().distance(this.getCenter());
             return dist <= otherCircle.getRadius() + this.getRadius();
-        } else if (other instanceof AABB) {
-            AABB otherAABB = (AABB) other;
-            float nearestX = Math.max(otherAABB.getMinX(), Math.min(getCenter().x, otherAABB.getMaxX()));
-            float nearestY = Math.max(otherAABB.getMinY(), Math.min(getCenter().y, otherAABB.getMaxY()));
+        } else if (other instanceof AABB2f) {
+            AABB2f otherAABB2f = (AABB2f) other;
+            float nearestX = Math.max(otherAABB2f.getMinX(), Math.min(getCenter().x, otherAABB2f.getMaxX()));
+            float nearestY = Math.max(otherAABB2f.getMinY(), Math.min(getCenter().y, otherAABB2f.getMaxY()));
             float dx = getCenter().x - nearestX;
             float dy = getCenter().y - nearestY;
             return dx * dx + dy * dy <= this.getRadius() * this.getRadius();
@@ -41,7 +41,7 @@ public class Circle implements Shape2f {
     public Vector2f intersection(Shape2f other) {
         Vector2f intersection = null;
 
-        if (other instanceof AABB) {
+        if (other instanceof AABB2f) {
             Vector2f boxClosestPoint = new Vector2f();
 
             intersection = new Vector2f(center);
@@ -57,12 +57,12 @@ public class Circle implements Shape2f {
             Circle otherCircle = (Circle) other;
             float dist = otherCircle.getCenter().distance(this.getCenter());
             return this.getRadius() >= dist + otherCircle.getRadius();
-        } else if (other instanceof AABB) {
-            AABB otherAABB = (AABB) other;
-            return this.getCenter().x - this.getRadius() <= otherAABB.getMinX() &&
-                    this.getCenter().x + this.getRadius() >= otherAABB.getMaxX() &&
-                    this.getCenter().y - this.getRadius() <= otherAABB.getMinY() &&
-                    this.getCenter().y + this.getRadius() >= otherAABB.getMaxY();
+        } else if (other instanceof AABB2f) {
+            AABB2f otherAABB2f = (AABB2f) other;
+            return this.getCenter().x - this.getRadius() <= otherAABB2f.getMinX() &&
+                    this.getCenter().x + this.getRadius() >= otherAABB2f.getMaxX() &&
+                    this.getCenter().y - this.getRadius() <= otherAABB2f.getMinY() &&
+                    this.getCenter().y + this.getRadius() >= otherAABB2f.getMaxY();
         }
         return false;
     }

@@ -34,6 +34,28 @@ public class Label extends Component {
 
     }
 
+    public enum RenderStyle {
+        SHADOW, NONE;
+
+        public static RenderStyle fromOrDefault(String text, RenderStyle defaultValue) {
+            RenderStyle renderStyle = from(text);
+
+            if (renderStyle == null)
+                return defaultValue;
+            else
+                return renderStyle;
+        }
+
+        public static RenderStyle from(String text) {
+            for (RenderStyle renderStyle : values()) {
+                if (renderStyle.name().equalsIgnoreCase(text)) {
+                    return renderStyle;
+                }
+            }
+            return null;
+        }
+    }
+
     public static final int NO_TEXT_SIZE = -1;
 
     private String text;
@@ -46,16 +68,18 @@ public class Label extends Component {
 
     private LabelAlignment alignment = LabelAlignment.LEFT;
 
-    public Label(String tag, String text) {
-        this(tag, text, new FontData(), Color.WHITE);
+    private RenderStyle renderStyle = RenderStyle.NONE;
+
+    public Label(String text) {
+        this(text, new FontData(), Color.WHITE);
     }
 
-    public Label(String tag, String text, FontData font) {
-        this(tag, text, font, Color.WHITE);
+    public Label(String text, FontData font) {
+        this(text, font, Color.WHITE);
     }
 
-    public Label(String tag, String text, FontData font, Color color) {
-        super(tag);
+    public Label(String text, FontData font, Color color) {
+        super();
         this.font = font;
         this.text = text;
         this.color = color;
@@ -73,6 +97,12 @@ public class Label extends Component {
     private void updateTextSize() {
         textWidth = font.getStringWidth(text);
         textHeight = font.getFontHeight();
+        if (this.getWidth() < textWidth) {
+            this.setWidth(textWidth);
+        }
+        if (this.getHeight() < textHeight) {
+            this.setHeight(textHeight);
+        }
 //        this.setWidth(textWidth);
 //        this.setHeight(textHeight);
     }
@@ -122,6 +152,14 @@ public class Label extends Component {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public RenderStyle getRenderStyle() {
+        return renderStyle;
+    }
+
+    public void setRenderStyle(RenderStyle renderStyle) {
+        this.renderStyle = renderStyle;
     }
 
     @Override

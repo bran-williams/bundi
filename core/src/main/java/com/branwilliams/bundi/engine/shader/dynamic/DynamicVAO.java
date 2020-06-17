@@ -110,8 +110,8 @@ public class DynamicVAO {
         int stride = vertexFormat.getElementSize() * FLOAT_SIZE;
         long offset = 0;
         for (int i = 0; i < vertexFormat.getElementCount(); i++) {
-            vao.storeAttribute(i, vertexFormat.getElement(i).size, vbo, stride, offset);
-            offset += vertexFormat.getElement(i).size * FLOAT_SIZE;
+            vao.storeAttribute(i, vertexFormat.getElement(i).getSize(), vbo, stride, offset);
+            offset += vertexFormat.getElement(i).getSize() * FLOAT_SIZE;
         }
 
         VertexArrayObject.unbind();

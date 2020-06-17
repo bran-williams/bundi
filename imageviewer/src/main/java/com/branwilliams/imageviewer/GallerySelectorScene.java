@@ -4,13 +4,19 @@ import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.Projection;
+import com.branwilliams.bundi.gui.api.ContainerManager;
+import com.branwilliams.bundi.gui.api.components.Button;
+import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
+import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.imageviewer.pipeline.GallerySelectorRenderPass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -32,18 +38,35 @@ public class GallerySelectorScene extends AbstractScene implements Window.KeyLis
 
     private boolean hasSelectedGallery;
 
+    private GuiScreenManager guiScreenManager;
+
+    private static final String UI_GALLERY_LIST = "ui/imageviewer-galleries.xml";
+
+    private static final Map<String, Object> UI_INGAME_HUD_ENVIRONMENT = createUIEnvironment();
+
+    private static Map<String, Object> createUIEnvironment() {
+        Map<String, Object> env = new HashMap<>();
+        env.put("move_sun_controls", "Ctrl + Left click");
+        return env;
+    }
+
     public GallerySelectorScene() {
         super("galleryselector_scene");
+        this.guiScreenManager = new GuiScreenManager(this);
+
         this.addKeyListener(this);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
+        this.guiScreenManager.init(engine, window);
+
         viewerScene = new ImageViewerScene(this);
 
         RenderContext renderContext = new RenderContext(new Projection(window));
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addLast(new GallerySelectorRenderPass(this));
+        renderPipeline.addLast(new GuiRenderPass<>(this, this::getGuiScreenManager));
 
         ImageViewerRenderer renderer = new ImageViewerRenderer(this, renderPipeline);
         setRenderer(renderer);
@@ -54,6 +77,33 @@ public class GallerySelectorScene extends AbstractScene implements Window.KeyLis
         galleries = readGalleries(GALLERY_DIR);
 //        selectedGallery = 0;
         hasSelectedGallery = false;
+
+        Map<String, Object> env = new HashMap<>();
+
+        List<String> galleriesEnv = new ArrayList<>();
+        for (int i = 0; i < galleries.length; i++) {
+            Gallery gallery = galleries[i];
+            galleriesEnv.add(gallery.getName() + " (" + gallery.files.length + ")");
+        }
+        env.put("galleries", galleriesEnv);
+
+        ContainerManager containerManager = this.guiScreenManager.loadAsGuiScreen(UI_GALLERY_LIST, env);
+
+        for (int i = 0; i < galleries.length; i++) {
+            Gallery gallery = galleries[i];
+            Button button = containerManager.getByTag("gallery" + i);
+            if (button != null) {
+                button.onPressed((b, a) -> {
+                    if (a.buttonId == GLFW_MOUSE_BUTTON_1) {
+                        setGallery(gallery);
+                        return true;
+                    }
+                    return false;
+                });
+            } else {
+                System.out.println("button null. i=" + i);
+            }
+        }
     }
 
     @Override
@@ -64,6 +114,7 @@ public class GallerySelectorScene extends AbstractScene implements Window.KeyLis
     @Override
     public void update(Engine engine, double deltaTime) {
         super.update(engine, deltaTime);
+        guiScreenManager.update();
 
         if (hasSelectedGallery)
             engine.setScene(viewerScene);
@@ -139,5 +190,9 @@ public class GallerySelectorScene extends AbstractScene implements Window.KeyLis
 
     public int getSelectedGallery() {
         return selectedGallery;
+    }
+
+    public GuiScreenManager getGuiScreenManager() {
+        return guiScreenManager;
     }
 }

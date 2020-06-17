@@ -4,10 +4,10 @@ import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.core.Window;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import java.util.Random;
+import org.joml.*;
+
+import java.lang.Math;
 
 /**
  * Math utility class.
@@ -340,9 +340,9 @@ public enum Mathf {
      * */
     public static Matrix4f toSphericalBillboardedModelMatrix(Matrix4f matrix, Transformable transformable, Camera camera) {
         return matrix.identity().translate(transformable.getPosition()).
-                rotateY(toRadians(180 - camera.getRotation().y)).
-                rotateX(toRadians(transformable.getRotation().x)).
-                rotateZ(toRadians(transformable.getRotation().z)).
+                rotateY(toRadians(180 - camera.getPitch())).
+                rotateX(toRadians(transformable.getRotationAsEuler().x)).
+                rotateZ(toRadians(transformable.getRotationAsEuler().z)).
                 scale(transformable.getScale());
     }
 
@@ -355,9 +355,9 @@ public enum Mathf {
      * */
     public static Matrix4f toCylindricalBillboardedModelMatrix(Matrix4f matrix, Transformable transformable, Camera camera) {
         return matrix.identity().translate(transformable.getPosition()).
-                rotateY(toRadians(180 - camera.getRotation().y)).
-                rotateX(toRadians(camera.getRotation().x)).
-                rotateZ(toRadians(transformable.getRotation().z)).
+                rotateY(toRadians(180 - camera.getPitch())).
+                rotateX(toRadians(camera.getYaw())).
+                rotateZ(toRadians(transformable.getRotationAsEuler().z)).
                 scale(transformable.getScale());
     }
 
@@ -373,9 +373,10 @@ public enum Mathf {
     public static Matrix4f toModelMatrix(Matrix4f matrix, Transformable transformable) {
         return matrix.identity()
                 .translate(transformable.getPosition())
-                .rotateX(toRadians(transformable.getRotation().x))
-                .rotateY(toRadians(transformable.getRotation().y))
-                .rotateZ(toRadians(transformable.getRotation().z))
+                .rotate(transformable.getRotation())
+                //.rotateX(toRadians(transformable.getRotationAsEuler().x))
+                //.rotateY(toRadians(transformable.getRotationAsEuler().y))
+                //.rotateZ(toRadians(transformable.getRotationAsEuler().z))
                 .scale(transformable.getScale());
     }
 
@@ -400,9 +401,8 @@ public enum Mathf {
      * */
     public static Matrix4f toViewMatrix(Matrix4f matrix, Camera camera) {
         return matrix.identity()
-                .rotateX(toRadians(camera.getRotation().x))
-                .rotateY(toRadians(camera.getRotation().y))
-                .rotateZ(toRadians(camera.getRotation().z))
+                .rotateX(toRadians(camera.getYaw()))
+                .rotateY(toRadians(camera.getPitch()))
                 .translate(-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
     }
 
@@ -448,6 +448,18 @@ public enum Mathf {
         Vector3f mouseRay = new Vector3f(rayEye.x, rayEye.y, rayEye.z);
         mouseRay.normalize();
         return mouseRay;
+    }
+
+    public static Vector3f getRandomPointWithinSphere(Random random) {
+        return getRandomPointWithinSphere(random, new Vector3f());
+    }
+
+    public static Vector3f getRandomPointWithinSphere(Random random, Vector3f vector) {
+        float x = (float) random.nextGaussian();
+        float y = (float) random.nextGaussian();
+        float z = (float) random.nextGaussian();
+
+        return vector.set(x, y, z).normalize();
     }
 
     /**

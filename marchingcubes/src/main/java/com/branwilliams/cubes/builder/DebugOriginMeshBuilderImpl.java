@@ -1,6 +1,6 @@
 package com.branwilliams.cubes.builder;
 
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.cubes.DebugOriginMesh;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -52,8 +52,8 @@ public class DebugOriginMeshBuilderImpl implements DebugOriginMeshBuilder {
         };
 
         mesh.getMesh().bind();
-        mesh.getMesh().storeAttribute(0, toArray3f(vertices), VertexElement.POSITION.size);
-        mesh.getMesh().storeAttribute(1, toArray4f(colors), VertexElement.COLOR.size);
+        mesh.getMesh().storeAttribute(0, toArray3f(vertices), VertexElements.POSITION.getSize());
+        mesh.getMesh().storeAttribute(1, toArray4f(colors), VertexElements.COLOR.getSize());
         mesh.getMesh().setVertexCount(vertices.length);
         mesh.getMesh().unbind();
 

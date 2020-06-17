@@ -6,17 +6,17 @@ import com.branwilliams.bundi.engine.shader.ShaderProgram;
 /**
  * Created by Brandon Williams on 11/17/2018.
  */
-public interface ShaderBuilder {
+public interface ShaderBuilder <T extends ShaderProgram> {
 
-    ShaderBuilder vertexShader(String code) throws ShaderInitializationException;
+    ShaderBuilder<T> vertexShader(String code) throws ShaderInitializationException;
 
-    ShaderBuilder fragmentShader(String code) throws ShaderInitializationException;
+    ShaderBuilder<T> fragmentShader(String code) throws ShaderInitializationException;
 
-    ShaderBuilder geometryShader(String code) throws ShaderInitializationException;
+    ShaderBuilder<T> geometryShader(String code) throws ShaderInitializationException;
 
-    ShaderBuilder tessellationControlShader(String code) throws ShaderInitializationException;
+    ShaderBuilder<T> tessellationControlShader(String code) throws ShaderInitializationException;
 
-    ShaderBuilder tessellationEvaluationShader(String code) throws ShaderInitializationException;
+    ShaderBuilder<T> tessellationEvaluationShader(String code) throws ShaderInitializationException;
 
-    ShaderProgram build() throws ShaderInitializationException;
+    T build() throws ShaderInitializationException;
 }

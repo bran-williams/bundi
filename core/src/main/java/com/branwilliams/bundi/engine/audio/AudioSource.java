@@ -14,6 +14,8 @@ public class AudioSource implements Destructible {
 
     private final int id;
 
+    private float gain;
+
     public AudioSource() {
         id = alGenSources();
     }
@@ -24,14 +26,31 @@ public class AudioSource implements Destructible {
     }
 
     /**
+     * @return True if this source is playing.
+     * */
+    public boolean isPlaying() {
+        return alGetSourcei(id, AL_SOURCE_STATE) == AL_PLAYING;
+    }
+
+    /**
+     * @return The last gain set of this audio source.
+     * */
+    public float getGain() {
+            return gain;
+    }
+
+
+    /**
      * Sets this audio sources buffer to the sound buffer specified.
      * */
     public void setPlayback(Sound sound) {
         alSourcei(id, AL_BUFFER, sound.getId());
     }
 
+
     public void setGain(float gain) {
         alSourcef(id, AL_GAIN, gain);
+        this.gain = gain;
     }
 
     public void setPitch(float pitch) {

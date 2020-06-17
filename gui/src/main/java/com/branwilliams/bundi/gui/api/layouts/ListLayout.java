@@ -9,7 +9,7 @@ import java.util.List;
  * List styled layout used within scrollable containers. Will lay out each component to be within a list-order. <br/>
  * Created by Brandon Williams on 2/16/2017.
  */
-public class ListLayout implements Layout<Widget> {
+public class ListLayout implements Layout<Widget, Widget> {
 
     // Padding used between the components and the container.
     private int padding;

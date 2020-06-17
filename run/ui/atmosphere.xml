@@ -4,7 +4,7 @@
         <GridLayout rows="4" columns="3" padding="2" componentPadding="4"/>
         <FontData font="Roboto" size="20" style="bold"/>
 
-<!--        <Container tag="invisible">-->
+<!--        <Container opacity="0">-->
 <!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
 
             <Label tag="x_title" text="x" color="#ffffff">
@@ -21,7 +21,7 @@
 
 <!--        </Container>-->
 
-<!--        <Container tag="invisible">-->
+<!--        <Container opacity="0">-->
 <!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
 
             <Label tag="y_title" text="y" color="#ffffff">
@@ -38,7 +38,7 @@
 
 <!--        </Container>-->
 
-<!--        <Container tag="invisible">-->
+<!--        <Container opacity="0">-->
 <!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
 
             <Label tag="z_title" text="z" color="#ffffff">
@@ -55,7 +55,7 @@
 
 <!--        </Container>-->
 
-<!--        <Container tag="invisible">-->
+<!--        <Container opacity="0">-->
 <!--            <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>-->
 
             <Label tag="weather_title" text="Weather" color="#ffffff">

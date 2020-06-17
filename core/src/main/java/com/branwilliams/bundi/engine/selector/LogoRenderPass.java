@@ -63,7 +63,7 @@ public class LogoRenderPass extends RenderPass<RenderContext> {
         shaderProgram.setViewMatrix(camera);
         shaderProgram.setColor(new Vector4f(0F, 0.5F, 1F, 1F));
 
-        logoTransformable.getRotation().y += 0.2F;
+        logoTransformable.getRotationAsEuler().y += 0.2F;
         shaderProgram.setModelMatrix(logoTransformable);
 
         ModelRenderer.renderModel(logoModel);

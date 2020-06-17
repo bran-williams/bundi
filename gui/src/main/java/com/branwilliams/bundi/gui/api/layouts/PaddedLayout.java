@@ -14,7 +14,7 @@ import java.util.Map;
  * Will enforce a vertical and/or horizontal padding. <br/>
  * Created by Brandon Williams on 1/15/2017.
  */
-public class PaddedLayout implements Layout<Widget> {
+public class PaddedLayout implements Layout<Widget, Widget> {
 
     /**
      * Store the positions of each component.

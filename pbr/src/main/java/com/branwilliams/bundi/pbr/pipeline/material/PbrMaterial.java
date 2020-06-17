@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.pbr.pipeline.material;
 
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.pbr.util.PbrUtils;
 

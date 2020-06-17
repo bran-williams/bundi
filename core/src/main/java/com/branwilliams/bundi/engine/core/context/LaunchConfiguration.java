@@ -8,26 +8,54 @@ package com.branwilliams.bundi.engine.core.context;
  */
 public class LaunchConfiguration {
 
+    /**
+     * The title of this app's window.
+     * */
     public String windowTitle;
 
+    /**
+     * The launch window width.
+     * */
     public int windowWidth;
 
+    /**
+     * The launch window height.
+     * */
     public int windowHeight;
 
+    /**
+     * True for vertical-sync.
+     * */
     public boolean vsync;
 
+    /**
+     * True if the app should launch in full-screen.
+     * */
     public boolean fullscreen;
 
+    /**
+     * This is the file path to the keycode mappings.
+     * */
     public String keycodes;
 
-    /***/
+    /**
+     * This is the directory for asset storage.
+     * */
     public String assetDirectory;
 
+    /**
+     * This is the directory for temporary storage.
+     * */
     public String tempDirectory;
 
-    /**/
+    /**
+    * This is the class-path of the first scene to launch.
+    * */
     public String launchScene;
 
+    /**
+     * This is the class-path to search for scenes.
+     * */
     public String sceneDirectory;
 
 }

@@ -5,7 +5,7 @@ import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
-import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.model.Model;
 import com.branwilliams.bundi.engine.model.ModelLoader;
 import com.branwilliams.bundi.engine.shader.*;
@@ -34,11 +34,11 @@ public class ModelViewerScene extends AbstractScene implements Window.KeyListene
     /**
      * Change me in order to view another model
      * */
-//    private final String modelLocation = "models/cartoonland2/cartoonland2.obj";
-//    private final String modelTextures = "models/cartoonland2/";
+    private final String modelLocation = "models/cartoonland2/cartoonland2.obj";
+    private final String modelTextures = "models/cartoonland2/";
 
-    private final String modelLocation = "models/white_oak/white_oak.obj";
-    private final String modelTextures = "models/white_oak/";
+//    private final String modelLocation = "models/white_oak/white_oak.obj";
+//    private final String modelTextures = "models/white_oak/";
 
 //    private final String modelLocation = "models/logo2/logo2.obj";
 //    private final String modelTextures = "models/logo2/";

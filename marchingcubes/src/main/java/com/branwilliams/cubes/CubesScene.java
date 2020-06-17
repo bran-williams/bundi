@@ -11,6 +11,7 @@ import com.branwilliams.bundi.engine.shader.DirectionalLight;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
+import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
@@ -37,6 +38,7 @@ import java.util.List;
 
 import static com.branwilliams.bundi.engine.util.ColorUtils.fromHex;
 import static com.branwilliams.bundi.engine.util.ColorUtils.toVector3;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
 /**
@@ -46,6 +48,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 public class CubesScene extends AbstractScene implements Window.KeyListener {
 
     public static final Color WORLD_COLOR = fromHex("#573B0C");
+
+    public static final Color FOG_COLOR = fromHex("#573B0C");
 
     // play vars
 
@@ -80,6 +84,8 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
             new Vector3f(0.4F),  // diffuse
             toVector3(WORLD_COLOR.brighter())); // specular
 
+    private TextureLoader textureLoader;
+
     private Camera camera;
 
     private RaycastResult raycast;
@@ -110,6 +116,8 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
         renderPipeline.addLast(new DebugRenderPass(this, this::getCamera));
         CubesRenderer renderer = new CubesRenderer(this, renderPipeline);
         setRenderer(renderer);
+
+        textureLoader = new TextureLoader(engine.getContext());
     }
 
     @Override
@@ -189,6 +197,9 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
     public void keyPress(Window window, int key, int scancode, int mods) {
         if (key == GLFW_KEY_R) {
             wireframe = !wireframe;
+        }
+        if (key == GLFW_KEY_F5) {
+            textureLoader.screenshot();
         }
     }
 

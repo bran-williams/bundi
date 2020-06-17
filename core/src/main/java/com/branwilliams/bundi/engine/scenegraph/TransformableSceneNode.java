@@ -18,6 +18,11 @@ public class TransformableSceneNode extends SceneNode {
 
     }
 
+    @Override
+    public void fixedUpdate(Engine engine, double deltaTime) {
+
+    }
+
     /**
      * TODO scene graph
      * */

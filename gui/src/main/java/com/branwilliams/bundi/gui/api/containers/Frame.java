@@ -18,8 +18,8 @@ public class Frame extends MoveableContainer {
 
     private String title;
 
-    public Frame(String tag, String title) {
-        super(tag);
+    public Frame(String title) {
+        super();
         this.title = title;
         this.titleWidget = new FrameTitleWidget(this, FRAME_TITLE_HEIGHT);
         this.setMoveFunction((frame, toolbox) -> {

@@ -24,7 +24,6 @@ public interface Widget extends Destructible {
 
     void setHeight(int height);
 
-
     /**
      * Set the x and y position of this component.
      * */

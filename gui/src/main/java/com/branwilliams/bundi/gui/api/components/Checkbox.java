@@ -3,7 +3,9 @@ package com.branwilliams.bundi.gui.api.components;
 import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
+
+import java.util.function.BiFunction;
 
 /**
  * Simple checkbox implementation. <br/>
@@ -21,30 +23,42 @@ public class Checkbox extends Component {
 
     private boolean pressed = false;
 
-    public Checkbox(String tag, String text) {
-        this(tag, text, false);
+    private BiFunction<Checkbox, ClickEvent, Boolean> pressFunction;
+
+    public Checkbox(String text) {
+        this( text, false);
     }
 
-    public Checkbox(String tag, String text, boolean enabled) {
-        super(tag);
+    public Checkbox(String text, boolean enabled) {
+        super();
         this.text = text;
         this.enabled = enabled;
-        this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> {
-            if (isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0) {
-                pressed = true;
-                return true;
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event -> {
+            switch (event.mouseClickAction) {
+                case MOUSE_PRESS:
+                    if (isHovered() && isPointInside(event.x, event.y) && event.buttonId == 0) {
+                        pressed = true;
+                        return true;
+                    }
+                    return false;
+
+                case MOUSE_RELEASE:
+                    if (pressed && isPointInside(event.x, event.y)) {
+                        if (pressFunction != null) {
+                            pressFunction.apply(this, event);
+                        }
+                        pressed = false;
+                        onPressed();
+                        return true;
+                    }
+                    pressed = false;
+                    return false;
+
+                default:
+                    return false;
             }
-            return false;
         });
-        this.addListener(Actions.MOUSE_RELEASE, (ClickAction.ClickActionListener) action -> {
-            if (pressed && isPointInside(action.x, action.y)) {
-                pressed = false;
-                onPressed();
-                return true;
-            }
-            pressed = false;
-            return false;
-        });
+
     }
 
     protected void onPressed() {}
@@ -55,6 +69,12 @@ public class Checkbox extends Component {
         this.setHeight(getCheckboxSize());
     }
 
+    /**
+     * Invokes the given function when this button is pressed.
+     * */
+    public void onPressed(BiFunction<Checkbox, ClickEvent, Boolean> pressFunction) {
+        this.pressFunction = pressFunction;
+    }
     /**
      * @return An int array of the dimensions of the check box.
      * */

@@ -3,12 +3,17 @@ package com.branwilliams.bundi.gui.api.layouts.anchor;
 import com.branwilliams.bundi.gui.api.Widget;
 
 /**
- * Constrains a component's position and size based on some criteria.
+ * Constrains a component in some way.
  * */
-public interface Constraint {
+public interface Constraint<Container extends Widget, Component extends Widget> {
 
     /**
-     * @return The new width and height of the component.
+     * Applies this constraint to the component.
      * */
-    int[] setPosition(Widget container, Widget component);
+    void apply(Container container, Component component);
+
+    /**
+     * @return True if this constraint should be applied to the component.
+     * */
+    boolean shouldApply(Container container, Component component);
 }

@@ -11,43 +11,93 @@ import org.joml.Vector3f;
  * */
 public class Camera {
 
+    private static final float DEFAULT_YAW = 0F;
+
+    private static final float DEFAULT_PITCH = 0F;
+
+    private static final Vector3f DEFAULT_UP = new Vector3f(0F, 1F, 0F);
+
+    private static final Vector3f DEFAULT_FRONT = new Vector3f(0F, 0F, -1F);
+
     private final Matrix4f viewMatrix = new Matrix4f();
 
+    /**
+     * World-space up vector. Default is (0, 1, 0).
+     *
+     * */
+    private Vector3f worldUp;
+
+    /**
+     * Position of this camera.
+     * */
     private Vector3f position;
 
-    private Vector3f rotation;
+    /**
+     * Up vector of this camera.
+     * */
+    private Vector3f up;
 
-    // This is used to by the view matrix method to ensure that the view matrix is not calculated too often.
+    /**
+     * Front vector of this camera.
+     * */
+    private Vector3f front;
+
+    /**
+     * Right vector of this camera.
+     * */
+    private Vector3f right;
+
+    /**
+     * The yaw (x-axis rotation) of this camera.
+     * */
+    private float yaw;
+
+    /**
+     * The pitch (y-axis rotation) of this camera.
+     * */
+    private float pitch;
+
+    /**
+     * This is used to by the view matrix method to ensure that the view matrix is not calculated too often.
+     * */
     private boolean dirty;
 
-    public Camera(Vector3f position, Vector3f rotation) {
+    public Camera(Vector3f position, float yaw, float pitch) {
+        this.worldUp = new Vector3f(DEFAULT_UP);
+        this.up = new Vector3f(DEFAULT_UP);
+        this.front = new Vector3f(DEFAULT_FRONT);
+
         this.position = position;
-        this.rotation = rotation;
+        this.yaw = yaw;
+        this.pitch = pitch;
+        updateCameraVectors();
         this.dirty = true;
     }
 
     public Camera(Vector3f position) {
-        this(position, new Vector3f(0, 0, 0));
+        this(position, DEFAULT_YAW, DEFAULT_PITCH);
     }
 
     public Camera() {
-        this(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0));
+        this(new Vector3f());
     }
 
     public void lookAt(Vector3f position) {
         lookAt(position.x, position.y, position.z);
     }
 
+    /**
+     * Forces this camera to look at the (world-space) position provided.
+     * */
     public void lookAt(float x, float y, float z) {
         double dx = position.x - x;
         double dy = position.y - y;
         double dz = position.z - z;
-        double theta = (double) Mathf.sqrt(dx * dx + dz * dz);
+        double theta = Math.sqrt(dx * dx + dz * dz);
 
-        float yaw = (float) (Math.atan2(dz, dx) * 180.0D / Math.PI) - 90.0F;
-        float pitch = (float) ((Math.atan2(dy, theta) * 180.0D / Math.PI));
-
-        rotation.set(pitch, yaw, rotation.z);
+        yaw = (float) (Math.atan2(dz, dx) * 180.0D / Math.PI) - 90.0F;
+        pitch = (float) ((Math.atan2(dy, theta) * 180.0D / Math.PI));
+        updateCameraVectors();
         dirty = true;
     }
 
@@ -55,15 +105,18 @@ public class Camera {
      * Moves this camera object in the directions provided
      * */
     public void moveDirection(float forward, float strafe) {
+        Vector3f movement = this.front.mul(forward, new Vector3f());
+        movement.add(this.right.mul(strafe, new Vector3f()));
+        move(movement.x, movement.y, movement.z);
 
         // forward movement.
-        float x = (float) Mathf.sin(Mathf.toRadians(rotation.y)) * forward;
-        float z = (float) -Mathf.cos(Mathf.toRadians(rotation.y)) * forward;
+//        float x = Mathf.sin(Mathf.toRadians(yaw)) * forward;
+//        float z = -Mathf.cos(Mathf.toRadians(yaw)) * forward;
 
         // strafing movement.
-        x += (float) Mathf.sin(Mathf.toRadians(rotation.y - 90)) * strafe;
-        z -= (float) Mathf.cos(Mathf.toRadians(rotation.y - 90)) * strafe;
-        move(x, 0F, z);
+//        x += Mathf.sin(Mathf.toRadians(yaw - 90)) * strafe;
+//        z -= Mathf.cos(Mathf.toRadians(yaw - 90)) * strafe;
+//        move(x, 0F, z);
     }
 
     /**
@@ -77,14 +130,14 @@ public class Camera {
     }
 
     /**
-     * Offsets this camera's rotation by the provided x, y, and z values.
+     * Offsets this camera's rotation by the provided yaw and pitch.
      * */
-    public void rotate(float x, float y, float z) {
-        rotation.x += x;
-        rotation.y += y;
-        rotation.z += z;
-        dirty = true;
+    public void rotate(float dYaw, float dPitch) {
+        this.yaw += dYaw;
+        this.pitch += dPitch;
         clampAngles();
+        updateCameraVectors();
+        dirty = true;
     }
 
     /**
@@ -93,28 +146,32 @@ public class Camera {
      * X rotation (pitch) is clamped to be between -90 ~ 90.
      * */
     public void clampAngles() {
-        if (rotation.y > 360)
-            rotation.y %= 360;
-        if (rotation.y < 0)
-            rotation.y = 360 + rotation.y;
+        if (yaw > 360)
+            yaw %= 360;
+        if (yaw < 0)
+            yaw = 360 + yaw;
 
-        if (rotation.x > 89)
-            rotation.x = 89;
-        if (rotation.x < -89)
-            rotation.x = -89;
+        if (pitch > 89)
+            pitch = 89;
+        if (pitch < -89)
+            pitch = -89;
     }
 
-    public Vector3f getDirection() {
-        Vector3f direction = new Vector3f();
-
-        float yaw   = Mathf.toRadians(rotation.y);
-        float pitch = Mathf.toRadians(rotation.x);
-
-        direction.x = Mathf.cos(pitch) * Mathf.sin(yaw);
-        direction.y = -Mathf.sin(pitch);
-        direction.z = -Mathf.cos(pitch) * Mathf.cos(yaw);
-
-        return direction.normalize();
+    /**
+     * @return The direction this camera is facing.
+     * */
+    public Vector3f getFacingDirection() {
+        return new Vector3f(front);
+//        Vector3f direction = new Vector3f();
+//
+//        float yawRad   = Mathf.toRadians(this.yaw);
+//        float pitchRad = Mathf.toRadians(this.pitch);
+//
+//        direction.x = Mathf.cos(pitchRad) * Mathf.sin(yawRad);
+//        direction.y = -Mathf.sin(pitchRad);
+//        direction.z = -Mathf.cos(pitchRad) * Mathf.cos(yawRad);
+//
+//        return direction.normalize();
     }
 
     public Vector3f getPosition() {
@@ -133,31 +190,49 @@ public class Camera {
         this.dirty = true;
     }
 
-    public Vector3f getRotation() {
-        return rotation;
+    public float getYaw() {
+        return yaw;
     }
 
-    public void setRotation(Vector3f rotation) {
-        this.rotation = rotation;
-        this.dirty = true;
-        clampAngles();
-    }
-
-    public void setRotation(float x, float y, float z) {
-        this.rotation.x = x;
-        this.rotation.y = y;
-        this.rotation.z = z;
-        this.dirty = true;
-        clampAngles();
+    public float getPitch() {
+        return pitch;
     }
 
     /**
-     * The 'pitch' of the camera is the rotation along the x-axis. This is capped between -90 and 90.
-     * This function inverts whatever value this camera currently has.
+     * Updates the front and up vectors from the yaw and pitch.
      * */
-    public void invertPitch() {
-        this.rotation.x = -this.rotation.x;
-        this.dirty = true;
+    protected void updateCameraVectors() {
+        // Calculate the new Front vector
+        Vector3f front = new Vector3f();
+        front.x = Mathf.cos(Mathf.toRadians(yaw)) * Mathf.cos(Mathf.toRadians(pitch));
+        front.y = Mathf.sin(Mathf.toRadians(pitch));
+        front.z = Mathf.sin(Mathf.toRadians(yaw)) * Mathf.cos(Mathf.toRadians(pitch));
+        this.front = front.normalize();
+
+        // Also re-calculate the Right and Up vector
+        this.right = front.cross(worldUp, new Vector3f()).normalize();
+        this.up = right.cross(front, new Vector3f()).normalize();
+    }
+
+    public Matrix4f toViewMatrix() {
+        if (dirty) {
+            updateCameraVectors();
+            viewMatrix.setLookAt(position, position.add(front, new Vector3f()), up);
+            dirty = false;
+        }
+        return viewMatrix;
+    }
+
+    public Vector3f getFront() {
+        return front;
+    }
+
+    public Vector3f getUp() {
+        return up;
+    }
+
+    public Vector3f getRight() {
+        return right;
     }
 
     @Override
@@ -165,15 +240,10 @@ public class Camera {
         return "Camera{" +
                 "viewMatrix=" + viewMatrix +
                 ", position=" + position +
-                ", rotation=" + rotation +
+                ", yaw=" + yaw +
+                ", pitch=" + pitch +
                 '}';
     }
 
-    public Matrix4f toViewMatrix() {
-        if (dirty) {
-            Mathf.toViewMatrix(viewMatrix, this);
-            dirty = false;
-        }
-        return viewMatrix;
-    }
+
 }

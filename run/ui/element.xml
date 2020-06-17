@@ -1,0 +1,22 @@
+<UI>
+    <Frame tag="imported_guy" title="Imported!" x="700" y="350" width="400" height="200">
+        <FontData font="Verdana" size="20" style="bold"/>
+        <GridLayout rows="2" columns="2" padding="2" componentPadding="2"/>
+
+        <Button tag="button" width="200" height="24" text="Press me" highlight="true">
+            <FontData font="Verdana" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="button2" width="200" height="24" text="Press me as well" highlight="true">
+            <FontData font="Verdana" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="button" width="200" height="24" text="button 3" highlight="true">
+            <FontData font="Trebuchet MS" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="button2" width="200" height="24" text="four" highlight="true">
+            <FontData font="Verdana" size="18" style="bold"/>
+        </Button>
+    </Frame>
+</UI>

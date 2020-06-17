@@ -3,6 +3,7 @@ package com.branwilliams.bundi.voxel;
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.ecs.IEntity;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.systems.LockableSystem;
@@ -11,10 +12,12 @@ import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
 import com.branwilliams.bundi.engine.util.noise.LayeredNoise;
 import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
-import com.branwilliams.bundi.engine.util.noise.PerlinNoise;
 import com.branwilliams.bundi.gui.impl.ColorPack;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
+import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilder;
+import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilderImpl;
+import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilder;
 import com.branwilliams.bundi.voxel.components.*;
 import com.branwilliams.bundi.voxel.inventory.ItemRegistry;
 import com.branwilliams.bundi.voxel.io.*;
@@ -28,9 +31,8 @@ import com.branwilliams.bundi.voxel.render.VoxelRenderer;
 import com.branwilliams.bundi.voxel.system.player.*;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
 import com.branwilliams.bundi.voxel.world.generator.NoiseChunkGenerator;
-import com.branwilliams.bundi.voxel.world.generator.PerlinChunkGenerator;
 import com.branwilliams.bundi.voxel.world.generator.VoxelChunkGenerator;
-import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilder;
+import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilderImpl;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderPipeline;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import com.branwilliams.bundi.voxel.world.storage.ChunkMeshStorage;
@@ -59,7 +61,15 @@ public class VoxelScene extends AbstractScene implements Lockable {
     /** Used to determine whether this scene is paused. */
     private final Lock delegateLock = new Lock();
 
-    private GuiScreenManager guiScreenManager;
+    private Engine engine;
+
+    private Window window;
+
+    private VoxelGameState gameState = VoxelGameState.INGAME;
+
+    private GuiScreenManager<VoxelScene> guiScreenManager;
+
+    private VoxelSoundManager voxelSoundManager;
 
     private Projection projection;
 
@@ -76,6 +86,8 @@ public class VoxelScene extends AbstractScene implements Lockable {
     private VoxelTexturePack texturePack;
 
     private VoxelMeshBuilder voxelMeshBuilder;
+
+    private VoxelChunkMeshBuilder voxelChunkMeshBuilder;
 
     private PlayerState playerState;
 
@@ -102,6 +114,10 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
+        // TODO Don't do this maybe?
+        this.engine = engine;
+        this.window = window;
+
 //        engine.setUpdateInterval(1 / 20D);
         guiScreenManager = new GuiScreenManager(this);
         guiScreenManager.init(engine, window);
@@ -114,23 +130,36 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
         camera = new Camera();
 
-        es.addSystem(new PlayerPauseSystem(this, this));
+        // pause input
+        es.addSystem(new PlayerPauseSystem(this));
+
+        // world loading/updating
         es.addSystem(new LockableSystem(this, new ChunkLoadSystem(this)));
+        es.addSystem(new LockableSystem(this, new AtmosphereSystem()));
+
+        // input
         es.addSystem(new LockableSystem(this, new PlayerInputSystem(this)));
+        es.addSystem(new PlayerCameraInputSystem(this)); // This system extends a system with lockable logic already.
+
+        // physics update and collision resolution
         es.addSystem(new LockableSystem(this, new PhysicsSystem(this, new Vector3f(0F, -9.8F, 0F))));
         es.addSystem(new LockableSystem(this, new PlayerCollisionSystem(this)));
-        es.addSystem(new PlayerCameraUpdateSystem(this)); // This system extends a system with lockable logic already.
+
+        // camera update (to follow user position)
+        es.addSystem(new LockableSystem(this, new PlayerCameraUpdateSystem(this)));
+
+        // raycast for world interaction
         es.addSystem(new LockableSystem(this, new PlayerRaycastSystem(this)));
         es.addSystem(new PlayerInteractSystem(this, this)); // This system implements its own lockable logic.
-        es.addSystem(new LockableSystem(this, new AtmosphereSystem()));
+
         es.initSystems(engine, window);
 
+        // disable cursor so user can have 3d movement
         window.disableCursor();
 
         Path assetDirectory = getAssetDirectory(engine.getContext());
         JsonLoader jsonLoader = new JsonLoader(assetDirectory);
         jsonLoader.initialize(engine.getWindow().getKeycodes());
-
 
         loadVoxelData(jsonLoader, assetDirectory, Paths.get("voxel_properties_hd.json"),
                 Paths.get("default_textures.json"));
@@ -139,7 +168,11 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
         loadSettings(jsonLoader);
 
-        voxelMeshBuilder = new VoxelMeshBuilder(voxelRegistry, texturePack);
+        voxelMeshBuilder = new VoxelMeshBuilderImpl(voxelRegistry, texturePack);
+        voxelChunkMeshBuilder = new VoxelChunkMeshBuilderImpl(voxelRegistry, texturePack);
+
+        voxelSoundManager = new VoxelSoundManager(this);
+        voxelSoundManager.initialize(engine);
     }
 
     @Override
@@ -199,6 +232,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
     public void destroy() {
         super.destroy();
         this.voxelWorld.destroy();
+        this.voxelSoundManager.destroy();
     }
 
     /**
@@ -253,7 +287,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
         RateLimiter meshCreationLimiter = new RateLimiter(TimeUnit.MILLISECONDS, 50L);
 
         // Create chunk & chunk mesh storage
-        ChunkMeshStorage chunkMeshStorage = new ChunkMeshStorage(voxelMeshBuilder, meshCreationLimiter);
+        ChunkMeshStorage chunkMeshStorage = new ChunkMeshStorage(voxelChunkMeshBuilder, meshCreationLimiter);
         ChunkStorage chunkStorage = new HashChunkStorage();
 
         // create generator and world
@@ -270,6 +304,10 @@ public class VoxelScene extends AbstractScene implements Lockable {
     @Override
     public void update(Engine engine, double updateInterval) {
         super.update(engine, updateInterval);
+
+        if (this.getGuiScreen() != null)
+            this.getGuiScreen().update();
+
         if (stop)
             engine.stop();
     }
@@ -282,6 +320,24 @@ public class VoxelScene extends AbstractScene implements Lockable {
     @Override
     public void setLocked(boolean locked) {
         delegateLock.setLocked(locked);
+    }
+
+    public void onGamePaused() {
+        setGameState(VoxelGameState.PAUSED);
+        this.setLocked(true);
+    }
+
+    public void onGameUnpaused() {
+        setGameState(VoxelGameState.INGAME);
+        this.setLocked(false);
+    }
+
+    public VoxelGameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(VoxelGameState gameState) {
+        this.gameState = gameState;
     }
 
     public Atmosphere getAtmosphere() {
@@ -336,16 +392,20 @@ public class VoxelScene extends AbstractScene implements Lockable {
         return player;
     }
 
-    public GuiScreen getGuiScreen() {
+    public GuiScreen<VoxelScene> getGuiScreen() {
         return guiScreenManager.getGuiScreen();
     }
 
-    public void setGuiScreen(GuiScreen guiScreen) {
+    public void setGuiScreen(GuiScreen<VoxelScene> guiScreen) {
         guiScreenManager.setGuiScreen(guiScreen);
     }
 
     public GameSettings getGameSettings() {
         return gameSettings;
+    }
+
+    public VoxelSoundManager getVoxelSoundManager() {
+        return voxelSoundManager;
     }
 
     /**
@@ -354,5 +414,13 @@ public class VoxelScene extends AbstractScene implements Lockable {
      * */
     public void stop() {
         stop = true;
+    }
+
+    public Engine getEngine() {
+        return engine;
+    }
+
+    public Window getWindow() {
+        return window;
     }
 }

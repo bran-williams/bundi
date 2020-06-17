@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.pbr.util;
 
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;

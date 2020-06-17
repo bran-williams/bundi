@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.model;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.Texture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +23,10 @@ public enum ModelRenderer {
      *
      * */
     public static void renderModel(Model model) {
+//        log.info("model rendering:");
         for (Material material : model.getData().keySet()) {
             bindMaterial(material);
-
+//            log.info("Binding material=" + material);
             for (Mesh mesh : model.getData().get(material)) {
                 renderMesh(mesh);
             }

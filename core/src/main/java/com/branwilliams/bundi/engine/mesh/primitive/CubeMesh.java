@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.mesh.primitive;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 
@@ -164,17 +164,17 @@ public class CubeMesh extends Mesh {
 
         float[] tangents = null;
         float[] bitangents = null;
-        if (vertexFormat.hasElement(VertexElement.TANGENT) || vertexFormat.hasElement(VertexElement.BITANGENT)) {
+        if (vertexFormat.hasElement(VertexElements.TANGENT) || vertexFormat.hasElement(VertexElements.BITANGENT)) {
             tangents = new float[vertices.length];
             bitangents = new float[vertices.length];
             MeshUtils.calculateTangentBitangents(vertices, textureCoordsVertices, tangents, bitangents);
         }
 
         bind();
-        for (VertexElement vertexElement : vertexFormat.getVertexElements()) {
-            int index = vertexFormat.getElementIndex(vertexElement);
-            int size = vertexElement.size;
-            switch (vertexElement) {
+        for (VertexElements vertexElements : vertexFormat.getVertexElements()) {
+            int index = vertexFormat.getElementIndex(vertexElements);
+            int size = vertexElements.getSize();
+            switch (vertexElements) {
                 case POSITION:
                     storeAttribute(index, vertices, size);
                     setVertexCount(vertices.length / size);
@@ -194,6 +194,7 @@ public class CubeMesh extends Mesh {
             }
         }
         unbind();
+        this.setVertexFormat(vertexFormat);
     }
     
     public CubeMesh(float size, VertexFormat vertexFormat) {

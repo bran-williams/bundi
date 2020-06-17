@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.engine.mesh;
 
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.Texture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +82,7 @@ public enum MeshRenderer {
 
         mesh.disable();
         mesh.unbind();
+
     }
 
 

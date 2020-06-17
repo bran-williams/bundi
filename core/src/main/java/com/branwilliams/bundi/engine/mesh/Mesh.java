@@ -12,6 +12,7 @@ import static org.lwjgl.opengl.GL15.*;
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.shader.VertexArrayObject;
 import com.branwilliams.bundi.engine.shader.VertexBufferObject;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -25,6 +26,8 @@ public class Mesh implements Destructible {
     // Vertices, colors, normals, etc are stored within vbos and those vbos are mapped to some id within the vao of this
     // mesh. This map keeps track of that information.
     private final Map<Integer, VertexBufferObject> attributes = new HashMap<>();
+
+    private VertexFormat vertexFormat;
 
     // This is the number of vertices within this mesh. This is not automatically determined, so it is important to
     // assign it when this mesh is used without indices.
@@ -249,6 +252,14 @@ public class Mesh implements Destructible {
 
     public void unbind() {
         VertexArrayObject.unbind();
+    }
+
+    public VertexFormat getVertexFormat() {
+        return vertexFormat;
+    }
+
+    public void setVertexFormat(VertexFormat vertexFormat) {
+        this.vertexFormat = vertexFormat;
     }
 
     @Override

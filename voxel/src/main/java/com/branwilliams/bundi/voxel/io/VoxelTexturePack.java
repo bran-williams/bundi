@@ -3,7 +3,7 @@ package com.branwilliams.bundi.voxel.io;
 import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.core.Destructible;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.voxel.builder.VoxelTextureBuilder;

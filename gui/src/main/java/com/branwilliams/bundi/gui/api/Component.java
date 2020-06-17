@@ -3,6 +3,8 @@ package com.branwilliams.bundi.gui.api;
 import com.branwilliams.bundi.gui.api.actions.ActionListener;
 import com.branwilliams.bundi.gui.api.actions.Actions;
 import com.branwilliams.bundi.engine.font.FontData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -11,6 +13,8 @@ import java.util.*;
  * Created by Brandon Williams on 1/15/2017.
  */
 public abstract class Component extends BasicWidget {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private Component parent;
 
@@ -34,26 +38,47 @@ public abstract class Component extends BasicWidget {
      * */
     protected FontData font = new FontData();
 
-    protected String tooltip = null;
+    protected PopupContainer tooltip = null;
 
     /**
      * Each activator will be mapped to it's respective action.
      * */
-    private final Map<Actions, List<ActionListener>> listeners = new HashMap<>();
+    private final Map<Class<?>, List<ActionListener>> listeners = new HashMap<>();
 
     /**
      * Determines if this component is visible or not.
      * */
     private boolean visible = true;
 
+    /**
+     * This is the minimum width this component should have.
+     * */
+    private int minimumWidth;
+
+    /**
+     * This is the minimum height this component should have.
+     * */
+    private int minimumHeight;
+
+    protected Component() {
+        this(null);
+    }
+
     protected Component(String tag) {
         this.tag = tag;
     }
+
 
     /**
      * Invoked to update the component.
      * */
     public abstract void update();
+
+    @Override
+    public void destroy() {
+        if (font != null)
+            font.destroy();
+    }
 
     /**
      * Invoked when some action occurs.
@@ -61,49 +86,58 @@ public abstract class Component extends BasicWidget {
      * @param type
      * @param data
      * */
-    public boolean isActivated(Actions type, Object data) {
+    public <T> boolean isActivated(Class<T> type, T data) {
         List<ActionListener> actionListeners = this.listeners.get(type);
+
         boolean activated = false;
+
         if (actionListeners != null) {
             for (int i = 0; i < actionListeners.size(); i++) {
-                if (actionListeners.get(i).onAction(data)) {
-                    activated = true;
-                }
+                ActionListener<T> actionListener = actionListeners.get(i);
+                actionListener.onAction(data);
             }
         }
+
         return activated;
     }
 
     /**
      * @return The tooltip associated with this component.
      * */
-    public String getTooltip() {
+    public PopupContainer getTooltip() {
         return tooltip;
     }
 
-    @Override
-    public void destroy() {
-        font.destroy();
-    }
-
-    public void setTooltip(String tooltip) {
+    public void setTooltip(PopupContainer tooltip) {
         this.tooltip = tooltip;
     }
+
+//    public String getTooltip() {
+//        return tooltip;
+//    }
+
+//    public void setTooltip(String tooltip) {
+//        this.tooltip = tooltip;
+//    }
 
     /**
      * Adds an actionListener to this component. Will update them with action information.
      * */
-    public void addListener(Actions action, ActionListener actionListener) {
+    public <T> void addListener(Class<T> action, ActionListener<T> actionListener) {
         // Grab the actions object from within our listeners map and use this optional's 'isPresent' value to determine if we
         // Must update our listeners list for this action type or create that list.
-        Optional<Actions> optional = this.listeners.keySet().stream().filter(internalActivation -> internalActivation == action).findFirst();
-        if (optional.isPresent()) {
-            this.listeners.get(optional.get()).add(actionListener);
+        if (listeners.containsKey(action)) {
+            List<ActionListener> listeners = this.listeners.get(action);
+            listeners.add(actionListener);
         } else {
-            List<ActionListener> list = new ArrayList<>();
-            list.add(actionListener);
-            this.listeners.put(action, list);
+            List<ActionListener> listeners = new ArrayList<>();
+            listeners.add(actionListener);
+            this.listeners.put(action, listeners);
         }
+    }
+
+    public List<ActionListener> clearActionListeners(Class<?> action) {
+        return this.listeners.remove(action);
     }
 
     /**
@@ -113,7 +147,29 @@ public abstract class Component extends BasicWidget {
         if (parent instanceof Container) {
             ((Container) parent).remove(this);
             this.parent = null;
+        } else {
+            log.info("Unable to dispose component=[{}]: No parent", toString());
         }
+    }
+
+    public int getMinimumWidth() {
+        return minimumWidth;
+    }
+
+    public void setMinimumWidth(int minimumWidth) {
+        this.minimumWidth = minimumWidth;
+    }
+
+    public int getMinimumHeight() {
+        return minimumHeight;
+    }
+
+    public void setMinimumHeight(int minimumHeight) {
+        this.minimumHeight = minimumHeight;
+    }
+
+    public boolean hasTag() {
+        return tag != null;
     }
 
     public String getTag() {
@@ -172,6 +228,4 @@ public abstract class Component extends BasicWidget {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
-
-
 }

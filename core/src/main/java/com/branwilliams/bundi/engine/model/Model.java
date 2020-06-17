@@ -2,10 +2,7 @@ package com.branwilliams.bundi.engine.model;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.Material;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
-import com.branwilliams.bundi.engine.shape.AABB;
-import com.branwilliams.bundi.engine.shape.Shape3f;
+import com.branwilliams.bundi.engine.material.Material;
 
 import java.util.*;
 

@@ -35,7 +35,7 @@ public class DebugRenderPass extends RenderPass<RenderContext> {
 
     private DebugOriginMesh originMesh;
 
-    private DebugGridMesh gridMesh;
+    private Mesh gridMesh;
 
     public DebugRenderPass(Scene scene, Supplier<Camera> camera) {
         this.scene = scene;
@@ -51,6 +51,8 @@ public class DebugRenderPass extends RenderPass<RenderContext> {
             DebugOriginMeshBuilderImpl debugOriginMeshBuilder = new DebugOriginMeshBuilderImpl();
             originMesh = debugOriginMeshBuilder.buildMesh(new Vector3f(0, 0.01F,0), 10);
             gridMesh = new DebugGridMesh(new Vector3f(), 256, 1);
+//            gridMesh = new GridMesh(256, 512);
+
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }

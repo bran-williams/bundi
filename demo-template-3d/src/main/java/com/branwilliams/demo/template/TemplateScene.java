@@ -27,7 +27,7 @@ public class TemplateScene extends AbstractScene {
     private boolean wireframe;
 
     public TemplateScene() {
-        super("template");
+        super("com.branwilliams.demo.template");
     }
 
     @Override

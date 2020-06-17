@@ -1,31 +1,33 @@
 package com.branwilliams.bundi.engine.shader;
 
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 /**
  * Basic implementation of the {@link Transformable} interface. Uses euler angles for the representation of the
  * rotation.
- * TODO Quaternion angle representation.
  * Created by Brandon Williams on 6/29/2018.
  */
 public class Transformation implements Transformable {
 
-    private Vector3f position, rotation;
+    private Vector3f position;
+
+    private Quaternionf rotation;
 
     private float scale;
 
-    public Transformation(Vector3f position, Vector3f rotation, float scale) {
+    public Transformation(Vector3f position, Quaternionf rotation, float scale) {
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;
     }
 
-    public Transformation(Vector3f position, Vector3f rotation) {
+    public Transformation(Vector3f position, Quaternionf rotation) {
         this(position, rotation, 1.0F);
     }
 
     public Transformation(Vector3f position) {
-        this(position, new Vector3f());
+        this(position, new Quaternionf());
     }
 
     public Transformation() {
@@ -34,7 +36,7 @@ public class Transformation implements Transformable {
 
     public Transformation(Transformable transformable) {
         this.position = new Vector3f(transformable.getPosition());
-        this.rotation = new Vector3f(transformable.getRotation());
+        this.rotation = new Quaternionf(transformable.getRotation());
         this.scale = transformable.getScale();
     }
 
@@ -56,20 +58,31 @@ public class Transformation implements Transformable {
     }
 
     @Override
-    public Vector3f getRotation() {
-        return rotation;
+    public Quaternionf getRotation() {
+        return this.rotation;
     }
 
     @Override
-    public void setRotation(Vector3f rotation) {
+    public void setRotation(Quaternionf rotation) {
         this.rotation = rotation;
     }
 
     @Override
-    public void setRotation(float x, float y, float z) {
+    public void setRotation(float x, float y, float z, float w) {
         this.rotation.x = x;
         this.rotation.y = y;
         this.rotation.z = z;
+        this.rotation.w = w;
+    }
+
+    @Override
+    public void setRotationFromEuler(Vector3f rotation) {
+        this.setRotationFromEuler(rotation.x, rotation.y, rotation.z);
+    }
+
+    @Override
+    public void setRotationFromEuler(float x, float y, float z) {
+        this.rotation.rotateXYZ(x, y, z);
     }
 
     @Override

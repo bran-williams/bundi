@@ -36,7 +36,7 @@ public class BasicPopupRenderer implements PopupRenderer {
         if (tooltip != null) {
             FontData font = toolbox.get(FONT_TOOLTIP);
             shapeRenderer.drawRect(x - 2, y - font.getFontHeight() - 2, x + font.getStringWidth(tooltip) + 2, y, toolbox.<Color>get(Pointers.COLOR_DEFAULT));
-            fontRenderer.drawString(font, tooltip, x, y - font.getFontHeight() - 1, 0xFFFFFFFF);
+            fontRenderer.drawString(font, tooltip, x, y - font.getFontHeight() - 1, toolbox.<Color>get(Pointers.COLOR_DISABLED_TEXT).getRGB());
 
             /*GLUtils.glColor(toolbox.get(Pointers.COLOR_DEFAULT));
             GLUtils.drawRect(x - 2, y - font.getFontHeight() - 2, x + font.getStringWidth(tooltip) + 2, y);

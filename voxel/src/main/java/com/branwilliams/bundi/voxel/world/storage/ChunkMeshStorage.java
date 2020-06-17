@@ -2,7 +2,8 @@ package com.branwilliams.bundi.voxel.world.storage;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.util.RateLimiter;
-import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilder;
+import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilder;
+import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilderImpl;
 import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import com.branwilliams.bundi.voxel.world.chunk.ChunkPos;
@@ -16,7 +17,7 @@ import java.util.*;
  */
 public class ChunkMeshStorage implements Destructible {
 
-    private final VoxelMeshBuilder voxelMeshBuilder;
+    private final VoxelChunkMeshBuilder voxelChunkMeshBuilder;
 
     private final RateLimiter meshCreationLimiter;
 
@@ -24,8 +25,8 @@ public class ChunkMeshStorage implements Destructible {
 
     private Map<ChunkPos, ChunkMesh> meshes;
 
-    public ChunkMeshStorage(VoxelMeshBuilder voxelMeshBuilder, RateLimiter meshCreationLimiter) {
-        this.voxelMeshBuilder = voxelMeshBuilder;
+    public ChunkMeshStorage(VoxelChunkMeshBuilder voxelChunkMeshBuilder, RateLimiter meshCreationLimiter) {
+        this.voxelChunkMeshBuilder = voxelChunkMeshBuilder;
         this.meshCreationLimiter = meshCreationLimiter;
         this.meshPool = new MeshPool();
         this.meshes = new HashMap<>();
@@ -75,7 +76,7 @@ public class ChunkMeshStorage implements Destructible {
                 case REASSIGNED:
                     if (meshCreationLimiter.reached()) {
                         mesh.load();
-                        voxelMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
+                        voxelChunkMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
                         meshCreationLimiter.reset();
                         break;
                     } else {
@@ -84,7 +85,7 @@ public class ChunkMeshStorage implements Destructible {
                 case UNASSIGNED:
                 case LOADED:
                     if (voxelChunk.isDirty()) {
-                        voxelMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
+                        voxelChunkMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
                         voxelChunk.markClean();
                     }
                     break;
@@ -110,7 +111,7 @@ public class ChunkMeshStorage implements Destructible {
         }
 
         mesh.load();
-        voxelMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
+        voxelChunkMeshBuilder.rebuildChunkMesh(voxelWorld, voxelChunk, mesh);
         voxelChunk.markClean();
     }
 

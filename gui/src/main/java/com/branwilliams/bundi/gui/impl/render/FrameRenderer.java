@@ -27,6 +27,6 @@ public class FrameRenderer extends AbstractComponentRenderer<Frame> {
         GLUtils.drawRect(titleWidget);
         GLUtils.glColor(toolbox.get(COLOR_TERTIARY_BACKGROUND));
         GLUtils.drawBorder(2F, frame.getX(), frame.getY(), frame.getX() + frame.getWidth(), frame.getY() + frame.getHeight());*/
-        fontRenderer.drawString(frame.getFont(), frame.getTitle(), titleWidget.getX() + 4, titleWidget.getY() + titleWidget.getHeight() / 2 - frame.getFont().getFontHeight() / 2, toolbox.<Color>get(COLOR_DISABLED_TEXT).getRGB());
+        fontRenderer.drawStringWithShadow(frame.getFont(), frame.getTitle(), titleWidget.getX() + 4, titleWidget.getY() + titleWidget.getHeight() / 2 - frame.getFont().getFontHeight() / 2, toolbox.<Color>get(COLOR_TERTIARY_BACKGROUND).getRGB());
     }
 }

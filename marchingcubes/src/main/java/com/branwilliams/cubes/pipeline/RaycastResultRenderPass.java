@@ -64,7 +64,7 @@ public class RaycastResultRenderPass extends RenderPass<RenderContext> {
         shaderProgram.setViewMatrix(camera.get());
 //            shaderProgram.setModelMatrix(transformable.position(scene.getRaycast().position));
 
-        RaycastResult raycast = raycast(scene.getCamera().getPosition(), scene.getCamera().getDirection(), scene.getRaycastDistance());
+        RaycastResult raycast = raycast(scene.getCamera().getPosition(), scene.getCamera().getFacingDirection(), scene.getRaycastDistance());
         if (raycast != null) {
             scene.setRaycast(raycast);
             shaderProgram.setModelMatrix(transformable.position(raycast.position).scale(0.25F));

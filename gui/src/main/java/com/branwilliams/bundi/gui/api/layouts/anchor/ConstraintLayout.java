@@ -6,15 +6,27 @@ import com.branwilliams.bundi.gui.api.Layout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConstraintLayout implements Layout<Widget> {
+public class ConstraintLayout implements Layout<Widget, Widget> {
 
-    private final List<Constraint> constraints = new ArrayList<>();
+    private final List<Constraint> constraints;
+
+    public ConstraintLayout() {
+        this(new ArrayList<>());
+    }
+
+    public ConstraintLayout(List<Constraint> constraints) {
+        this.constraints = constraints;
+    }
 
     @Override
-    public int[] layout(Widget container, List<Widget> list) {
-        for (Constraint constraint : constraints) {
-
+    public int[] layout(Widget container, List<Widget> components) {
+        for (Widget component : components) {
+            for (Constraint constraint : constraints) {
+                if (constraint.shouldApply(container, component))
+                    constraint.apply(container, component);
+            }
         }
+
         return new int[] { container.getWidth(), container.getHeight() };
     }
 

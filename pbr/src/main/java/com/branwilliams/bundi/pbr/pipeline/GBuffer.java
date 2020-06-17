@@ -28,10 +28,11 @@ public class GBuffer extends FrameBufferObject {
         this.normal.nearestFilter();
         this.bindTexture(normal, GL_FRAMEBUFFER, 1);
 
-        this.depth = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.DEPTH32F_STENCIL8);
+        this.depth = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.DEPTH32F);
         this.depth.bind();
         this.depth.nearestFilter();
-        this.bindDepthStencilTexture(depth, GL_FRAMEBUFFER);
+//        this.bindDepthStencilTexture(depth, GL_FRAMEBUFFER);
+        this.bindDepthTexture(depth, GL_FRAMEBUFFER);
         Texture.unbind(this.depth);
         Texture.unbind();
 

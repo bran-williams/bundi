@@ -2,7 +2,7 @@ package com.branwilliams.bundi.water;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;

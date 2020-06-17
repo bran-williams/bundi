@@ -2,6 +2,7 @@ package com.branwilliams.bundi.voxel.world.storage;
 
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.voxel.VoxelConstants;
+import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.voxels.VoxelFace;
 import com.branwilliams.bundi.voxel.voxels.Voxels;
@@ -119,6 +120,14 @@ public interface ChunkStorage {
      * */
     default Voxel getVoxelAtPosition(Vector3f position) {
         return getVoxelAtPosition(position.x, position.y, position.z);
+    }
+
+    /**
+     * @return The {@link AABB} of the {@link Voxel} at the given position.
+     * */
+    default AABB getVoxelBoundingBoxAtPosition(Vector3f position) {
+        Voxel voxel = getVoxelAtPosition(position.x, position.y, position.z);
+        return voxel.getBoundingBox(position);
     }
 
     /**

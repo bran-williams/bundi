@@ -1,6 +1,6 @@
 package com.branwilliams.terrain.builder;
 
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.terrain.TerrainTile;
 import com.branwilliams.terrain.generator.HeightGenerator;

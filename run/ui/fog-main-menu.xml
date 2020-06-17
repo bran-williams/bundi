@@ -1,0 +1,52 @@
+<UI>
+    <Import file="ui/variables.xml"/>
+
+    <Frame tag="templated" title="Templated" x="460" y="50" width="400" height="200">
+        <ListLayout padding="1" componentPadding="2"/>
+        <FontData font="Verdana" size="20" style="bold"/>
+
+        <IF var="taco">
+            <Label tag="taco_slider" text="{{ taco_text }}" color="{{ taco_color }}">
+                <FontData font="Roboto" size="18" style="plain"/>
+            </Label>
+
+            <Checkbox tag="test3" width="200" height="24" text="{{ taco_checkbox }}">
+                <FontData font="Trebuchet MS" size="18" style="bold"/>
+            </Checkbox>
+        </IF>
+
+        <FOR list="myList" var="i">
+            <Checkbox tag="test3" width="200" height="24" text="{{ i }}">
+                <FontData font="Trebuchet MS" size="18" style="bold"/>
+            </Checkbox>
+        </FOR>
+
+        <Label tag="monkey_label" text="{{ monkey }}" color="{{ monkey_color }}">
+            <FontData font="Roboto" size="18" style="plain"/>
+        </Label>
+
+        <Label tag="dog_label" text="{{ dog }}" color="{{ dog_color }}">
+            <FontData font="Roboto" size="18" style="plain"/>
+        </Label>
+        <Label tag="cat_label" text="{{ cat }}" color="{{ cat_color }}">
+            <FontData font="Roboto" size="18" style="plain"/>
+        </Label>
+    </Frame>
+
+
+    <Container tag="mainmenu" x="50" y="50" width="0" height="0" opacity="0">
+        <ListLayout padding="2" componentPadding="4"/>
+
+        <Label tag="menu_title" text="Main menu" color="#ffffff" height="70" alignment="left" style="shadow">
+            <FontData font="Roboto" size="68" style="bold"/>
+        </Label>
+
+        <Button tag="load_button" text="Play" width="150" height="24" highlight="true">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Button>
+
+        <Button tag="quit_button" text="Quit" width="150" height="24" highlight="true">
+            <FontData font="Roboto" size="18" style="bold"/>
+        </Button>
+    </Container>
+</UI>

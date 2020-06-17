@@ -2,7 +2,7 @@ package com.branwilliams.mcskin.steve;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.branwilliams.bundi.engine.util.MeshUtils.*;
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLE_STRIP;
 
 /**
  * @author Brandon

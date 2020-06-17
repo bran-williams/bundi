@@ -2,6 +2,7 @@ package com.branwilliams.bundi.gui.api.loader.factory;
 
 import com.branwilliams.bundi.engine.font.FontCache;
 import com.branwilliams.bundi.engine.font.FontData;
+import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.loader.UIElementFactory;
 import com.branwilliams.bundi.gui.api.loader.UIElementType;
 import com.branwilliams.bundi.gui.util.XmlUtils;
@@ -22,7 +23,7 @@ public class FontDataFactory implements UIElementFactory<FontData> {
     }
 
     @Override
-    public FontData createElement(Node node, NamedNodeMap attributes) {
+    public FontData createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
         String font = XmlUtils.getAttributeText(attributes, "font", "Default");
         int size = XmlUtils.getAttributeInt(attributes, "size", 18);
         String style = XmlUtils.getAttributeText(attributes, "style", "plain");
@@ -46,5 +47,10 @@ public class FontDataFactory implements UIElementFactory<FontData> {
     @Override
     public UIElementType getType() {
         return UIElementType.FONT;
+    }
+
+    @Override
+    public String getName() {
+        return "fontdata";
     }
 }

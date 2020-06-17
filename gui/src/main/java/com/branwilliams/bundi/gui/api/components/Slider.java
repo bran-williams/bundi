@@ -3,7 +3,7 @@ package com.branwilliams.bundi.gui.api.components;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 
 import java.util.function.Consumer;
 
@@ -21,26 +21,29 @@ public class Slider extends Component {
 
     private Consumer<Slider> valueChangeFunction;
 
-    public Slider(String tag) {
-        this(tag, 8);
+    public Slider() {
+        this(8);
     }
 
-    public Slider(String tag, int barSize) {
-        super(tag);
+    public Slider(int barSize) {
+        super();
         this.barSize = barSize;
-        this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> {
-            if (isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0) {
-                sliding = true;
-                return true;
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) action -> {
+            switch (action.mouseClickAction) {
+                case MOUSE_PRESS:
+                    if (isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0) {
+                        sliding = true;
+                        return true;
+                    }
+                    return false;
+                case MOUSE_RELEASE:
+                    if (sliding && valueChangeFunction != null) {
+                        valueChangeFunction.accept(this);
+                    }
+                    sliding = false;
+                    return false;
             }
-            return false;
-        });
-        this.addListener(Actions.MOUSE_RELEASE, (ClickAction.ClickActionListener) action -> {
-            if (sliding && valueChangeFunction != null) {
-                valueChangeFunction.accept(this);
-            }
-            sliding = false;
-            return false;
+           return false;
         });
     }
 
@@ -113,7 +116,15 @@ public class Slider extends Component {
     }
 
     public void setSliderPercentage(float sliderPercentage) {
+        // store old one
+        float oldSliderPercentage = this.sliderPercentage;
+        // update THIS one
         this.sliderPercentage = sliderPercentage;
+
+        // if change make function happy
+        if (this.valueChangeFunction != null && oldSliderPercentage != this.sliderPercentage) {
+            this.valueChangeFunction.accept(this);
+        }
     }
 
     public int getFormattedValue() {

@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.mesh.primitive;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.engine.util.MeshUtils;
@@ -87,34 +87,34 @@ public class SphereMesh extends Mesh {
         bind();
 
         float[] verticesArray = toArrayf(vertices);
-        if (vertexFormat.hasElement(VertexElement.POSITION)) {
-            storeAttribute(vertexFormat.getElementIndex(VertexElement.POSITION), verticesArray, VertexElement.POSITION.size);
+        if (vertexFormat.hasElement(VertexElements.POSITION)) {
+            storeAttribute(vertexFormat.getElementIndex(VertexElements.POSITION), verticesArray, VertexElements.POSITION.getSize());
             setVertexCount(verticesArray.length / 3);
         }
 
         float[] texCoordsArray = toArrayf(textureCoordinates);
-        if (vertexFormat.hasElement(VertexElement.UV)) {
-            storeAttribute(vertexFormat.getElementIndex(VertexElement.UV), texCoordsArray, VertexElement.UV.size);
+        if (vertexFormat.hasElement(VertexElements.UV)) {
+            storeAttribute(vertexFormat.getElementIndex(VertexElements.UV), texCoordsArray, VertexElements.UV.getSize());
         }
 
-        if (vertexFormat.hasElement(VertexElement.NORMAL)) {
-            storeAttribute(vertexFormat.getElementIndex(VertexElement.NORMAL), toArrayf(normals), VertexElement.NORMAL.size);
+        if (vertexFormat.hasElement(VertexElements.NORMAL)) {
+            storeAttribute(vertexFormat.getElementIndex(VertexElements.NORMAL), toArrayf(normals), VertexElements.NORMAL.getSize());
         }
 
 
 
-        if (vertexFormat.hasElement(VertexElement.TANGENT) || vertexFormat.hasElement(VertexElement.BITANGENT)) {
+        if (vertexFormat.hasElement(VertexElements.TANGENT) || vertexFormat.hasElement(VertexElements.BITANGENT)) {
             float[] tangents = new float[verticesArray.length];
             float[] bitangents = new float[verticesArray.length];
 
             MeshUtils.calculateTangentBitangents(verticesArray, texCoordsArray, tangents, bitangents);
 
-            if (vertexFormat.hasElement(VertexElement.TANGENT)) {
-                storeAttribute(vertexFormat.getElementIndex(VertexElement.TANGENT), tangents, VertexElement.TANGENT.size);
+            if (vertexFormat.hasElement(VertexElements.TANGENT)) {
+                storeAttribute(vertexFormat.getElementIndex(VertexElements.TANGENT), tangents, VertexElements.TANGENT.getSize());
             }
 
-            if (vertexFormat.hasElement(VertexElement.BITANGENT)) {
-                storeAttribute(vertexFormat.getElementIndex(VertexElement.BITANGENT), bitangents, VertexElement.BITANGENT.size);
+            if (vertexFormat.hasElement(VertexElements.BITANGENT)) {
+                storeAttribute(vertexFormat.getElementIndex(VertexElements.BITANGENT), bitangents, VertexElements.BITANGENT.getSize());
             }
         }
         unbind();

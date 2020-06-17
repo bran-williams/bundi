@@ -1,7 +1,6 @@
 package com.branwilliams.mcskin.steve;
 
-import com.branwilliams.bundi.engine.shader.Material;
-import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.bundi.engine.material.Material;
 
 /**
  * @author Brandon

@@ -34,6 +34,10 @@ public final class Voxels {
 
     public static final Voxel glass          = new GlassVoxel();
 
+    public static final Voxel oak_planks     = new Voxel(VoxelIdentifiers.OAK_PLANKS);
+
+    public static final Voxel oak_log        = new Voxel(VoxelIdentifiers.OAK_LOG);
+
     public static final Voxel oak_leaves     = new LeavesVoxel();
 
     /***

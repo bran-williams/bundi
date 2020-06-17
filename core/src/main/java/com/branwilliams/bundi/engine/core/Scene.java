@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by Brandon Williams on 12/27/2017.
  */
-public interface Scene extends Nameable, Destructible {
+public interface Scene extends Nameable, Destructible, Updateable {
 
     /**
      * Invoked to initialize the scene. This is only invoked once, whenever the scene is first set. This always occurs
@@ -51,24 +51,6 @@ public interface Scene extends Nameable, Destructible {
     }
 
     /**
-     * Invoked from the engine before rendering. This is invoked as often as the render pass, regardless of the time it
-     * took.
-     *
-     * @param engine The engine playing this scene.
-     * @param deltaTime The time (in seconds) passed between the previous update function.
-     * */
-    void update(Engine engine, double deltaTime);
-
-    /**
-     * Invoked from the engine before rendering. This is invoked with a fixed rate, which can be set with
-     * {@link Engine#setUpdateInterval(double)}.
-     *
-     * @param engine The engine playing this scene.
-     * @param deltaTime The time (in seconds) passed between the previous update function.
-     * */
-    void fixedUpdate(Engine engine, double deltaTime);
-
-    /**
      * When this scene is played, it's renderer takes over and handles the rendering of this scene. If this returns
      * null, the engine's renderer does not change.
      * @return The renderer this scene uses.
@@ -107,6 +89,12 @@ public interface Scene extends Nameable, Destructible {
     void addCharacterListener(Window.CharacterListener characterListener);
 
     boolean removeCharacterListener(Window.CharacterListener characterListener);
+
+    List<Window.JoystickListener> getJoystickListeners();
+
+    void addJoystickListener(Window.JoystickListener joystickListener);
+
+    boolean removeJoystickListener(Window.JoystickListener joystickListener);
 
     EntitySystemManager getEs();
 

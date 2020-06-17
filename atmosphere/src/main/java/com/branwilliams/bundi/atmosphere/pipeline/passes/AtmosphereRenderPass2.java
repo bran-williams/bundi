@@ -7,16 +7,14 @@ import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.bundi.engine.util.Mathf;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
 import java.util.function.Supplier;
-
-import static org.lwjgl.opengl.GL11.*;
 
 /**
  * Created by Brandon Williams on 11/28/2018.

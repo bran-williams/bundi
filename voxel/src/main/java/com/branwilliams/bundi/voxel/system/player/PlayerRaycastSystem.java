@@ -34,7 +34,7 @@ public class PlayerRaycastSystem extends AbstractSystem {
         for (IEntity entity : entitySystemManager.getEntities(this)) {
             PlayerState playerState = entity.getComponent(PlayerState.class);
             Vector3f position = scene.getCamera().getPosition();
-            Vector3f direction = scene.getCamera().getDirection();
+            Vector3f direction = scene.getCamera().getFacingDirection();
 
 
             RaycastResult raycastResult = scene.getVoxelWorld().raycast(position, direction, playerState.getReachDistance());

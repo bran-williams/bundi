@@ -2,8 +2,9 @@ package com.branwilliams.bundi.gui.api.components;
 
 import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 
+import java.awt.*;
 import java.util.function.BiFunction;
 
 /**
@@ -14,38 +15,49 @@ public class Button extends Component {
 
     private String text;
 
-    private boolean highlight;
+    private boolean active;
 
     private boolean pressed = false;
 
-    private BiFunction<Button, ClickAction, Boolean> pressFunction;
+    private Color backgroundColor;
 
-    public Button(String tag, String text) {
-        this(tag, text, false);
+    private Color textColor;
+
+    private BiFunction<Button, ClickEvent, Boolean> pressFunction;
+
+    public Button(String text) {
+        this(text, false);
     }
 
-    public Button(String tag, String text, boolean highlight) {
-        super(tag);
+    public Button(String text, boolean active) {
+        super();
         this.text = text;
-        this.highlight = highlight;
-        this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> {
-            if (isHovered() && isPointInside(action.x, action.y)) {
-                pressed = true;
-                return true;
+        this.active = active;
+
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event -> {
+            switch (event.mouseClickAction) {
+                case MOUSE_PRESS:
+                    if (active && isHovered() && isPointInside(event.x, event.y)) {
+                        pressed = true;
+                        return true;
+                    }
+                    return false;
+
+                case MOUSE_RELEASE:
+                    // return true only if mouse release on top of button and button was pressed when initially clicked.
+                    if (active && pressed && isPointInside(event.x, event.y)) {
+                        if (pressFunction != null) {
+                            pressFunction.apply(this, event);
+                        }
+                        pressed = false;
+                        return true;
+                    }
+                    pressed = false;
+                    return false;
+
+                default:
+                    return false;
             }
-            return false;
-        });
-        this.addListener(Actions.MOUSE_RELEASE, (ClickAction.ClickActionListener) action -> {
-            // return true only if mouse release on top of button and button was pressed when initially clicked.
-            if (pressed && isPointInside(action.x, action.y)) {
-                if (pressFunction != null) {
-                    pressFunction.apply(this, action);
-                }
-                pressed = false;
-                return true;
-            }
-            pressed = false;
-            return false;
         });
     }
 
@@ -57,7 +69,7 @@ public class Button extends Component {
     /**
      * Invokes the given function when this button is pressed.
      * */
-    public void onPressed(BiFunction<Button, ClickAction, Boolean> pressFunction) {
+    public void onPressed(BiFunction<Button, ClickEvent, Boolean> pressFunction) {
         this.pressFunction = pressFunction;
     }
 
@@ -69,23 +81,39 @@ public class Button extends Component {
         this.text = text;
     }
 
-    public boolean isHighlight() {
-        return highlight;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setHighlight(boolean highlight) {
-        this.highlight = highlight;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public boolean isPressed() {
         return pressed;
     }
 
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
+    }
+
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public void setTextColor(Color textColor) {
+        this.textColor = textColor;
+    }
+
     @Override
     public String toString() {
         return "Button{" +
                 "text='" + text + '\'' +
-                ", highlight=" + highlight +
+                ", active=" + active +
                 ", font=" + font +
                 ", tooltip='" + tooltip + '\'' +
                 ", x=" + getX() +

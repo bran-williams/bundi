@@ -1,6 +1,9 @@
 package com.branwilliams.bundi.engine.shader;
 
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
 
 /**
  * A transformable object is something that can be translated, rotated, and scaled. This object is useful for
@@ -75,54 +78,71 @@ public interface Transformable extends Cloneable {
     }
 
     /**
+     * @return The rotation of this transformable (as a quaternion).
+     * */
+    Quaternionf getRotation();
+
+    /**
+     * Sets the rotation of this transformable.
+     * */
+    void setRotation(Quaternionf rotation);
+
+    /**
+     * Sets the rotation of this transformable.
+     * */
+    void setRotation(float x, float y, float z, float w);
+
+    /**
      * @return The rotation of this transformable (in euler angles).
      * */
-    Vector3f getRotation();
+    default Vector3f getRotationAsEuler() {
+        return getRotation().getEulerAnglesXYZ(new Vector3f());
+    }
 
     /**
      * @return The X rotation of this transformable.
      * */
-    default float rX() {
-        return getRotation().x;
+    default float eulerX() {
+        return getRotationAsEuler().x;
     }
 
     /**
      * @return The Y rotation of this transformable.
      * */
-    default float rY() {
-        return getRotation().y;
+    default float eulerY() {
+        return getRotationAsEuler().y;
     }
 
     /**
      * @return The Z rotation of this transformable.
      * */
-    default float rZ() {
-        return getRotation().z;
+    default float eulerZ() {
+        return getRotationAsEuler().z;
     }
 
     /**
      * Sets the rotation of this transformable.
      * */
-    void setRotation(Vector3f rotation);
+    void setRotationFromEuler(Vector3f rotation);
 
     /**
      * Sets the rotation of this transformable.
      * */
-    void setRotation(float x, float y, float z);
+    void setRotationFromEuler(float x, float y, float z);
 
     /**
      * Sets the rotation of this transformable.
      * */
-    default Transformable rotate(Vector3f rotation) {
-        this.setRotation(rotation);
+    default Transformable rotateFromEuler(Vector3f rotation) {
+        this.setRotationFromEuler(rotation);
         return this;
     }
 
     /**
      * Sets the rotation of this transformable.
      * */
-    default Transformable rotate(float x, float y, float z) {
-        this.setRotation(x, y, z);
+    default Transformable rotateFromEuler(float x, float y, float z) {
+        this.setRotationFromEuler(x, y, z);
         return this;
     }
 
@@ -156,10 +176,23 @@ public interface Transformable extends Cloneable {
         Transformable res = copy();
 
         res.getPosition().add(transform.getPosition());
-        res.getRotation().add(transform.getRotation());
+        res.getRotationAsEuler().add(transform.getRotationAsEuler());
         res.setScale(res.getScale() + transform.getScale());
 
         return res;
+    }
+
+    /**
+     * This will create a matrix representation of this transformable. For the transformable of an object within a
+     * scene, this is considered the model matrix.
+     *
+     * @return A matrix representation of this transformable.
+     * */
+    default Matrix4f toMatrix(Matrix4f matrix) {
+        return matrix.identity()
+                .translate(getPosition())
+                .rotate(getRotation())
+                .scale(getScale());
     }
 
     /**
@@ -171,11 +204,16 @@ public interface Transformable extends Cloneable {
         return ImmutableEmptyTransformable.instance;
     }
 
+    /**
+     * An immutable transformable whose position is (0,0,0) and whose rotation is (0,0,0,1), and whose scale is 1.
+     * */
     final class ImmutableEmptyTransformable implements Transformable {
 
         private static final ImmutableEmptyTransformable instance = new ImmutableEmptyTransformable();
 
         private final Vector3f zero = new Vector3f(0, 0, 0);
+
+        private final Quaternionf zeroQ = new Quaternionf();
 
         private ImmutableEmptyTransformable() {
 
@@ -197,23 +235,38 @@ public interface Transformable extends Cloneable {
         }
 
         @Override
-        public Vector3f getRotation() {
+        public Quaternionf getRotation() {
+            return zeroQ;
+        }
+
+        @Override
+        public void setRotation(Quaternionf rotation) {
+
+        }
+
+        @Override
+        public void setRotation(float x, float y, float z, float w) {
+
+        }
+
+        @Override
+        public Vector3f getRotationAsEuler() {
             return zero;
         }
 
         @Override
-        public void setRotation(Vector3f rotation) {
+        public void setRotationFromEuler(Vector3f rotation) {
 
         }
 
         @Override
-        public void setRotation(float x, float y, float z) {
+        public void setRotationFromEuler(float x, float y, float z) {
 
         }
 
         @Override
         public float getScale() {
-            return 1;
+            return 1F;
         }
 
         @Override

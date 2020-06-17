@@ -22,21 +22,21 @@ public class ValueContainer extends Container {
     private final Value value;
 
     public ValueContainer(Value value, FontData titleFont, FontData descriptionFont) {
-        super("hmmmmm");
+        super();
 
         // Using a grid layout with infinite rows and three columns ensures that the components are stacked upon each other.
-        this.setLayout(new GridLayout(3, 1, 2, 2,4));
+        this.setLayout(new GridLayout(3, 1, 2, 2,4, false));
         this.setUseLayoutSize(true);
         this.setAutoLayout(true);
         this.value = value;
-        this.add(title = new Label("title", String.format("%s (%.1f%s)", value.getName(), value.getValue(), value.getCarot())));
+        this.add(title = new Label(String.format("%s (%.1f%s)", value.getName(), value.getValue(), value.getCarot())));
         this.title.setFont(titleFont);
 
-        this.add(description = new Label("description", value.getDescription()));
+        this.add(description = new Label(value.getDescription()));
         this.description.setFont(descriptionFont);
         this.description.setColor(new Color(118, 118, 118));
 
-        this.add(slider = new Slider("slider"));
+        this.add(slider = new Slider());
         // Set the default dimensions of the slider as well as updating it's percentage to reflect the value node.
         this.slider.setSize(150, 18);
         this.slider.setSliderPercentage((value.getValue() - value.getMinValue()) / (value.getMaxValue() - value.getMinValue()));
@@ -54,6 +54,22 @@ public class ValueContainer extends Container {
             this.title.setText(String.format("%s (%.1f%s)", value.getName(), value.getValue(), value.getCarot()));
         }));
         this.layout();
+    }
+
+    public Label getTitle() {
+        return title;
+    }
+
+    public Label getDescription() {
+        return description;
+    }
+
+    public Slider getSlider() {
+        return slider;
+    }
+
+    public Value getValue() {
+        return value;
     }
 
     /**

@@ -7,5 +7,6 @@ public enum UIElementType {
     CONTAINER,
     COMPONENT,
     LAYOUT,
-    FONT;
+    FONT,
+    POPUP;
 }

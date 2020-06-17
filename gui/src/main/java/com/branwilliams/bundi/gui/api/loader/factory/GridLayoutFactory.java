@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.api.loader.factory;
 
+import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.layouts.GridLayout;
 import com.branwilliams.bundi.gui.api.loader.UIElementFactory;
 import com.branwilliams.bundi.gui.api.loader.UIElementType;
@@ -13,7 +14,7 @@ import org.w3c.dom.Node;
 public class GridLayoutFactory implements UIElementFactory<GridLayout> {
 
     @Override
-    public GridLayout createElement(Node node, NamedNodeMap attributes) {
+    public GridLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
         int rows = XmlUtils.getAttributeInt(attributes, "rows", 0);
         int columns = XmlUtils.getAttributeInt(attributes, "columns", 0);
 
@@ -25,12 +26,20 @@ public class GridLayoutFactory implements UIElementFactory<GridLayout> {
         // Padding is also used for component padding whenever it is not defined.
         int componentPadding = XmlUtils.getAttributeInt(attributes, "componentpadding", padding);
 
-        GridLayout gridLayout = new GridLayout(rows, columns, horizontalPadding, verticalPadding, componentPadding);
+        boolean forcedSize = XmlUtils.getAttributeBoolean(attributes, "forcedsize", true);
+
+        GridLayout gridLayout = new GridLayout(rows, columns, horizontalPadding, verticalPadding, componentPadding,
+                forcedSize);
         return gridLayout;
     }
 
     @Override
     public UIElementType getType() {
         return UIElementType.LAYOUT;
+    }
+
+    @Override
+    public String getName() {
+        return "gridlayout";
     }
 }

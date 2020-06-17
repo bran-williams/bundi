@@ -1,22 +1,37 @@
 <UI>
-    <Container tag="pausemenu" x="4" y="4" width="600" height="800">
-        <GridLayout rows="4" columns="1" padding="2" componentPadding="4"/>
-<!--        <ListLayout padding="2" componentPadding="4"/>-->
+    <Container tag="mainmenu" autolayout="true" x="50" y="50" width="100" height="100" opacity="0">
+        <GridLayout rows="6" columns="1" padding="2" componentPadding="12"/>
+        <!--        <ListLayout padding="2" componentPadding="4"/>-->
 
-        <Label tag="menu_title" text="Paused" color="#ffffff" height="34" alignment="center">
-            <FontData font="Robot" size="24" style="bold"/>
+        <Label tag="menu_title" text="Paused" color="#ffffff" height="70" alignment="left">
+            <FontData font="Roboto" size="68" style="bold"/>
         </Label>
 
-        <Button tag="resume_button" text="Resume" width="150" height="24" highlight="true">
-            <FontData font="Robot" size="18" style="plain"/>
+        <Button tag="resume_button" text="Resume" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
         </Button>
 
-        <Button tag="new_world_button" text="New world" width="150" height="24" highlight="true">
-            <FontData font="Robot" size="18" style="plain"/>
+        <Button tag="options_button" text="Options" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
+
+            <Popup>
+                <ListLayout padding="2"/>
+                <Label tag="popup_label" text="heloo" color="#ff0000" style="shadow">
+                    <FontData font="Trebuchet MS" size="24" style="bold"/>
+                </Label>
+                <Label tag="popup_label" text="a green" color="#00ff00">
+                    <FontData font="Dejavu Sans" size="24" style="bold"/>
+                </Label>
+
+                <Label tag="popup_label" text="line frwee" color="#0000ff" style="shadow">
+                    <FontData font="Verdana" size="24" style="bold"/>
+                </Label>
+            </Popup>
         </Button>
 
-        <Button tag="quit_button" text="Quit" width="150" height="24" highlight="true">
-            <FontData font="Robot" size="18" style="plain"/>
+        <Button tag="quit_button" color="#f44336" text="Quit" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
         </Button>
+
     </Container>
 </UI>

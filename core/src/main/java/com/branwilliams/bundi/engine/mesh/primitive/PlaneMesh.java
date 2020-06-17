@@ -1,12 +1,10 @@
 package com.branwilliams.bundi.engine.mesh.primitive;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.MeshUtils;
-import org.joml.Planef;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,59 +16,94 @@ import static org.lwjgl.opengl.GL11.GL_LINES;
  */
 public class PlaneMesh extends Mesh {
 
+    public static final float DEFAULT_SCALE = 1F;
+
     public static final Vector3f UP = new Vector3f(0F, 1F, 0F);
 
-    public static final VertexFormat VERTEX_FORMAT = VertexFormat.POSITION_COLOR;
+    private final Planef plane;
 
-    /**
-     *
-     * */
-    public PlaneMesh(VertexFormat vertexFormat, int numX, float sizeX) {
-        this(vertexFormat, numX, numX, sizeX, sizeX, UP);
+    public PlaneMesh(VertexFormat vertexFormat, Planef plane) {
+        this(vertexFormat, plane, DEFAULT_SCALE, DEFAULT_SCALE);
+    }
+
+    public PlaneMesh(VertexFormat vertexFormat, Planef plane, float scale) {
+        this(vertexFormat, plane, scale, scale);
     }
 
     /**
-     * @param numX The number of rows in the x-axis.
-     * @param numZ The number of rows in the z-axis.
-     * @param sizeX The total size of the grid in the x-axis.
-     * @param sizeZ The total size of the grid in the z-axis.
      * */
-    public PlaneMesh(VertexFormat vertexFormat, int numX, int numZ, float sizeX, float sizeZ, Vector3f normal) {
+    public PlaneMesh(VertexFormat vertexFormat, Planef plane, float scaleX, float scaleY) {
         super();
-        float halfX = sizeX * 0.5F;
-        float halfZ = sizeZ * 0.5F;
+        this.plane = plane;
+        Vector3f normal = new Vector3f(plane.a, plane.b, plane.c);
+        float distance = plane.d;
 
-        float stepX = sizeX / numX;
-        float stepZ = sizeZ / numZ;
+        Vector3f forward = new Vector3f(normal.x, normal.y, normal.z);
+        Vector3f right = new Vector3f(forward).cross(UP);
+        Vector3f up = new Vector3f(right).cross(forward);
+
+        Matrix4f rot = new Matrix4f(right.x, up.x, -forward.x, 0.0f,
+                right.y, up.y, -forward.y, 0.0f,
+                right.z, up.z, -forward.z, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
+
+        Matrix4f trans = new Matrix4f().translate(normal.mul(distance, new Vector3f()));
+
+        Matrix4f planeTransformation = new Matrix4f(trans).mul(rot);
+
+        Matrix3f rotMatrix = new Matrix3f(planeTransformation);
+
 
         List<Vector3f> vertices = new ArrayList<>();
-        List<Vector4f> colors = new ArrayList<>();
-        List<Vector3f> normals = new ArrayList<>();
 
-        for (int i = 0; i < numX + 1; i++) {
-            vertices.add(new Vector3f(-halfX, 0, -halfZ + stepZ * i));
-            vertices.add(new Vector3f(halfX, 0, -halfZ + stepZ * i));
-            colors.add(new Vector4f(1, 1, 1, 1));
-            colors.add(new Vector4f(1, 1, 1, 1));
-            normals.add(normal);
-            normals.add(normal);
-        }
+        vertices.add(rotMatrix.transform(new Vector3f(-scaleX, scaleY, 0F)));
+        vertices.add(rotMatrix.transform(new Vector3f(scaleX, scaleY, 0F)));
+        vertices.add(rotMatrix.transform(new Vector3f(-scaleX, -scaleY, 0F)));
+        vertices.add(rotMatrix.transform(new Vector3f(scaleX, -scaleY, 0F)));
 
-        for (int i = 0; i < numZ + 1; i++) {
-            vertices.add(new Vector3f(-halfX + stepX * i, 0, -halfZ));
-            vertices.add(new Vector3f(-halfX + stepX * i, 0, halfZ));
-            colors.add(new Vector4f(1, 1, 1, 1));
-            colors.add(new Vector4f(1, 1, 1, 1));
-            normals.add(normal);
-            normals.add(normal);
-        }
-
-        setRenderMode(GL_LINES);
         bind();
-        storeAttribute(0, MeshUtils.toArray3f(vertices), VertexElement.POSITION.size);
-        storeAttribute(1, MeshUtils.toArray4f(colors), VertexElement.COLOR.size);
-        storeAttribute(2, MeshUtils.toArray3f(normals), VertexElement.NORMAL.size);
-        setVertexCount(vertices.size());
+        storeAttribute(vertexFormat.getElementIndex(VertexElements.POSITION), MeshUtils.toArray3f(vertices),
+                VertexElements.POSITION.getSize());
+
+        if (vertexFormat.hasElement(VertexElements.COLOR)) {
+            List<Vector4f> colors = new ArrayList<>();
+
+            colors.add(new Vector4f(1, 1, 1, 1));
+            colors.add(new Vector4f(1, 1, 1, 1));
+            colors.add(new Vector4f(1, 1, 1, 1));
+            colors.add(new Vector4f(1, 1, 1, 1));
+            storeAttribute(vertexFormat.getElementIndex(VertexElements.COLOR), MeshUtils.toArray4f(colors),
+                    VertexElements.COLOR.getSize());
+        }
+        if (vertexFormat.hasElement(VertexElements.NORMAL)) {
+            List<Vector3f> normals = new ArrayList<>();
+
+            normals.add(normal);
+            normals.add(normal);
+            normals.add(normal);
+            normals.add(normal);
+            storeAttribute(vertexFormat.getElementIndex(VertexElements.NORMAL), MeshUtils.toArray3f(normals),
+                    VertexElements.NORMAL.getSize());
+        }
+
+        if (vertexFormat.hasElement(VertexElements.UV)) {
+            List<Vector2f> uvs = new ArrayList<>();
+
+            uvs.add(new Vector2f(0, 1));
+            uvs.add(new Vector2f(1, 1));
+            uvs.add(new Vector2f(0, 0));
+            uvs.add(new Vector2f(1, 0));
+            storeAttribute(vertexFormat.getElementIndex(VertexElements.UV), MeshUtils.toArray2f(uvs),
+                    VertexElements.UV.getSize());
+        }
+
+        this.storeIndices(new int[] { 0, 2, 1, 1, 2, 3 });
         unbind();
+
+        this.setVertexFormat(vertexFormat);
+    }
+
+    public Planef getPlane() {
+        return plane;
     }
 }

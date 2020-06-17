@@ -52,7 +52,6 @@ public class ModelRenderPass extends RenderPass {
         shaderProgram.setProjectionMatrix(renderContext.getProjection());
         shaderProgram.setViewMatrix(camera.get());
         shaderProgram.setModelMatrix(transform);
-
         ModelRenderer.renderModel(model);
 
         ShaderProgram.unbind();

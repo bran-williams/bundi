@@ -57,6 +57,7 @@ public class VoxelSelectionRenderPass extends RenderPass<VoxelRenderContext> {
         }
 
         RaycastResult selectedVoxel = scene.getPlayerState().getRaycast();
+
         Vector3f voxelPos = selectedVoxel.blockPosition;
         Voxel voxel = scene.getVoxelWorld().getChunks().getVoxelAtPosition(voxelPos);
         AABB voxelAABB = voxel.getBoundingBox((int) voxelPos.x, (int) voxelPos.y, (int) voxelPos.z);
@@ -68,6 +69,7 @@ public class VoxelSelectionRenderPass extends RenderPass<VoxelRenderContext> {
         shaderProgram.setModelMatrix(Transformable.empty());
 
         dynamicVAO.begin();
+
         RenderUtils.addAABB(dynamicVAO, voxelAABB, SELECTION_OUTLINE_COLOR);
 
         dynamicVAO.position(voxelCenter.x, voxelCenter.y, voxelCenter.z).color(DIRECTION_VECTOR_COLOR).endVertex();

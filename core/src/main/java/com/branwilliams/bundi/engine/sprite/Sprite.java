@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.sprite;
 
 import com.branwilliams.bundi.engine.shader.VertexArrayObject;
-import com.branwilliams.bundi.engine.shape.AABB;
+import com.branwilliams.bundi.engine.shape.AABB2f;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 
@@ -26,7 +26,7 @@ public class Sprite {
 
     private boolean centered;
 
-    private final AABB aabb;
+    private final AABB2f aabb2f;
 
     public Sprite(SpriteSheet spriteSheet, VertexFormat vertexFormat, VertexArrayObject vao, int vertexCount, int index, float width, float height, boolean centered) {
         this.spriteSheet = spriteSheet;
@@ -38,9 +38,9 @@ public class Sprite {
         this.height = height;
         this.centered = centered;
         if (centered) {
-            this.aabb = new AABB(-width/2, -height/2, width/2, height/2);
+            this.aabb2f = new AABB2f(-width/2, -height/2, width/2, height/2);
         } else {
-            this.aabb = new AABB(0, 0, width, height);
+            this.aabb2f = new AABB2f(0, 0, width, height);
         }
     }
 
@@ -82,8 +82,8 @@ public class Sprite {
         return centered;
     }
 
-    public AABB getAABB() {
-        return aabb;
+    public AABB2f getAABB() {
+        return aabb2f;
     }
 
     @Override

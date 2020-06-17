@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.gui.api.components;
 
 import com.branwilliams.bundi.gui.api.Component;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 
 import java.util.function.BiFunction;
 
@@ -16,7 +16,7 @@ public class TreeView extends Component {
 
     private boolean pressed = false;
 
-    private BiFunction<TreeView, ClickAction, Boolean> pressFunction;
+    private BiFunction<TreeView, ClickEvent, Boolean> pressFunction;
 
     public TreeView(String tag, String text) {
         this(tag, text, false);
@@ -35,7 +35,7 @@ public class TreeView extends Component {
     /**
      * Invokes the given function when this button is pressed.
      * */
-    public void onPressed(BiFunction<TreeView, ClickAction, Boolean> pressFunction) {
+    public void onPressed(BiFunction<TreeView, ClickEvent, Boolean> pressFunction) {
         this.pressFunction = pressFunction;
     }
 

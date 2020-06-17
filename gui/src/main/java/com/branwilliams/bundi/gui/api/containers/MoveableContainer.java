@@ -3,7 +3,7 @@ package com.branwilliams.bundi.gui.api.containers;
 import com.branwilliams.bundi.gui.api.Container;
 import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 
 import java.util.function.BiFunction;
 
@@ -19,26 +19,28 @@ public abstract class MoveableContainer extends Container {
 
     private BiFunction<MoveableContainer, Toolbox, Boolean> moveFunction;
 
-    public MoveableContainer(String tag) {
-        super(tag);
+    public MoveableContainer() {
+        super();
         //this.setAutoLayout(true);
-        // Sets moving to true once this container was clicked inside a moveable area.
-        this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> {
-            if (isHovered() && isPointInsideMoveableArea(action.x, action.y) && action.buttonId == 0) {
-                clickOffsetX = action.x - getX();
-                clickOffsetY = action.y - getY();
-                moving = true;
-                return true;
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) action -> {
+            // Sets moving to true once this container was clicked inside a moveable area.
+            switch (action.mouseClickAction) {
+                case MOUSE_PRESS:
+                    if (isHovered() && isPointInsideMoveableArea(action.x, action.y) && action.buttonId == 0) {
+                        clickOffsetX = action.x - getX();
+                        clickOffsetY = action.y - getY();
+                        moving = true;
+                        return true;
+                    }
+                case MOUSE_RELEASE:
+                    // Sets moving to false when the mouse is no longer being pressed.
+                    clickOffsetX = 0;
+                    clickOffsetY = 0;
+                    moving = false;
             }
             return false;
         });
-        // Sets moving to false when the mouse is no longer being pressed.
-        this.addListener(Actions.MOUSE_RELEASE, (ClickAction.ClickActionListener) action -> {
-            clickOffsetX = 0;
-            clickOffsetY = 0;
-            moving = false;
-            return false;
-        });
+
     }
 
     @Override

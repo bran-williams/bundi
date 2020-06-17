@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.cloth;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;

@@ -7,13 +7,17 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
+import com.branwilliams.bundi.engine.mesh.primitive.CubeMesh;
 import com.branwilliams.bundi.engine.shader.Camera;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.Projection;
+import com.branwilliams.bundi.engine.shader.Transformation;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.skybox.SkyboxRenderPass;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
+import com.branwilliams.bundi.water.pipeline.passes.CubesRenderPass;
 import com.branwilliams.bundi.water.pipeline.passes.WaterNormalRenderPass;
 import com.branwilliams.bundi.water.pipeline.passes.WaterRenderPass;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
@@ -21,6 +25,7 @@ import com.branwilliams.bundi.water.system.WaterUpdateSystem;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
+import java.awt.*;
 import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -34,9 +39,11 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
 
     public static final int WATER_PLANE_LENGTH = 128;
 
-    private final Water water = createFlatWater(WATER_PLANE_LENGTH);
+//    private final Water water = createFlatWater(WATER_PLANE_LENGTH);
 
-//    private final Water water = createWater(0.24F, WATER_PLANE_LENGTH);
+    private final Water water = createWater(0.24F, WATER_PLANE_LENGTH);
+
+    private TextureLoader textureLoader;
 
     private Camera camera;
 
@@ -63,6 +70,7 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
         renderPipeline.addLast(new WaterNormalRenderPass(this));
         renderPipeline.addLast(new EnableWireframeRenderPass(this::isWireframe));
         renderPipeline.addLast(new WaterRenderPass(this, this::getCamera));
+        renderPipeline.addLast(new CubesRenderPass(this, this::getCamera));
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
         renderPipeline.addLast(new SkyboxRenderPass<>(this::getCamera, this::getSkybox));
 
@@ -73,13 +81,13 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
     @Override
     public void play(Engine engine) {
         camera = new Camera();
-        camera.setPosition(0, 5F, 0);
+        camera.setPosition(0, 2F, 0);
         camera.lookAt(-WATER_PLANE_LENGTH * 0.5F, 0F, -2F);
 
-        TextureLoader textureLoader = new TextureLoader(engine.getContext());
+        textureLoader = new TextureLoader(engine.getContext());
 
         try {
-            CubeMapTexture environment = textureLoader.loadCubeMapTexture("assets/stormydays.csv");
+            CubeMapTexture environment = textureLoader.loadCubeMapTexture("assets/mp_drakeq.csv");
 
             skybox = new Skybox(500, new Material(environment));
 
@@ -94,6 +102,30 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        CubeMesh cubeMesh0 = new CubeMesh(1, 1, 1, VertexFormat.POSITION);
+
+        Color color0 = new Color(0x021e44);
+        Color color1 = new Color(0xffb800);
+        Color color2 = new Color(0x04e1500);
+
+        es.entity("cube0").component(
+                cubeMesh0,
+                color0,
+                new Transformation().position(-20, 2, -WATER_PLANE_LENGTH * 0.5F).scale(5)
+        ).build();
+
+        es.entity("cube2").component(
+                cubeMesh0,
+                color1,
+                new Transformation().position(0, 1, -WATER_PLANE_LENGTH * 0.35F).scale(2)
+        ).build();
+
+        es.entity("cube3").component(
+                cubeMesh0,
+                color2,
+                new Transformation().position(10, 3, -WATER_PLANE_LENGTH * 0.7F).scale(7)
+        ).build();
     }
 
     public static Water createFlatWater(int planeLength) {
@@ -155,11 +187,15 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
             wireframe = !wireframe;
         }
         if (key == GLFW_KEY_E) {
-            water.getTransformable().getRotation().x += 0.5F;
+            water.getTransformable().getRotationAsEuler().x += 0.5F;
         }
 
         if (key == GLFW_KEY_Q) {
-            water.getTransformable().getRotation().x -= 0.5F;
+            water.getTransformable().getRotationAsEuler().x -= 0.5F;
+        }
+
+        if (key == GLFW_KEY_F5) {
+            textureLoader.screenshot();
         }
     }
 

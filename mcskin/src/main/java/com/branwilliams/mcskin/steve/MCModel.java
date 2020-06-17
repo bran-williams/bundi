@@ -1,6 +1,6 @@
 package com.branwilliams.mcskin.steve;
 
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.Texture;
 
 import java.util.ArrayList;

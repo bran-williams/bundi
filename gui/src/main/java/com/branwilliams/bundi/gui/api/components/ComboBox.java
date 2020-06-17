@@ -2,7 +2,7 @@ package com.branwilliams.bundi.gui.api.components;
 
 import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
+import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 
 /**
  * Simple combo box implementation. <br/>
@@ -20,27 +20,35 @@ public class ComboBox<I> extends Component {
 
     private int itemHeight = 15;
 
-    public ComboBox(String tag, I... items) {
-        super(tag);
+    public ComboBox(I... items) {
+        super();
         this.items = items;
-        addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0);
-        addListener(Actions.MOUSE_RELEASE, (ClickAction.ClickActionListener) action -> {
-            if (isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0) {
-                if (expanded) {
-                    // Find the hovered item and set it selected.
-                    int index = getHoveredItem(action.x, action.y);
-                    if (index != -1) {
-                        setSelected(index);
+        addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event -> {
+            switch (event.mouseClickAction) {
+                case MOUSE_PRESS:
+                    return isHovered() && isPointInside(event.x, event.y) && event.buttonId == 0;
+
+                case MOUSE_RELEASE:
+                    if (isHovered() && isPointInside(event.x, event.y) && event.buttonId == 0) {
+                        if (expanded) {
+                            // Find the hovered item and set it selected.
+                            int index = getHoveredItem(event.x, event.y);
+                            if (index != -1) {
+                                setSelected(index);
+                            }
+                            expanded = false;
+                        } else {
+                            // Expand me!
+                            expanded = true;
+                        }
+                    } else {
+                        expanded = false;
                     }
-                    expanded = false;
-                } else {
-                    // Expand me!
-                    expanded = true;
-                }
-            } else {
-                expanded = false;
+                    return false;
+
+                default:
+                    return false;
             }
-            return false;
         });
         this.setHeight(itemHeight);
     }

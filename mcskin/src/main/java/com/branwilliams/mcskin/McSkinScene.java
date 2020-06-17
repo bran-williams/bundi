@@ -7,7 +7,7 @@ import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.Camera;
-import com.branwilliams.bundi.engine.shader.Material;
+import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.Texture;
@@ -21,7 +21,6 @@ import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.mcskin.steve.MCModel;
 import com.branwilliams.mcskin.steve.HumanoidModel;
-import com.branwilliams.mcskin.steve.PlayerModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -116,19 +115,19 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
 
         usernameField = containerManager.getByTag("lined");
         submitButton = containerManager.getByTag("submit");
-        submitButton.setHighlight(true);
+        submitButton.setActive(true);
 
         fixButton = containerManager.getByTag("fix");
 
         submitButton.onPressed(((button, clickAction) -> {
-            if (submitButton.isHighlight() && clickAction.buttonId == 0 && usernameField.hasText()) {
+            if (submitButton.isActive() && clickAction.buttonId == 0 && usernameField.hasText()) {
                 downloadSkin(usernameField.getText());
             }
             return true;
         }));
 
         fixButton.onPressed(((button, clickAction) -> {
-            if (fixButton.isHighlight() && clickAction.buttonId == 0) {
+            if (fixButton.isActive() && clickAction.buttonId == 0) {
                 try {
                     TextureData skinData = textureLoader.loadTexture(skinUrl);
                     setModelSkin(applyOverlay(skinData));
@@ -162,7 +161,7 @@ public class McSkinScene extends AbstractScene implements Window.KeyListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        fixButton.setHighlight(true);
+        fixButton.setActive(true);
     }
 
     /**

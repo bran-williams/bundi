@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.screen;
 
+import com.branwilliams.bundi.engine.core.Scene;
 import com.branwilliams.bundi.engine.core.Window;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 
@@ -7,9 +8,13 @@ import com.branwilliams.bundi.gui.api.ContainerManager;
  * @author Brandon
  * @since August 17, 2019
  */
-public abstract class ContainerScreen implements GuiScreen {
+public abstract class ContainerScreen <SceneType extends Scene> implements GuiScreen<SceneType> {
 
     public ContainerManager containerManager;
+
+    public ContainerScreen() {
+        this(null);
+    }
 
     public ContainerScreen(ContainerManager containerManager) {
         this.containerManager = containerManager;
@@ -77,4 +82,11 @@ public abstract class ContainerScreen implements GuiScreen {
         containerManager.destroy();
     }
 
+    public ContainerManager getContainerManager() {
+        return containerManager;
+    }
+
+    public void setContainerManager(ContainerManager containerManager) {
+        this.containerManager = containerManager;
+    }
 }

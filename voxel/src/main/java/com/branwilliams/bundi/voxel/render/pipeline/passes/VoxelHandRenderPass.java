@@ -49,13 +49,13 @@ public class VoxelHandRenderPass extends RenderPass<VoxelRenderContext> {
         }
 
 //        transformable.rotate(10, -45, 170);
-        transformable.rotate(30, 225, 0);
+        transformable.rotateFromEuler(15, -20, 0);
         cubeMesh = new Mesh();
     }
 
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
-        Vector3f handPos = new Vector3f(0.3F, -0.4F, -0.5F);
+        Vector3f handPos = new Vector3f(1F, 0.15F, -0.25F);
         Item heldItem = scene.getPlayerState().getInventory().getHeldItem();
 
         if (heldItem instanceof VoxelItem) {

@@ -5,5 +5,10 @@ package com.branwilliams.bundi.engine.shader.patching;
  */
 public interface ShaderPatch {
 
+    /**
+     * Modifies shader code to varying degrees.
+     *
+     * @return The modified code.
+     * */
     String patch(String code);
 }

@@ -1,7 +1,7 @@
 package com.branwilliams.cubes;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 import org.joml.Vector3f;
@@ -56,8 +56,8 @@ public class DebugGridMesh extends Mesh {
 
         setRenderMode(GL_LINES);
         bind();
-        storeAttribute(0, MeshUtils.toArray3f(vertices), VertexElement.POSITION.size);
-        storeAttribute(1, MeshUtils.toArray4f(colors), VertexElement.COLOR.size);
+        storeAttribute(0, MeshUtils.toArray3f(vertices), VertexElements.POSITION.getSize());
+        storeAttribute(1, MeshUtils.toArray4f(colors), VertexElements.COLOR.getSize());
         setVertexCount(vertices.size());
         unbind();
     }

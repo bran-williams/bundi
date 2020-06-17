@@ -9,7 +9,7 @@ import java.util.List;
  * Layout which places each component into their own row and column. <br/>
  * Created by Brandon Williams on 2/19/2017.
  */
-public class GridLayout implements Layout<Widget> {
+public class GridLayout implements Layout<Widget, Widget> {
 
     private final int rows, columns;
 
@@ -18,6 +18,8 @@ public class GridLayout implements Layout<Widget> {
     private final int horizontalPadding;
 
     private final int componentPadding;
+
+    private final boolean forcedSize;
 
     public GridLayout(int rows, int columns) {
         this(rows, columns, 0);
@@ -28,10 +30,11 @@ public class GridLayout implements Layout<Widget> {
     }
 
     public GridLayout(int rows, int columns, int containerPadding, int componentPadding) {
-        this(rows, columns, containerPadding, containerPadding, componentPadding);
+        this(rows, columns, containerPadding, containerPadding, componentPadding, true);
     }
 
-    public GridLayout(int rows, int columns, int verticalPadding, int horizontalPadding, int componentPadding) {
+    public GridLayout(int rows, int columns, int verticalPadding, int horizontalPadding, int componentPadding,
+                      boolean forcedSize) {
         if (rows <= 0 || columns <= 0) {
             throw new IllegalArgumentException("Rows and columns both must be greater than zero!");
         }
@@ -40,6 +43,7 @@ public class GridLayout implements Layout<Widget> {
         this.verticalPadding = verticalPadding;
         this.horizontalPadding = horizontalPadding;
         this.componentPadding = componentPadding;
+        this.forcedSize = forcedSize;
     }
 
     @Override
@@ -78,7 +82,19 @@ public class GridLayout implements Layout<Widget> {
                 rowHeight[row] = component.getHeight();
         }
 
-        int x = 0, y = 0, width = 0, height = 0;
+        int width = 0;
+        int height = 0;
+
+        // TODO uniform column sizes and uniform row sizes?
+//        int minimumWidth = horizontalPadding * 2;
+//        for (int i = 0; i < columns; i++) {
+//            boolean isLastComponent = i == columns - 1;
+//            minimumWidth += columnWidth[i] + (isLastComponent ? 0 : componentPadding);
+//        }
+//        if (minimumWidth < container.getWidth()) {
+//        }
+
+        int x = 0, y = 0;
 
         for (int i = 0; i < components.size(); i++) {
             Widget component = components.get(i);
@@ -86,16 +102,32 @@ public class GridLayout implements Layout<Widget> {
             // Calculate this component's row and column.
             int column = i % columns;
             int row = (int) Math.floor((float) i / (float) columns);
+            int thisColumnsWidth = columnWidth[column];
+            int thisRowsHeight = rowHeight[row];
 
             component.setX(container.getX() + horizontalPadding + x);
             component.setY(container.getY() + verticalPadding + y);
 
-            // Increment our width and height
-            if (x + component.getWidth() + horizontalPadding * 2 > width)
-                width = x + component.getWidth() + horizontalPadding * 2;
 
-            if (y + component.getHeight() + verticalPadding * 2 > height)
-                height = y + component.getHeight() + verticalPadding * 2;
+
+            if (forcedSize) {
+                if (component.getWidth() < thisColumnsWidth) {
+                    component.setWidth(thisColumnsWidth - horizontalPadding);
+                }
+                if (component.getHeight() < thisRowsHeight) {
+                    component.setHeight(thisRowsHeight - verticalPadding);
+                }
+            } else {
+                thisColumnsWidth = component.getWidth();
+                thisRowsHeight = component.getHeight();
+            }
+
+            // Increment our width and height
+            if (x + thisColumnsWidth + horizontalPadding * 2 > width)
+                width = x + thisColumnsWidth + horizontalPadding * 2;
+
+            if (y + thisRowsHeight + verticalPadding * 2 > height)
+                height = y + thisRowsHeight + verticalPadding * 2;
 
             // If we have a next component
             if ((i + 1) < components.size()) {
@@ -106,6 +138,7 @@ public class GridLayout implements Layout<Widget> {
                 if (nextColumn > column) {
                     x += columnWidth[column] + componentPadding;
                 }
+
                 // if the next component is within a new row, reset the x position and move downward.
                 if (nextRow > row) {
                     y += rowHeight[row] + componentPadding;

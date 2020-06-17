@@ -16,7 +16,6 @@ import static com.branwilliams.bundi.gui.impl.Pointers.*;
  * @since May 15, 2019
  */
 public enum ColorPack {
-
     DEFAULT(0xFF297E25),
     RED(0xFFF44336),
     PINK(0xFFE91E6),
@@ -38,15 +37,24 @@ public enum ColorPack {
     GREY(0xFF9E9E9E),
     BLUE_GREY(0xFF607D8B);
 
-    private final Color background, secondaryBackground, defaultComponent, highlightComponent, enabledText, disabledText;
+    private final Color background, secondaryBackground, tertiaryBackground, defaultComponent, highlightComponent, enabledText, disabledText;
 
     ColorPack(int highlight) {
-        this(0xFF141414, 0xFF232323, 0xFF2D2D2D, highlight, 0xFFFFFFFF, 0xFF8A8A8A);
+        this(0xFF141414,
+                0xFF232323,
+                0xFF8A8A8A,
+                0xFF2D2D2D,
+                highlight,
+                0xFFFFFFFF,
+                0xFF666666);
     }
 
-    ColorPack(int background, int secondaryBackground, int defaultComponent, int highlightComponent, int enabledText, int disabledText) {
+
+
+    ColorPack(int background, int secondaryBackground, int tertiaryBackground, int defaultComponent, int highlightComponent, int enabledText, int disabledText) {
         this.background = new Color(background);
         this.secondaryBackground = new Color(secondaryBackground);
+        this.tertiaryBackground = new Color(tertiaryBackground);
         this.defaultComponent = new Color(defaultComponent);
         this.highlightComponent = new Color(highlightComponent);
         this.enabledText = new Color(enabledText);
@@ -68,10 +76,19 @@ public enum ColorPack {
     public void apply(Toolbox toolbox) {
         toolbox.put(COLOR_BACKGROUND, background);
         toolbox.put(COLOR_SECONDARY_BACKGROUND, secondaryBackground);
-        toolbox.put(COLOR_DEFAULT, defaultComponent);
+        toolbox.put(COLOR_TERTIARY_BACKGROUND, tertiaryBackground);
+
         toolbox.put(COLOR_HIGHLIGHT, highlightComponent);
         toolbox.put(COLOR_ENABLED_TEXT, enabledText);
         toolbox.put(COLOR_DISABLED_TEXT, disabledText);
+        toolbox.put(COLOR_DEFAULT, defaultComponent);
+
+        toolbox.put(COLOR_DEFAULT_TEXT, disabledText);
+        toolbox.put(COLOR_DEFAULT_BUTTON_INACTIVE, defaultComponent);
+        toolbox.put(COLOR_DEFAULT_BUTTON_ACTIVE, highlightComponent);
+
+        toolbox.put(COLOR_DEFAULT_BUTTON_TEXT_INACTIVE, disabledText);
+        toolbox.put(COLOR_DEFAULT_BUTTON_TEXT_ACTIVE, enabledText);
     }
 
     public Color getBackground() {

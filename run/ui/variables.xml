@@ -1,0 +1,8 @@
+<UI>
+    <VarSet var="monkey" val="oo oo aa aa"/>
+    <VarSet var="monkey_color" val="#773399"/>
+    <VarSet var="dog" val="bark bark BARK BARK"/>
+    <VarSet var="dog_color" val="#FF0099"/>
+    <VarSet var="cat" val="meeeooowwww"/>
+    <VarSet var="cat_color" val="#000099"/>
+</UI>

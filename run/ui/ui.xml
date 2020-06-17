@@ -55,10 +55,10 @@
         <ListLayout padding="1" componentPadding="2"/>
         <FontData font="Verdana" size="20" style="bold"/>
 
-        <Container tag="invisible">
+        <Container opacity="0">
             <GridLayout rows="2" columns="1" padding="0" componentPadding="2"/>
 
-            <Container tag="invisible">
+            <Container opacity="0">
                 <GridLayout rows="1" columns="2" padding="0" componentPadding="2"/>
 
                 <Label tag="slider_title" text="Slider Name" color="#ffffff">
@@ -75,7 +75,7 @@
             </Slider>
         </Container>
 
-        <Container tag="invisible">
+        <Container opacity="0">
             <GridLayout rows="1" columns="3" padding="0" componentPadding="2"/>
 
             <Label tag="slider_title" text="Slider Name" color="#ffffff">

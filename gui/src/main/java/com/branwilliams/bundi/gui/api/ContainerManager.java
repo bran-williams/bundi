@@ -1,16 +1,13 @@
 package com.branwilliams.bundi.gui.api;
 
 import com.branwilliams.bundi.engine.core.Destructible;
+import com.branwilliams.bundi.engine.core.Scene;
 import com.branwilliams.bundi.engine.core.Window;
-import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
-import com.branwilliams.bundi.gui.api.actions.Direction;
-import com.branwilliams.bundi.gui.api.actions.KeystrokeAction;
+import com.branwilliams.bundi.gui.api.actions.*;
 import com.branwilliams.bundi.gui.api.render.RenderManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Manages containers. <br/>
@@ -18,18 +15,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class ContainerManager implements Destructible, Window.MouseListener, Window.KeyListener, Window.CharacterListener {
 
+    private final Container window;
+
     private final List<Container> containers = new ArrayList<>();
 
     private RenderManager renderManager;
 
     private Toolbox toolbox;
 
-    private String tooltip = null;
+    private PopupContainer tooltip = null;
 
     // Enable layering of components when true.
     private boolean layering = true;
 
-    public ContainerManager(RenderManager renderManager, Toolbox toolbox) {
+    public ContainerManager(Scene scene, Window window, RenderManager renderManager, Toolbox toolbox) {
+        this.window = new ScreenWidget(scene, window);
         this.renderManager = renderManager;
         this.toolbox = toolbox;
     }
@@ -54,8 +54,11 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
         for (Container container : containers) {
             renderManager.render(container);
         }
-
-        renderManager.getPopupRenderer().drawTooltip(tooltip, toolbox.getMouseX(), toolbox.getMouseY());
+        if (tooltip != null) {
+            tooltip.updatePosition(toolbox.getMouseX(), toolbox.getMouseY());
+            renderManager.render(tooltip);
+        }
+//        renderManager.getPopupRenderer().drawTooltip(tooltip, toolbox.getMouseX(), toolbox.getMouseY());
     }
 
     /**
@@ -80,6 +83,7 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
      * */
     public boolean add(Container container) {
         container.setToolbox(toolbox);
+        container.setParent(window);
         return this.containers.add(container);
     }
 
@@ -122,11 +126,11 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
 
     @Override
     public void press(Window window, float mouseX, float mouseY, int buttonId) {
-        ClickAction clickAction = new ClickAction((int) mouseX, (int) mouseY, buttonId);
+        ClickEvent clickEvent = new ClickEvent(ClickEvent.MouseClickAction.MOUSE_PRESS, (int) mouseX, (int) mouseY, buttonId);
 
         for (int i = containers.size() - 1; i >= 0; i--) {
             Container container = containers.get(i);
-            if (container.isActivated(Actions.MOUSE_PRESS, clickAction)) {
+            if (container.isActivated(ClickEvent.class, clickEvent)) {
                 // Layer this container.
                 if (layering) {
                     containers.remove(container);
@@ -139,10 +143,10 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
 
     @Override
     public void release(Window window, float mouseX, float mouseY, int buttonId) {
-        ClickAction clickAction = new ClickAction((int) mouseX, (int) mouseY, buttonId);
+        ClickEvent clickEvent = new ClickEvent(ClickEvent.MouseClickAction.MOUSE_RELEASE, (int) mouseX, (int) mouseY, buttonId);
         for (int i = containers.size() - 1; i >= 0; i--) {
             Container container = containers.get(i);
-            if (container.isActivated(Actions.MOUSE_RELEASE, clickAction))
+            if (container.isActivated(ClickEvent.class, clickEvent))
                 break;
         }
     }
@@ -150,42 +154,46 @@ public class ContainerManager implements Destructible, Window.MouseListener, Win
     @Override
     public void wheel(Window window, double xoffset, double yoffset) {
         for (Container container : containers) {
-            if (container.isActivated(Actions.MOUSEWHEEL, yoffset < 0 ? Direction.UP : Direction.DOWN))
+            if (container.isActivated(MouseWheelDirection.class, yoffset < 0 ? MouseWheelDirection.UP : MouseWheelDirection.DOWN))
                 break;
         }
     }
 
     @Override
     public void keyPress(Window window, int key, int scancode, int mods) {
-        KeystrokeAction keystrokeAction = new KeystrokeAction(key, scancode, mods);
+        KeystrokeEvent keystrokeEvent = new KeystrokeEvent(key, scancode, mods,
+                KeystrokeEvent.KeystrokeAction.KEY_PRESS);
         for (Container container : containers) {
-            if (container.isActivated(Actions.KEY_PRESS, keystrokeAction))
+            if (container.isActivated(KeystrokeEvent.class, keystrokeEvent))
                 break;
         }
     }
 
     @Override
     public void keyRelease(Window window, int key, int scancode, int mods) {
-        KeystrokeAction keystrokeAction = new KeystrokeAction(key, scancode, mods);
+        KeystrokeEvent keystrokeEvent = new KeystrokeEvent(key, scancode, mods,
+                KeystrokeEvent.KeystrokeAction.KEY_RELEASE);
         for (Container container : containers) {
-            if (container.isActivated(Actions.KEY_RELEASE, keystrokeAction))
+            if (container.isActivated(KeystrokeEvent.class, keystrokeEvent))
                 break;
         }
     }
 
     @Override
     public void keyHeld(Window window, int key, int scancode, int mods) {
-        KeystrokeAction keystrokeAction = new KeystrokeAction(key, scancode, mods);
+        KeystrokeEvent keystrokeEvent = new KeystrokeEvent(key, scancode, mods,
+                KeystrokeEvent.KeystrokeAction.KEY_HELD);
         for (Container container : containers) {
-            if (container.isActivated(Actions.KEY_HELD, keystrokeAction))
+            if (container.isActivated(KeystrokeEvent.class, keystrokeEvent))
                 break;
         }
     }
 
     @Override
     public void charTyped(Window window, String characters) {
+        CharTypedEvent charTypedEvent = new CharTypedEvent(characters);
         for (Container container : containers) {
-            if (container.isActivated(Actions.CHARACTER_TYPED, characters))
+            if (container.isActivated(CharTypedEvent.class, charTypedEvent))
                 break;
         }
     }

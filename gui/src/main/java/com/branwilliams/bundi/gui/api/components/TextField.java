@@ -1,10 +1,7 @@
 package com.branwilliams.bundi.gui.api.components;
 
 import com.branwilliams.bundi.gui.api.Component;
-import com.branwilliams.bundi.gui.api.actions.Actions;
-import com.branwilliams.bundi.gui.api.actions.CharacterTypedActionListener;
-import com.branwilliams.bundi.gui.api.actions.ClickAction;
-import com.branwilliams.bundi.gui.api.actions.KeystrokeAction;
+import com.branwilliams.bundi.gui.api.actions.*;
 
 import java.awt.*;
 
@@ -44,25 +41,30 @@ public class TextField extends Component {
         super(tag);
         this.setText(text);
         this.defaultText = defaultText;
-        this.addListener(Actions.MOUSE_PRESS, (ClickAction.ClickActionListener) action -> typing = isHovered() && isPointInside(action.x, action.y) && action.buttonId == 0);
 
-        this.addListener(Actions.CHARACTER_TYPED, (CharacterTypedActionListener) characters -> {
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener)
+                event ->
+                        typing = (event.mouseClickAction == ClickEvent.MouseClickAction.MOUSE_PRESS
+                                && isHovered()
+                                && isPointInside(event.x, event.y) && event.buttonId == 0));
+
+
+        this.addListener(CharTypedEvent.class, (CharacterTypedActionListener) charTypedEvent -> {
             if (typing) {
-                if (validCharacters.contains(characters))
-                    this.append(characters);
+                if (validCharacters.contains(charTypedEvent.character))
+                    this.append(charTypedEvent.character);
                 return true;
             }
 
             return false;
         });
 
-        this.addListener(Actions.KEY_HELD, (KeystrokeAction.KeystrokeActionListener) this::keystrokeAction);
-        this.addListener(Actions.KEY_PRESS, (KeystrokeAction.KeystrokeActionListener) this::keystrokeAction);
+        this.addListener(KeystrokeEvent.class, (KeystrokeEvent.KeystrokeActionListener) this::keystrokeAction);
     }
 
-    private boolean keystrokeAction(KeystrokeAction action) {
-        if (typing) {
-            switch (action.key) {
+    private boolean keystrokeAction(KeystrokeEvent event) {
+        if (typing && event.keystrokeAction != KeystrokeEvent.KeystrokeAction.KEY_RELEASE) {
+            switch (event.keystroke.key) {
                 case GLFW_KEY_BACKSPACE:
                     backSpace();
                     break;
