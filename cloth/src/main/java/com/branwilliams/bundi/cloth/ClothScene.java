@@ -4,7 +4,7 @@ import com.branwilliams.bundi.cloth.pipeline.ClothRenderPass;
 import com.branwilliams.bundi.cloth.pipeline.SphereRenderPass;
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
@@ -32,7 +32,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since November 20, 2019
  */
-public class ClothScene extends AbstractScene implements Window.KeyListener {
+public class ClothScene extends AbstractScene {
 
     private TextureLoader textureLoader;
 
@@ -50,7 +50,6 @@ public class ClothScene extends AbstractScene implements Window.KeyListener {
 
     public ClothScene() {
         super("cloth");
-        this.addKeyListener(this);
     }
 
     @Override
@@ -199,16 +198,4 @@ public class ClothScene extends AbstractScene implements Window.KeyListener {
         return skybox;
     }
 
-
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-        if (key == GLFW_KEY_F5) {
-            textureLoader.screenshot();
-        }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
-    }
 }

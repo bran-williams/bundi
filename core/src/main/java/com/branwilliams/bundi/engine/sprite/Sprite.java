@@ -26,7 +26,7 @@ public class Sprite {
 
     private boolean centered;
 
-    private final AABB2f aabb2f;
+    private final AABB2f boundingBox;
 
     public Sprite(SpriteSheet spriteSheet, VertexFormat vertexFormat, VertexArrayObject vao, int vertexCount, int index, float width, float height, boolean centered) {
         this.spriteSheet = spriteSheet;
@@ -38,9 +38,9 @@ public class Sprite {
         this.height = height;
         this.centered = centered;
         if (centered) {
-            this.aabb2f = new AABB2f(-width/2, -height/2, width/2, height/2);
+            this.boundingBox = new AABB2f(-width/2, -height/2, width/2, height/2);
         } else {
-            this.aabb2f = new AABB2f(0, 0, width, height);
+            this.boundingBox = new AABB2f(0, 0, width, height);
         }
     }
 
@@ -83,7 +83,7 @@ public class Sprite {
     }
 
     public AABB2f getAABB() {
-        return aabb2f;
+        return boundingBox;
     }
 
     @Override

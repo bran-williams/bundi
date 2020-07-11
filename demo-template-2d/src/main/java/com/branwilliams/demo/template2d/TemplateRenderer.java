@@ -3,7 +3,7 @@ package com.branwilliams.demo.template2d;
 import com.branwilliams.bundi.engine.core.AbstractRenderer;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import org.joml.Vector4f;

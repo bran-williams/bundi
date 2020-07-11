@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.gui.screen;
 
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 
 /**

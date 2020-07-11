@@ -30,6 +30,10 @@ public class Profiler implements Nameable {
 
     private Map<String, DebugInfo> sectionDurations = new HashMap<>();
 
+    public Profiler(Class<?> clazz) {
+        this(clazz.getSimpleName(), DEFAULT_SECTION_CAPACITY, DEFAULT_AVERAGE_CAPACITY);
+    }
+
     public Profiler(String name) {
         this(name, DEFAULT_SECTION_CAPACITY, DEFAULT_AVERAGE_CAPACITY);
     }

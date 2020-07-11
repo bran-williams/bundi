@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.selector;
 
 import com.branwilliams.bundi.engine.core.*;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.*;

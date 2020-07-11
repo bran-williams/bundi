@@ -2,6 +2,8 @@ package com.branwilliams.bundi.atmosphere;
 
 import com.branwilliams.bundi.atmosphere.pipeline.passes.AtmosphereRenderPass2;
 import com.branwilliams.bundi.engine.core.*;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
@@ -25,7 +27,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 /**
  * Created by Brandon Williams on 9/15/2019.
  */
-public class AtmosphereScene extends AbstractScene implements Window.KeyListener {
+public class AtmosphereScene extends AbstractScene implements KeyListener {
 
     private Camera camera;
 

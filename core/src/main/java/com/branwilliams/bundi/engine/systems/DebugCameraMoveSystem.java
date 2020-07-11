@@ -4,7 +4,8 @@ import com.branwilliams.bundi.engine.core.Joystick;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Lockable;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.JoystickListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Camera;
@@ -22,7 +23,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
  * @author Brandon
  * @since September 08, 2019
  */
-public class DebugCameraMoveSystem extends MouseControlSystem implements Window.JoystickListener {
+public class DebugCameraMoveSystem extends MouseControlSystem implements JoystickListener {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -146,23 +147,12 @@ public class DebugCameraMoveSystem extends MouseControlSystem implements Window.
             moved = true;
         }
 
-        if (joystick.isButtonPressed(Joystick.JoystickButton.DPAD_UP)) {
-            camera.moveDirection(moveSpeed, 0F);
+        if (joystick.isButtonPressed(Joystick.JoystickButton.RIGHT_BUMPER)) {
+            camera.move(0, moveSpeed, 0F);
             moved = true;
         }
-
-        if (joystick.isButtonPressed(Joystick.JoystickButton.DPAD_DOWN)) {
-            camera.moveDirection(-moveSpeed, 0F);
-            moved = true;
-        }
-
-        if (joystick.isButtonPressed(Joystick.JoystickButton.DPAD_LEFT)) {
-            camera.moveDirection(0F, -moveSpeed);
-            moved = true;
-        }
-
-        if (joystick.isButtonPressed(Joystick.JoystickButton.DPAD_RIGHT)) {
-            camera.moveDirection(0F, moveSpeed);
+        if (joystick.isButtonPressed(Joystick.JoystickButton.LEFT_BUMPER)) {
+            camera.move(0, -moveSpeed, 0F);
             moved = true;
         }
 

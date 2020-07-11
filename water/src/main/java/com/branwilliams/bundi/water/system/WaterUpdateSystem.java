@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.water.system;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;

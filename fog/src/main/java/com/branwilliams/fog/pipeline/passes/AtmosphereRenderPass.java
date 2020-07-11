@@ -1,17 +1,15 @@
 package com.branwilliams.fog.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
-import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
 import com.branwilliams.bundi.engine.shader.ShaderUniformException;
-import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.fog.Atmosphere;
 import com.branwilliams.fog.pipeline.shaders.AtmosphereShaderProgram;
 import org.slf4j.Logger;

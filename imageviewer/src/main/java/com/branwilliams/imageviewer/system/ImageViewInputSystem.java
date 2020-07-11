@@ -2,7 +2,9 @@ package com.branwilliams.imageviewer.system;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Lockable;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.MouseListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
@@ -16,7 +18,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since December 27, 2019
  */
-public class ImageViewInputSystem extends AbstractSystem implements Window.KeyListener, Window.MouseListener {
+public class ImageViewInputSystem extends AbstractSystem implements KeyListener, MouseListener {
 
     private static final float MINIMUM_SCALE = 0.1F;
 

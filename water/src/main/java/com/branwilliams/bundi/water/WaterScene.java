@@ -2,7 +2,8 @@ package com.branwilliams.bundi.water;
 
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
@@ -35,7 +36,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since September 03, 2019
  */
-public class WaterScene extends AbstractScene implements Window.KeyListener {
+public class WaterScene extends AbstractScene implements KeyListener {
 
     public static final int WATER_PLANE_LENGTH = 128;
 
@@ -192,10 +193,6 @@ public class WaterScene extends AbstractScene implements Window.KeyListener {
 
         if (key == GLFW_KEY_Q) {
             water.getTransformable().getRotationAsEuler().x -= 0.5F;
-        }
-
-        if (key == GLFW_KEY_F5) {
-            textureLoader.screenshot();
         }
     }
 

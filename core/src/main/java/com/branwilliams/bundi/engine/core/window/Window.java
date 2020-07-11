@@ -1,5 +1,8 @@
-package com.branwilliams.bundi.engine.core;
+package com.branwilliams.bundi.engine.core.window;
 
+import com.branwilliams.bundi.engine.core.Joystick;
+import com.branwilliams.bundi.engine.core.Keycode;
+import com.branwilliams.bundi.engine.core.Keycodes;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import org.lwjgl.glfw.*;
@@ -26,7 +29,18 @@ public class Window {
 
     public static final String DEFAULT_ICON_PATH = "icons/favicon-32x32.png";
 
+    private final Transformable mouseTransform = new Transformation();
+
+    // The listeners for window events. This is updated from within the engine.
+    private final List<WindowEventListener> windowEventListeners;
+
+    // All connected joysticks live here.
+    private final List<Joystick> connectedJoysticks;
+
     private long windowId = -1;
+
+    // True only if the init function was able to successfully run.
+    private boolean hasInitialized = false;
 
     private String title;
 
@@ -44,17 +58,7 @@ public class Window {
     // True if the mouse is within this window.
     private boolean mouseInside = false;
 
-    // The current scene within the engine. This is updated from within the engine.
-    private Scene scene;
-
-    private final Transformable mouse = new Transformation();
-
-    // True only if the init function was able to successfully run.
-    private boolean hasInitialized = false;
-
     private Keycodes keycodes;
-
-    private List<Joystick> connectedJoysticks = new ArrayList<>();
 
     public Window(String title, int width, int height, boolean vsync, boolean fullscreen, Keycodes keycodes) {
         this.title = title;
@@ -63,18 +67,21 @@ public class Window {
         this.vsync = vsync;
         this.fullscreen = fullscreen;
         this.keycodes = keycodes;
+
+        this.windowEventListeners = new ArrayList<>();
+        this.connectedJoysticks = new ArrayList<>();
     }
 
     /**
      * Initializes the window information.
      * */
-    public void initialize() throws GLFWInitializationException {
+    public void initialize() throws WindowInitializationException {
         // Sets the error callback to point to the System.err print stream.
         GLFWErrorCallback.createPrint(System.err).set();
 
         // Uh oh
         if (!glfwInit())
-            throw new GLFWInitializationException("Unable to initialize GLFW");
+            throw new WindowInitializationException("Unable to initialize GLFW");
 
         hasInitialized = true;
 
@@ -110,22 +117,20 @@ public class Window {
 
         // Allows for listeners to recieved key events.
         glfwSetKeyCallback(windowId, (windowId, key, scancode, action, mods) -> {
-            if (scene == null)
-                return;
             switch (action) {
                 case GLFW_RELEASE:
-                    for (int i = 0; i < scene.getKeyListeners().size(); i++) {
-                        scene.getKeyListeners().get(i).keyRelease(this, key, scancode, mods);
+                    for (int i = 0; i < windowEventListeners.size(); i++) {
+                        windowEventListeners.get(i).keyRelease(this, key, scancode, mods);
                     }
                     break;
                 case GLFW_PRESS:
-                    for (int i = 0; i < scene.getKeyListeners().size(); i++) {
-                        scene.getKeyListeners().get(i).keyPress(this, key, scancode, mods);
+                    for (int i = 0; i < windowEventListeners.size(); i++) {
+                        windowEventListeners.get(i).keyPress(this, key, scancode, mods);
                     }
                     break;
                 case GLFW_REPEAT:
-                    for (int i = 0; i < scene.getKeyListeners().size(); i++) {
-                        scene.getKeyListeners().get(i).keyHeld(this, key, scancode, mods);
+                    for (int i = 0; i < windowEventListeners.size(); i++) {
+                        windowEventListeners.get(i).keyHeld(this, key, scancode, mods);
                     }
                     break;
             }
@@ -136,19 +141,15 @@ public class Window {
             this.width = width;
             this.height = height;
             this.resized = true;
-            if (scene == null)
-                return;
-            for (int i = 0; i < scene.getWindowListeners().size(); i++) {
-                scene.getWindowListeners().get(i).resize(this, width, height);
+            for (int i = 0; i < windowEventListeners.size(); i++) {
+                windowEventListeners.get(i).resize(this, width, height);
             }
         });
 
         // Updates listeners when the mouse wheel has changed.
         glfwSetScrollCallback(windowId, (window, xoffset, yoffset) -> {
-            if (scene == null)
-                return;
-            for (int i = 0; i < scene.getMouseListeners().size(); i++) {
-                scene.getMouseListeners().get(i).wheel(this, xoffset, yoffset);
+            for (int i = 0; i < windowEventListeners.size(); i++) {
+                windowEventListeners.get(i).wheel(this, xoffset, yoffset);
             }
         });
 
@@ -157,10 +158,8 @@ public class Window {
             float oldMouseX = this.mouseX, oldMouseY = this.mouseY;
             this.mouseX = (float) mouseX;
             this.mouseY = (float) mouseY;
-            if (scene == null)
-                return;
-            for (int i = 0; i < scene.getMouseListeners().size(); i++) {
-                scene.getMouseListeners().get(i).move(this, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
+            for (int i = 0; i < windowEventListeners.size(); i++) {
+                windowEventListeners.get(i).move(this, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
             }
         });
 
@@ -168,28 +167,24 @@ public class Window {
 
         // Updates the listeners with mouse clicks.
         glfwSetMouseButtonCallback(windowId, (window, button, action, mods) -> {
-            if (scene == null)
-                return;
             switch (action) {
                 case GLFW_RELEASE:
-                    for (int i = 0; i < scene.getMouseListeners().size(); i++) {
-                        scene.getMouseListeners().get(i).release(this, mouseX, mouseY, button);
+                    for (int i = 0; i < windowEventListeners.size(); i++) {
+                        windowEventListeners.get(i).release(this, mouseX, mouseY, button);
                     }
                     break;
                 case GLFW_PRESS:
-                    for (int i = 0; i < scene.getMouseListeners().size(); i++) {
-                        scene.getMouseListeners().get(i).press(this, mouseX, mouseY, button);
+                    for (int i = 0; i < windowEventListeners.size(); i++) {
+                        windowEventListeners.get(i).press(this, mouseX, mouseY, button);
                     }
                     break;
             }
         });
 
         glfwSetCharCallback(windowId, (window, codepoint) -> {
-            if (scene == null)
-                return;
             String characters = String.valueOf(Character.toChars(codepoint));
-            for (int i = 0; i < scene.getCharacterListeners().size(); i++) {
-                scene.getCharacterListeners().get(i).charTyped(this, characters);
+            for (int i = 0; i < windowEventListeners.size(); i++) {
+                windowEventListeners.get(i).charTyped(this, characters);
             }
         });
 
@@ -199,15 +194,15 @@ public class Window {
             if (action == GLFW_CONNECTED) {
                 connectedJoysticks.add(joystick);
 
-                for (JoystickListener joystickListener : this.scene.getJoystickListeners()) {
-                    joystickListener.onJoystickConnected(joystick);
+                for (int i = 0; i < windowEventListeners.size(); i++) {
+                    windowEventListeners.get(i).onJoystickConnected(joystick);
                 }
 
             } else if (action == GLFW_DISCONNECTED) {
                 connectedJoysticks.remove(joystick);
 
-                for (JoystickListener joystickListener : this.scene.getJoystickListeners()) {
-                    joystickListener.onJoystickDisconnected(joystick);
+                for (int i = 0; i < windowEventListeners.size(); i++) {
+                    windowEventListeners.get(i).onJoystickDisconnected(joystick);
                 }
                 joystick.destroy();
             }
@@ -262,7 +257,7 @@ public class Window {
     }
 
     /**
-     *
+     * Sets the icon of this window to the image specified at the path.
      * */
     public void setIcon(String path) {
         IntBuffer w = memAllocInt(1);
@@ -305,6 +300,22 @@ public class Window {
         memFree(comp);
         memFree(h);
         memFree(w);
+    }
+
+    /**
+     * Sets the fullscreen state of this window. Will also have to reset the vsync status.
+     * */
+    public void setFullscreen(boolean fullscreen) {
+        if (fullscreen != this.fullscreen) {
+            this.fullscreen = fullscreen;
+            glfwSetWindowMonitor(windowId, fullscreen ? glfwGetPrimaryMonitor() : NULL, 0, 0, width, height,
+                    GLFW_DONT_CARE);
+            this.setVsync(this.vsync);
+        }
+    }
+
+    public boolean isFullscreen() {
+        return fullscreen;
     }
 
     public List<Joystick> getConnectedJoysticks() {
@@ -495,120 +506,29 @@ public class Window {
     }
 
     /**
-     * Updates the scene that this window
+     * Adds the provided listener to this window.
      * */
-    protected void setScene(Scene scene) {
-        this.scene = scene;
+    public boolean addWindowEventListener(WindowEventListener windowEventListener) {
+        return windowEventListeners.add(windowEventListener);
     }
 
     /**
-     * @return The transformable
+     * Removes the provided listener from this window.
+     * */
+    public boolean removeWindowEventListener(WindowEventListener windowEventListener) {
+        return windowEventListeners.remove(windowEventListener);
+    }
+
+    /**
+     * @return A {@link Transformable} with the mouse positions.
      * */
     public Transformable getMousePosition() {
-        mouse.setPosition(getMouseX(), getMouseY(), 0F);
-        return mouse;
+        mouseTransform.setPosition(getMouseX(), getMouseY(), 0F);
+        return mouseTransform;
     }
 
     public Keycodes getKeycodes() {
         return keycodes;
-    }
-
-    /**
-     * Listens for the resizing of a window.
-     * */
-    public interface WindowListener {
-        /**
-         * Invoked when the window is resized.
-         * */
-        void resize(Window window, int width, int height);
-    }
-
-    /**
-     * Listens for mouse movement, mouse button presses and
-     * releases, and mouse wheels within a window.
-     * */
-    public interface MouseListener {
-        /**
-         * Invoked when the mouse moves.
-         * */
-        void move(Window window, float newMouseX, float newMouseY, float oldMouseX, float oldMouseY);
-
-        /**
-         * Invoked when a mouse button is pressed.
-         * */
-        void press(Window window, float mouseX, float mouseY, int buttonId);
-
-        /**
-         * Invoked when a mouse button is released.
-         * */
-        void release(Window window, float mouseX, float mouseY, int buttonId);
-
-        /**
-         * Invoked when the mouse wheel moves.
-         * */
-        void wheel(Window window, double xoffset, double yoffset);
-    }
-
-    /**
-     * Listens for key presses/releases within a window.
-     * */
-    public interface KeyListener {
-        /**
-         * Invoked when a key is pressed.
-         * */
-        void keyPress(Window window, int key, int scancode, int mods);
-
-        /**
-         * Invoked when a key is released.
-         * */
-        void keyRelease(Window window, int key, int scancode, int mods);
-
-        /**
-         * Invoked when a key has been held down.
-         * */
-        default void keyHeld(Window window, int key, int scancode, int mods) {}
-    }
-
-    /**
-     * Listens for characters being typed within a window.
-     * */
-    public interface CharacterListener {
-        /**
-         * Invoked when a character is typed.
-         * */
-        void charTyped(Window window, String characters);
-    }
-
-    public interface JoystickListener {
-
-        void onJoystickConnected(Joystick joystick);
-
-        void onJoystickDisconnected(Joystick joystick);
-    }
-
-    /**
-     * This exception is thrown when GLFW is unable to initialize.
-     * */
-    public class GLFWInitializationException extends RuntimeException {
-
-        public GLFWInitializationException() {
-        }
-
-        public GLFWInitializationException(String message) {
-            super(message);
-        }
-
-        public GLFWInitializationException(String message, Throwable cause) {
-            super(message, cause);
-        }
-
-        public GLFWInitializationException(Throwable cause) {
-            super(cause);
-        }
-
-        public GLFWInitializationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-            super(message, cause, enableSuppression, writableStackTrace);
-        }
     }
 
 }

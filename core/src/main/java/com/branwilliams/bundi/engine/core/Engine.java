@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.core;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.core.scenes.ErrorScene;
+import com.branwilliams.bundi.engine.core.window.Window;
 import org.jetbrains.annotations.NotNull;
 import com.branwilliams.bundi.engine.Profiler;
 import org.lwjgl.openal.AL;
@@ -30,7 +31,7 @@ public class Engine implements Runnable {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    private final Profiler profiler = new Profiler("Engine");
+    private final Profiler profiler = new Profiler(getClass());
 
     private final EngineContext context;
 
@@ -45,7 +46,7 @@ public class Engine implements Runnable {
 
     // ---------------------------------------
 
-    // Set true when the engine is ran.
+    // Set true when the game loop begins.
     private boolean running = false;
 
     // Rate at which the fixedUpdate function is invoked. In invocations/second.
@@ -87,7 +88,7 @@ public class Engine implements Runnable {
     public void run() {
         try {
             window.initialize();
-            running = true;
+            init();
             loop();
             closeScenes();
             alcDestroyContext(alContext);
@@ -104,23 +105,30 @@ public class Engine implements Runnable {
     }
 
     /**
-     * Main game loop.
+     * Setup debug message callback, create OpenAL context, log some info.
      * */
-    private void loop() throws Exception {
+    private void init() {
         glCapabilities = GL.createCapabilities();
 
-        ErrorUtils.setupDebugMessageCallback(log);
+        OpenGLDebugMessageLogger.setupDebugMessageCallback(log);
+
+        createALContext();
 
         log.info("OpenGL version: " + glGetString(GL_VERSION));
         log.info("Graphics card: " + glGetString(GL_RENDERER));
         log.info("Graphics card vendor: " + glGetString(GL_VENDOR));
         log.info("Max texture (1D/2D) size: " + glGetInteger(GL_MAX_TEXTURE_SIZE));
 
-        createALContext();
-
         // Set the clear color and initial viewport dimensions.
         glClearColor(0F, 0F, 0F, 0F);
         glViewport(0, 0, window.getWidth(), window.getHeight());
+    }
+
+    /**
+     * Main game loop.
+     * */
+    private void loop() throws Exception {
+        running = true;
 
         // Time between updates. Used to ensure the update function does not rely on frame rate.
         double time = window.getTime();
@@ -263,7 +271,7 @@ public class Engine implements Runnable {
                 }
                 // Replace the current scene.
                 current = next;
-                window.setScene(current);
+                window.setWindowEventListeners(current);
                 next = null;
 
                 // Replace the renderer and event manager if necessary. Play the scene.
@@ -286,18 +294,18 @@ public class Engine implements Runnable {
     }
 
     /**
-     * @return True if the current scene is not null.
-     * */
-    private boolean hasCurrentScene() {
-        return current != null;
-    }
-
-    /**
      * Sets the scene to an error scene whenever an exception is thrown from a provided scene.
      * */
     private void handleException(Exception exception) {
         exception.printStackTrace();
         setScene(new ErrorScene(exception));
+    }
+
+    /**
+     * @return True if the current scene is not null.
+     * */
+    private boolean hasCurrentScene() {
+        return current != null;
     }
 
     /**
@@ -308,6 +316,13 @@ public class Engine implements Runnable {
         if (scene == null)
             throw new NullPointerException("Scene cannot be null!");
         this.next = scene;
+    }
+
+    /**
+     * Stops the game loop the following frame. Simply setting 'running = false'.
+     * */
+    public void stop() {
+        this.running = false;
     }
 
     /**
@@ -338,13 +353,6 @@ public class Engine implements Runnable {
      * */
     public boolean isRunning() {
         return running;
-    }
-
-    /**
-     * Stops the game loop the following frame. Simply setting 'running = false'.
-     * */
-    public void stop() {
-        this.running = false;
     }
 
     public double getUpdateInterval() {
@@ -385,10 +393,12 @@ public class Engine implements Runnable {
         return alCapabilities;
     }
 
+
+
     /**
      * This utility class is used to translate error codes from OpenGL to their plain English counterparts.
      * */
-    private static class ErrorUtils {
+    private static class OpenGLDebugMessageLogger {
 
         private static void setupDebugMessageCallback(Logger log) {
             GLUtil.setupDebugMessageCallback();

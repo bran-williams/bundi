@@ -2,7 +2,7 @@ package com.branwilliams.bundi.water.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
@@ -13,9 +13,6 @@ import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.bundi.engine.util.ColorUtils;
-import com.branwilliams.bundi.water.Water;
-import com.branwilliams.bundi.water.pipeline.shaders.WaterShaderProgram;
 
 import java.awt.Color;
 import java.util.function.Supplier;

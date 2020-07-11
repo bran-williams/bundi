@@ -2,7 +2,7 @@ package com.branwilliams.demo.template;
 
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
@@ -27,7 +27,7 @@ public class TemplateScene extends AbstractScene {
     private boolean wireframe;
 
     public TemplateScene() {
-        super("com.branwilliams.demo.template");
+        super("template");
     }
 
     @Override

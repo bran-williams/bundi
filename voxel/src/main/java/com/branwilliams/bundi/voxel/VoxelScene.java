@@ -2,6 +2,7 @@ package com.branwilliams.bundi.voxel;
 
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.context.EngineContext;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.shader.*;
@@ -159,7 +160,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
         Path assetDirectory = getAssetDirectory(engine.getContext());
         JsonLoader jsonLoader = new JsonLoader(assetDirectory);
-        jsonLoader.initialize(engine.getWindow().getKeycodes());
+        jsonLoader.initialize(window.getKeycodes());
 
         loadVoxelData(jsonLoader, assetDirectory, Paths.get("voxel_properties_hd.json"),
                 Paths.get("default_textures.json"));
@@ -167,6 +168,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
         itemRegistry = new ItemRegistry(voxelRegistry);
 
         loadSettings(jsonLoader);
+        applySettings(engine, window);
 
         voxelMeshBuilder = new VoxelMeshBuilderImpl(voxelRegistry, texturePack);
         voxelChunkMeshBuilder = new VoxelChunkMeshBuilderImpl(voxelRegistry, texturePack);
@@ -279,6 +281,12 @@ public class VoxelScene extends AbstractScene implements Lockable {
         playerControls = settingsLoader.loadPlayerControls();
         gameSettings = settingsLoader.loadGameSettings();
     }
+
+    private void applySettings(Engine engine, Window window) {
+        window.setVsync(gameSettings.isVsync());
+        window.setFullscreen(gameSettings.isFullscreen());
+    }
+
 
     public void loadWorld() {
         if (voxelWorld != null)

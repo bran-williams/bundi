@@ -2,7 +2,7 @@ package com.branwilliams.bundi.engine.core.pipeline;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 
 /**
  * Created by Brandon Williams on 9/19/2018.

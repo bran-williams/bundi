@@ -2,7 +2,7 @@ package com.branwilliams.bundi.engine.ecs;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 
 import java.util.*;

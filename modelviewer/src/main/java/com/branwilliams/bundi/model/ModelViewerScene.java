@@ -2,7 +2,8 @@ package com.branwilliams.bundi.model;
 
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.material.Material;
@@ -27,7 +28,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
  * @author Brandon
  * @since August 31, 2019
  */
-public class ModelViewerScene extends AbstractScene implements Window.KeyListener {
+public class ModelViewerScene extends AbstractScene implements KeyListener {
 
     private final Vector3f cameraPosition = new Vector3f();
 

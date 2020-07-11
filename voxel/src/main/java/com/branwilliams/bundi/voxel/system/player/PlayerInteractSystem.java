@@ -6,14 +6,13 @@ import com.branwilliams.bundi.engine.audio.AudioSource;
 import com.branwilliams.bundi.engine.audio.Sound;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Lockable;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.MouseListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.VoxelScene;
-import com.branwilliams.bundi.voxel.math.AABB;
-import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.voxels.Voxels;
 import org.joml.Vector3f;
 
@@ -21,7 +20,7 @@ import org.joml.Vector3f;
  * @author Brandon
  * @since August 10, 2019
  */
-public class PlayerInteractSystem extends AbstractSystem implements Window.MouseListener {
+public class PlayerInteractSystem extends AbstractSystem implements MouseListener {
 
     /** This is the number of updates that this system will wait for while the mouse button is held down. */
     private static final int TICKS_PER_INTERACTION = 15;

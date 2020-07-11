@@ -3,6 +3,8 @@ package com.branwilliams.imageviewer;
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 import com.branwilliams.bundi.gui.api.components.Button;
@@ -24,7 +26,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since December 27, 2019
  */
-public class GallerySelectorScene extends AbstractScene implements Window.KeyListener {
+public class GallerySelectorScene extends AbstractScene implements KeyListener {
 
     private static final String GALLERY_DIR = "temp";
 

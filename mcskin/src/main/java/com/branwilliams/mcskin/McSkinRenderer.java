@@ -2,8 +2,7 @@ package com.branwilliams.mcskin;
 
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
-import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
+import com.branwilliams.bundi.engine.core.window.Window;
 
 import static org.lwjgl.opengl.GL11.*;
 

@@ -3,6 +3,8 @@ package com.branwilliams.imageviewer;
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
+import com.branwilliams.bundi.engine.core.window.Window;
+import com.branwilliams.bundi.engine.core.window.WindowListener;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.texture.Texture;
@@ -19,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * @author Brandon
  * @since December 27, 2019
  */
-public class ImageViewerScene extends AbstractScene implements Window.WindowListener {
+public class ImageViewerScene extends AbstractScene implements WindowListener {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 

@@ -1,5 +1,7 @@
 package com.branwilliams.bundi.engine.core;
 
+import com.branwilliams.bundi.engine.core.window.Window;
+
 /**
  * Performs the rendering stage of the engine's update loop. <br/>
  * The {@link Renderer#render(Engine, Window, double)} function is invoked every loop after the update functions of the current

@@ -2,10 +2,11 @@ package com.branwilliams.bundi.gui.pipeline;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
+import com.branwilliams.bundi.engine.core.window.WindowListener;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
@@ -18,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
  * @author Brandon
  * @since November 24, 2019
  */
-public class GuiRenderPass <CurrentContext extends RenderContext> extends RenderPass<CurrentContext> implements Window.WindowListener {
+public class GuiRenderPass <CurrentContext extends RenderContext> extends RenderPass<CurrentContext> implements WindowListener {
 
     private final Supplier<GuiScreenManager> guiScreenManager;
 

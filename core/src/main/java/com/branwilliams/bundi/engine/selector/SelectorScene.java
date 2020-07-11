@@ -3,7 +3,8 @@ package com.branwilliams.bundi.engine.selector;
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.context.Ignore;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @since February 26, 2019
  */
 @Ignore
-public class SelectorScene extends AbstractScene implements Window.KeyListener {
+public class SelectorScene extends AbstractScene implements KeyListener {
 
     private Engine engine;
 

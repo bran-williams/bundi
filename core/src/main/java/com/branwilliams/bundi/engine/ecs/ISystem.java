@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.ecs;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 
 /**
  * A System performs any logic on a list of entities who have the components that satisfy the systems component matcher.

@@ -2,7 +2,7 @@ package com.branwilliams.fog.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
@@ -16,12 +16,9 @@ import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.fog.pipeline.shaders.TemplateShaderPatches;
-import org.joml.Vector4f;
+import org.joml.Matrix4f;
 
-import java.awt.*;
 import java.util.function.Supplier;
-
-import static com.branwilliams.bundi.engine.util.ColorUtils.toVector4;
 
 
 /**
@@ -47,6 +44,8 @@ public class TemplateRenderPass extends RenderPass<RenderContext> implements ICo
 
     private final MaterialFormat materialFormat;
 
+    private final Matrix4f modelMatrix;
+
     public TemplateRenderPass(Scene scene, Supplier<Camera> camera, Supplier<Fog> fog,
                               Supplier<DirectionalLight> light, VertexFormat vertexFormat,
                               MaterialFormat materialFormat) {
@@ -56,6 +55,7 @@ public class TemplateRenderPass extends RenderPass<RenderContext> implements ICo
         this.light = light;
         this.vertexFormat = vertexFormat;
         this.materialFormat = materialFormat;
+        this.modelMatrix = new Matrix4f();
         scene.getEs().addMatcher(this);
     }
 
@@ -84,7 +84,7 @@ public class TemplateRenderPass extends RenderPass<RenderContext> implements ICo
             Transformable transformable = entity.getComponent(Transformable.class);
             Material material = entity.getComponent(Material.class);
 
-            TemplateShaderPatches.setModelMatrix(shaderProgram, transformable);
+            TemplateShaderPatches.setModelMatrix(shaderProgram, transformable, modelMatrix);
 
             MaterialBinder.bindMaterialTextures(material);
             MaterialBinder.setMaterialUniforms(shaderProgram, material, material.getMaterialFormat(), materialName);

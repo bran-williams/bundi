@@ -28,7 +28,7 @@ public class OptionsGuiScreen extends VoxelGuiScreen {
             boolean state = !scene.getGameSettings().isPlayMusic();
 
             scene.getGameSettings().setPlayMusic(state);
-            playMusicCheckbox.setEnabled(state);
+            checkbox.setEnabled(state);
 
             if (state) {
                 scene.getVoxelSoundManager().getMusicSource().play();
@@ -44,12 +44,24 @@ public class OptionsGuiScreen extends VoxelGuiScreen {
             boolean state = !scene.getWindow().isVsync();
 
             scene.getGameSettings().setVsync(state);
-            toggleVsync.setEnabled(state);
+            checkbox.setEnabled(state);
 
             scene.getWindow().setVsync(state);
             return true;
         }));
 
+        Checkbox toggleFullscreen = containerManager.getByTag("toggle_fullscreen");
+        toggleFullscreen.setEnabled(scene.getWindow().isFullscreen());
+        toggleFullscreen.onPressed(((checkbox, clickAction) -> {
+            boolean state = !scene.getWindow().isFullscreen();
+
+            scene.getGameSettings().setFullscreen(state);
+            checkbox.setEnabled(scene.getWindow().isFullscreen());
+
+            scene.getWindow().setFullscreen(state);
+
+            return true;
+        }));
 
         Slider slider = containerManager.getByTag("music_volume_slider");
 

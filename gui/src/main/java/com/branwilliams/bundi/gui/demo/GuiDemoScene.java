@@ -2,7 +2,8 @@ package com.branwilliams.bundi.gui.demo;
 
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.Projection;
@@ -15,13 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F3;
 
 /**
  * @author Brandon
  * @since February 05, 2020
  */
-public class GuiDemoScene extends AbstractScene implements Window.KeyListener {
+public class GuiDemoScene extends AbstractScene implements KeyListener {
 
     private static final String UI_FILE = "ui/demo-menu.xml";
 

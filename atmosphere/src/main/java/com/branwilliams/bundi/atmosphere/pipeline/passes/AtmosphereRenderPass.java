@@ -2,7 +2,7 @@ package com.branwilliams.bundi.atmosphere.pipeline.passes;
 
 import com.branwilliams.bundi.atmosphere.pipeline.shaders.AtmosphereShaderProgram;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;

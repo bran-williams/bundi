@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.engine.shader;
 
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import org.joml.Matrix4f;
 
 /**

@@ -50,7 +50,7 @@ public class ChunkShaderProgram extends ShaderProgram {
 
         this.createUniform("fogDensity");
         this.createUniform("skyColor");
-        this.createUniform("sunColor");
+//        this.createUniform("sunColor");
 
 //        this.createUniform("fogColor");
 
@@ -79,7 +79,7 @@ public class ChunkShaderProgram extends ShaderProgram {
     public void setAtmosphere(Atmosphere atmosphere) {
         this.setUniform("fogDensity", atmosphere.getFog().getDensity());
         this.setUniform("skyColor", atmosphere.getSkyColor());
-        this.setUniform("sunColor", atmosphere.getSunColor());
+//        this.setUniform("sunColor", atmosphere.getSunColor());
     }
 
     public void setProjectionMatrix(Projection projection) {

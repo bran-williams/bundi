@@ -2,7 +2,8 @@ package com.branwilliams.bundi.pbr;
 
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
@@ -25,14 +26,13 @@ import org.joml.Vector3f;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F12;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
 /**
  * @author Brandon
  * @since August 31, 2019
  */
-public class PbrScene extends AbstractScene implements Window.KeyListener {
+public class PbrScene extends AbstractScene implements KeyListener {
 
     private final Vector3f cameraPosition = new Vector3f(0F, 0F, 0F);
 
@@ -167,8 +167,6 @@ public class PbrScene extends AbstractScene implements Window.KeyListener {
 
             nextMaterial();
             loadMaterial();
-        } else if (key == GLFW_KEY_F12) {
-            textureLoader.screenshot();
         }
     }
 

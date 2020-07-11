@@ -1,7 +1,8 @@
 package com.branwilliams.bundi.voxel.system.player;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
@@ -14,7 +15,7 @@ import com.branwilliams.bundi.voxel.render.gui.screens.PauseGuiScreen;
 /**
  *
  * */
-public class PlayerPauseSystem extends AbstractSystem implements Window.KeyListener {
+public class PlayerPauseSystem extends AbstractSystem implements KeyListener {
 
     private final VoxelScene scene;
 

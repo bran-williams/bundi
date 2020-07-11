@@ -1,7 +1,9 @@
 package com.branwilliams.cubes.system;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.MouseListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
@@ -20,7 +22,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since January 25, 2020
  */
-public class PlayerInteractSystem extends AbstractSystem implements Window.KeyListener, Window.MouseListener {
+public class PlayerInteractSystem extends AbstractSystem implements KeyListener, MouseListener {
 
     private final CubesScene scene;
 

@@ -3,7 +3,7 @@ package com.branwilliams.bundi.engine.util;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformable;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import java.util.Random;
 import org.joml.*;
 

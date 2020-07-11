@@ -2,7 +2,7 @@ package com.branwilliams.bundi.voxel.render;
 
 import com.branwilliams.bundi.engine.core.AbstractRenderer;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderPipeline;
 

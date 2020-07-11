@@ -1,9 +1,10 @@
 package com.branwilliams.bundi.gui.api;
 
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
+import com.branwilliams.bundi.engine.core.window.WindowListener;
 
-public class ScreenWidget extends Container implements Window.WindowListener {
+public class ScreenWidget extends Container implements WindowListener {
 
     public ScreenWidget(Scene scene, Window window) {
         super();

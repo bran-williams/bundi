@@ -36,8 +36,8 @@ public class TemplateShaderPatches {
         shaderBuilder.addShaderPatches(getDirectionalLightShaderPatches(lightName, materialFormat, materialName));
 
         ShaderProgram shaderProgram = shaderBuilder
-                .vertexShader(IOUtils.readFile(directory, "fog/shaders/com.branwilliams.demo.template/vertexShader.vert", null))
-                .fragmentShader(IOUtils.readFile(directory, "fog/shaders/com.branwilliams.demo.template/fragmentShader.frag", null))
+                .vertexShader(IOUtils.readFile(directory, "fog/shaders/template/vertexShader.vert", null))
+                .fragmentShader(IOUtils.readFile(directory, "fog/shaders/template/fragmentShader.frag", null))
                 .build();
 
         shaderProgram.bind();
@@ -89,8 +89,8 @@ public class TemplateShaderPatches {
         shaderProgram.setUniform("viewMatrix", camera.toViewMatrix());
     }
 
-    public static void setModelMatrix(ShaderProgram shaderProgram, Transformable transformable) {
-        shaderProgram.setUniform("modelMatrix", transformable.toMatrix(new Matrix4f()));
+    public static void setModelMatrix(ShaderProgram shaderProgram, Transformable transformable, Matrix4f modelMatrix) {
+        shaderProgram.setUniform("modelMatrix", transformable.toMatrix(modelMatrix));
     }
 
     public static void setViewPos(ShaderProgram shaderProgram, Camera camera) {

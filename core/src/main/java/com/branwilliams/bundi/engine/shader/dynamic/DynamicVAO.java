@@ -353,19 +353,25 @@ public class DynamicVAO {
     /**
      * Draws a textured rectangle at the provided positions.
      * */
-    public void drawRect(float x, float y, float x1, float y1, float u, float v, float s, float t, float r, float g, float b, float a) {
+    public void drawRect(float x, float y, float x1, float y1,
+                         float u, float v, float s, float t,
+                         float r, float g, float b, float a) {
         begin();
         addRect(x, y, x1, y1, u, v, s, t, r, g, b, a);
         draw();
     }
 
-    public void drawRect(float x, float y, float x1, float y1, float u, float v, float s, float t, Color color) {
+    public void drawRect(float x, float y, float x1, float y1,
+                         float u, float v, float s, float t,
+                         Color color) {
         begin();
         addRect(x, y, x1, y1, u, v, s, t, color);
         draw();
     }
 
-    public void drawRect(float x, float y, float x1, float y1, float u, float v, float s, float t, int color) {
+    public void drawRect(float x, float y, float x1, float y1,
+                         float u, float v, float s, float t,
+                         int color) {
         begin();
         addRect(x, y, x1, y1, u, v, s, t, color);
         draw();
@@ -382,7 +388,9 @@ public class DynamicVAO {
         addLine(x, y, x1, y1);
         draw(GL_LINES);
     }
-    public void addLine(float x, float y, float x1, float y1, float u, float v, float s, float t, int color) {
+    public void addLine(float x, float y, float x1, float y1,
+                        float u, float v, float s, float t,
+                        int color) {
         float z = 0F;
 
         position(x, y, z).texture(u, v).color(color).endVertex();
@@ -404,7 +412,8 @@ public class DynamicVAO {
         position(x1, y1, z).endVertex();
     }
 
-    public void addLine(float x, float y, float x1, float y1, float r, float g, float b, float a) {
+    public void addLine(float x, float y, float x1, float y1,
+                        float r, float g, float b, float a) {
         float z = 0F;
 
         position(x, y, z).color(r, g, b, a).endVertex();
@@ -422,7 +431,8 @@ public class DynamicVAO {
         position(x1, y, z).color(color).endVertex();
     }
 
-    public void addRect(float x, float y, float x1, float y1, float u, float v, float s, float t) {
+    public void addRect(float x, float y, float x1, float y1,
+                        float u, float v, float s, float t) {
         float z = 0F;
 
         position(x1, y, z).texture(s, v).endVertex();
@@ -433,14 +443,18 @@ public class DynamicVAO {
         position(x1, y, z).texture(s, v).endVertex();
     }
 
-    public void addRect(float x, float y, float x1, float y1, float u, float v, float s, float t, Color color) {
+    public void addRect(float x, float y, float x1, float y1,
+                        float u, float v, float s, float t,
+                        Color color) {
         addRect(x, y, x1, y1, u, v, s, t, color.getRGB());
     }
 
         /**
          * Adds a textured rectangle at the provided positions to this dynamicVao.
          * */
-    public void addRect(float x, float y, float x1, float y1, float u, float v, float s, float t, int color) {
+    public void addRect(float x, float y, float x1, float y1,
+                        float u, float v, float s, float t,
+                        int color) {
         float z = 0F;
         position(x1, y, z).texture(s, v).color(color).endVertex();
         position(x, y, z).texture(u, v).color(color).endVertex();
@@ -453,7 +467,9 @@ public class DynamicVAO {
     /**
      * Adds a textured rectangle at the provided positions to this dynamicVao.
      * */
-    public void addRect(float x, float y, float x1, float y1, float u, float v, float s, float t, float r, float g, float b, float a) {
+    public void addRect(float x, float y, float x1, float y1,
+                        float u, float v, float s, float t,
+                        float r, float g, float b, float a) {
         float z = 0F;
         position(x1, y, z).texture(s, v).color(r, g, b, a).endVertex();
         position(x, y, z).texture(u, v).color(r, g, b, a).endVertex();
@@ -467,7 +483,9 @@ public class DynamicVAO {
     /**
      * Adds a textured rectangle at the provided positions to this dynamicVao.
      * */
-    public void addGradientRect(float x, float y, float x1, float y1, float u, float v, float s, float t, int topColor, int bottomColor) {
+    public void addGradientRect(float x, float y, float x1, float y1,
+                                float u, float v, float s, float t,
+                                int topColor, int bottomColor) {
         float z = 0F;
         position(x1, y, z).texture(s, v).color(topColor).endVertex();
         position(x, y, z).texture(u, v).color(topColor).endVertex();
@@ -498,28 +516,38 @@ public class DynamicVAO {
      * Each vertex is assigned a color when provided to this dynamicVao, this function modifies that color.
      * */
     public DynamicVAO color(Color color) {
-        return this.color((float) color.getRed() / 255F, (float) color.getGreen() / 255F, (float) color.getBlue() / 255F, (float) color.getAlpha() / 255F);
+        return this.color((float) color.getRed() / 255F,
+                (float) color.getGreen() / 255F,
+                (float) color.getBlue() / 255F,
+                (float) color.getAlpha() / 255F);
     }
 
     /**
      * Each vertex is assigned a color when provided to this dynamicVao, this function modifies that color.
      * */
     public DynamicVAO color(Color color, float alpha) {
-        return this.color((float) color.getRed() / 255F, (float) color.getGreen() / 255F, (float) color.getBlue() / 255F, alpha);
+        return this.color((float) color.getRed() / 255F,
+                (float) color.getGreen() / 255F,
+                (float) color.getBlue() / 255F, alpha);
     }
 
     /**
      * Each vertex is assigned a color when provided to this dynamicVao, this function modifies that color.
      * */
     public DynamicVAO color(int color) {
-        return this.color((float) (color >> 16 & 255) / 255F, (float) (color >> 8 & 255) / 255F, (float) (color & 255) / 255F, (color >> 24 & 0xff) / 255F);
+        return this.color((float) (color >> 16 & 255) / 255F,
+                (float) (color >> 8 & 255) / 255F,
+                (float) (color & 255) / 255F,
+                (color >> 24 & 0xff) / 255F);
     }
 
     /**
      * Each vertex is assigned a color when provided to this dynamicVao, this function modifies that color.
      * */
     public DynamicVAO color(int color, float alpha) {
-        return this.color((float) (color >> 16 & 255) / 255F, (float) (color >> 8 & 255) / 255F, (float) (color & 255) / 255F, alpha);
+        return this.color((float) (color >> 16 & 255) / 255F,
+                (float) (color >> 8 & 255) / 255F,
+                (float) (color & 255) / 255F, alpha);
     }
 
     public int getVertexCount() {

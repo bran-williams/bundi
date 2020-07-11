@@ -49,6 +49,11 @@ public class LaunchConfiguration {
     public String tempDirectory;
 
     /**
+     * This is the directory for storing screenshots.
+     * */
+    public String screenshotDirectory;
+
+    /**
     * This is the class-path of the first scene to launch.
     * */
     public String launchScene;
@@ -58,4 +63,11 @@ public class LaunchConfiguration {
      * */
     public String sceneDirectory;
 
+    /**
+     * Some default values here...
+     * */
+    public LaunchConfiguration() {
+        this.screenshotDirectory = "screenshots";
+        this.keycodes = "keycodes.json";
+    }
 }

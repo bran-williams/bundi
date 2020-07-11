@@ -18,7 +18,7 @@ public class GBuffer extends FrameBufferObject {
         super(width, height);
         this.bind();
 
-        this.albedo = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR8);
+        this.albedo = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR16F);
         this.albedo.bind();
         this.albedo.nearestFilter();
         this.bindTexture(albedo, GL_FRAMEBUFFER, 0);

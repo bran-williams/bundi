@@ -1,23 +1,18 @@
 package com.branwilliams.bundi.voxel.render.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
-import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
-import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
 import com.branwilliams.bundi.engine.shader.ShaderUniformException;
 import com.branwilliams.bundi.engine.skybox.Skybox;
-import com.branwilliams.bundi.engine.skybox.SkyboxShaderProgram;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.render.pipeline.shaders.AtmosphereShaderProgram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.function.Supplier;
 
 /**
  * Created by Brandon Williams on 11/28/2018.

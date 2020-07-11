@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.engine.core;
 
+import com.branwilliams.bundi.engine.core.window.*;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.tukio.EventManager;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created by Brandon Williams on 12/27/2017.
  */
-public interface Scene extends Nameable, Destructible, Updateable {
+public interface Scene extends Nameable, Destructible, Updateable, WindowEventListener {
 
     /**
      * Invoked to initialize the scene. This is only invoked once, whenever the scene is first set. This always occurs
@@ -65,36 +66,6 @@ public interface Scene extends Nameable, Destructible, Updateable {
      * scene.
      * */
     EventManager getEventManager();
-
-    List<Window.WindowListener> getWindowListeners();
-
-    void addWindowListener(Window.WindowListener windowListener);
-
-    boolean removeWindowListener(Window.WindowListener windowListener);
-
-    List<Window.MouseListener> getMouseListeners();
-
-    void addMouseListener(Window.MouseListener mouseListener);
-
-    boolean removeMouseListener(Window.MouseListener mouseListener);
-
-    List<Window.KeyListener> getKeyListeners();
-
-    void addKeyListener(Window.KeyListener keyListener);
-
-    boolean removeKeyListener(Window.KeyListener keyListener);
-
-    List<Window.CharacterListener> getCharacterListeners();
-
-    void addCharacterListener(Window.CharacterListener characterListener);
-
-    boolean removeCharacterListener(Window.CharacterListener characterListener);
-
-    List<Window.JoystickListener> getJoystickListeners();
-
-    void addJoystickListener(Window.JoystickListener joystickListener);
-
-    boolean removeJoystickListener(Window.JoystickListener joystickListener);
 
     EntitySystemManager getEs();
 

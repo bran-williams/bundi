@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.voxel.render.gui;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 import com.branwilliams.bundi.gui.screen.ContainerScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreen;

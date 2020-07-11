@@ -2,7 +2,9 @@ package com.branwilliams.fog;
 
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.screenshot.ScreenshotCapturer;
+import com.branwilliams.bundi.engine.core.window.MouseListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
@@ -13,19 +15,13 @@ import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.primitive.CubeMesh;
 import com.branwilliams.bundi.engine.mesh.primitive.PlaneMesh;
 import com.branwilliams.bundi.engine.mesh.primitive.SphereMesh;
-import com.branwilliams.bundi.engine.model.Model;
-import com.branwilliams.bundi.engine.model.ModelLoader;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.*;
-import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.fog.pipeline.passes.AtmosphereRenderPass;
-import com.branwilliams.fog.pipeline.passes.CubesRenderPass;
-import com.branwilliams.fog.pipeline.passes.TemplateModelRenderPass;
 import com.branwilliams.fog.pipeline.passes.TemplateRenderPass;
 import com.branwilliams.fog.systems.RotationAnimationSystem;
 import org.joml.Planef;
@@ -36,7 +32,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import static com.branwilliams.bundi.engine.util.ColorUtils.toVector4;
 import static org.lwjgl.glfw.GLFW.*;
@@ -45,7 +40,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since November 30, 2019
  */
-public class FogScene extends AbstractScene implements Window.MouseListener {
+public class FogScene extends AbstractScene implements MouseListener {
 
     private static final String UI_INGAME_HUD = "ui/fog-ingame-hud.xml";
 
@@ -99,18 +94,18 @@ public class FogScene extends AbstractScene implements Window.MouseListener {
         es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 16F));
         es.initSystems(engine, window);
 
-        Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
+        Projection worldProjection = new Projection(window, 90, 0.01F, 1000F);
         RenderContext renderContext = new RenderContext(worldProjection);
 
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addLast(new EnableWireframeRenderPass(this::isWireframe));
         renderPipeline.addLast(new AtmosphereRenderPass<>(this::getCamera, this::getAtmosphere, this::getSkydome));
 //        renderPipeline.addLast(new CubesRenderPass(this, this::getCamera, this::getFog));
-        renderPipeline.addLast(new TemplateRenderPass(this, this::getCamera, this::getFog, this::getSun,
-                VertexFormat.POSITION_UV_NORMAL, MaterialFormat.DIFFUSE_SPECULAR));
+//        renderPipeline.addLast(new TemplateRenderPass(this, this::getCamera, this::getFog, this::getSun,
+//                VertexFormat.POSITION_UV_NORMAL, MaterialFormat.DIFFUSE_SPECULAR));
         renderPipeline.addLast(new TemplateRenderPass(this, this::getCamera, this::getFog, this::getSun,
                 VertexFormat.POSITION_UV_NORMAL, MaterialFormat.DIFFUSE_VEC4));
-        renderPipeline.addLast(new TemplateModelRenderPass(this, this::getCamera, this::getFog, this::getSun));
+//        renderPipeline.addLast(new TemplateModelRenderPass(this, this::getCamera, this::getFog, this::getSun));
 
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
         renderPipeline.addLast(new GuiRenderPass<>(this, this::getGuiScreenManager));
@@ -137,8 +132,8 @@ public class FogScene extends AbstractScene implements Window.MouseListener {
         Vector4f sunColor = toVector4(new Color(0xFFFFE5B2)); // new Vector4f(1.0F, 0.9F, 0.7F, 1.0F);
 
         sun = new DirectionalLight(
-                new Vector3f(-0.2F, -1.0F, -0.3F), // direction
-                new Vector3f(0.2F),                    // ambient
+                new Vector3f(0F, -1.0F, 0F), // direction
+                new Vector3f(0.3F),                    // ambient
                 new Vector3f(sunColor.x, sunColor.y, sunColor.z),                    // diffuse
                 new Vector3f(sunColor.x, sunColor.y, sunColor.z));                   // specular
 
@@ -196,7 +191,7 @@ public class FogScene extends AbstractScene implements Window.MouseListener {
         es.entity("cube3").component(
                 cubeMesh0,
                 material2,
-                new Transformation().position(10, 3, -40 * 0.7F).scale(7)
+                new Transformation().position(10, 3, -40 * 0.7F).scale(3)
         ).build();
 
         Material boxMaterial = createDiffuseSpecularMaterial(textureLoader,
@@ -208,7 +203,7 @@ public class FogScene extends AbstractScene implements Window.MouseListener {
                 "textures/logl/floor_specular.jpg");
 
         PlaneMesh floorMesh = new PlaneMesh(VertexFormat.POSITION_UV_NORMAL,
-                new Planef(0F, -1F, 0F, 1F), 60, 60);
+                new Planef(0F, 1F, 0F, 1F), 6, 6);
 
         planeFacingDirection.reflect(PlaneMesh.UP);
 
@@ -243,7 +238,7 @@ public class FogScene extends AbstractScene implements Window.MouseListener {
 
         es.entity("cube7").component(
                 cubeMesh0,
-                new Transformation().position(10, 3, 40 * 0.7F).scale(7),
+                new Transformation().position(10, 3, 40 * 0.7F).scale(3),
                 boxMaterial
         ).build();
 
@@ -251,7 +246,7 @@ public class FogScene extends AbstractScene implements Window.MouseListener {
                 cubeMesh0,
                 new Transformation().position(-10, 2, 20 * 0.5F).scale(5),
                 boxMaterial,
-                new RotationAnimation(new Vector3f(0F, 1F, 0F), 3F)
+                new RotationAnimation(new Vector3f(1F, 0F, 0F), 0.3F)
         ).build();
 
 

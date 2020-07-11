@@ -1,7 +1,7 @@
 package com.branwilliams.imageviewer.pipeline;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
@@ -11,9 +11,6 @@ import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
 import com.branwilliams.bundi.engine.shader.ShaderUniformException;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
-import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.imageviewer.ImageViewerScene;
 
 import java.awt.*;

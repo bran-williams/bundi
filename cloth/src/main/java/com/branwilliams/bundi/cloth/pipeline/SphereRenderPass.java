@@ -1,7 +1,7 @@
 package com.branwilliams.bundi.cloth.pipeline;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
@@ -11,7 +11,6 @@ import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import org.joml.Spheref;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.function.Supplier;

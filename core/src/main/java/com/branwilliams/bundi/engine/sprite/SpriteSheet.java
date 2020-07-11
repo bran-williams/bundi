@@ -99,8 +99,8 @@ public class SpriteSheet {
      * @param x The x coordinate of the sprite in the sprite texture.
      * @param y The y coordinate of the sprite.
      * @param width The width of the sprite.
-     * @param height The y coordinate of the sprite.
-     * @return A Sprite object at the index specified.
+     * @param height The height of the sprite.
+     * @return A Sprite from this sprite sheet.
      * */
     public Sprite getSprite(int x, int y, int width, int height, float xscale, float yscale) {
         Sprite sprite;

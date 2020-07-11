@@ -3,7 +3,7 @@ package com.branwilliams.bundi.engine.core.launcher;
 import com.branwilliams.bundi.engine.core.context.*;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.core.Keycodes;
 import com.google.gson.Gson;
@@ -81,7 +81,8 @@ public final class EngineLauncher {
         }
         log.info(String.format("Scenes found: [%d] %s", scenes.size(), scenes.toString()));
 
-        return new EngineContext(Paths.get(configuration.assetDirectory), Paths.get(configuration.tempDirectory), scenes);
+        return new EngineContext(Paths.get(configuration.assetDirectory), Paths.get(configuration.tempDirectory),
+                Paths.get(configuration.screenshotDirectory), scenes);
     }
 
     /**
@@ -143,4 +144,5 @@ public final class EngineLauncher {
                     path.toAbsolutePath()), e);
         }
     }
+
 }

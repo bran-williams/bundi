@@ -2,7 +2,7 @@ package com.branwilliams.fog.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
@@ -12,12 +12,12 @@ import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.material.MaterialBinder;
 import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.mesh.Mesh;
-import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.model.Model;
 import com.branwilliams.bundi.engine.model.ModelRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.fog.pipeline.shaders.TemplateShaderPatches;
+import org.joml.Matrix4f;
 
 import java.util.function.Supplier;
 
@@ -43,12 +43,15 @@ public class TemplateModelRenderPass extends RenderPass<RenderContext> {
 
     private final Supplier<DirectionalLight> light;
 
+    private final Matrix4f modelMatrix;
+
     public TemplateModelRenderPass(Scene scene, Supplier<Camera> camera, Supplier<Fog> fog,
                                    Supplier<DirectionalLight> light) {
         this.scene = scene;
         this.camera = camera;
         this.fog = fog;
         this.light = light;
+        this.modelMatrix = new Matrix4f();
         this.matcher = scene.getEs().matcher(Model.class, Transformable.class, Float.class);
     }
 
@@ -76,7 +79,7 @@ public class TemplateModelRenderPass extends RenderPass<RenderContext> {
             Model model = entity.getComponent(Model.class);
             Transformable transformable = entity.getComponent(Transformable.class);
 
-            TemplateShaderPatches.setModelMatrix(shaderProgram, transformable);
+            TemplateShaderPatches.setModelMatrix(shaderProgram, transformable, modelMatrix);
 
 
 

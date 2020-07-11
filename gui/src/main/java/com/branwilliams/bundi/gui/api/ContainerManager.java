@@ -2,7 +2,10 @@ package com.branwilliams.bundi.gui.api;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.CharacterListener;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.MouseListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.gui.api.actions.*;
 import com.branwilliams.bundi.gui.api.render.RenderManager;
 
@@ -13,7 +16,7 @@ import java.util.List;
  * Manages containers. <br/>
  * Created by Brandon Williams on 1/23/2017.
  */
-public class ContainerManager implements Destructible, Window.MouseListener, Window.KeyListener, Window.CharacterListener {
+public class ContainerManager implements Destructible, MouseListener, KeyListener, CharacterListener {
 
     private final Container window;
 

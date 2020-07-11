@@ -1,9 +1,10 @@
 package com.branwilliams.bundi.voxel.render.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
+import com.branwilliams.bundi.engine.core.window.WindowListener;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
@@ -28,7 +29,7 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  * @author Brandon
  * @since August 10, 2019
  */
-public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implements Window.WindowListener {
+public class VoxelGuiRenderPass extends RenderPass<VoxelRenderContext> implements WindowListener {
 
     private static final float CROSSHAIR_SIZE = 8F;
 

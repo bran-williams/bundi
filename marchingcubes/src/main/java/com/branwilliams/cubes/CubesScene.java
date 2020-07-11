@@ -5,6 +5,8 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.DirectionalLight;
@@ -38,14 +40,13 @@ import java.util.List;
 
 import static com.branwilliams.bundi.engine.util.ColorUtils.fromHex;
 import static com.branwilliams.bundi.engine.util.ColorUtils.toVector3;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_F5;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
 /**
  * @author Brandon
  * @since November 30, 2019
  */
-public class CubesScene extends AbstractScene implements Window.KeyListener {
+public class CubesScene extends AbstractScene implements KeyListener {
 
     public static final Color WORLD_COLOR = fromHex("#573B0C");
 
@@ -197,9 +198,6 @@ public class CubesScene extends AbstractScene implements Window.KeyListener {
     public void keyPress(Window window, int key, int scancode, int mods) {
         if (key == GLFW_KEY_R) {
             wireframe = !wireframe;
-        }
-        if (key == GLFW_KEY_F5) {
-            textureLoader.screenshot();
         }
     }
 

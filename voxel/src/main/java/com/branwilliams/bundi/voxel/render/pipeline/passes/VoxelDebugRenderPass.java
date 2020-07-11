@@ -1,32 +1,22 @@
 package com.branwilliams.bundi.voxel.render.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.font.BasicFontRenderer;
 import com.branwilliams.bundi.engine.font.FontRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
-import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.bundi.engine.texture.Texture;
-import com.branwilliams.bundi.engine.texture.TextureData;
-import com.branwilliams.bundi.engine.util.TextureUtils;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.components.MovementComponent;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
-import com.branwilliams.bundi.voxel.voxels.Voxel;
-import com.branwilliams.bundi.voxel.voxels.VoxelFace;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.awt.*;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
-import static org.lwjgl.opengl.GL13.glActiveTexture;
 
 /**
  * @author Brandon

@@ -2,7 +2,7 @@ package com.branwilliams.bundi.gui.screen;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.font.FontCache;
 import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.gui.api.Container;
@@ -12,12 +12,10 @@ import com.branwilliams.bundi.gui.api.loader.UILoader;
 import com.branwilliams.bundi.gui.impl.BasicRenderer;
 import com.branwilliams.bundi.gui.impl.BasicToolbox;
 import com.branwilliams.bundi.gui.impl.ColorPack;
-import com.google.common.collect.Lists;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;

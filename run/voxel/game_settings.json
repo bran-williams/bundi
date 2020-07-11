@@ -1,3 +1,5 @@
 {
-  "chunkRenderDistance": 2
+  "chunkRenderDistance": 2,
+  "vsync": true,
+  "fullscreen": false
 }

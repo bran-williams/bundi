@@ -14,6 +14,8 @@ public class GameSettings {
 
     private boolean vsync;
 
+    private boolean fullscreen;
+
     public GameSettings(int chunkRenderDistance) {
         this.chunkRenderDistance = chunkRenderDistance;
     }
@@ -48,5 +50,13 @@ public class GameSettings {
 
     public void setVsync(boolean vsync) {
         this.vsync = vsync;
+    }
+
+    public boolean isFullscreen() {
+        return fullscreen;
+    }
+
+    public void setFullscreen(boolean fullscreen) {
+        this.fullscreen = fullscreen;
     }
 }

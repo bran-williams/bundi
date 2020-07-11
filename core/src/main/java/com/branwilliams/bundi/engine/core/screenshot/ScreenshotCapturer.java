@@ -1,4 +1,4 @@
-package com.branwilliams.bundi.engine.texture;
+package com.branwilliams.bundi.engine.core.screenshot;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import org.lwjgl.stb.STBImageWrite;
@@ -17,16 +17,17 @@ public class ScreenshotCapturer {
     private final Path screenshots;
 
     public ScreenshotCapturer(EngineContext context) {
-        this(context.getAssetDirectory());
+        this(context.getScreenshotDirectory());
     }
 
     public ScreenshotCapturer(Path directory) {
-        this.screenshots = directory.resolve("screenshots");
+        this.screenshots = directory;
     }
 
     public boolean screenshot() {
         return screenshot(this.screenshots);
     }
+
     /**
      * TODO move this into the Window class and make the screenshots directory be configurable.
      * */
@@ -50,4 +51,9 @@ public class ScreenshotCapturer {
 
         return result;
     }
+
+    public ScreenshotCaptureListener screenshotOnKeyPress(int keyCode) {
+        return new ScreenshotCaptureListener(this, keyCode);
+    }
+
 }

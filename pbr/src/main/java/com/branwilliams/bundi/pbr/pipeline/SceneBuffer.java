@@ -27,13 +27,13 @@ public class SceneBuffer extends FrameBufferObject {
         this.bindTexture(color, GL_FRAMEBUFFER, 0);
 
         gbuffer.getDepth().bind();
-        this.bindDepthStencilTexture(gbuffer.getDepth(), GL_FRAMEBUFFER);
+        this.bindDepthTexture(gbuffer.getDepth(), GL_FRAMEBUFFER);
         Texture.unbind(gbuffer.getDepth());
-
         Texture.unbind();
+
         drawBuffers(0);
         this.checkStatus();
-        this.unbind();
+        FrameBufferObject.unbind();
     }
 
     public Texture getColor() {

@@ -2,11 +2,13 @@ package com.branwilliams.bundi.engine.core;
 
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
+import com.branwilliams.bundi.engine.core.window.Window;
+import com.branwilliams.bundi.engine.core.window.WindowListener;
 
 /**
  * Created by Brandon Williams on 7/1/2018.
  */
-public abstract class AbstractRenderer <Context extends RenderContext> implements Renderer, Window.WindowListener {
+public abstract class AbstractRenderer <Context extends RenderContext> implements Renderer, WindowListener {
 
     private final String name;
 

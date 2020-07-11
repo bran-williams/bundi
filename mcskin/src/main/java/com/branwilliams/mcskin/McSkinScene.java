@@ -3,7 +3,8 @@ package com.branwilliams.mcskin;
 import com.branwilliams.bundi.engine.core.AbstractScene;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Lock;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.shader.Camera;
@@ -33,7 +34,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
  * @author Brandon
  * @since November 24, 2019
  */
-public class McSkinScene extends AbstractScene implements Window.KeyListener {
+public class McSkinScene extends AbstractScene implements KeyListener {
 
     private McApi mcApi;
 

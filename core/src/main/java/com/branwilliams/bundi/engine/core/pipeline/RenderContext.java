@@ -3,7 +3,7 @@ package com.branwilliams.bundi.engine.core.pipeline;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 
 /**
  * Holds the variables shared between render passes. This is held by the pipeline and it receives function calls

@@ -18,10 +18,13 @@ public class EngineContext {
 
     private final Path tempDirectory;
 
+    private final Path screenshotDirectory;
 
-    public EngineContext(Path assetDirectory, Path tempDirectory, List<Class<? extends Scene>> scenes) {
+    public EngineContext(Path assetDirectory, Path tempDirectory, Path screenshotDirectory,
+                         List<Class<? extends Scene>> scenes) {
         this.assetDirectory = toRealPath(assetDirectory);
         this.tempDirectory = toRealPath(tempDirectory);
+        this.screenshotDirectory = toRealPath(screenshotDirectory);
         this.scenes = scenes;
     }
 
@@ -43,5 +46,9 @@ public class EngineContext {
 
     public Path getTempDirectory() {
         return tempDirectory;
+    }
+
+    public Path getScreenshotDirectory() {
+        return screenshotDirectory;
     }
 }

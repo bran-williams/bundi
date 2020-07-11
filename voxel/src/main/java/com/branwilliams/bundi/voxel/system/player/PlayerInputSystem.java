@@ -1,14 +1,15 @@
 package com.branwilliams.bundi.voxel.system.player;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.KeyListener;
+import com.branwilliams.bundi.engine.core.window.MouseListener;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Transformable;
-import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.voxel.components.*;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import org.joml.Vector3f;
@@ -18,7 +19,7 @@ import org.joml.Vector3f;
  * @author Brandon
  * @since August 11, 2019
  */
-public class PlayerInputSystem extends AbstractSystem implements Window.MouseListener, Window.KeyListener {
+public class PlayerInputSystem extends AbstractSystem implements MouseListener, KeyListener {
 
     private final VoxelScene scene;
 

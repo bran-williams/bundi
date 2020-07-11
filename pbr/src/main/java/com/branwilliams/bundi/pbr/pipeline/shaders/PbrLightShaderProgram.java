@@ -23,7 +23,7 @@ public class PbrLightShaderProgram extends ShaderProgram {
             String index = "[" + i + "]";
             this.createUniform("lights" + index + ".position");
             this.createUniform("lights" + index + ".color");
-            this.createUniform("lights" + index + ".ambiance");
+//            this.createUniform("lights" + index + ".ambiance");
             this.createUniform("lights" + index + ".constant");
             this.createUniform("lights" + index + ".linear");
             this.createUniform("lights" + index + ".quadratic");
@@ -58,7 +58,7 @@ public class PbrLightShaderProgram extends ShaderProgram {
             }
             this.setUniform("lights" + index + ".position", light.getPosition());
             this.setUniform("lights" + index + ".color", light.getColor());
-            this.setUniform("lights" + index + ".ambiance", light.getAmbiance());
+//            this.setUniform("lights" + index + ".ambiance", light.getAmbiance());
             this.setUniform("lights" + index + ".constant", light.getAttenuation().getConstant());
             this.setUniform("lights" + index + ".linear", light.getAttenuation().getLinear());
             this.setUniform("lights" + index + ".quadratic", light.getAttenuation().getQuadratic());

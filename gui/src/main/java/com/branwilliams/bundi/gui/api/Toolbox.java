@@ -2,7 +2,7 @@ package com.branwilliams.bundi.gui.api;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Nameable;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
 
 /**
  * Simple utility class used within the components system to perform simple calculations. <br/>

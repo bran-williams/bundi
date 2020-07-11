@@ -83,7 +83,8 @@ vec4 computeFog(vec3 lightDir, vec3 viewDir, vec4 lightColor, float dist) {
      float fogAmount = 1.0 - exp( -dist * fogDensity );
     float sunAmount = max( dot( viewDir, -lightDir ), 0.0 );
     vec4  fogColor  = mix( skyColor, sunColor, pow(sunAmount, 64.0) );
-    return mix( lightColor, fogColor, fogAmount );
+    return mix( lightColor, skyColor, fogAmount );
+//    return mix( lightColor, fogColor, fogAmount );
 }
 
 // plane based distance.

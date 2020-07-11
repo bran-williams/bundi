@@ -3,14 +3,15 @@ package com.branwilliams.bundi.engine.core.pipeline;
 import com.branwilliams.bundi.engine.Profiler;
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.Window;
+import com.branwilliams.bundi.engine.core.window.Window;
+import com.branwilliams.bundi.engine.core.window.WindowListener;
 
 import java.util.function.Predicate;
 
 /**
  * Created by Brandon Williams on 9/15/2018.
  */
-public class RenderPipeline <CurrentContext extends RenderContext> implements Window.WindowListener, Destructible {
+public class RenderPipeline <CurrentContext extends RenderContext> implements WindowListener, Destructible {
 
     private final Profiler profiler = new Profiler("render_profiler");
 
