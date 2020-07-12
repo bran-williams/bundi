@@ -21,7 +21,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
  * @author Brandon
  * @since February 05, 2020
  */
-public class GuiDemoScene extends AbstractScene implements KeyListener {
+public class GuiDemoScene extends AbstractScene {
 
     private static final String UI_FILE = "ui/demo-menu.xml";
 
@@ -79,20 +79,17 @@ public class GuiDemoScene extends AbstractScene implements KeyListener {
         this.guiScreenManager.update();
     }
 
-    public GuiScreenManager getGuiScreenManager() {
-        return guiScreenManager;
-    }
-
     @Override
     public void keyPress(Window window, int key, int scancode, int mods) {
+        super.keyPress(window, key, scancode, mods);
         if (key == GLFW_KEY_ESCAPE) {
             this.guiScreenManager.setGuiScreen(null);
             this.guiScreenManager.loadAsGuiScreen(UI_FILE, UI_ENVIRONMENT);
         }
     }
 
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
+    public GuiScreenManager getGuiScreenManager() {
+        return guiScreenManager;
     }
+
 }

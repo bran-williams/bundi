@@ -40,7 +40,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since November 30, 2019
  */
-public class FogScene extends AbstractScene implements MouseListener {
+public class FogScene extends AbstractScene {
 
     private static final String UI_INGAME_HUD = "ui/fog-ingame-hud.xml";
 
@@ -61,8 +61,6 @@ public class FogScene extends AbstractScene implements MouseListener {
 
     private Vector3f cameraLookAt = new Vector3f();
 
-    private ScreenshotCapturer screenshotCapturer;
-
     private Camera camera;
 
     private boolean wireframe;
@@ -80,12 +78,10 @@ public class FogScene extends AbstractScene implements MouseListener {
     public FogScene() {
         super("fog");
         this.guiScreenManager = new GuiScreenManager(this);
-        this.addMouseListener(this);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
-        this.screenshotCapturer = new ScreenshotCapturer(engine.getContext());
 
         this.guiScreenManager.init(engine, window);
         this.guiScreenManager.loadAsGuiScreen(UI_INGAME_HUD, UI_INGAME_HUD_ENVIRONMENT);
@@ -101,8 +97,8 @@ public class FogScene extends AbstractScene implements MouseListener {
         renderPipeline.addLast(new EnableWireframeRenderPass(this::isWireframe));
         renderPipeline.addLast(new AtmosphereRenderPass<>(this::getCamera, this::getAtmosphere, this::getSkydome));
 //        renderPipeline.addLast(new CubesRenderPass(this, this::getCamera, this::getFog));
-//        renderPipeline.addLast(new TemplateRenderPass(this, this::getCamera, this::getFog, this::getSun,
-//                VertexFormat.POSITION_UV_NORMAL, MaterialFormat.DIFFUSE_SPECULAR));
+        renderPipeline.addLast(new TemplateRenderPass(this, this::getCamera, this::getFog, this::getSun,
+                VertexFormat.POSITION_UV_NORMAL, MaterialFormat.DIFFUSE_SPECULAR));
         renderPipeline.addLast(new TemplateRenderPass(this, this::getCamera, this::getFog, this::getSun,
                 VertexFormat.POSITION_UV_NORMAL, MaterialFormat.DIFFUSE_VEC4));
 //        renderPipeline.addLast(new TemplateModelRenderPass(this, this::getCamera, this::getFog, this::getSun));
@@ -289,6 +285,21 @@ public class FogScene extends AbstractScene implements MouseListener {
         super.destroy();
     }
 
+    @Override
+    public void press(Window window, float mouseX, float mouseY, int buttonId) {
+        super.press(window, mouseX, mouseY, buttonId);
+        if ((window.isKeyPressed(GLFW_KEY_LEFT_CONTROL) || window.isKeyPressed(GLFW_KEY_RIGHT_CONTROL))
+                && buttonId == GLFW_MOUSE_BUTTON_1) {
+            movingSun = true;
+        }
+    }
+
+    @Override
+    public void release(Window window, float mouseX, float mouseY, int buttonId) {
+        super.release(window, mouseX, mouseY, buttonId);
+        movingSun = false;
+    }
+
     public Material createDiffuseSpecularMaterial(TextureLoader textureLoader, String diffusePath, String specularPath) {
         Material material = null;
         try {
@@ -334,32 +345,5 @@ public class FogScene extends AbstractScene implements MouseListener {
 
     public DirectionalLight getSun() {
         return sun;
-    }
-
-    @Override
-    public void move(Window window, float newMouseX, float newMouseY, float oldMouseX, float oldMouseY) {
-
-    }
-
-    @Override
-    public void press(Window window, float mouseX, float mouseY, int buttonId) {
-        if ((window.isKeyPressed(GLFW_KEY_LEFT_CONTROL) || window.isKeyPressed(GLFW_KEY_RIGHT_CONTROL))
-                && buttonId == GLFW_MOUSE_BUTTON_1) {
-            movingSun = true;
-        }
-
-        if (window.isKeyPressed(GLFW_KEY_F6)) {
-            screenshotCapturer.screenshot();
-        }
-    }
-
-    @Override
-    public void release(Window window, float mouseX, float mouseY, int buttonId) {
-        movingSun = false;
-    }
-
-    @Override
-    public void wheel(Window window, double xoffset, double yoffset) {
-
     }
 }

@@ -1,4 +1,4 @@
-package com.branwilliams.demo.template2d;
+package com.branwilliams.demo.template2d.pipeline.pass;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.Scene;
@@ -29,7 +29,7 @@ public class SpriteRenderPass extends RenderPass<RenderContext> {
     @Override
     public void init(RenderContext renderContext, Engine engine, Window window) throws InitializationException {
         try {
-            shaderProgram = new DynamicShaderProgram(VertexFormat.POSITION_2D_UV_COLOR);
+            shaderProgram = new DynamicShaderProgram();
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }

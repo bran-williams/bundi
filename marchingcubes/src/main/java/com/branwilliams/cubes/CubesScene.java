@@ -46,7 +46,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
  * @author Brandon
  * @since November 30, 2019
  */
-public class CubesScene extends AbstractScene implements KeyListener {
+public class CubesScene extends AbstractScene {
 
     public static final Color WORLD_COLOR = fromHex("#573B0C");
 
@@ -196,14 +196,10 @@ public class CubesScene extends AbstractScene implements KeyListener {
 
     @Override
     public void keyPress(Window window, int key, int scancode, int mods) {
+        super.keyPress(window, key, scancode, mods);
         if (key == GLFW_KEY_R) {
             wireframe = !wireframe;
         }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
     }
 
     public float getRaycastDistance() {

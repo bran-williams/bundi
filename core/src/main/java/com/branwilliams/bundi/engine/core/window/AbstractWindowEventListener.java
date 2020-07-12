@@ -1,7 +1,5 @@
 package com.branwilliams.bundi.engine.core.window;
 
-import com.branwilliams.bundi.engine.core.Joystick;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,131 +24,76 @@ public class AbstractWindowEventListener implements WindowEventListener {
     }
 
     @Override
-    public void resize(Window window, int width, int height) {
-        for (WindowListener windowListener : windowListeners) {
-            windowListener.resize(window, width, height);
-        }
-    }
-
-    @Override
-    public void move(Window window, float newMouseX, float newMouseY, float oldMouseX, float oldMouseY) {
-        for (MouseListener mouseListener : mouseListeners) {
-            mouseListener.move(window, newMouseX, newMouseY, oldMouseX, oldMouseY);
-        }
-    }
-
-    @Override
-    public void press(Window window, float mouseX, float mouseY, int buttonId) {
-        for (MouseListener mouseListener : mouseListeners) {
-            mouseListener.press(window, mouseX, mouseY, buttonId);
-        }
-    }
-
-    @Override
-    public void release(Window window, float mouseX, float mouseY, int buttonId) {
-        for (MouseListener mouseListener : mouseListeners) {
-            mouseListener.release(window, mouseX, mouseY, buttonId);
-        }
-    }
-
-    @Override
-    public void wheel(Window window, double xoffset, double yoffset) {
-        for (MouseListener mouseListener : mouseListeners) {
-            mouseListener.wheel(window, xoffset, yoffset);
-        }
-    }
-
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-        for (KeyListener keyListener : keyListeners) {
-            keyListener.keyPress(window, key, scancode, mods);
-        }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-        for (KeyListener keyListener : keyListeners) {
-            keyListener.keyRelease(window, key, scancode, mods);
-        }
-    }
-
-    @Override
-    public void charTyped(Window window, String characters) {
-        for (CharacterListener characterListener : characterListeners) {
-            characterListener.charTyped(window, characters);
-        }
-    }
-
-    @Override
-    public void onJoystickConnected(Joystick joystick) {
-        for (JoystickListener joystickListener : joystickListeners) {
-            joystickListener.onJoystickConnected(joystick);
-        }
-    }
-
-    @Override
-    public void onJoystickDisconnected(Joystick joystick) {
-        for (JoystickListener joystickListener : joystickListeners) {
-            joystickListener.onJoystickDisconnected(joystick);
-        }
-    }
-
     public List<WindowListener> getWindowListeners() {
         return windowListeners;
     }
 
+    @Override
     public void addWindowListener(WindowListener windowListener) {
         windowListeners.add(windowListener);
     }
 
+    @Override
     public boolean removeWindowListener(WindowListener windowListener) {
         return windowListeners.remove(windowListener);
     }
 
+    @Override
     public List<MouseListener> getMouseListeners() {
         return mouseListeners;
     }
 
+    @Override
     public void addMouseListener(MouseListener mouseListener) {
         this.mouseListeners.add(mouseListener);
     }
 
+    @Override
     public boolean removeMouseListener(MouseListener mouseListener) {
         return mouseListeners.remove(mouseListener);
     }
 
+    @Override
     public List<KeyListener> getKeyListeners() {
         return keyListeners;
     }
 
+    @Override
     public void addKeyListener(KeyListener keyListener) {
         this.keyListeners.add(keyListener);
     }
 
+    @Override
     public boolean removeKeyListener(KeyListener keyListener) {
         return keyListeners.remove(keyListener);
     }
 
+    @Override
     public List<CharacterListener> getCharacterListeners() {
         return characterListeners;
     }
 
+    @Override
     public void addCharacterListener(CharacterListener characterListener) {
         this.characterListeners.add(characterListener);
     }
 
+    @Override
     public boolean removeCharacterListener(CharacterListener characterListener) {
         return characterListeners.remove(characterListener);
     }
 
+    @Override
     public List<JoystickListener> getJoystickListeners() {
         return joystickListeners;
     }
 
+    @Override
     public void addJoystickListener(JoystickListener joystickListener) {
         this.joystickListeners.add(joystickListener);
     }
 
+    @Override
     public boolean removeJoystickListener(JoystickListener joystickListener) {
         return joystickListeners.remove(joystickListener);
     }

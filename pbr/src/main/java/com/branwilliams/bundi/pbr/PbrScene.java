@@ -32,7 +32,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
  * @author Brandon
  * @since August 31, 2019
  */
-public class PbrScene extends AbstractScene implements KeyListener {
+public class PbrScene extends AbstractScene {
 
     private final Vector3f cameraPosition = new Vector3f(0F, 0F, 0F);
 
@@ -129,6 +129,19 @@ public class PbrScene extends AbstractScene implements KeyListener {
         super.update(engine, deltaTime);
     }
 
+    @Override
+    public void keyPress(Window window, int key, int scancode, int mods) {
+        super.keyPress(window, key, scancode, mods);
+        if (key == GLFW_KEY_R) {
+            Model model = sphereEntity.getComponent(Model.class);
+            model.destroy();
+            sphereEntity.removeComponent(model);
+
+            nextMaterial();
+            loadMaterial();
+        }
+    }
+
     private PbrMaterial readMaterial(Path directory, String filePath) {
         return readMaterial(directory.resolve(filePath));
     }
@@ -140,39 +153,6 @@ public class PbrScene extends AbstractScene implements KeyListener {
         String json = IOUtils.readFile(filePath, null);
 
         return gson.fromJson(json, PbrMaterial.class);
-    }
-
-    public Transformable getObjectTransformable() {
-        return sphereEntity.getComponent(Transformable.class);
-    }
-
-    public Camera getCamera() {
-        return camera;
-    }
-
-    public float getExposure() {
-        return exposure;
-    }
-
-    public Skybox getSkybox() {
-        return skybox;
-    }
-
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-        if (key == GLFW_KEY_R) {
-            Model model = sphereEntity.getComponent(Model.class);
-            model.destroy();
-            sphereEntity.removeComponent(model);
-
-            nextMaterial();
-            loadMaterial();
-        }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
     }
 
     private void loadMaterial() {
@@ -209,5 +189,21 @@ public class PbrScene extends AbstractScene implements KeyListener {
 
     public String[] getMaterials() {
         return materials;
+    }
+
+    public Transformable getObjectTransformable() {
+        return sphereEntity.getComponent(Transformable.class);
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public float getExposure() {
+        return exposure;
+    }
+
+    public Skybox getSkybox() {
+        return skybox;
     }
 }

@@ -1,23 +1,15 @@
 package com.branwilliams.bundi.engine.core;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
-import com.branwilliams.bundi.engine.core.scenes.ErrorScene;
 import com.branwilliams.bundi.engine.core.window.Window;
 import org.jetbrains.annotations.NotNull;
 import com.branwilliams.bundi.engine.Profiler;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC;
-import org.lwjgl.openal.ALCCapabilities;
-import org.lwjgl.openal.ALCapabilities;
+
 import org.lwjgl.opengl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.*;
 import static org.lwjgl.opengl.GLDebugMessageCallback.getMessage;
@@ -55,80 +47,66 @@ public class Engine implements Runnable {
     // Calculated frame rate.
     private int frames = 0;
 
-    // Each scene is mapped in order to ensure it is destroyed at the ending of this application and in order to ensure
-    // a scene is only initialized once.
-    private Map<String, Scene> sceneCache = new HashMap<>();
-
-    /** The current scene of this engine. */
-    private Scene current;
-
-    /** When a new scene is set, it is stored in this variable.
-     * The engine will attempt to replace {@link Engine#current} with this scene every frame.
-     * This will only occur once next.isReady() returns true.
-     */
-    private Scene next;
-
     private GLCapabilities glCapabilities;
 
-    private ALCapabilities alCapabilities;
+    private SceneManager sceneManager;
 
-    private long alDevice;
-
-    private long alContext;
+    private AudioManager audioManager;
 
     public Engine(EngineContext context, Window window, Scene scene) {
         this.context = context;
         this.window = window;
-        this.setScene(scene);
+
         if (window == null)
             throw new IllegalStateException("Window cannot be null!");
+
+        this.sceneManager = new SceneManager();
+        this.sceneManager.setScene(scene);
+
+        this.audioManager = new AudioManager();
     }
 
     @Override
     public void run() {
         try {
-            window.initialize();
             init();
+            running = true;
             loop();
-            closeScenes();
-            alcDestroyContext(alContext);
-            alcCloseDevice(alDevice);
-            window.destroy();
+            destroy();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (window.hasInitialized())
                 glfwTerminate();
-            // glfwSetErrorCallback(null).free();
             running = false;
         }
     }
 
     /**
-     * Setup debug message callback, create OpenAL context, log some info.
+     * Initialize the window, Setup debug message callback, create OpenAL context, log some info.
      * */
     private void init() {
+        window.initialize();
+
         glCapabilities = GL.createCapabilities();
 
         OpenGLDebugMessageLogger.setupDebugMessageCallback(log);
 
-        createALContext();
+        audioManager.createALContext();
 
         log.info("OpenGL version: " + glGetString(GL_VERSION));
         log.info("Graphics card: " + glGetString(GL_RENDERER));
         log.info("Graphics card vendor: " + glGetString(GL_VENDOR));
         log.info("Max texture (1D/2D) size: " + glGetInteger(GL_MAX_TEXTURE_SIZE));
-
-        // Set the clear color and initial viewport dimensions.
-        glClearColor(0F, 0F, 0F, 0F);
-        glViewport(0, 0, window.getWidth(), window.getHeight());
     }
 
     /**
      * Main game loop.
      * */
     private void loop() throws Exception {
-        running = true;
+        // Set the clear color and initial viewport dimensions.
+        glClearColor(0F, 0F, 0F, 0F);
+        glViewport(0, 0, window.getWidth(), window.getHeight());
 
         // Time between updates. Used to ensure the update function does not rely on frame rate.
         double time = window.getTime();
@@ -146,23 +124,21 @@ public class Engine implements Runnable {
         // Loops until the window was closed or running was set to false.
         while (running && !window.shouldClose()) {
             // Update the current scene.
-            if (updateScene()) {
+            if (sceneManager.updateScene(this, window)) {
                 this.profiler.begin("scene_update");
 
                 // Invokes the update function as often as necessary.
-                current.update(this, delta);
+                sceneManager.getCurrent().update(this, delta);
 
                 this.profiler.endBegin("scene_fixed_update");
 
                 // Invokes the update function as many times as necessary. This is done at a fixed interval.
                 while (elapsed >= updateInterval) {
-                    current.fixedUpdate(this, Math.min(updateInterval, elapsed));
+                    sceneManager.getCurrent().fixedUpdate(this, Math.min(updateInterval, elapsed));
                     elapsed -= updateInterval;
                 }
 
                 this.profiler.endBegin("render");
-
-                //checkGLErrors();
 
                 // Invoke the renderer as much as possible.
                 if (renderer != null) {
@@ -171,7 +147,7 @@ public class Engine implements Runnable {
 
                 // Update the window and viewport if necessary.
                 window.update();
-                if (window.isResized()) {
+                if (window.wasResized()) {
                     glViewport(0, 0, window.getWidth(), window.getHeight());
                 }
                 this.profiler.end();
@@ -194,128 +170,10 @@ public class Engine implements Runnable {
         }
     }
 
-    private void closeScenes() {
-        try {
-            sceneCache.values().forEach(Scene::destroy);
-        } catch (Exception e) {
-            // TODO create an engine exception?
-            log.error("Unable to destroy remaining scenes.");
-        }
-
-    }
-
-    /**
-     * Creates the OpenAL context using the default audio device.
-     *
-     * */
-    private void createALContext() {
-        String defaultDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
-
-        alDevice = alcOpenDevice(defaultDeviceName);
-
-        int[] attributes = {0};
-        alContext = alcCreateContext(alDevice, attributes);
-        if (!alcMakeContextCurrent(alContext)) {
-            throw new RuntimeException("Unable to create OpenAL context");
-        }
-
-        ALCCapabilities alcCapabilities = ALC.createCapabilities(alDevice);
-        alCapabilities = AL.createCapabilities(alcCapabilities);
-
-        log.info("OpenAL context created using default device");
-    }
-
-    /**
-     * Updates the current scene to the next scene when possible. If the next scene is not cached it will be initialized
-     * and its renderer will also be initialized. Any exceptions thrown will be caught and an error scene will become
-     * the next scene. <br/> <br/>
-     * The current scene will only be replaced once the next scene returns true from {@link Scene#isReady()}. When the
-     * current scene is being replaced, it will be paused. If it returns true from
-     * {@link Scene#destroyUponReplacement()}, it will also be destroyed and removed from the cache. The new current
-     * scene will be played and any exceptions thrown here will also be caught and an error scene will replace it.
-     * @return True if the current scene is not null.
-     * */
-    private boolean updateScene() {
-        if (next != null) {
-            // When a scene isn't within this map, it means that it is a new scene. Initialize it and put it there!
-            if (!sceneCache.containsKey(next.getName())) {
-                sceneCache.put(next.getName(), next);
-                try {
-                    log.info("Initializing scene " + next.getName() + ".");
-                    profiler.begin("init_scene:" + next.getName());
-                    next.init(this, window);
-
-                    if (next.getRenderer() != null) {
-                        profiler.endBegin("renderer_init");
-                        log.info("Initializing renderer " + next.getRenderer().getName() + ".");
-                        next.getRenderer().init(this, window);
-                    }
-                } catch (Exception e) {
-                    log.error("Unable to initialize scene " + next.getName() + ":");
-                    handleException(e);
-                    return hasCurrentScene();
-                } finally {
-                    profiler.end();
-                }
-            }
-
-            // When the scene is ready, pause the old one, set the new one, and play it!
-            if (next.isReady()) {
-                // Pause and destroy the old scene.
-                if (current != null) {
-                    current.pause(this);
-                    if (current.destroyUponReplacement()) {
-                        current.destroy();
-                        sceneCache.remove(current.getName());
-                    }
-                }
-                // Replace the current scene.
-                current = next;
-                window.setWindowEventListeners(current);
-                next = null;
-
-                // Replace the renderer and event manager if necessary. Play the scene.
-                if (current.getRenderer() != null)
-                    renderer = current.getRenderer();
-
-                log.info("Playing scene " + current.getName() + ".");
-                profiler.begin("play_scene:" + current.getName());
-                try {
-                    current.play(this);
-                } catch (Exception e) {
-                    log.error("Unable to play scene " + current.getName() + ":");
-                    handleException(e);
-                } finally {
-                    profiler.end();
-                }
-            }
-        }
-        return hasCurrentScene();
-    }
-
-    /**
-     * Sets the scene to an error scene whenever an exception is thrown from a provided scene.
-     * */
-    private void handleException(Exception exception) {
-        exception.printStackTrace();
-        setScene(new ErrorScene(exception));
-    }
-
-    /**
-     * @return True if the current scene is not null.
-     * */
-    private boolean hasCurrentScene() {
-        return current != null;
-    }
-
-    /**
-     * Sets the next scene to the one provided.
-     * @param scene The next scene to play.
-     * */
-    public void setScene(@NotNull Scene scene) {
-        if (scene == null)
-            throw new NullPointerException("Scene cannot be null!");
-        this.next = scene;
+    private void destroy() {
+        sceneManager.destroy();
+        audioManager.destroy();
+        window.destroy();
     }
 
     /**
@@ -326,10 +184,18 @@ public class Engine implements Runnable {
     }
 
     /**
+     * Sets the next scene to the one provided.
+     * @param scene The next scene to play.
+     * */
+    public void setScene(@NotNull Scene scene) {
+        this.sceneManager.setScene(scene);
+    }
+
+    /**
      * @return The cached scene with the provided name or null if not found.
      * */
     public Scene recallScene(String sceneName) {
-        return this.sceneCache.get(sceneName);
+        return sceneManager.recallScene(sceneName);
     }
 
     public Window getWindow() {
@@ -389,11 +255,13 @@ public class Engine implements Runnable {
         return glCapabilities;
     }
 
-    public ALCapabilities getALCapabilities() {
-        return alCapabilities;
+    public SceneManager getSceneManager() {
+        return sceneManager;
     }
 
-
+    public AudioManager getAudioManager() {
+        return audioManager;
+    }
 
     /**
      * This utility class is used to translate error codes from OpenGL to their plain English counterparts.

@@ -36,7 +36,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since September 03, 2019
  */
-public class WaterScene extends AbstractScene implements KeyListener {
+public class WaterScene extends AbstractScene {
 
     public static final int WATER_PLANE_LENGTH = 128;
 
@@ -184,6 +184,7 @@ public class WaterScene extends AbstractScene implements KeyListener {
 
     @Override
     public void keyPress(Window window, int key, int scancode, int mods) {
+        super.keyPress(window, key, scancode, mods);
         if (key == GLFW_KEY_G) {
             wireframe = !wireframe;
         }
@@ -194,11 +195,6 @@ public class WaterScene extends AbstractScene implements KeyListener {
         if (key == GLFW_KEY_Q) {
             water.getTransformable().getRotationAsEuler().x -= 0.5F;
         }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
     }
 
     public Camera getCamera() {

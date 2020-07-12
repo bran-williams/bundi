@@ -492,7 +492,7 @@ public class Window {
      * Note: This value is going to be reset once this getter is used.
      * @return True if this window has been resized.
      * */
-    protected boolean isResized() {
+    public boolean wasResized() {
         boolean resized = this.resized;
         this.resized = false;
         return resized;

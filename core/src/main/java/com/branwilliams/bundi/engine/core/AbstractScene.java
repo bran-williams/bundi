@@ -42,7 +42,7 @@ public abstract class AbstractScene extends AbstractWindowEventListener implemen
     @Override
     public void init(Engine engine, Window window) throws Exception {
         screenshotCapturer = new ScreenshotCapturer(engine.getContext());
-        this.addKeyListener(screenshotCapturer.screenshotOnKeyPress(GLFW_KEY_F9));
+        this.addKeyListener(screenshotCapturer.screenshotOnKeyPress(KEY_SCREENSHOT));
     }
 
     @Override

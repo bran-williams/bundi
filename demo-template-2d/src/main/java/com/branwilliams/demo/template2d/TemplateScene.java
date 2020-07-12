@@ -7,16 +7,13 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
-import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
-import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.sprite.AnimatedSprite;
 import com.branwilliams.bundi.engine.sprite.SpriteSheet;
-import com.branwilliams.bundi.engine.texture.Texture;
-import com.branwilliams.bundi.engine.texture.TextureData;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
+import com.branwilliams.demo.template2d.pipeline.pass.SpriteRenderPass;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -32,10 +29,6 @@ public class TemplateScene extends AbstractScene {
     private TextureLoader textureLoader;
 
     private float scale = 4F;
-
-    private SpriteSheet spriteSheet;
-
-    private Camera camera;
 
     private boolean wireframe;
 
@@ -60,19 +53,19 @@ public class TemplateScene extends AbstractScene {
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
         TemplateRenderer<RenderContext> renderer = new TemplateRenderer<>(this, renderPipeline);
         setRenderer(renderer);
+
     }
 
     @Override
     public void play(Engine engine) {
-//        camera = new Camera();
-//        camera.setPosition(cameraStartingPosition);
-//        camera.lookAt(cameraLookAt);
 
         SpriteSheet fireball;
         SpriteSheet adventurer;
         try {
-            adventurer = loadSpriteSheet("textures/colored_tilemap_packed.png", 8, 8);
-            fireball = loadSpriteSheet("textures/Fireball_68x9.png", 68, 9);
+            adventurer = textureLoader.loadSpriteSheet("textures/colored_tilemap_packed.png",
+                    8, 8);
+            fireball = textureLoader.loadSpriteSheet("textures/Fireball_68x9.png",
+                    68, 9);
 
             es.entity("fireball").component(
                     new Transformation().position(50, 100, 0),
@@ -116,23 +109,6 @@ public class TemplateScene extends AbstractScene {
     @Override
     public void destroy() {
         super.destroy();
-    }
-
-    private SpriteSheet loadSpriteSheet(String spriteSheetFile, int spriteWidth, int spriteHeight) throws IOException {
-        TextureData spriteImage = textureLoader.loadTexture(spriteSheetFile);
-
-        Texture spriteTexture = new Texture(spriteImage, false)
-                .bind().nearestFilter().clampToEdges();
-        // Texture.unbind();
-
-        SpriteSheet spriteSheet = new SpriteSheet(spriteTexture, new DynamicVAO(), spriteWidth, spriteHeight);
-        spriteSheet.setCenteredSprite(false);
-
-        return spriteSheet;
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 
     public boolean isWireframe() {

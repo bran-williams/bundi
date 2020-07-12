@@ -1,6 +1,8 @@
 package com.branwilliams.bundi.engine.texture;
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
+import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
+import com.branwilliams.bundi.engine.sprite.SpriteSheet;
 import com.branwilliams.bundi.engine.util.*;
 import static com.branwilliams.bundi.engine.util.TextureUtils.getFormatFromChannels;
 
@@ -88,6 +90,19 @@ public class TextureLoader {
             index++;
         }
         return new CubeMapTexture(width, height, textureDatas);
+    }
+
+    public SpriteSheet loadSpriteSheet(String spriteSheetFile, int spriteWidth, int spriteHeight) throws IOException {
+        TextureData spriteImage = loadTexture(spriteSheetFile);
+
+        Texture spriteTexture = new Texture(spriteImage, false)
+                .bind().nearestFilter().clampToEdges();
+         Texture.unbind();
+
+        SpriteSheet spriteSheet = new SpriteSheet(spriteTexture, new DynamicVAO(), spriteWidth, spriteHeight);
+        spriteSheet.setCenteredSprite(false);
+
+        return spriteSheet;
     }
 }
 

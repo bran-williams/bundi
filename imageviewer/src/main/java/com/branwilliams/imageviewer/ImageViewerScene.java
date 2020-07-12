@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * @author Brandon
  * @since December 27, 2019
  */
-public class ImageViewerScene extends AbstractScene implements WindowListener {
+public class ImageViewerScene extends AbstractScene {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -92,6 +92,13 @@ public class ImageViewerScene extends AbstractScene implements WindowListener {
         }
     }
 
+    @Override
+    public void resize(Window window, int width, int height) {
+        super.resize(window, width, height);
+        this.windowWidth = width;
+        this.windowHeight = height;
+    }
+
     public void onTextureChange(Texture texture) {
         imageViewParameters.getTransform().position(windowWidth * 0.5F, windowHeight * 0.5F, 0F);
         imageViewParameters.getTransform().setScale(1F);
@@ -99,12 +106,6 @@ public class ImageViewerScene extends AbstractScene implements WindowListener {
 
     public ImageViewParameters getImageViewParameters() {
         return imageViewParameters;
-    }
-
-    @Override
-    public void resize(Window window, int width, int height) {
-        this.windowWidth = width;
-        this.windowHeight = height;
     }
 
     public void exitGallery() {

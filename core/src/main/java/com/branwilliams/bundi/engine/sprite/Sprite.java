@@ -49,10 +49,12 @@ public class Sprite {
      * */
     public void draw() {
         this.spriteSheet.getTexture().bind();
+
         this.vao.bind();
 
         DynamicVAO.draw(GL_TRIANGLES, vertexFormat, vertexCount);
-        this.vao.unbind();
+
+        VertexArrayObject.unbind();
     }
 
     /**

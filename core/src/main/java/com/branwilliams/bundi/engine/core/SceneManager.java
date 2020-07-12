@@ -16,7 +16,6 @@ public class SceneManager implements Destructible {
 
     private final Profiler profiler = new Profiler(getClass());
 
-
     // Each scene is mapped in order to ensure it is destroyed at the ending of this application and in order to ensure
     // a scene is only initialized once.
     private Map<String, Scene> sceneCache = new HashMap<>();
@@ -40,7 +39,7 @@ public class SceneManager implements Destructible {
      * scene will be played and any exceptions thrown here will also be caught and an error scene will replace it.
      * @return True if the current scene is not null.
      * */
-    private boolean updateScene(Engine engine, Window window) {
+    public boolean updateScene(Engine engine, Window window) {
         if (next != null) {
             // When a scene isn't within this map, it means that it is a new scene. Initialize it and put it there!
             if (!sceneCache.containsKey(next.getName())) {
@@ -68,21 +67,24 @@ public class SceneManager implements Destructible {
             if (next.isReady()) {
                 // Pause and destroy the old scene.
                 if (current != null) {
+                    window.removeWindowEventListener(current);
                     current.pause(engine);
                     if (current.destroyUponReplacement()) {
                         current.destroy();
                         sceneCache.remove(current.getName());
                     }
                 }
+
                 // Replace the current scene.
                 current = next;
                 window.addWindowEventListener(current);
                 next = null;
 
-//                // Replace the renderer and event manager if necessary. Play the scene.
-//                if (current.getRenderer() != null)
-//                    renderer = current.getRenderer();
+                // Replace the renderer if necessary.
+                if (current.getRenderer() != null)
+                    engine.setRenderer(current.getRenderer());
 
+                // Play the scene.
                 log.info("Playing scene " + current.getName() + ".");
                 profiler.begin("play_scene:" + current.getName());
                 try {
@@ -109,7 +111,7 @@ public class SceneManager implements Destructible {
     /**
      * @return True if the current scene is not null.
      * */
-    private boolean hasCurrentScene() {
+    public boolean hasCurrentScene() {
         return current != null;
     }
 
@@ -121,6 +123,10 @@ public class SceneManager implements Destructible {
         if (scene == null)
             throw new NullPointerException("Scene cannot be null!");
         this.next = scene;
+    }
+
+    public Scene getCurrent() {
+        return current;
     }
 
     /**

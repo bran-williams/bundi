@@ -12,7 +12,7 @@ import com.branwilliams.bundi.engine.shader.Transformation;
  * Created by Brandon Williams on 2/2/2018.
  */
 @Ignore
-public class ErrorScene extends AbstractScene implements MouseListener {
+public class ErrorScene extends AbstractScene {
 
     private Transformable mouseOffset = new Transformation();
 
@@ -45,6 +45,7 @@ public class ErrorScene extends AbstractScene implements MouseListener {
 
     @Override
     public void move(Window window, float newMouseX, float newMouseY, float oldMouseX, float oldMouseY) {
+        super.move(window, newMouseX, newMouseY, oldMouseX, oldMouseY);
         if (movingMouse) {
             mouseOffset.move(newMouseX - oldMouseX, newMouseY - oldMouseX, 0F);
         }
@@ -52,18 +53,16 @@ public class ErrorScene extends AbstractScene implements MouseListener {
 
     @Override
     public void press(Window window, float mouseX, float mouseY, int buttonId) {
+        super.press(window, mouseX, mouseY, buttonId);
         movingMouse = true;
     }
 
     @Override
     public void release(Window window, float mouseX, float mouseY, int buttonId) {
+        super.release(window, mouseX, mouseY, buttonId);
         movingMouse = false;
     }
 
-    @Override
-    public void wheel(Window window, double xoffset, double yoffset) {
-
-    }
 
     public Transformable getMouseOffset() {
         return mouseOffset;

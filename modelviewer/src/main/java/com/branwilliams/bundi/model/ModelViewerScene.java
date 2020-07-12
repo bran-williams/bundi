@@ -28,7 +28,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
  * @author Brandon
  * @since August 31, 2019
  */
-public class ModelViewerScene extends AbstractScene implements KeyListener {
+public class ModelViewerScene extends AbstractScene {
 
     private final Vector3f cameraPosition = new Vector3f();
 
@@ -133,16 +133,5 @@ public class ModelViewerScene extends AbstractScene implements KeyListener {
 
     public Skybox getSkybox() {
         return skybox;
-    }
-
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-        if (key == GLFW_KEY_R) {
-        }
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-
     }
 }

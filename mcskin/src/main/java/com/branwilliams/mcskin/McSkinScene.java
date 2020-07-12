@@ -34,7 +34,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
  * @author Brandon
  * @since November 24, 2019
  */
-public class McSkinScene extends AbstractScene implements KeyListener {
+public class McSkinScene extends AbstractScene {
 
     private McApi mcApi;
 
@@ -218,12 +218,8 @@ public class McSkinScene extends AbstractScene implements KeyListener {
     }
 
     @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-
-    }
-
-    @Override
     public void keyRelease(Window window, int key, int scancode, int mods) {
+        super.keyRelease(window, key, scancode, mods);
         switch (key) {
             case GLFW_KEY_ESCAPE:
                 guiLock.toggle();

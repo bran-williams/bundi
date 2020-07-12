@@ -26,7 +26,7 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Brandon
  * @since December 27, 2019
  */
-public class GallerySelectorScene extends AbstractScene implements KeyListener {
+public class GallerySelectorScene extends AbstractScene {
 
     private static final String GALLERY_DIR = "temp";
 
@@ -122,6 +122,26 @@ public class GallerySelectorScene extends AbstractScene implements KeyListener {
             engine.setScene(viewerScene);
     }
 
+    @Override
+    public void keyRelease(Window window, int key, int scancode, int mods) {
+        super.keyRelease(window, key, scancode, mods);
+        switch (key) {
+            case GLFW_KEY_UP:
+                selectedGallery--;
+                if (selectedGallery < 0)
+                    selectedGallery = galleries.length - 1;
+                break;
+            case GLFW_KEY_DOWN:
+                selectedGallery++;
+                if (selectedGallery >= galleries.length)
+                    selectedGallery = 0;
+                break;
+            case GLFW_KEY_ENTER:
+                setGallery(galleries[selectedGallery]);
+                break;
+        }
+    }
+
     private Gallery[] readGalleries(String path) {
         List<Gallery> galleries = new ArrayList<>();
 
@@ -164,30 +184,6 @@ public class GallerySelectorScene extends AbstractScene implements KeyListener {
 
     public Gallery[] getGalleries() {
         return galleries;
-    }
-    @Override
-    public void keyPress(Window window, int key, int scancode, int mods) {
-
-    }
-
-    @Override
-    public void keyRelease(Window window, int key, int scancode, int mods) {
-        switch (key) {
-            case GLFW_KEY_UP:
-                selectedGallery--;
-                if (selectedGallery < 0)
-                    selectedGallery = galleries.length - 1;
-                break;
-            case GLFW_KEY_DOWN:
-                selectedGallery++;
-                if (selectedGallery >= galleries.length)
-                    selectedGallery = 0;
-                break;
-            case GLFW_KEY_ENTER:
-                setGallery(galleries[selectedGallery]);
-                break;
-
-        }
     }
 
     public int getSelectedGallery() {

@@ -1,0 +1,13 @@
+{
+  "windowTitle": "Parallax",
+  "windowWidth": 1024,
+  "windowHeight": 768,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.demo.template2d.ParallaxScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp",
+  "sceneDirectory": "com.branwilliams.demo"
+}
