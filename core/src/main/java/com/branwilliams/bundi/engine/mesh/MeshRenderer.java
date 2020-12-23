@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
+import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
 /**
  * Renders meshes.
@@ -52,10 +54,17 @@ public enum MeshRenderer {
      * */
     public static void render(Mesh mesh) {
         if (mesh.hasIndices()) {
-            glDrawElements(mesh.getRenderMode(), mesh.getIndiceCount(), GL_UNSIGNED_INT, 0);
+            if (mesh.hasInstances()) {
+                glDrawElementsInstanced(mesh.getRenderMode(), mesh.getIndiceCount(), GL_UNSIGNED_INT, 0,
+                        mesh.getInstanceCount());
+            } else {
+                glDrawElements(mesh.getRenderMode(), mesh.getIndiceCount(), GL_UNSIGNED_INT, 0);
+            }
         } else {
             if (mesh.getVertexCount() <= 0) {
                 log.error("Mesh has a vertex count of zero: " + mesh);
+            } else if (mesh.hasInstances()) {
+                glDrawArraysInstanced(mesh.getRenderMode(), 0, mesh.getVertexCount(), mesh.getInstanceCount());
             } else {
                 glDrawArrays(mesh.getRenderMode(), 0, mesh.getVertexCount());
             }

@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -23,47 +24,50 @@ public enum IOUtils {
 
     /**
      * Reads the contents of a file with the newline character (\n) as the delimiter.
+     *
      * @see IOUtils#readFile(File, String, String)
-     * */
+     */
     public static String readFile(Path file, String defaultText) {
         return readFile(file.toFile(), defaultText, NEWLINE);
     }
 
     /**
      * Reads the contents of a file with the newline character (\n) as the delimiter.
+     *
      * @see IOUtils#readFile(File, String, String)
-     * */
+     */
     public static String readFile(Path directory, String file, String defaultText) {
         return readFile(directory.resolve(file).toFile(), defaultText, NEWLINE);
     }
 
     /**
      * @see IOUtils#readFile(File, String, String)
-     * */
+     */
     public static String readFile(Path directory, String file, String defaultText, String delimiter) {
         return readFile(directory.resolve(file).toFile(), defaultText, delimiter);
     }
 
     /**
      * Reads the contents of a file with the newline character (\n) as the delimiter.
+     *
      * @see IOUtils#readFile(File, String, String)
-     * */
+     */
     public static String readFile(String filePath, String defaultText) {
         return readFile(new File(filePath), defaultText, NEWLINE);
     }
 
     /**
-     *
      * @see IOUtils#readFile(File, String, String)
-     * */
+     */
     public static String readFile(String filePath, String defaultText, String delimiter) {
         return readFile(new File(filePath), defaultText, delimiter);
     }
 
     /**
      * Reads the contents of a file with the newline character (\n) as the delimiter.
+     *
      * @see IOUtils#readFile(File, String, String)
-     * */
+     */
     public static String readFile(File file, String defaultText) {
         return readFile(file, defaultText, NEWLINE);
     }
@@ -72,14 +76,13 @@ public enum IOUtils {
      * Reads the contents of a file, line by line, into a string. If the file cannot be read, a default string is
      * returned. The lines of the file are concatenated into one string, where each line is separated by a delimiter.
      *
-     * @param file The {@link File} to read from.
+     * @param file        The {@link File} to read from.
      * @param defaultText The default String returned if the file could not be read.
-     * @param delimiter The delimiter used to separate each line read from the file.
+     * @param delimiter   The delimiter used to separate each line read from the file.
      * @return The contents of the file, as a string, with each line separated by some delimiter. If the file is unable
      * to be read, then some default text is returned.
-     * */
+     */
     public static String readFile(File file, String defaultText, String delimiter) {
-
         if (file == null) {
             LOG.error("Unable to read null file");
             return defaultText;
@@ -94,18 +97,40 @@ public enum IOUtils {
         return defaultText;
     }
 
+    public static String readResource(String fileName, String defaultText) {
+        return readResource(fileName, defaultText, NEWLINE);
+    }
+
+    public static String readResource(String fileName, String defaultText, String delimiter) {
+        if (fileName == null) {
+            LOG.error("Unable to read null fileName");
+            return defaultText;
+        }
+
+        InputStream inputStream = getResourceAsInputStream(fileName);
+        if (inputStream == null) {
+            LOG.error("Unable to find resource: {}", fileName);
+            return defaultText;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            defaultText = reader.lines().collect(Collectors.joining(delimiter));
+        } catch (IOException e) {
+            LOG.error("Unable to read file '{}', error: {}", fileName, e.getMessage());
+        }
+
+        return defaultText;
+    }
+
     /**
      * Reads the specified resource and returns the raw data as a ByteBuffer.
      *
-     * @author LWJGL
-     * @author Spasi
-     *
      * @param resource   the resource to read
      * @param bufferSize the initial buffer size
-     *
      * @return the resource data
-     *
      * @throws IOException if an IO error occurs
+     * @author LWJGL
+     * @author Spasi
      */
     public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
@@ -113,10 +138,11 @@ public enum IOUtils {
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
-                buffer = MemoryUtil.memAlloc((int)fc.size() + 1);
-                while (fc.read(buffer) != -1) {
-                    ;
-                }
+                buffer = MemoryUtil.memAlloc((int) fc.size() + 1);
+                int read;
+                do {
+                    read = fc.read(buffer);
+                } while (read != -1);
             }
         } else {
             try (
@@ -148,5 +174,37 @@ public enum IOUtils {
         return newBuffer;
     }
 
+    /**
+     * Taken and modified from the following:
+     *
+     * https://stackoverflow.com/a/3862134
+     *
+     * */
+    public static InputStream getResourceAsInputStream(String resource) {
+        InputStream inputStream;
+
+        //Try with the Thread Context Loader.
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader != null) {
+            inputStream = classLoader.getResourceAsStream(resource);
+            if (inputStream != null) {
+                System.out.println("ThreadContext found: " + inputStream);
+                return inputStream;
+            }
+        }
+
+        //Let's now try with the classloader that loaded this class.
+        classLoader = IOUtils.class.getClassLoader();
+        if (classLoader != null) {
+            inputStream = classLoader.getResourceAsStream(resource);
+            if (inputStream != null) {
+                System.out.println("IOUtils.class found: " + inputStream);
+                return inputStream;
+            }
+        }
+
+        //Last ditch attempt. Get the resource from the classpath.
+        return ClassLoader.getSystemResourceAsStream(resource);
+    }
 
 }

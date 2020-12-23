@@ -16,20 +16,27 @@ public class AtmosphereSystem extends AbstractSystem {
 
     private float sunPitch = -90;
 
+    private float pitchPerSecond = 4;
+
     public AtmosphereSystem() {
         super(new ClassComponentMatcher(Atmosphere.class));
     }
 
     @Override
     public void init(Engine engine, EntitySystemManager entitySystemManager, Window window) {
-
+        sunPitch = -90;
     }
 
     @Override
     public void update(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
+
+    }
+
+    @Override
+    public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
         Vector3f direction = new Vector3f();
 
-        sunPitch = -90 + (float) engine.getTime();
+        sunPitch += (float) (pitchPerSecond * deltaTime);
         float yaw   = Mathf.toRadians(sunYaw);
         float pitch = Mathf.toRadians(sunPitch);
 
@@ -43,9 +50,5 @@ public class AtmosphereSystem extends AbstractSystem {
             Atmosphere atmosphere = entity.getComponent(Atmosphere.class);
             atmosphere.getSun().setDirection(sunPosition);
         }
-    }
-
-    @Override
-    public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
     }
 }

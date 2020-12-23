@@ -27,7 +27,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  */
 public class Window {
 
-    public static final String DEFAULT_ICON_PATH = "icons/favicon-32x32.png";
+    public static final String DEFAULT_ICON_PATH = "bundi/icons/favicon-32x32.png";
 
     private final Transformable mouseTransform = new Transformation();
 

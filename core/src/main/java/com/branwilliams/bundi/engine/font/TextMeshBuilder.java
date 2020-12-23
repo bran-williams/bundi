@@ -1,6 +1,5 @@
 package com.branwilliams.bundi.engine.font;
 
-import com.branwilliams.bundi.engine.shader.VertexArrayObject;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 
@@ -42,7 +41,7 @@ public class TextMeshBuilder {
         }
 
         dynamicVao.compile();
-        VertexArrayObject vao = dynamicVao.pop();
+        DynamicVAO vao = dynamicVao.pop();
         TextMesh textMesh = new TextMesh(fontData, text, vao);
         return textMesh;
     }

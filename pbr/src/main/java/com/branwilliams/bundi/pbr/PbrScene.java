@@ -105,17 +105,17 @@ public class PbrScene extends AbstractScene {
                 new PointLight(new Vector3f(cameraPosition))
         ).build();
 
-        es.entity("light2").component(
-                new PointLight(new Vector3f(cameraPosition).add(-2F, 0F, -2F), new Vector3f(1F, 0F, 0F))
-        ).build();
-
-        es.entity("light3").component(
-                new PointLight(new Vector3f(cameraPosition).add(2F, 0F, -2F), new Vector3f(0F, 1F, 0F))
-        ).build();
-
-        es.entity("light4").component(
-                new PointLight(new Vector3f(cameraPosition).add(0F, 2F, -2F), new Vector3f(0F, 0F, 1F))
-        ).build();
+//        es.entity("light2").component(
+//                new PointLight(new Vector3f(cameraPosition).add(-2F, 0F, -2F), new Vector3f(1F, 0F, 0F))
+//        ).build();
+//
+//        es.entity("light3").component(
+//                new PointLight(new Vector3f(cameraPosition).add(2F, 0F, -2F), new Vector3f(0F, 1F, 0F))
+//        ).build();
+//
+//        es.entity("light4").component(
+//                new PointLight(new Vector3f(cameraPosition).add(0F, 2F, -2F), new Vector3f(0F, 0F, 1F))
+//        ).build();
 
     }
 

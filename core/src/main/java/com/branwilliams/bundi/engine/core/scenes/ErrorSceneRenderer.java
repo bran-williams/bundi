@@ -85,7 +85,6 @@ public class ErrorSceneRenderer implements Renderer {
     @Override
     public void render(Engine engine, Window window, double deltaTime) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         this.shaderProgram.bind();
         this.shaderProgram.setProjectionMatrix(projection);
         this.shaderProgram.setModelMatrix(transformation.get());

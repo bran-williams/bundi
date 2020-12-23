@@ -23,4 +23,8 @@ public enum MaterialElementType {
         this.glslType = glslType;
         this.isTexture = isTexture;
     }
+
+    public boolean isSampler() {
+        return this == SAMPLER_2D || this == SAMPLER_3D || this == SAMPLER_CUBEMAP;
+    }
 }

@@ -1,6 +1,7 @@
 package com.branwilliams.cubes.world;
 
 import com.branwilliams.bundi.engine.core.Engine;
+import com.branwilliams.bundi.engine.core.Updateable;
 import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.cubes.GridCell;
 import com.branwilliams.cubes.GridCellMesh;
@@ -13,7 +14,7 @@ import org.joml.Vector3i;
  * @author Brandon
  * @since January 25, 2020
  */
-public class MarchingCubeWorld {
+public class MarchingCubeWorld implements Updateable {
 
     private final Grid3i<MarchingCubeChunk> chunks;
 
@@ -41,6 +42,11 @@ public class MarchingCubeWorld {
                 chunk.resetDirty();
             }
         }
+    }
+
+    @Override
+    public void fixedUpdate(Engine engine, double deltaTime) {
+
     }
 
     public void loadAllChunks() {

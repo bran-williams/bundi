@@ -287,7 +287,6 @@ public class VoxelScene extends AbstractScene implements Lockable {
         window.setFullscreen(gameSettings.isFullscreen());
     }
 
-
     public void loadWorld() {
         if (voxelWorld != null)
             voxelWorld.destroy();

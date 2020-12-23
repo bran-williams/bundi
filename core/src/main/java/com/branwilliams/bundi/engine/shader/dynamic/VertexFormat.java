@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.engine.shader.dynamic;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,53 +13,53 @@ import java.util.List;
  * @author Brandon
  * @since April 11, 2019
  */
-public class VertexFormat {
+public class VertexFormat <VertexElementType extends VertexElement> implements Iterable<VertexElementType> {
 
-    public static final VertexFormat NONE = new VertexFormat();
+    public static final VertexFormat<VertexElements> NONE = new VertexFormat<>();
 
-    public static final VertexFormat POSITION = new VertexFormat(VertexElements.POSITION);
+    public static final VertexFormat<VertexElements> POSITION = new VertexFormat<>(VertexElements.POSITION);
 
-    public static final VertexFormat POSITION_COLOR = new VertexFormat(VertexElements.POSITION, VertexElements.COLOR);
+    public static final VertexFormat<VertexElements> POSITION_COLOR = new VertexFormat<>(VertexElements.POSITION, VertexElements.COLOR);
 
-    public static final VertexFormat POSITION_UV = new VertexFormat(VertexElements.POSITION, VertexElements.UV);
+    public static final VertexFormat<VertexElements> POSITION_UV = new VertexFormat<>(VertexElements.POSITION, VertexElements.UV);
 
-    public static final VertexFormat POSITION_NORMAL = new VertexFormat(VertexElements.POSITION, VertexElements.NORMAL);
+    public static final VertexFormat<VertexElements> POSITION_NORMAL = new VertexFormat<>(VertexElements.POSITION, VertexElements.NORMAL);
 
-    public static final VertexFormat POSITION_UV_COLOR = new VertexFormat(VertexElements.POSITION, VertexElements.UV,
+    public static final VertexFormat<VertexElements> POSITION_UV_COLOR = new VertexFormat<>(VertexElements.POSITION, VertexElements.UV,
             VertexElements.COLOR);
 
-    public static final VertexFormat POSITION_UV_NORMAL = new VertexFormat(VertexElements.POSITION, VertexElements.UV,
+    public static final VertexFormat<VertexElements> POSITION_UV_NORMAL = new VertexFormat<>(VertexElements.POSITION, VertexElements.UV,
             VertexElements.NORMAL);
 
-    public static final VertexFormat POSITION_UV_COLOR_NORMAL = new VertexFormat(VertexElements.POSITION, VertexElements.UV,
+    public static final VertexFormat<VertexElements> POSITION_UV_COLOR_NORMAL = new VertexFormat<>(VertexElements.POSITION, VertexElements.UV,
             VertexElements.COLOR, VertexElements.NORMAL);
 
-    public static final VertexFormat POSITION_UV_NORMAL_TANGENT = new VertexFormat(VertexElements.POSITION,
+    public static final VertexFormat<VertexElements> POSITION_UV_NORMAL_TANGENT = new VertexFormat<>(VertexElements.POSITION,
             VertexElements.UV, VertexElements.NORMAL, VertexElements.TANGENT);
 
-    public static final VertexFormat POSITION_UV_NORMAL_TANGENT_BITANGENT = new VertexFormat(VertexElements.POSITION,
+    public static final VertexFormat<VertexElements> POSITION_UV_NORMAL_TANGENT_BITANGENT = new VertexFormat<>(VertexElements.POSITION,
             VertexElements.UV, VertexElements.NORMAL, VertexElements.TANGENT, VertexElements.BITANGENT);
 
-    public static final VertexFormat POSITION_2D = new VertexFormat(VertexElements.POSITION_2D);
+    public static final VertexFormat<VertexElements> POSITION_2D = new VertexFormat<>(VertexElements.POSITION_2D);
 
-    public static final VertexFormat POSITION_2D_COLOR = new VertexFormat(VertexElements.POSITION_2D, VertexElements.COLOR);
+    public static final VertexFormat<VertexElements> POSITION_2D_COLOR = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.COLOR);
 
-    public static final VertexFormat POSITION_2D_UV = new VertexFormat(VertexElements.POSITION_2D, VertexElements.UV);
+    public static final VertexFormat<VertexElements> POSITION_2D_UV = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.UV);
 
-    public static final VertexFormat POSITION_2D_UV_COLOR = new VertexFormat(VertexElements.POSITION_2D, VertexElements.UV,
+    public static final VertexFormat<VertexElements> POSITION_2D_UV_COLOR = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.UV,
             VertexElements.COLOR);
 
     /**
      * The list of elements this vertex format contains.
      * */
-    private final List<VertexElements> vertexElements;
+    private final List<VertexElementType> vertexElements;
 
     /**
      * The total size of the vertex this format represents.
      * */
     private final int elementSize;
 
-    public VertexFormat(List<VertexElements> vertexElements) {
+    public VertexFormat(List<VertexElementType> vertexElements) {
         this.vertexElements = vertexElements;
 
         elementSize = this.vertexElements.stream()
@@ -66,7 +67,7 @@ public class VertexFormat {
                 .sum();
     }
 
-    public VertexFormat(VertexElements... vertexElements) {
+    public VertexFormat(VertexElementType... vertexElements) {
         this(Arrays.asList(vertexElements));
     }
 
@@ -114,26 +115,31 @@ public class VertexFormat {
     /**
      * @return The VertexElement at the index provided.
      * */
-    public VertexElements getElement(int index) {
+    public VertexElement getElement(int index) {
         return vertexElements.get(index);
     }
 
     /**
      * @return The index for the provided VertexElement.
      * */
-    public int getElementIndex(VertexElements vertexElements) {
-        return this.vertexElements.indexOf(vertexElements);
+    public int getElementIndex(VertexElement vertexElement) {
+        return this.vertexElements.indexOf(vertexElement);
     }
 
-    public List<VertexElements> getVertexElements() {
+    public List<VertexElementType> getVertexElements() {
         return vertexElements;
     }
 
-    public boolean hasElement(VertexElements vertexElements) {
-        return this.vertexElements.contains(vertexElements);
+    public boolean hasElement(VertexElement vertexElement) {
+        return this.vertexElements.contains(vertexElement);
     }
 
     public int getElementCount() {
         return vertexElements.size();
+    }
+
+    @Override
+    public Iterator<VertexElementType> iterator() {
+        return vertexElements.iterator();
     }
 }

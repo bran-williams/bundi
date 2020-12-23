@@ -26,10 +26,8 @@ public class MaterialBinder {
                                               String materialName)
             throws ShaderUniformException {
         for (MaterialFormat.MaterialEntry materialEntry : materialFormat.getElements().values()) {
-            if (materialEntry.elementType == MaterialElementType.SAMPLER_2D
-                    || materialEntry.elementType == MaterialElementType.SAMPLER_3D
-                    || materialEntry.elementType == MaterialElementType.SAMPLER_CUBEMAP) {
-                String uniformName = materialName + "." + materialEntry.variableName;
+            if (materialEntry.elementType.isSampler()) {
+                String uniformName = getMaterialEntryUniformName(materialName, materialEntry);
                 shaderProgram.setUniform(uniformName, materialEntry.textureIndex);
             }
         }
@@ -39,14 +37,9 @@ public class MaterialBinder {
                                               String materialName)
             throws ShaderUniformException {
         if (materialFormat != null) {
-
-            if (materialFormat.hasElement(MaterialElement.SPECULAR)) {
-                shaderProgram.createUniform("viewPos");
-            }
-
             for (MaterialElement element : materialFormat.getElements().keySet()) {
                 MaterialFormat.MaterialEntry materialEntry = materialFormat.getElement(element);
-                String uniformName = materialName + "." + materialEntry.variableName;
+                String uniformName = getMaterialEntryUniformName(materialName, materialEntry);
                 shaderProgram.createUniform(uniformName);
             }
         }
@@ -57,33 +50,57 @@ public class MaterialBinder {
         if (materialFormat != null) {
             for (MaterialElement element : materialFormat.getElements().keySet()) {
                 MaterialFormat.MaterialEntry materialEntry = materialFormat.getElement(element);
-                String uniformName = materialName + "." + materialEntry.variableName;
-
-                switch (materialEntry.elementType) {
-                    case VEC2:
-                        Vector2f vec2 = material.getProperty(materialEntry.variableName);
-                        shaderProgram.setUniform(uniformName, vec2);
-                        break;
-                    case VEC3:
-                        Vector3f vec3 = material.getProperty(materialEntry.variableName);
-                        shaderProgram.setUniform(uniformName, vec3);
-                        break;
-                    case VEC4:
-                        Vector4f vec4 = material.getProperty(materialEntry.variableName);
-                        shaderProgram.setUniform(uniformName, vec4);
-                        break;
-                    case MAT3:
-                        Matrix3f mat3 = material.getProperty(materialEntry.variableName);
-                        shaderProgram.setUniform(uniformName, mat3);
-                        break;
-                    case MAT4:
-                        Matrix4f mat4 = material.getProperty(materialEntry.variableName);
-                        shaderProgram.setUniform(uniformName, mat4);
-                        break;
-                    default:
-                        break;
-                }
+                setMaterialUniform(shaderProgram, materialName, materialEntry, material);
             }
         }
     }
+
+    public static void createMaterialUniform(ShaderProgram shaderProgram, String materialName,
+                                             MaterialFormat materialFormat, MaterialElement materialElement)
+            throws ShaderUniformException {
+        MaterialFormat.MaterialEntry materialEntry = materialFormat.getElement(materialElement);
+        String uniformName = getMaterialEntryUniformName(materialName, materialEntry);
+
+        shaderProgram.createUniform(uniformName);
+
+        if (materialEntry.elementType.isSampler()) {
+            shaderProgram.setUniform(uniformName, materialEntry.textureIndex);
+        }
+    }
+
+    public static void setMaterialUniform(ShaderProgram shaderProgram, String materialName,
+                                          MaterialFormat.MaterialEntry materialEntry, Material material) {
+        String uniformName = getMaterialEntryUniformName(materialName, materialEntry);
+
+        switch (materialEntry.elementType) {
+            case VEC2:
+                Vector2f vec2 = material.getProperty(materialEntry.variableName);
+                shaderProgram.setUniform(uniformName, vec2);
+                break;
+            case VEC3:
+                Vector3f vec3 = material.getProperty(materialEntry.variableName);
+                shaderProgram.setUniform(uniformName, vec3);
+                break;
+            case VEC4:
+                Vector4f vec4 = material.getProperty(materialEntry.variableName);
+                shaderProgram.setUniform(uniformName, vec4);
+                break;
+            case MAT3:
+                Matrix3f mat3 = material.getProperty(materialEntry.variableName);
+                shaderProgram.setUniform(uniformName, mat3);
+                break;
+            case MAT4:
+                Matrix4f mat4 = material.getProperty(materialEntry.variableName);
+                shaderProgram.setUniform(uniformName, mat4);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static String getMaterialEntryUniformName(String materialName,
+                                                     MaterialFormat.MaterialEntry materialEntry) {
+        return materialName + "." + materialEntry.variableName;
+    }
+
 }

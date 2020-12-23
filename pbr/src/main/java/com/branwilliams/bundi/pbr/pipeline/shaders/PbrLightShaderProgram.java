@@ -57,7 +57,7 @@ public class PbrLightShaderProgram extends ShaderProgram {
                 throw new ShaderUniformException("Lights cannot be null!");
             }
             this.setUniform("lights" + index + ".position", light.getPosition());
-            this.setUniform("lights" + index + ".color", light.getColor());
+            this.setUniform("lights" + index + ".color", light.getDiffuse());
 //            this.setUniform("lights" + index + ".ambiance", light.getAmbiance());
             this.setUniform("lights" + index + ".constant", light.getAttenuation().getConstant());
             this.setUniform("lights" + index + ".linear", light.getAttenuation().getLinear());

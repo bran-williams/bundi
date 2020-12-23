@@ -53,6 +53,7 @@ public class PlayerInteractSystem extends AbstractSystem implements KeyListener,
 //        scene.setRaycast(result);
 
         Vector3f ray = scene.getCamera().getFacingDirection().mul(raycastDistance.get());
+        int radius = 2;
         if (scene.getRaycast() != null && pressed != -1 && shouldEdit) {
             MarchingCubeChunk chunk = scene.getWorld().getChunk(scene.getRaycast().position);
             if (chunk != null) {
@@ -62,9 +63,9 @@ public class PlayerInteractSystem extends AbstractSystem implements KeyListener,
                         gridCell.getIsoValues()[i] += pressed == 0 ? 0.01F : -0.01F;
                     }
 
-                    for (int x = -1; x <= 1; x++) {
-                        for (int y = -1; y <= 1; y++) {
-                            for (int z = -1; z <= 1; z++) {
+                    for (int x = -radius; x <= radius; x++) {
+                        for (int y = -radius; y <= radius; y++) {
+                            for (int z = -radius; z <= radius; z++) {
 
                                 // skip origin
                                 if (x == 0 && y == 0 && z == 0)

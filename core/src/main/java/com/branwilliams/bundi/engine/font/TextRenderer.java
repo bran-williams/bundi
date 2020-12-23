@@ -25,7 +25,7 @@ public class TextRenderer {
                 for (TextRenderInfo renderInfo : renders.get(font)) {
 
                     TextMesh textMesh = this.renderedText.get(renderInfo.getText());
-                    textMesh.getVao();
+//                    textMesh.getVao();
                 }
             }
         }

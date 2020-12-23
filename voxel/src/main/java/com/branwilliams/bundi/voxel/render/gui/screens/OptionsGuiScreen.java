@@ -63,19 +63,18 @@ public class OptionsGuiScreen extends VoxelGuiScreen {
             return true;
         }));
 
-        Slider slider = containerManager.getByTag("music_volume_slider");
-
-        Label sliderValueLabel = containerManager.getByTag("music_volume_value");
+        Slider musicVolumeSlider = containerManager.getByTag("music_volume_slider");
+        Label musicVolumeLabel = containerManager.getByTag("music_volume_value");
 
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
 
-        slider.onValueChange((s) -> {
+        musicVolumeSlider.onValueChange((s) -> {
             float roundedValue = Float.parseFloat(df.format(s.getSliderPercentage()));
-            sliderValueLabel.setText((int) (roundedValue * 100) + "%");
+            musicVolumeLabel.setText((int) (roundedValue * 100) + "%");
             scene.getVoxelSoundManager().getMusicSource().setGain(roundedValue);
         });
-        slider.setSliderPercentage(scene.getVoxelSoundManager().getMusicSource().getGain());
+        musicVolumeSlider.setSliderPercentage(scene.getVoxelSoundManager().getMusicSource().getGain());
 
     }
 }

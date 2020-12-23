@@ -19,4 +19,5 @@ include 'voxel'
 include 'fog'
 include 'galleryviewer'
 include 'demo-template-2d'
+include 'frogger'
 

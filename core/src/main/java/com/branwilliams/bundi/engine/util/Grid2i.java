@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.util;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.function.Function;
 
@@ -19,12 +20,16 @@ public class Grid2i<T> implements Iterable<T> {
 
     private boolean dirty;
 
+    public Grid2i(Class<T> valueType, int width, int height) {
+        this((size) -> (T[]) Array.newInstance(valueType, size), width, height);
+    }
+
     public Grid2i(Function<Integer, T[]> kernelBuilder, int width, int height) {
         this(kernelBuilder.apply(width * height), width, height);
     }
 
     public Grid2i(T[] kernel, int width, int height) {
-        if (width * height != kernel.length)
+                if (width * height != kernel.length)
             throw new IllegalArgumentException("Kernel must have the dimensions of width * height");
         this.kernel = kernel;
         this.width = width;
@@ -44,7 +49,7 @@ public class Grid2i<T> implements Iterable<T> {
     public int toFlatIndex(int x, int y) {
         x = Mathf.clamp(x, 0, width - 1);
         y = Mathf.clamp(y, 0, height - 1);
-        return x * width + y;
+        return x * height + y;
     }
 
     public T[] getKernel() {

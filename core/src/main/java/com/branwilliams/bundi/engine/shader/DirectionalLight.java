@@ -54,4 +54,18 @@ public class DirectionalLight {
     public void setSpecular(Vector3f specular) {
         this.specular = specular;
     }
+
+    public static String getStructName() {
+        return "DirLight";
+    }
+
+    public static String toGLSLStruct() {
+        return "struct DirLight {\n"
+                + "    vec3 direction;\n"
+                + "\n"
+                + "    vec3 ambient;\n"
+                + "    vec3 diffuse;\n"
+                + "    vec3 specular;\n"
+                + "};\n";
+    }
 }

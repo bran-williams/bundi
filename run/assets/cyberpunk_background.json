@@ -1,0 +1,52 @@
+{
+  "layers": [
+    {
+      "properties": {
+        "layer": 0,
+        "speed": {"x" : 0.75, "y":  0}
+      },
+      "objects": [
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 256, "y": 192},
+          "object": {
+            "texture": "textures/cyberpunk/far-buildings.png",
+            "scale": 4
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 1,
+        "speed": {"x" : 1.25, "y":  0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 256, "y": 192},
+          "object": {
+            "texture": "textures/cyberpunk/back-buildings.png",
+            "scale": 4
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 2,
+        "speed": {"x": 3, "y": 0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 352, "y": 192},
+          "object": {
+            "texture": "textures/cyberpunk/foreground.png",
+            "scale": 4
+          }
+        }
+      ]
+    }
+  ]
+}

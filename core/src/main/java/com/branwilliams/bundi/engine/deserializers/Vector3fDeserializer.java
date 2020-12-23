@@ -1,9 +1,13 @@
 package com.branwilliams.bundi.engine.deserializers;
 
+import com.branwilliams.bundi.engine.util.ColorUtils;
 import com.google.gson.*;
 import org.joml.Vector3f;
 
+import java.awt.*;
 import java.lang.reflect.Type;
+
+import static com.branwilliams.bundi.engine.util.GsonUtils.getFirstValidKey;
 
 /**
  * @author Brandon
@@ -16,10 +20,18 @@ public class Vector3fDeserializer implements JsonDeserializer<Vector3f> {
 
         Vector3f vector3f = new Vector3f();
 
-        vector3f.x = jsonObject.get("x").getAsFloat();
-        vector3f.y = jsonObject.get("y").getAsFloat();
-        vector3f.z = jsonObject.get("z").getAsFloat();
+        if (jsonObject.has("rgb")) {
+            String hexColor = getFirstValidKey(jsonObject, "rgb").getAsString();
+            Color color = ColorUtils.fromHex(hexColor);
+            vector3f = ColorUtils.toVector3(color);
+            return vector3f;
+        }
+
+        vector3f.x = getFirstValidKey(jsonObject, "x", "r").getAsFloat();
+        vector3f.y =  getFirstValidKey(jsonObject, "y", "g").getAsFloat();
+        vector3f.z =  getFirstValidKey(jsonObject, "z", "b").getAsFloat();
 
         return vector3f;
     }
+
 }

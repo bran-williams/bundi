@@ -1,0 +1,104 @@
+{
+  "layers": [
+    {
+      "properties": {
+        "layer": 0,
+        "speed": {"x" : 0, "y":  0}
+      },
+      "objects": [
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 384, "y": 216},
+          "object": {
+            "texture": "textures/glacial/sky.png",
+            "scale": 4
+          }
+        },
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 384, "y": 216},
+          "object": {
+            "texture": "textures/glacial/clouds_bg.png",
+            "scale": 4
+          }
+        },
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 384, "y": 216},
+          "object": {
+            "texture": "textures/glacial/glacial_mountains.png",
+            "scale": 4
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 1,
+        "speed": {"x" : 0.25, "y":  0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 384, "y": 216},
+          "velocity": {"x": 0.01, "y": 0},
+          "object": {
+            "texture": "textures/glacial/cloud_lonely.png",
+            "scale": 4
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 2,
+        "speed": {"x": 3, "y": 0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 384, "y": 216},
+          "velocity": {"x": 0.005, "y": 0},
+          "object": {
+            "texture": "textures/glacial/clouds_mg_3.png",
+            "scale": 4
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 3,
+        "speed": {"x": 4, "y": 0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 384, "y": 216},
+          "velocity": {"x": 0.03, "y": 0},
+          "object": {
+            "texture": "textures/glacial/clouds_mg_2.png",
+            "scale": 4
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 4,
+        "speed": {"x": 5, "y": 0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 384, "y": 216},
+          "velocity": {"x": 0.05, "y": 0},
+          "object": {
+            "texture": "textures/glacial/clouds_mg_1.png",
+            "scale": 4
+          }
+        }
+      ]
+    }
+  ]
+}

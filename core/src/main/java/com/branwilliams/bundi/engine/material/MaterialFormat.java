@@ -33,6 +33,8 @@ public class MaterialFormat {
     public static MaterialFormat DIFFUSE_VEC4 = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
             MaterialElementType.VEC4, "diffuse");
 
+    public static MaterialFormat DIFFUSE_VEC3 = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
+            MaterialElementType.VEC3, "diffuse");
 
     public static MaterialFormat DIFFUSE_VEC4_SPECULAR_VEC4 = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
             MaterialElementType.VEC4, "diffuse").addElement(MaterialElement.SPECULAR,
@@ -169,7 +171,6 @@ public class MaterialFormat {
         @Override
         public String toGLSLUniform(String materialName) {
             return "";
-
         }
 
         @Override

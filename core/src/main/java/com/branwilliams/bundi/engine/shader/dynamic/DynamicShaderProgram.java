@@ -88,11 +88,11 @@ public class DynamicShaderProgram extends ShaderProgram {
         this(VertexFormat.POSITION_UV_COLOR, mode);
     }
 
-    public DynamicShaderProgram(VertexFormat vertexFormat) throws ShaderInitializationException, ShaderUniformException {
+    public DynamicShaderProgram(VertexFormat<VertexElements> vertexFormat) throws ShaderInitializationException, ShaderUniformException {
         this(vertexFormat, 0);
     }
 
-    public DynamicShaderProgram(VertexFormat vertexFormat, int mode) throws ShaderInitializationException, ShaderUniformException {
+    public DynamicShaderProgram(VertexFormat<VertexElements> vertexFormat, int mode) throws ShaderInitializationException, ShaderUniformException {
         super();
         this.vertexFormat = vertexFormat;
         this.mode = mode;

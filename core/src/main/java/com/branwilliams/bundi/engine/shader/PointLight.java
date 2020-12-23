@@ -11,42 +11,50 @@ public class PointLight {
 
     private Vector3f position;
 
-    private Vector3f color;
+    private Vector3f ambient;
+
+    private Vector3f diffuse;
+
+    private Vector3f specular;
+
 
     private float ambiance;
 
     private LinearAttenuation attenuation;
 
-    public PointLight(Vector3f position, Vector3f color, float ambiance, LinearAttenuation attenuation) {
+    public PointLight(Vector3f position, Vector3f ambient, Vector3f diffuse, Vector3f specular, float ambiance,
+                      LinearAttenuation attenuation) {
         this.position = position;
-        this.color = color;
+        this.ambient = ambient;
+        this.diffuse = diffuse;
+        this.specular = specular;
         this.ambiance = ambiance;
         this.attenuation = attenuation;
     }
 
 
-    public PointLight(Vector3f position, Vector3f color, float ambiance) {
-        this(position, color, ambiance, new LinearAttenuation(1.0F, 0.09F, 0.032F));
+    public PointLight(Vector3f position, Vector3f ambient, Vector3f diffuse, Vector3f specular, float ambiance) {
+        this(position, ambient, diffuse, specular, ambiance, new LinearAttenuation(1.0F, 0.09F, 0.032F));
     }
 
 
-    public PointLight(Vector3f position, Vector3f color) {
-        this(position, color, 0.0005F);
+    public PointLight(Vector3f position, Vector3f ambient, Vector3f diffuse, Vector3f specular) {
+        this(position, ambient, diffuse, specular, 0.0005F);
     }
 
     public PointLight(Vector3f position) {
-        this(position, new Vector3f(1F, 1F, 1F));
+        this(position, new Vector3f(0.05F, 0.05F, 0.05F), new Vector3f(0.8F), new Vector3f(1F));
     }
 
-    public PointLight(Vector3f color, float radius) {
-        this(new Vector3f(), color, 0F, new LinearAttenuation(1.0F, 0.09F, 1.0F / (radius*radius * 0.01F)));
+    public PointLight(Vector3f ambient, Vector3f diffuse, Vector3f specular, float radius) {
+        this(new Vector3f(), ambient, diffuse, specular, 0F, new LinearAttenuation(1.0F, 0.09F, 1.0F / (radius*radius * 0.01F)));
     }
 
     /**
      * @return The radius this point light will affect.
      * */
     public float getRadius() {
-        float maxChannel = Math.max(Math.max(color.x, color.y), color.z);
+        float maxChannel = Math.max(Math.max(diffuse.x, diffuse.y), diffuse.z);
 
         return (-attenuation.getLinear() + (float) Math.sqrt(attenuation.getLinear() * attenuation.getLinear() -
                 4 * attenuation.getQuadratic() * (attenuation.getConstant() - (256F/5F) * maxChannel)))
@@ -73,12 +81,28 @@ public class PointLight {
         this.position = position;
     }
 
-    public Vector3f getColor() {
-        return color;
+    public Vector3f getAmbient() {
+        return ambient;
     }
 
-    public void setColor(Vector3f color) {
-        this.color = color;
+    public void setAmbient(Vector3f ambient) {
+        this.ambient = ambient;
+    }
+
+    public Vector3f getDiffuse() {
+        return diffuse;
+    }
+
+    public void setDiffuse(Vector3f diffuse) {
+        this.diffuse = diffuse;
+    }
+
+    public Vector3f getSpecular() {
+        return specular;
+    }
+
+    public void setSpecular(Vector3f specular) {
+        this.specular = specular;
     }
 
     public float getAmbiance() {
@@ -97,4 +121,21 @@ public class PointLight {
         this.attenuation = attenuation;
     }
 
+    public static String getStructName() {
+        return "PointLight";
+    }
+
+    public static String toGLSLStruct() {
+        return "struct PointLight {\n"
+                + "    vec3 position;\n"
+                + "\n"
+                + "    float constant;\n"
+                + "    float linear;\n"
+                + "    float quadratic;\n"
+                + "\n"
+                + "    vec3 ambient;\n"
+                + "    vec3 diffuse;\n"
+                + "    vec3 specular;\n"
+                + "};\n";
+    }
 }

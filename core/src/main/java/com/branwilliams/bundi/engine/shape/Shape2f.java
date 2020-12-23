@@ -46,7 +46,9 @@ public interface Shape2f {
     /**
      * Centers this shape to the provided position.
      * */
-    Shape2f center(Vector2f position);
+    default Shape2f center(Vector2f position) {
+        return center(position.x, position.y);
+    }
 
     /**
      * Centers this shape to the provided position.

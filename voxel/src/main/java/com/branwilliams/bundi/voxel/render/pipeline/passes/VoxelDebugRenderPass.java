@@ -65,8 +65,7 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> {
         fontRenderer.drawStringWithShadow("FPS: " + engine.getFrames(), 2, y, 0xFFFFFFFF);
         y += fontRenderer.getFontData().getFontHeight();
 
-        int onGroundColor = playerState.isOnGround() ? 0xFF339900 : 0xFF990000;
-        fontRenderer.drawStringWithShadow("onGround=True", 2, y, onGroundColor);
+        fontRenderer.drawStringWithShadow("onGround: " + playerState.isOnGround(), 2, y, 0xFFFFFFFF);
         y += fontRenderer.getFontData().getFontHeight();
 
         y = drawVector("Position", playerTransform.getPosition(), 2, y, 0xFFFFFFFF);
@@ -80,7 +79,7 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> {
         fontRenderer.drawStringWithShadow(title, x, y, color);
         y += fontRenderer.getFontData().getFontHeight();
 
-        fontRenderer.drawStringWithShadow(String.format("\tx=%.3f y=%.3f z=%.3f", vector.x, vector.y, vector.z), x, y, color);
+        fontRenderer.drawStringWithShadow(String.format("x: %.3f y: %.3f z: %.3f", vector.x, vector.y, vector.z), x, y, color);
         y += fontRenderer.getFontData().getFontHeight();
 
         return y;

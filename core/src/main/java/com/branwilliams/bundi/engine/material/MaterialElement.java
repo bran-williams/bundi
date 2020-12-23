@@ -9,5 +9,6 @@ public enum MaterialElement {
     SPECULAR,
     AMBIENT,
     EMISSIVE,
-    NORMAL
+    NORMAL,
+    OTHER
 }

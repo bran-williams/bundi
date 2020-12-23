@@ -5,6 +5,8 @@ import org.joml.Vector2f;
 
 import java.lang.reflect.Type;
 
+import static com.branwilliams.bundi.engine.util.GsonUtils.getFirstValidKey;
+
 /**
  * @author Brandon
  * @since August 09, 2019
@@ -16,8 +18,8 @@ public class Vector2fDeserializer implements JsonDeserializer<Vector2f> {
 
         Vector2f vector2f = new Vector2f();
 
-        vector2f.x = jsonObject.get("x").getAsFloat();
-        vector2f.y = jsonObject.get("y").getAsFloat();
+        vector2f.x = getFirstValidKey(jsonObject, "x", "r").getAsFloat();
+        vector2f.y = getFirstValidKey(jsonObject, "y", "g").getAsFloat();
 
         return vector2f;
     }

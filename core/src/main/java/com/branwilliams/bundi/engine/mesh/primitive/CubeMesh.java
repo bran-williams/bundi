@@ -109,7 +109,11 @@ public class CubeMesh extends Mesh {
             0.0f, 1.0f,
     };
 
-    public CubeMesh(float xsize, float ysize, float zsize, VertexFormat vertexFormat) {
+    public CubeMesh(float xsize, float ysize, float zsize, VertexFormat<VertexElements> vertexFormat) {
+        this(xsize, ysize, zsize, 1.0F, vertexFormat);
+    }
+
+    public CubeMesh(float xsize, float ysize, float zsize, float uvsize, VertexFormat<VertexElements> vertexFormat) {
         super();
         float[] vertices = {
                 // bottom
@@ -160,7 +164,55 @@ public class CubeMesh extends Mesh {
                 xsize, ysize, -zsize,
                 xsize, ysize, zsize,
         };
+        float[] textureCoordsVertices = {
+                // bottom
+                0.0f, 0.0f,
+                uvsize, 0.0f,
+                0.0f, uvsize,
+                uvsize, 0.0f,
+                uvsize, uvsize,
+                0.0f, uvsize,
 
+                // top
+                0.0f, 0.0f,
+                0.0f, uvsize,
+                uvsize, 0.0f,
+                uvsize, 0.0f,
+                0.0f, uvsize,
+                uvsize, uvsize,
+
+                // front
+                uvsize, 0.0f,
+                0.0f, 0.0f,
+                uvsize, uvsize,
+                0.0f, 0.0f,
+                0.0f, uvsize,
+                uvsize, uvsize,
+
+                // back
+                0.0f, 0.0f,
+                0.0f, uvsize,
+                uvsize, 0.0f,
+                uvsize, 0.0f,
+                0.0f, uvsize,
+                uvsize, uvsize,
+
+                // left
+                0.0f, uvsize,
+                uvsize, 0.0f,
+                0.0f, 0.0f,
+                0.0f, uvsize,
+                uvsize, uvsize,
+                uvsize, 0.0f,
+
+                // right
+                uvsize, uvsize,
+                uvsize, 0.0f,
+                0.0f, 0.0f,
+                uvsize, uvsize,
+                0.0f, 0.0f,
+                0.0f, uvsize,
+        };
 
         float[] tangents = null;
         float[] bitangents = null;

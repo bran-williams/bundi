@@ -5,7 +5,7 @@
   "vsync": true,
   "keycodes": "./keycodes.json",
 
-  "launchScene": "com.branwilliams.demo.template2d.ParallaxScene",
+  "launchScene": "com.branwilliams.frogger.ParallaxScene",
 
   "assetDirectory": ".",
   "tempDirectory": "./temp",

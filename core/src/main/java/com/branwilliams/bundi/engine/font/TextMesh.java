@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.font;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.shader.VertexArrayObject;
+import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 
 public class TextMesh implements Destructible {
 
@@ -9,9 +10,9 @@ public class TextMesh implements Destructible {
 
     private Text text;
 
-    private VertexArrayObject vao;
+    private DynamicVAO vao;
 
-    public TextMesh(FontData font, Text text, VertexArrayObject vao) {
+    public TextMesh(FontData font, Text text, DynamicVAO vao) {
         this.font = font;
         this.text = text;
         this.vao = vao;
@@ -21,7 +22,7 @@ public class TextMesh implements Destructible {
         return font;
     }
 
-    public VertexArrayObject getVao() {
+    public DynamicVAO getVao() {
         return vao;
     }
 

@@ -42,6 +42,7 @@ public class SpriteRenderPass extends RenderPass<RenderContext> {
 
         for (IEntity entity : scene.getEs().getEntities(matcher)) {
             Transformable transformable = entity.getComponent(Transformable.class);
+
             shaderProgram.setModelMatrix(transformable);
 
             Sprite sprite = entity.getComponent(Sprite.class);

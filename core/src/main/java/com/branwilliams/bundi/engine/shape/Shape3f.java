@@ -32,12 +32,16 @@ public interface Shape3f {
     /**
      * Centers this collidable to the provided position.
      * */
-    void center(float x, float y, float z);
+    default void center(float x, float y, float z) {
+        getCenter().set(x, y, z);
+    }
 
     /**
      * Centers this collidable to the provided position.
      * */
-    void center(Vector3f position);
+    default void center(Vector3f position) {
+        getCenter().set(position);
+    }
 
     /**
      * Centers this collidable to the provided position.

@@ -5,13 +5,9 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.pipeline.passes.DisableWireframeRenderPass;
 import com.branwilliams.bundi.engine.core.pipeline.passes.EnableWireframeRenderPass;
-import com.branwilliams.bundi.engine.core.window.KeyListener;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
-import com.branwilliams.bundi.engine.shader.Camera;
-import com.branwilliams.bundi.engine.shader.DirectionalLight;
-import com.branwilliams.bundi.engine.shader.Projection;
-import com.branwilliams.bundi.engine.shader.Transformation;
+import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.Grid3i;
@@ -38,8 +34,8 @@ import java.awt.Color;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static com.branwilliams.bundi.engine.util.ColorUtils.fromHex;
-import static com.branwilliams.bundi.engine.util.ColorUtils.toVector3;
+import static com.branwilliams.bundi.engine.util.ColorUtils.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_R;
 
 /**
@@ -85,6 +81,17 @@ public class CubesScene extends AbstractScene {
             new Vector3f(0.4F),  // diffuse
             toVector3(WORLD_COLOR.brighter())); // specular
 
+    private Environment environment = new Environment(new Fog(0.005F, toVector4(FOG_COLOR)),
+            new PointLight[] {
+                    new PointLight(new Vector3f(0, 0, 0),
+                            new Vector3f(0.05F),
+                            new Vector3f(2F),
+                            new Vector3f(1F))
+            },
+            new DirectionalLight[] {
+                    sun
+            }, null);
+
     private TextureLoader textureLoader;
 
     private Camera camera;
@@ -95,14 +102,16 @@ public class CubesScene extends AbstractScene {
 
     private MarchingCubeWorld world;
 
+    private Lockable pauseState = new Lock();
+
     public CubesScene() {
         super("cubes");
-        this.addKeyListener(this);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
-        es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 16F));
+        es.addSystem(new DebugCameraMoveSystem(this, pauseState, this::getCamera, 0.16F,
+                16F, true));
         es.addSystem(new PlayerInteractSystem(this, this::getRaycastDistance));
         es.initSystems(engine, window);
 
@@ -199,6 +208,17 @@ public class CubesScene extends AbstractScene {
         super.keyPress(window, key, scancode, mods);
         if (key == GLFW_KEY_R) {
             wireframe = !wireframe;
+        }
+
+        if (key == GLFW_KEY_ESCAPE) {
+            pauseState.toggle();
+
+            if (pauseState.isLocked()) {
+                window.showCursor();
+                window.centerCursor();
+            } else {
+                window.disableCursor();
+            }
         }
     }
 

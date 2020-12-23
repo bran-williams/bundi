@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.engine.sprite;
 
+import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.util.RateLimiter;
 
 /**
@@ -9,54 +10,55 @@ public class AnimatedSprite extends Sprite {
 
     private final RateLimiter rateLimiter;
 
-    private final Sprite[] sprites;
+    private final int[] spriteIndices;
 
     private int spriteIndex;
+
+    private float xscale;
+
+    private float yscale;
+
+    private boolean rebuild;
 
     public AnimatedSprite(SpriteSheet spriteSheet, int[] spriteIndices, RateLimiter rateLimiter, float scale) {
         this(spriteSheet, spriteIndices, rateLimiter, scale, scale);
     }
 
-    public AnimatedSprite(SpriteSheet spriteSheet, int[] spriteIndices, RateLimiter rateLimiter, float xscale, float yscale) {
-        super(spriteSheet, null, null, 0, 0, 0, 0, spriteSheet.isCenteredSprite());
-        sprites = new Sprite[spriteIndices.length];
-        for (int i = 0; i < spriteIndices.length; i++) {
-            sprites[i] = spriteSheet.getSprite(spriteIndices[i], xscale, yscale);
-        }
+    public AnimatedSprite(SpriteSheet spriteSheet, int[] spriteIndices, RateLimiter rateLimiter,
+                          float xscale, float yscale) {
+        super(spriteSheet, new DynamicVAO(), -1, spriteSheet.getSpriteWidth() * xscale,
+                spriteSheet.getSpriteHeight() * yscale, spriteSheet.isCenteredSprite());
+        this.spriteIndices = spriteIndices;
         this.rateLimiter = rateLimiter;
-    }
+        this.xscale = xscale;
+        this.yscale = yscale;
 
-    public Sprite getCurrentSprite() {
-        updateSpriteIndex();
-        return sprites[spriteIndex];
+        this.rebuild = true;
     }
 
     @Override
     public void draw() {
-        getCurrentSprite().draw();
-    }
-
-    @Override
-    public float getWidth() {
-        return getCurrentSprite().getWidth();
-    }
-
-    @Override
-    public float getHeight() {
-        return getCurrentSprite().getHeight();
+        updateSpriteIndex();
+        if (rebuild) {
+            SpriteSheet.buildSpriteMesh(getSpriteSheet(), getDynamicVao(), getIndex(), xscale, yscale);
+            rebuild = false;
+        }
+        super.draw();
     }
 
     @Override
     public int getIndex() {
-        return getCurrentSprite().getIndex();
+        updateSpriteIndex();
+        return spriteIndices[spriteIndex];
     }
 
     public void updateSpriteIndex() {
         while (rateLimiter.reached()) {
             this.spriteIndex++;
-            if (spriteIndex >= sprites.length) {
+            if (spriteIndex >= spriteIndices.length) {
                 spriteIndex = 0;
             }
+            this.rebuild = true;
         }
     }
 }

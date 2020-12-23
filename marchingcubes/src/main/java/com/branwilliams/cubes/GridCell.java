@@ -405,7 +405,7 @@ public class GridCell {
    Linearly interpolate the position where an isosurface cuts
    an edge between two vertices, each with their own scalar value
 */
-    Vector3f interpolateVertex(float isoLevel, Vector3f p1, Vector3f p2, float valp1, float valp2) {
+    private Vector3f interpolateVertex(float isoLevel, Vector3f p1, Vector3f p2, float valp1, float valp2) {
         float mu;
         Vector3f p = new Vector3f();
 

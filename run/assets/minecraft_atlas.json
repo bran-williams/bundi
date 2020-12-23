@@ -1,0 +1,32 @@
+{
+  "spriteSize":{"x": 32, "y": 32},
+  "atlas": {
+    "0" : {
+      "diffuse": "textures/mc/dirt.png"
+    },
+    "1": {
+      "diffuse": "textures/mc/grass_block_side.png"
+    },
+    "2": {
+      "diffuse": "textures/mc/cobblestone.png"
+    },
+    "3": {
+      "diffuse": "textures/mc/stone.png"
+    },
+    "4": {
+      "diffuse": "textures/mc/sand.png"
+    },
+    "5": {
+      "diffuse": "textures/mc/bricks.png"
+    },
+    "6": {
+      "diffuse": "textures/mc/gold_block.png"
+    },
+    "7": {
+      "diffuse": "textures/mc/diamond_block.png"
+    },
+    "8": {
+      "diffuse": "textures/mc/sponge.png"
+    }
+  }
+}

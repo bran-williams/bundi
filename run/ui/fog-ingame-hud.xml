@@ -5,9 +5,12 @@
         <Label tag="move_sun_controls" text="Hold {{ move_sun_controls }} to move the sun." color="#ffffff" height="30" alignment="left" style="shadow">
             <FontData font="Roboto" size="24" style="bold"/>
         </Label>
-
-        <Label tag="linetwo" text="Line #2." color="#ffffff" height="30" alignment="left" style="shadow">
+        <Label tag="wireframe_controls" text="Press {{ wireframe_controls }} to toggle wireframe mode." color="#ffffff" height="30" alignment="left" style="shadow">
             <FontData font="Roboto" size="24" style="bold"/>
         </Label>
+        <Label tag="reloadenv_controls" text="Press {{ reloadenv_controls }} to reload the env file." color="#ffffff" height="30" alignment="left" style="shadow">
+            <FontData font="Roboto" size="24" style="bold"/>
+        </Label>
+
     </Container>
 </UI>

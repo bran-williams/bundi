@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 /**
  * Simple wrapper class for a vertex array object.
@@ -45,6 +46,10 @@ public class VertexArrayObject {
         vbo.bind();
         //enableAttribute(index);
         glVertexAttribPointer(index, vertexSize, GL_FLOAT, false, stride, offset);
+    }
+
+    public void setAttributeDivisor(int index, int divisor) {
+        glVertexAttribDivisor(index, divisor);
     }
 
     /**

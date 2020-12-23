@@ -81,8 +81,12 @@ public class DynamicVAO {
      * @param vertexFormat The {@link VertexFormat} which this dynamicVao will follow.
      * */
     public DynamicVAO(VertexFormat vertexFormat) {
+        this(vertexFormat, new VertexArrayObject(), new VertexBufferObject());
+    }
+
+    private DynamicVAO(VertexFormat vertexFormat, VertexArrayObject vao, VertexBufferObject vbo) {
         this.vertexFormat = vertexFormat;
-        initVao();
+        initVao(vao, vbo);
         reset();
     }
 
@@ -90,27 +94,27 @@ public class DynamicVAO {
      * Creates the VAO and VBO for this dynamicVao and assigns the attributes (to the vao) specified by this vertex
      * format.
      * */
-    private void initVao() {
-        vao = new VertexArrayObject();
-        vbo = new VertexBufferObject();
+    private void initVao(VertexArrayObject vao, VertexBufferObject vbo) {
+        this.vao = vao;
+        this.vbo = vbo;
 
         defaultBufferSize = DEFAULT_BUFFER_ELEMENT_COUNT * vertexFormat.getElementSize();
 
         // Create the temp buffer and initially store it within the vbo.
         tempBuffer = createFloatBuffer(null, defaultBufferSize, false);
-        vbo.bind();
-        vbo.storeBuffer(tempBuffer.capacity() * FLOAT_SIZE, BUFFER_USAGE);
-        vbo.unbind();
+        this.vbo.bind();
+        this.vbo.storeBuffer(tempBuffer.capacity() * FLOAT_SIZE, BUFFER_USAGE);
+        this.vbo.unbind();
 
         log.info("Temp buffer initialized with size: " + defaultBufferSize);
-        vao.bind();
+        this.vao.bind();
 
         // calculate the stride and offsets for each vertex element. Store the offset/strides within their corresponding
         // index of the vertex format.
         int stride = vertexFormat.getElementSize() * FLOAT_SIZE;
         long offset = 0;
         for (int i = 0; i < vertexFormat.getElementCount(); i++) {
-            vao.storeAttribute(i, vertexFormat.getElement(i).getSize(), vbo, stride, offset);
+            this.vao.storeAttribute(i, vertexFormat.getElement(i).getSize(), this.vbo, stride, offset);
             offset += vertexFormat.getElement(i).getSize() * FLOAT_SIZE;
         }
 
@@ -333,21 +337,28 @@ public class DynamicVAO {
     }
 
     /**
-     * This function replaces the vertex array object and also returns it's current vao without deleting it.
-     * @Returns This dynamicVao's vao.
+     * Creates a copy of this vao and creates a new vao/vbo for this one. This vao must be compiled before this can
+     * happen. The data of this vao/vbo will be gone.
+     *
+     * @Returns A copy of the previous vao.
      * */
-    public VertexArrayObject pop() {
+    public DynamicVAO pop() {
         if (dirty) {
             vao.bind();
             loadVertexData();
             VertexArrayObject.unbind();
         }
-        // Store a copy of the current vao
+
+        // Store a copy of the current vao and vbo
         VertexArrayObject vao = this.vao;
+        VertexBufferObject vbo = this.vbo;
+
         // Initialize a new VAO and VBO(s)
-        initVao();
-        // Return the old one
-        return vao;
+        initVao(new VertexArrayObject(), new VertexBufferObject());
+        reset();
+
+        // Return the old stuff
+        return new DynamicVAO(vertexFormat, vao, vbo);
     }
 
     /**

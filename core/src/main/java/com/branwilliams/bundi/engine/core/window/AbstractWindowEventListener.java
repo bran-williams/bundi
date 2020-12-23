@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.core.window;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AbstractWindowEventListener implements WindowEventListener {
 
@@ -16,11 +17,11 @@ public class AbstractWindowEventListener implements WindowEventListener {
     private final List<JoystickListener> joystickListeners;
 
     public AbstractWindowEventListener() {
-        windowListeners = new ArrayList<>();
-        mouseListeners = new ArrayList<>();
-        keyListeners = new ArrayList<>();
-        characterListeners = new ArrayList<>();
-        joystickListeners = new ArrayList<>();
+        windowListeners = new CopyOnWriteArrayList<>();
+        mouseListeners = new CopyOnWriteArrayList<>();
+        keyListeners = new CopyOnWriteArrayList<>();
+        characterListeners = new CopyOnWriteArrayList<>();
+        joystickListeners = new CopyOnWriteArrayList<>();
     }
 
     @Override

@@ -1,24 +1,17 @@
 package com.branwilliams.bundi.engine.sprite;
 
-import com.branwilliams.bundi.engine.shader.VertexArrayObject;
+import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.shape.AABB2f;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 
 /**
  * Created by Brandon Williams on 6/26/2018.
  */
-public class Sprite {
+public class Sprite implements Destructible {
 
     private final SpriteSheet spriteSheet;
 
-    private final VertexFormat vertexFormat;
-
-    private final VertexArrayObject vao;
-
-    private final int vertexCount;
+    private final DynamicVAO dynamicVao;
 
     private final int index;
 
@@ -28,11 +21,10 @@ public class Sprite {
 
     private final AABB2f boundingBox;
 
-    public Sprite(SpriteSheet spriteSheet, VertexFormat vertexFormat, VertexArrayObject vao, int vertexCount, int index, float width, float height, boolean centered) {
+    public Sprite(SpriteSheet spriteSheet, DynamicVAO dynamicVao, int index, float width, float height,
+                  boolean centered) {
         this.spriteSheet = spriteSheet;
-        this.vertexFormat = vertexFormat;
-        this.vao = vao;
-        this.vertexCount = vertexCount;
+        this.dynamicVao = dynamicVao;
         this.index = index;
         this.width = width;
         this.height = height;
@@ -49,19 +41,23 @@ public class Sprite {
      * */
     public void draw() {
         this.spriteSheet.getTexture().bind();
-
-        this.vao.bind();
-
-        DynamicVAO.draw(GL_TRIANGLES, vertexFormat, vertexCount);
-
-        VertexArrayObject.unbind();
+        this.dynamicVao.draw();
     }
 
     /**
      * Destroys the vao created for this sprite object.
      * */
+    @Override
     public void destroy() {
-        this.vao.destroy();
+        this.dynamicVao.destroy();
+    }
+
+    public SpriteSheet getSpriteSheet() {
+        return spriteSheet;
+    }
+
+    public DynamicVAO getDynamicVao() {
+        return dynamicVao;
     }
 
     public boolean hasIndex() {

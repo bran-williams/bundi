@@ -39,6 +39,9 @@ public class Mesh implements Destructible {
     // This is the number of indices for this mesh.
     private int indiceCount;
 
+    // This is the number of instances for this mesh.
+    private int instanceCount;
+
     private int renderMode = GL_TRIANGLES;
 
     private float radius;
@@ -171,6 +174,16 @@ public class Mesh implements Destructible {
         return vbo;
     }
 
+    public void setAttributeDivisor(int attributeId, int divisor) {
+        VertexBufferObject vbo = attributes.get(attributeId);
+        if (vbo != null) {
+            vbo.bind();
+            this.vao.setAttributeDivisor(attributeId, divisor);
+            vbo.unbind();
+        }
+
+    }
+
     /**
      * @return True if the given attribute id is assigned to a vbo within this mesh.
      * */
@@ -189,6 +202,17 @@ public class Mesh implements Destructible {
         return indiceCount;
     }
 
+    public boolean hasInstances() {
+        return instanceCount > 0;
+    }
+
+    public void setInstanceCount(int instanceCount) {
+        this.instanceCount = instanceCount;
+    }
+
+    public int getInstanceCount() {
+        return instanceCount;
+    }
     /**
      * @return The number of vertices within this mesh.
      * */

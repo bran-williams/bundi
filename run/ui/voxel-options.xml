@@ -4,7 +4,7 @@
         <!--        <ListLayout padding="2" componentPadding="4"/>-->
 
         <Label tag="menu_title" text="Options" color="#ffffff" height="70" alignment="left">
-            <FontData font="Roboto" size="68" style="bold"/>
+            <FontData font="Roboto" size="54" style="bold"/>
         </Label>
 
         <Container tag="menu_body">

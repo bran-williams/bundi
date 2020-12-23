@@ -21,6 +21,18 @@ public class CommentShaderPatch implements ShaderPatch {
         REPLACE,
         PREPEND;
     }
+
+    public CommentShaderPatch(String linePattern, Function<String, String> lineModifier) {
+        this(linePattern, lineModifier, ModificationType.REPLACE);
+    }
+
+    public CommentShaderPatch(String linePattern, Function<String, String> lineModifier,
+                              ModificationType modificationType) {
+        this.linePattern = Pattern.compile(linePattern);
+        this.lineModifier = lineModifier;
+        this.modificationType = modificationType;
+    }
+
     public CommentShaderPatch(Pattern linePattern, Function<String, String> lineModifier) {
         this(linePattern, lineModifier, ModificationType.REPLACE);
     }
@@ -40,12 +52,14 @@ public class CommentShaderPatch implements ShaderPatch {
             String comment = commentMatcher.group();
 //            System.out.println("comment=" + comment);
             if (linePattern.matcher(comment).find()) {
-                System.out.println("match found: comment=" + comment);
+//                System.out.println("match found: comment=" + comment);
+                String beforeComment = code.substring(0, code.indexOf(comment));
+
                 switch (modificationType) {
                     case PREPEND:
-                        return code.substring(0, code.indexOf(comment)) + lineModifier.apply(comment) + code.substring(code.indexOf(comment));
+                        return beforeComment + lineModifier.apply(comment) + code.substring(code.indexOf(comment));
                     case REPLACE:
-                        return code.substring(0, code.indexOf(comment)) + lineModifier.apply(comment) + code.substring(code.indexOf(comment) + comment.length());
+                        return beforeComment + lineModifier.apply(comment) + code.substring(code.indexOf(comment) + comment.length());
                     default:
                 }
             }

@@ -141,9 +141,19 @@ public class TerrainScene extends AbstractScene {
             normalTextureData.add(terrainTexture.getTextureData().getNormalTextureData());
         }
         ArrayTexture diffuse = new ArrayTexture(Texture.TextureType.COLOR8, diffuseTextureData.toArray(new TextureData[0]));
+        diffuse.bind();
+        diffuse.generateMipmaps();
+        diffuse.linearFilter(true);
+        Texture.unbind(diffuse);
+
         terrainMaterial.setTexture(0, diffuse);
 
         ArrayTexture normal = new ArrayTexture(Texture.TextureType.COLOR8, normalTextureData.toArray(new TextureData[0]));
+        normal.bind();
+        normal.generateMipmaps();
+        normal.linearFilter(true);
+        Texture.unbind(normal);
+
         terrainMaterial.setTexture(1, normal);
         terrainMaterial.setProperty("hasNormalTexture", true);
 

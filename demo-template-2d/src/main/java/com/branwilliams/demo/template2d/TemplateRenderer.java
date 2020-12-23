@@ -27,7 +27,6 @@ public class TemplateRenderer <Context extends RenderContext> extends AbstractRe
         super.init(engine, window);
 
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
-//        glEnable(GL_CULL_FACE);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -38,4 +37,5 @@ public class TemplateRenderer <Context extends RenderContext> extends AbstractRe
         glClear(GL_COLOR_BUFFER_BIT);
         super.render(engine, window, deltaTime);
     }
+
 }

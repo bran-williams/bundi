@@ -2,6 +2,9 @@ package com.branwilliams.bundi.engine.shader.patching;
 
 import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
 import com.branwilliams.bundi.engine.shader.ShaderProgram;
+import com.branwilliams.bundi.engine.util.ShaderUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +15,8 @@ import java.util.List;
  * Created by Brandon Williams on 11/17/2018.
  */
 public abstract class PatchingShaderBuilder <T extends ShaderProgram> implements ShaderBuilder<T> {
+
+    private final Logger log = LoggerFactory.getLogger(PatchingShaderBuilder.class);
 
     private List<ShaderPatch> patches = new ArrayList<>();
 
@@ -58,40 +63,39 @@ public abstract class PatchingShaderBuilder <T extends ShaderProgram> implements
 
     @Override
     public ShaderBuilder<T> vertexShader(String code) throws ShaderInitializationException {
-        code = patchCode(code);
-        System.out.println("vertexShader=");
-        System.out.println(code);
+        code = ShaderUtils.patchCode(code, patches);
+        log.info("vs={}", code);
         shaderProgram.setVertexShader(code);
         return this;
     }
 
     @Override
     public ShaderBuilder<T> fragmentShader(String code) throws ShaderInitializationException {
-        code = patchCode(code);
-        System.out.println("fragmentShader=");
-        System.out.println(code);
+        code = ShaderUtils.patchCode(code, patches);
+        log.info("fs={}", code);
+
         shaderProgram.setFragmentShader(code);
         return this;
     }
 
     @Override
     public ShaderBuilder<T> geometryShader(String code) throws ShaderInitializationException {
-        code = patchCode(code);
-        shaderProgram.setGeometryShader(patchCode(code));
+        code = ShaderUtils.patchCode(code, patches);
+        shaderProgram.setGeometryShader(code);
         return this;
     }
 
     @Override
     public ShaderBuilder<T> tessellationControlShader(String code) throws ShaderInitializationException {
-        code = patchCode(code);
-        shaderProgram.setTessellationControlShader(patchCode(code));
+        code = ShaderUtils.patchCode(code, patches);
+        shaderProgram.setTessellationControlShader(code);
         return this;
     }
 
     @Override
     public ShaderBuilder<T> tessellationEvaluationShader(String code) throws ShaderInitializationException {
-        code = patchCode(code);
-        shaderProgram.setTessellationEvaluationShader(patchCode(code));
+        code = ShaderUtils.patchCode(code, patches);
+        shaderProgram.setTessellationEvaluationShader(code);
         return this;
     }
 
@@ -108,13 +112,6 @@ public abstract class PatchingShaderBuilder <T extends ShaderProgram> implements
         onBuild(shaderProgram_);
 
         return shaderProgram_;
-    }
-
-    protected String patchCode(String code) {
-        for (ShaderPatch shaderPatch : patches) {
-            code = shaderPatch.patch(code);
-        }
-        return code;
     }
 
     public void addShaderPatches(Collection<ShaderPatch> shaderPatches) {

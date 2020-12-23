@@ -11,6 +11,7 @@ import com.branwilliams.bundi.engine.shader.Projection;
 import com.branwilliams.bundi.engine.shader.Transformation;
 import com.branwilliams.bundi.engine.sprite.AnimatedSprite;
 import com.branwilliams.bundi.engine.sprite.SpriteSheet;
+import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.RateLimiter;
 import com.branwilliams.demo.template2d.pipeline.pass.SpriteRenderPass;
@@ -53,7 +54,6 @@ public class TemplateScene extends AbstractScene {
         renderPipeline.addLast(new DisableWireframeRenderPass(this::isWireframe));
         TemplateRenderer<RenderContext> renderer = new TemplateRenderer<>(this, renderPipeline);
         setRenderer(renderer);
-
     }
 
     @Override

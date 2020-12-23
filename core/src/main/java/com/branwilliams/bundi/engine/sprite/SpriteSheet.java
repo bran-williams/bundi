@@ -1,16 +1,15 @@
 package com.branwilliams.bundi.engine.sprite;
 
+import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.texture.Texture;
 
 /**
  * Created by Brandon Williams on 6/24/2018.
  */
-public class SpriteSheet {
+public class SpriteSheet implements Destructible {
 
     private final Texture texture;
-
-    private final DynamicVAO dynamicVao;
 
     // The size of each sprite.
     private final int spriteWidth, spriteHeight;
@@ -18,6 +17,8 @@ public class SpriteSheet {
     // Number of sprites on the horizontal axis and vertical axis.
     private final int numSpritesHorizontal;
     private final int numSpritesVertical;
+
+    private DynamicVAO dynamicVao;
 
     private Sprite[] sprites;
 
@@ -61,28 +62,12 @@ public class SpriteSheet {
             return null;
         }
         if (sprites[index] == null) {
-            // UV positions for sprite at index
-            float u = (float) (index % numSpritesHorizontal) / (float) numSpritesHorizontal;
-            float v = (float) Math.floor(index / numSpritesHorizontal) / (float) numSpritesVertical;
-            //float y = (float) Math.floor(index / numSpritesVertical) / (float) numSpritesVertical;
+            buildSpriteMesh(this, dynamicVao, index, xscale, yscale);
 
-            float vWidth = spriteWidth * xscale;
-            float vHeight = spriteHeight * yscale;
+            sprites[index] = new Sprite(this, dynamicVao, index,
+                    spriteWidth * xscale, spriteHeight * yscale, centeredSprite);
 
-            float vX = centeredSprite ? -vWidth / 2 : 0;
-            float vY = centeredSprite ? -vHeight / 2 : 0;
-            float vX1 = centeredSprite ? vWidth / 2 : vWidth;
-            float vY1 = centeredSprite ? vHeight / 2 : vHeight;
-
-            dynamicVao.begin();
-            dynamicVao.addRect(vX, vY, vX1, vY1,
-                    u, // u
-                    v, // v
-                    u + (float) (spriteWidth) / (float) texture.getWidth(),
-                    v + (float) (spriteHeight) / (float) texture.getHeight(),
-                    1F, 1F, 1F, 1F);
-            sprites[index] = new Sprite(this, dynamicVao.getVertexFormat(), dynamicVao.pop(), dynamicVao.getVertexCount(),
-                    index, spriteWidth * xscale, spriteHeight * yscale, centeredSprite);
+            this.dynamicVao = new DynamicVAO();
         }
         return sprites[index];
     }
@@ -103,28 +88,106 @@ public class SpriteSheet {
      * @return A Sprite from this sprite sheet.
      * */
     public Sprite getSprite(int x, int y, int width, int height, float xscale, float yscale) {
-        Sprite sprite;
+        buildSpriteMesh(this, dynamicVao, x, y, width, height, xscale, yscale);
 
-        float u = (float) x / (float) texture.getWidth();
-        float v = (float) y / (float) texture.getHeight();
+        Sprite sprite = new Sprite(this, dynamicVao,
+                -1, width * xscale, height * yscale, centeredSprite);
+
+        this.dynamicVao = new DynamicVAO();
+
+        return sprite;
+
+    }
+
+    public float getSpriteU(int index) {
+        return getSpriteU(this, index);
+    }
+
+    public float getSpriteV(int index) {
+        return getSpriteV(this, index);
+    }
+
+    public float getSpriteS(int index) {
+        return getSpriteS(this, index);
+    }
+
+    public float getSpriteT(int index) {
+        return getSpriteT(this, index);
+    }
+
+    public static float getSpriteU(SpriteSheet spriteSheet, int index) {
+        return (float) (index % spriteSheet.numSpritesHorizontal) / (float) spriteSheet.numSpritesHorizontal;
+    }
+
+    public static float getSpriteV(SpriteSheet spriteSheet, int index) {
+        return (float) Math.floor(index / spriteSheet.numSpritesHorizontal) / (float) spriteSheet.numSpritesVertical;
+    }
+
+    public static float getSpriteS(SpriteSheet spriteSheet, int index) {
+        return getSpriteU(spriteSheet, index) +
+                (float) (spriteSheet.spriteWidth) / (float) spriteSheet.texture.getWidth();
+    }
+
+    public static float getSpriteT(SpriteSheet spriteSheet, int index) {
+        return getSpriteV(spriteSheet, index) +
+                (float) (spriteSheet.spriteHeight) / (float) spriteSheet.texture.getHeight();
+    }
+
+    /**
+     * This function will create a sprite object for the given x, y position with the given width and height in pixels.
+     *
+     * */
+    public static void buildSpriteMesh(SpriteSheet spriteSheet, DynamicVAO dynamicVao, int index,
+                                       float xscale, float yscale) {
+        // UV positions for sprite at index
+        float u = getSpriteU(spriteSheet, index);
+        float v = getSpriteV(spriteSheet, index);
+        float s = getSpriteS(spriteSheet, index);
+        float t = getSpriteT(spriteSheet, index);
+
+        float vWidth = spriteSheet.spriteWidth * xscale;
+        float vHeight = spriteSheet.spriteHeight * yscale;
+
+        float vX = spriteSheet.centeredSprite ? -vWidth / 2 : 0;
+        float vY = spriteSheet.centeredSprite ? -vHeight / 2 : 0;
+        float vX1 = spriteSheet.centeredSprite ? vWidth / 2 : vWidth;
+        float vY1 = spriteSheet.centeredSprite ? vHeight / 2 : vHeight;
+
+        dynamicVao.begin();
+        dynamicVao.addRect(vX, vY, vX1, vY1,
+                u, v, s, t,
+                1F, 1F, 1F, 1F);
+        dynamicVao.compile();
+    }
+
+    /**
+     * This function will create a sprite object for the given x, y position with the given width and height in pixels.
+     *
+     * @param x The x coordinate of the sprite.
+     * @param y The y coordinate of the sprite.
+     * @param width The width of the sprite.
+     * @param height The height of the sprite.
+     * */
+    public static void buildSpriteMesh(SpriteSheet spriteSheet, DynamicVAO dynamicVao, int x, int y,
+                                         int width, int height, float xscale, float yscale) {
+        float u = (float) x / (float) spriteSheet.texture.getWidth();
+        float v = (float) y / (float) spriteSheet.texture.getHeight();
+        float s = u + (float) (width) / (float) spriteSheet.texture.getWidth();
+        float t = v + (float) (height) / (float) spriteSheet.texture.getHeight();
 
         float vWidth = width * xscale;
         float vHeight = height * yscale;
 
-        float vX = centeredSprite ? -vWidth / 2 : 0;
-        float vY = centeredSprite ? -vHeight / 2 : 0;
-        float vX1 = centeredSprite ? vWidth / 2 : vWidth;
-        float vY1 = centeredSprite ? vHeight / 2 : vHeight;
+        float vX = spriteSheet.centeredSprite ? -vWidth * 0.5F : 0;
+        float vY = spriteSheet.centeredSprite ? -vHeight * 0.5F : 0;
+        float vX1 = spriteSheet.centeredSprite ? vWidth * 0.5F : vWidth;
+        float vY1 = spriteSheet.centeredSprite ? vHeight * 0.5F : vHeight;
 
         dynamicVao.begin();
         dynamicVao.addRect(vX, vY, vX1, vY1,
-                u, v,
-                u + (float) (width) / (float) texture.getWidth(),
-                v + (float) (height) / (float) texture.getHeight(),
+                u, v, s, t,
                 1F, 1F, 1F, 1F);
-        sprite = new Sprite(this, dynamicVao.getVertexFormat(), dynamicVao.pop(), dynamicVao.getVertexCount(),
-                -1, width * xscale, height * yscale, centeredSprite);
-        return sprite;
+        dynamicVao.compile();
     }
 
 
@@ -144,6 +207,10 @@ public class SpriteSheet {
         return x + y * texture.getWidth();
     }
 
+    public Integer getMaxIndex() {
+        return this.sprites.length - 1;
+    }
+
     public Texture getTexture() {
         return texture;
     }
@@ -161,5 +228,31 @@ public class SpriteSheet {
 
     public void setCenteredSprite(boolean centeredSprite) {
         this.centeredSprite = centeredSprite;
+    }
+
+    public int getSpriteWidth() {
+        return spriteWidth;
+    }
+
+    public int getSpriteHeight() {
+        return spriteHeight;
+    }
+
+    public int getNumSpritesHorizontal() {
+        return numSpritesHorizontal;
+    }
+
+    public int getNumSpritesVertical() {
+        return numSpritesVertical;
+    }
+
+    @Override
+    public void destroy() {
+        this.texture.destroy();
+        this.dynamicVao.destroy();
+
+        for (int i = 0; i < sprites.length; i++) {
+            destroySprite(i);
+        }
     }
 }

@@ -34,29 +34,28 @@ public class TextureLoader {
         this.directory = directory;
     }
 
-    public TextureData loadTexture(Path imageLocation) throws IOException {
-        File file = directory.resolve(imageLocation).toFile();
+    public TextureData loadTexture(Path textureLocation) throws IOException {
+        File file = directory.resolve(textureLocation).toFile();
         return loadTexture(file);
     }
 
-    public TextureData loadTexture(String imageLocation) throws IOException {
-        File file = directory.resolve(imageLocation).toFile();
+    public TextureData loadTexture(String textureLocation) throws IOException {
+        File file = directory.resolve(textureLocation).toFile();
         return loadTexture(file);
     }
 
-    public TextureData loadTexture(File file) throws IOException {
+    public TextureData loadTexture(File textureLocation) throws IOException {
         int[] width = new int[1];
         int[] height = new int[1];
         int[] channels = new int[1];
-
-        ByteBuffer buffer = STBImage.stbi_load(file.getPath(), width, height, channels, 0);
+        ByteBuffer buffer = STBImage.stbi_load(textureLocation.getPath(), width, height, channels, 0);
 
         if (buffer == null) {
             String msg = "Failed to load texture: " + STBImage.stbi_failure_reason();
             log.error(msg);
             throw new IOException(msg);
         } else {
-            log.info(file + ": width=" + width[0] + ", height=" + height[0] + ", channels=" + channels[0]);
+            log.info(textureLocation + ": width=" + width[0] + ", height=" + height[0] + ", channels=" + channels[0]);
         }
         int format = getFormatFromChannels(channels[0]);
 

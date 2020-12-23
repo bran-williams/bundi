@@ -9,6 +9,7 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import org.joml.Vector4f;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER_SRGB;
 
 /**
  * @author Brandon
@@ -33,6 +34,8 @@ public class FogRenderer<Context extends RenderContext> extends AbstractRenderer
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+//        glEnable(GL_FRAMEBUFFER_SRGB);
     }
 
     @Override

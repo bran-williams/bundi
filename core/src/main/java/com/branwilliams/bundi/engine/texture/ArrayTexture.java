@@ -44,8 +44,6 @@ public class ArrayTexture extends Texture {
                     images[i].getData());
         }
 
-        generateMipmaps();
-        linearFilter(true);
         repeatEdges();
 
         unbind(this);

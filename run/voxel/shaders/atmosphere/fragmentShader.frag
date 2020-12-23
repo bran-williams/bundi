@@ -19,7 +19,7 @@ uniform float fogDensity;
 vec4 computeFog(vec3 lightDir, vec3 viewDir, vec4 lightColor, float dist) {
     float fogAmount = 1.0 - exp( -dist * fogDensity );
     float sunAmount = max( dot( viewDir, -lightDir ), 0.0 );
-    vec4  fogColor  = mix(skyColor, sunColor, pow(sunAmount, 64.0) );
+    vec4  fogColor  = mix(skyColor, sunColor, pow(sunAmount, 128.0) );
     return mix( lightColor, fogColor, fogAmount );
 }
 

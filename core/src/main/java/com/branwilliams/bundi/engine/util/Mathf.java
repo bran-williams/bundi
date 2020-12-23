@@ -74,7 +74,11 @@ public enum Mathf {
         return t * t * (3.0F - 2.0F * t);
     }
 
-    public static int floor(double val) {
+    public static Vector2f smoothStep(Vector2f edge0, Vector2f edge1, float x) {
+        return new Vector2f(smoothStep(edge0.x, edge1.x, x), smoothStep(edge0.y, edge1.y, x));
+    }
+
+        public static int floor(double val) {
         return (int)(val + 1024.0D) - 1024;
     }
 
@@ -215,7 +219,7 @@ public enum Mathf {
      * Linearly interpolates from x to y by the amount.
      * */
     public static float lerp(float x, float y, float amount) {
-        return x * (1 - amount) + y * amount;
+        return x * (1F - amount) + y * amount;
     }
 
     public static int abs(int input) {
@@ -319,6 +323,20 @@ public enum Mathf {
      * */
     public static Matrix4f createFrustumMatrix(Window window, float znear, float zfar) {
         return createFrustumMatrix(window, new Matrix4f(), 0, window.getWidth(), window.getHeight(), 0, znear, zfar);
+    }
+
+    /**
+     * Creates an orthographic projection matrix from the window information given.
+     * */
+    public static Matrix4f createOrtho2dMatrix(Matrix4f matrix, Vector2f size) {
+        return matrix.setOrtho2D(0, size.x, size.y, 0);
+    }
+
+    /**
+     * Creates a projection matrix from the window information given.
+     * */
+    public static Matrix4f createOrtho2dMatrix(Vector2f size) {
+        return createOrtho2dMatrix(new Matrix4f(), size);
     }
 
     /**

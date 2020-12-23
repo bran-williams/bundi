@@ -139,10 +139,11 @@ public class SceneManager implements Destructible {
     @Override
     public void destroy() {
         try {
-            sceneCache.values().forEach(Scene::destroy);
+            if (!sceneCache.isEmpty())
+                sceneCache.values().forEach(Scene::destroy);
         } catch (Exception e) {
             // TODO create an engine exception?
-            log.error("Unable to destroy remaining scenes.");
+            log.error("Unable to destroy remaining scenes: ", e);
         }
     }
 }

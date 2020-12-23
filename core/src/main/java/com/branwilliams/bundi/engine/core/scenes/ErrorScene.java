@@ -20,7 +20,6 @@ public class ErrorScene extends AbstractScene {
 
     public ErrorScene(Exception exception) {
         super("error_scene");
-        this.addMouseListener(this);
         this.setRenderer(new ErrorSceneRenderer(this::getMouseOffset, exception));
     }
 
@@ -47,7 +46,8 @@ public class ErrorScene extends AbstractScene {
     public void move(Window window, float newMouseX, float newMouseY, float oldMouseX, float oldMouseY) {
         super.move(window, newMouseX, newMouseY, oldMouseX, oldMouseY);
         if (movingMouse) {
-            mouseOffset.move(newMouseX - oldMouseX, newMouseY - oldMouseX, 0F);
+            float moveSpeed = 0.2F;
+            mouseOffset.move((newMouseX - oldMouseX) * moveSpeed, (newMouseY - oldMouseY) * moveSpeed, 0F);
         }
     }
 
