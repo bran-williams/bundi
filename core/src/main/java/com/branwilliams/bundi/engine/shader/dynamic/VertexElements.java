@@ -1,5 +1,7 @@
 package com.branwilliams.bundi.engine.shader.dynamic;
 
+import com.branwilliams.bundi.engine.util.ShaderUtils;
+
 /**
  * Represents an element that a vertex format can support.
  * @author Brandon
@@ -13,6 +15,8 @@ public enum VertexElements implements VertexElement {
     POSITION_2D("vec2", "position", 2),
     TANGENT("vec3", "tangent", 3),
     BITANGENT("vec3", "bitangent", 3);
+
+    private static final String PASS_PREFIX = "pass";
 
     private final int size;
 
@@ -40,5 +44,10 @@ public enum VertexElements implements VertexElement {
     @Override
     public String getVariableName() {
         return variableName;
+    }
+
+    @Override
+    public String getPassName() {
+        return PASS_PREFIX + ShaderUtils.capitalizeFirstChar(variableName);
     }
 }

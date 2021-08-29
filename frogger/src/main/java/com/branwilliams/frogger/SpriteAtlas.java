@@ -52,7 +52,7 @@ public class SpriteAtlas implements Destructible {
         maxSpriteIndex = i - 1;
 
         this.texture = new ArrayTexture(Texture.TextureType.COLOR8, textureData.toArray(new TextureData[0]));
-        this.texture.nearestFilter().repeatEdges();
+        this.texture.bind().nearestFilter().clampToEdges();
         Texture.unbind(this.texture);
 
         atlas.clear();

@@ -1,10 +1,9 @@
 package com.branwilliams.bundi.engine.core.window;
 
-import com.branwilliams.bundi.engine.core.Joystick;
-import com.branwilliams.bundi.engine.core.Keycode;
-import com.branwilliams.bundi.engine.core.Keycodes;
+import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.Transformation;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.*;
 import org.lwjgl.stb.STBImage;
 
@@ -13,7 +12,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.branwilliams.bundi.engine.util.IOUtils.ioResourceToByteBuffer;
+import static com.branwilliams.bundi.engine.util.IOUtils.readResourceAsByteBuffer;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
@@ -25,17 +24,20 @@ import static org.lwjgl.system.MemoryUtil.*;
  *
  * Created by Brandon on 9/4/2016.
  */
-public class Window {
+public class Window implements Destructible {
 
     public static final String DEFAULT_ICON_PATH = "bundi/icons/favicon-32x32.png";
 
     private final Transformable mouseTransform = new Transformation();
 
-    // The listeners for window events. This is updated from within the engine.
+    // The listeners for window events. This is updated from within the scene manager.
     private final List<WindowEventListener> windowEventListeners;
 
     // All connected joysticks live here.
     private final List<Joystick> connectedJoysticks;
+
+    // All connected monitors.
+    private List<Monitor> monitors;
 
     private long windowId = -1;
 
@@ -70,6 +72,7 @@ public class Window {
 
         this.windowEventListeners = new ArrayList<>();
         this.connectedJoysticks = new ArrayList<>();
+        this.monitors = new ArrayList<>();
     }
 
     /**
@@ -96,7 +99,7 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        glfwWindowHint(GLFW_SAMPLES, 4);
+        glfwWindowHint(GLFW_SAMPLES, 0);
 
         // Actually creates the window.
         windowId = glfwCreateWindow(width, height, title, fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
@@ -114,6 +117,15 @@ public class Window {
 //        glfwSetErrorCallback((error, description) -> {
 //            throw new IllegalStateException(GLFWErrorCallback.getDescription(description));
 //        });
+
+        glfwSetMonitorCallback((monitorId, event) -> {
+            Monitor monitor = new Monitor(this, monitorId);
+            if (event == GLFW_CONNECTED) {
+                monitors.add(monitor);
+            } else if (event == GLFW_DISCONNECTED) {
+                monitors.remove(monitor);
+            }
+        });
 
         // Allows for listeners to recieved key events.
         glfwSetKeyCallback(windowId, (windowId, key, scancode, action, mods) -> {
@@ -234,11 +246,17 @@ public class Window {
                 connectedJoysticks.add(joystick);
             }
         }
+
+        PointerBuffer monitorsPointer = glfwGetMonitors();
+        while (monitorsPointer.hasRemaining()) {
+            monitors.add(new Monitor(this, monitorsPointer.get()));
+        }
     }
 
     /**
      * Frees the window from glfw and deletes the information regarding it.
      * */
+    @Override
     public void destroy() {
         glfwFreeCallbacks(windowId);
         glfwDestroyWindow(windowId);
@@ -269,8 +287,8 @@ public class Window {
         ByteBuffer icon32;
 
         try {
-            icon16 = ioResourceToByteBuffer(path, 2048);
-            icon32 = ioResourceToByteBuffer(path, 4096);
+            icon16 = readResourceAsByteBuffer(path, 2048);
+            icon32 = readResourceAsByteBuffer(path, 4096);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -320,6 +338,10 @@ public class Window {
 
     public List<Joystick> getConnectedJoysticks() {
         return connectedJoysticks;
+    }
+
+    public List<Monitor> getMonitors() {
+        return monitors;
     }
 
     /**
@@ -503,6 +525,10 @@ public class Window {
      * */
     public double getTime() {
         return glfwGetTime();
+    }
+
+    public boolean isShiftKeyPressed() {
+        return isKeyPressed(GLFW_KEY_LEFT_SHIFT) || isKeyPressed(GLFW_KEY_RIGHT_SHIFT);
     }
 
     /**

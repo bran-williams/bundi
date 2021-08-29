@@ -18,7 +18,7 @@ import org.joml.Vector3f;
  */
 public class PhysicsSystem extends AbstractSystem {
 
-    private static final float MINIMUM_VELOCITY = 0.0001F;
+    private static final Vector3f MINIMUM_VELOCITY = new Vector3f(0.01F, 0.001F, 0.01F);
 
     private Scene scene;
 
@@ -31,7 +31,7 @@ public class PhysicsSystem extends AbstractSystem {
     }
 
     public PhysicsSystem(Scene scene, Vector3f gravity) {
-        this(scene, gravity, new Vector3f(0.9F));
+        this(scene, gravity, new Vector3f(0.9F, 0.96F, 0.9F));
     }
 
     public PhysicsSystem(Scene scene, Vector3f gravity, Vector3f velocityDamper) {
@@ -59,8 +59,8 @@ public class PhysicsSystem extends AbstractSystem {
             float moveY = (float) (movementComponent.getVelocity().y * movementComponent.getMovementSpeed() * deltaTime);
             float moveZ = (float) (movementComponent.getVelocity().z * movementComponent.getMovementSpeed() * deltaTime);
             Vector3f movement = new Vector3f(moveX, moveY, moveZ);
-//            System.out.println("moveX=" + moveX + ", moveY=" + moveY + ", moveZ=" + moveZ + "");
-//            System.out.println("gravityX=" + (float) (gravity.x * deltaTime) + ", gravityY=" + (float) (gravity.y * deltaTime) + ", gravityZ=" + (float) (gravity.z * deltaTime));
+            System.out.println("moveX=" + moveX + ", moveY=" + moveY + ", moveZ=" + moveZ + "");
+            System.out.println("gravityX=" + (float) (gravity.x * deltaTime) + ", gravityY=" + (float) (gravity.y * deltaTime) + ", gravityZ=" + (float) (gravity.z * deltaTime));
 
             // Add a little splash of gravity
             movement.add((float) (gravity.x * deltaTime), (float) (gravity.y * deltaTime), (float) (gravity.z * deltaTime));
@@ -80,15 +80,15 @@ public class PhysicsSystem extends AbstractSystem {
 
             movementComponent.getVelocity().mul(velocityDamper);
 
-            if (Math.abs(movementComponent.getVelocity().x) < MINIMUM_VELOCITY) {
+            if (Math.abs(movementComponent.getVelocity().x) < MINIMUM_VELOCITY.x) {
                 movementComponent.getVelocity().x = 0F;
             }
 
-            if (Math.abs(movementComponent.getVelocity().y) < MINIMUM_VELOCITY) {
+            if (Math.abs(movementComponent.getVelocity().y) < MINIMUM_VELOCITY.y) {
                 movementComponent.getVelocity().y = 0F;
             }
 
-            if (Math.abs(movementComponent.getVelocity().z) < MINIMUM_VELOCITY) {
+            if (Math.abs(movementComponent.getVelocity().z) < MINIMUM_VELOCITY.z) {
                 movementComponent.getVelocity().z = 0F;
             }
         }

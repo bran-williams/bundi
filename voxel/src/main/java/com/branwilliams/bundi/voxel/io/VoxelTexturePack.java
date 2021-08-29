@@ -6,7 +6,7 @@ import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.texture.Texture;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.voxel.builder.VoxelTextureBuilder;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelTextureBuilder;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelFaceTexture;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelProperties;
 import com.branwilliams.bundi.voxel.voxels.Voxel;

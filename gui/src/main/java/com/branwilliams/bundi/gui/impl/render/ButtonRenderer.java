@@ -54,6 +54,6 @@ public class ButtonRenderer extends AbstractComponentRenderer<Button> {
      * Originally draws a centered string with the default font renderer.
      * */
     public void drawString(FontData fontData, String text, int x, int y, int color) {
-        fontRenderer.drawString(fontData, text.toUpperCase(), x + 4, y - fontData.getFontHeight() / 2, color);
+        fontRenderer.drawString(fontData, text, x + 4, y - fontData.getFontHeight() / 2, color);
     }
 }

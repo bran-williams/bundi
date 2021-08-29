@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.voxel;
 
+import com.branwilliams.bundi.engine.audio.AudioSource;
 import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.core.window.Window;
@@ -16,9 +17,9 @@ import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
 import com.branwilliams.bundi.gui.impl.ColorPack;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
-import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilder;
-import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilderImpl;
-import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilder;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelChunkMeshBuilder;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelChunkMeshBuilderImpl;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelMeshBuilder;
 import com.branwilliams.bundi.voxel.components.*;
 import com.branwilliams.bundi.voxel.inventory.ItemRegistry;
 import com.branwilliams.bundi.voxel.io.*;
@@ -33,7 +34,7 @@ import com.branwilliams.bundi.voxel.system.player.*;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
 import com.branwilliams.bundi.voxel.world.generator.NoiseChunkGenerator;
 import com.branwilliams.bundi.voxel.world.generator.VoxelChunkGenerator;
-import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilderImpl;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelMeshBuilderImpl;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderPipeline;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import com.branwilliams.bundi.voxel.world.storage.ChunkMeshStorage;
@@ -115,12 +116,16 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
+        super.init(engine, window);
         // TODO Don't do this maybe?
         this.engine = engine;
         this.window = window;
 
+        voxelSoundManager = new VoxelSoundManager(this);
+        voxelSoundManager.initialize(engine);
+
 //        engine.setUpdateInterval(1 / 20D);
-        guiScreenManager = new GuiScreenManager(this);
+        guiScreenManager = new GuiScreenManager<>(this);
         guiScreenManager.init(engine, window);
         ColorPack.LIGHT_BLUE.apply(guiScreenManager.getToolbox());
 
@@ -172,9 +177,6 @@ public class VoxelScene extends AbstractScene implements Lockable {
 
         voxelMeshBuilder = new VoxelMeshBuilderImpl(voxelRegistry, texturePack);
         voxelChunkMeshBuilder = new VoxelChunkMeshBuilderImpl(voxelRegistry, texturePack);
-
-        voxelSoundManager = new VoxelSoundManager(this);
-        voxelSoundManager.initialize(engine);
     }
 
     @Override
@@ -209,7 +211,7 @@ public class VoxelScene extends AbstractScene implements Lockable {
                 new Vector3f(0.5F));                     // specular
 
         // blueish
-        Vector4f skyColor = new Vector4f(0.5F, 0.6F, 0.7F, 1.0F);
+        Vector4f skyColor = new Vector4f(0.2F, 0.5F, 0.8F, 1.0F);
 
         // yellowish
         Vector4f sunColor = new Vector4f(1.0F, 0.9F, 0.7F, 1.0F);
@@ -282,9 +284,14 @@ public class VoxelScene extends AbstractScene implements Lockable {
         gameSettings = settingsLoader.loadGameSettings();
     }
 
+    private AudioSource musicSource;
+
+    private AudioSource buttonSoundSource;
+
     private void applySettings(Engine engine, Window window) {
         window.setVsync(gameSettings.isVsync());
         window.setFullscreen(gameSettings.isFullscreen());
+        voxelSoundManager.getBackgroundMusicSource().setGain(gameSettings.getMusicVolume());
     }
 
     public void loadWorld() {

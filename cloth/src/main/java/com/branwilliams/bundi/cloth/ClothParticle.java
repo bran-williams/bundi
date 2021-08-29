@@ -16,18 +16,18 @@ public class ClothParticle {
 
     private Vector3f position;
 
-    private Vector3f oldPosition;
+    private Vector3f prevPosition;
 
     private Vector3f acceleration;
 
     private Vector3f accumulatedNormal;
 
-    public ClothParticle(ClothPhysicsParameters parameters, Vector3f position) {
+    public ClothParticle(ClothPhysicsParameters parameters, Vector3f position, float mass) {
         this.parameters = parameters;
         this.position = position;
         this.movable = true;
-        this.mass = 5;
-        this.oldPosition = new Vector3f(position);
+        this.mass = mass;
+        this.prevPosition = new Vector3f(position);
         this.acceleration = new Vector3f();
         this.accumulatedNormal = new Vector3f();
     }
@@ -42,13 +42,16 @@ public class ClothParticle {
         if (movable) {
             Vector3f tempForOldPos = new Vector3f(position);
 
-            float dx = (position.x - oldPosition.x) * (1F - parameters.getDamping()) + acceleration.x * parameters.getTimeStepSize2();
-            float dy = (position.y - oldPosition.y) * (1F - parameters.getDamping()) + acceleration.y * parameters.getTimeStepSize2();
-            float dz = (position.z - oldPosition.z) * (1F - parameters.getDamping()) + acceleration.z * parameters.getTimeStepSize2();
+            float dx = (position.x - prevPosition.x) * (1F - parameters.getDamping())
+                    + acceleration.x * parameters.getTimeStepSize2();
+            float dy = (position.y - prevPosition.y) * (1F - parameters.getDamping())
+                    + acceleration.y * parameters.getTimeStepSize2();
+            float dz = (position.z - prevPosition.z) * (1F - parameters.getDamping())
+                    + acceleration.z * parameters.getTimeStepSize2();
 
             position.add(dx, dy, dz);
 
-            oldPosition.set(tempForOldPos);
+            prevPosition.set(tempForOldPos);
             acceleration.set(0);
         }
     }

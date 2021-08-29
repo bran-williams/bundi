@@ -25,5 +25,10 @@ public class FroggerConstants {
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
             50, 51, 52, 53, 54, 55, 56, 57, 58, 59
     };
+    public static final int[] FROGMAN_FRAMES = { 0, 1, 2, 3, 0 };
+    public static final int FROGMAN_FRAME_IDLE = 0;
+
+    public static final String FROGMAN_NAME = "frogman";
+
     public static final String PARALLAX_BACKGROUND_FILE = "assets/glacial_background.json";
 }

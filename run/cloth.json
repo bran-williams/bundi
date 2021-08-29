@@ -5,7 +5,7 @@
   "vsync": true,
   "keycodes": "./keycodes.json",
 
-  "launchScene": "com.branwilliams.bundi.cloth.ClothScene",
+  "launchScene": "com.branwilliams.bundi.cloth.demo.ClothScene",
 
   "assetDirectory": ".",
   "tempDirectory": "./temp",

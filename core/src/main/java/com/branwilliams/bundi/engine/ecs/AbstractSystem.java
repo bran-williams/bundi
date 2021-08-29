@@ -29,4 +29,7 @@ public abstract class AbstractSystem implements ISystem {
         return es;
     }
 
+    @Override
+    public void destroy() {
+    }
 }

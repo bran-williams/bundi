@@ -13,18 +13,14 @@ public enum MaterialElementType {
 
     public final String glslType;
 
-    public final boolean isTexture;
+    public final boolean isSampler;
 
     MaterialElementType(String glslType) {
         this(glslType, false);
     }
 
-    MaterialElementType(String glslType, boolean isTexture) {
+    MaterialElementType(String glslType, boolean isSampler) {
         this.glslType = glslType;
-        this.isTexture = isTexture;
-    }
-
-    public boolean isSampler() {
-        return this == SAMPLER_2D || this == SAMPLER_3D || this == SAMPLER_CUBEMAP;
+        this.isSampler = isSampler;
     }
 }

@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.voxel.voxels;
 
-import com.branwilliams.bundi.voxel.builder.ChunkMeshVertex;
+import com.branwilliams.bundi.voxel.render.mesh.builder.ChunkMeshVertex;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;

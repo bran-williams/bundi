@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 public class OptionsGuiScreen extends VoxelGuiScreen {
 
     public OptionsGuiScreen(GuiScreen<VoxelScene> previous, VoxelScene scene) {
-        super(scene, previous, "ui/voxel-options.xml");
+        super(scene, previous, "voxel/ui/voxel-options.xml");
 
         Button previousButton = containerManager.getByTag("previous_button");
         previousButton.onPressed(((button, clickAction) -> {
@@ -31,9 +31,9 @@ public class OptionsGuiScreen extends VoxelGuiScreen {
             checkbox.setEnabled(state);
 
             if (state) {
-                scene.getVoxelSoundManager().getMusicSource().play();
+                scene.getVoxelSoundManager().getBackgroundMusicSource().play();
             } else {
-                scene.getVoxelSoundManager().getMusicSource().stop();
+                scene.getVoxelSoundManager().getBackgroundMusicSource().stop();
             }
             return true;
         }));
@@ -72,9 +72,25 @@ public class OptionsGuiScreen extends VoxelGuiScreen {
         musicVolumeSlider.onValueChange((s) -> {
             float roundedValue = Float.parseFloat(df.format(s.getSliderPercentage()));
             musicVolumeLabel.setText((int) (roundedValue * 100) + "%");
-            scene.getVoxelSoundManager().getMusicSource().setGain(roundedValue);
+            scene.getGameSettings().setMusicVolume(roundedValue);
+            scene.getVoxelSoundManager().getBackgroundMusicSource().setGain(roundedValue);
         });
-        musicVolumeSlider.setSliderPercentage(scene.getVoxelSoundManager().getMusicSource().getGain());
+        musicVolumeLabel.setText((int) (scene.getGameSettings().getMusicVolume() * 100) + "%");
+        musicVolumeSlider.setSliderPercentage(scene.getGameSettings().getMusicVolume());
+
+
+        Slider renderDistanceSlider = containerManager.getByTag("render_distance_slider");
+        Label renderDistanceLabel = containerManager.getByTag("render_distance_value");
+        int maxChunkRenderDistance = 16;
+
+        renderDistanceSlider.onValueChange((s) -> {
+            float roundedValue = Float.parseFloat(df.format(s.getSliderPercentage()));
+            int renderDistance = (int) (roundedValue * maxChunkRenderDistance);
+            renderDistanceLabel.setText(String.valueOf(renderDistance));
+            scene.getGameSettings().setChunkRenderDistance(renderDistance);
+        });
+        renderDistanceLabel.setText(String.valueOf(scene.getGameSettings().getChunkRenderDistance()));
+        renderDistanceSlider.setSliderPercentage((float) scene.getGameSettings().getChunkRenderDistance() / (float) maxChunkRenderDistance);
 
     }
 }

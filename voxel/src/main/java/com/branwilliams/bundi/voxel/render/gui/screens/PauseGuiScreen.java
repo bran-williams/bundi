@@ -7,12 +7,11 @@ import com.branwilliams.bundi.voxel.render.gui.VoxelGuiScreen;
 public class PauseGuiScreen extends VoxelGuiScreen {
 
     public PauseGuiScreen(VoxelScene scene) {
-        super(scene, "ui/voxel-pause.xml");
+        super(scene, "voxel/ui/voxel-pause.xml");
 
         Button resumeButton = containerManager.getByTag("resume_button");
 
         resumeButton.onPressed(((button, clickAction) -> {
-            scene.getVoxelSoundManager().playButtonSoundEffect();
             scene.setGuiScreen(null);
             return true;
         }));
@@ -21,7 +20,6 @@ public class PauseGuiScreen extends VoxelGuiScreen {
 
         optionsButton.onPressed(((button, clickAction) -> {
             scene.setGuiScreen(new OptionsGuiScreen(this, scene));
-            scene.getVoxelSoundManager().playButtonSoundEffect();
             return true;
         }));
 

@@ -2,8 +2,7 @@ package com.branwilliams.bundi.voxel.world.storage;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.util.RateLimiter;
-import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilder;
-import com.branwilliams.bundi.voxel.builder.VoxelMeshBuilderImpl;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelChunkMeshBuilder;
 import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import com.branwilliams.bundi.voxel.world.chunk.ChunkPos;

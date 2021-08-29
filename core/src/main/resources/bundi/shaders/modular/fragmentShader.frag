@@ -23,7 +23,7 @@ float computeDist(vec4 viewSpace) {
 }
 #endif
 
-/*material*/
+/*materialstruct*/
 /*fraguniforms*/
 
 void main() {

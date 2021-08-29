@@ -1,0 +1,70 @@
+{
+  "layers": [
+    {
+      "properties": {
+        "layer": 0,
+        "speed": {"x" : 0, "y":  0}
+      },
+      "objects": [
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 576, "y": 324},
+          "object": {
+            "texture": "textures/swamptileset/background/Layers/1.png",
+            "scale": 2
+          }
+        },
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 576, "y": 324},
+          "object": {
+            "texture": "textures/swamptileset/background/Layers/2.png",
+            "scale": 2
+          }
+        },
+        {
+          "movementType": "STATIC",
+          "size": {"x" : 576, "y": 324},
+          "object": {
+            "texture": "textures/swamptileset/background/Layers/3.png",
+            "scale": 2
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 1,
+        "speed": {"x" : 0.25, "y":  0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 576, "y": 324},
+          "velocity": {"x": 0, "y": 0},
+          "object": {
+            "texture": "textures/swamptileset/background/Layers/4.png",
+            "scale": 2
+          }
+        }
+      ]
+    },
+    {
+      "properties": {
+        "layer": 2,
+        "speed": {"x": 3, "y": 0}
+      },
+      "objects": [
+        {
+          "movementType": "MOVING",
+          "size": {"x" : 576, "y": 324},
+          "velocity": {"x": 0, "y": 0},
+          "object": {
+            "texture": "textures/swamptileset/background/Layers/5.png",
+            "scale": 2
+          }
+        }
+      ]
+    }
+  ]
+}

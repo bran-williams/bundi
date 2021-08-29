@@ -144,6 +144,7 @@ public class Label extends Component {
 
     public void setText(String text) {
         this.text = text;
+        resetTextSize();
     }
 
     public Color getColor() {

@@ -16,4 +16,9 @@ public interface VertexElement {
      * The variable name given to this element.
      * */
     String getVariableName();
+
+    /**
+     * The name of this vertex element as it's passed from the vertexShader to the next
+     * */
+    String getPassName();
 }

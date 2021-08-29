@@ -1,0 +1,23 @@
+<UI>
+    <Container tag="mainmenu" autolayout="true" x="50" y="50" width="100" height="100" opacity="0">
+        <GridLayout rows="6" columns="1" padding="2" componentPadding="12"/>
+        <!--        <ListLayout padding="2" componentPadding="4"/>-->
+
+        <Label tag="menu_title" text="Paused" color="#ffffff" height="70" alignment="left">
+            <FontData font="Roboto" size="50" style="bold"/>
+        </Label>
+
+        <Button tag="resume_button" text="Resume" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
+        </Button>
+
+        <Button tag="options_button" text="Options" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
+        </Button>
+
+        <Button tag="quit_button" color="#f44336" text="Quit" width="300" height="48" highlight="true">
+            <FontData font="Roboto" size="36" style="plain"/>
+        </Button>
+
+    </Container>
+</UI>

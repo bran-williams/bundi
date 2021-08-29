@@ -6,6 +6,7 @@ import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.gui.api.*;
 import com.branwilliams.bundi.gui.api.loader.factory.*;
+import com.branwilliams.bundi.gui.api.loader.template.TemplateEvaluator;
 import com.branwilliams.bundi.gui.util.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +36,7 @@ public class UILoader {
 
     private final Path directory;
 
-    private Map<String, UIElementFactory> elementFactories = new HashMap<>();
+    private final Map<String, UIElementFactory<?>> elementFactories = new HashMap<>();
 
     public UILoader(FontCache fontCache, Toolbox toolbox) {
         this.toolbox = toolbox;
@@ -52,13 +52,14 @@ public class UILoader {
     private void loadDefaultFactories(FontCache fontCache, EngineContext context) {
         addComponentFactory(new FrameFactory());
         addComponentFactory(new ContainerFactory());
+        addComponentFactory(new ScrollableContainerFactory());
         addComponentFactory(new ButtonFactory());
         addComponentFactory(new SliderFactory());
         addComponentFactory(new CheckboxFactory());
         addComponentFactory(new LabelFactory());
         addComponentFactory(new TextFieldFactory());
         addComponentFactory(new ImageFactory(context));
-
+        addComponentFactory(new ComboBoxFactory());
         addElementFactory(new ListLayoutFactory());
         addElementFactory(new GridLayoutFactory());
         addElementFactory(new FontDataFactory(fontCache));
@@ -74,19 +75,35 @@ public class UILoader {
         addElementFactory(componentFactory);
     }
 
-    public List<Container> loadUI(String file, Map<String, Object> env) throws IOException, SAXException, ParserConfigurationException,
-            IllegalArgumentException {
-        return loadUI(Paths.get(file), env);
+    public List<Container> loadUIFromAssetDirectory(String file, Map<String, Object> env) {
+        String fileContents = IOUtils.readFile(directory, file, null);
+        if (fileContents == null) {
+            log.error("Unable to read file " + directory.resolve(file));
+            return null;
+        }
+        return loadUIFromFileContents(fileContents, env);
     }
 
-    public List<Container> loadUI(Path file, Map<String, Object> env) throws IOException, SAXException, ParserConfigurationException,
-            IllegalArgumentException {
-        String fileContents = IOUtils.readFile(directory, file.toString(), null);
+    public List<Container> loadUIFromResources(String file, Map<String, Object> env) {
+        String fileContents = IOUtils.readResource(file, null);
         if (fileContents == null) {
             log.error("Unable to read file " + directory.resolve(file.toString()));
             return null;
         }
+        return loadUIFromFileContents(fileContents, env);
+    }
 
+    public List<Container> loadUIFromFileContents(String fileContents, Map<String, Object> env) {
+        try {
+            return loadUIFromFileContentsInternal(fileContents, env);
+        } catch (IOException | SAXException | ParserConfigurationException | IllegalArgumentException e) {
+            log.error("Unable to load ui: " + e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private List<Container> loadUIFromFileContentsInternal(String fileContents, Map<String, Object> env)
+            throws IOException, SAXException, ParserConfigurationException, IllegalArgumentException {
         Document document = XmlUtils.fromString(fileContents);
         Node documentElement = document.getDocumentElement();
 
@@ -105,7 +122,7 @@ public class UILoader {
                 String nodeName = node.getNodeName().toLowerCase();
 
                 if (elementFactories.containsKey(nodeName)) {
-                    UIElementFactory elementFactory = elementFactories.get(nodeName);
+                    UIElementFactory<?> elementFactory = elementFactories.get(nodeName);
 
                     if (elementFactory.getType() == UIElementType.CONTAINER) {
                         Container container = (Container) elementFactory.createElement(toolbox, node, node.getAttributes());
@@ -117,7 +134,7 @@ public class UILoader {
                     }
 
                 } else {
-                    log.error("Invalid element '" + nodeName + "' from file: " + file);
+                    log.error("Invalid element '" + nodeName + "' from fileContents: " + fileContents);
                 }
             }
         } else
@@ -139,7 +156,7 @@ public class UILoader {
             String nodeName = node.getNodeName().toLowerCase();
 
             if (elementFactories.containsKey(nodeName)) {
-                UIElementFactory elementFactory = elementFactories.get(nodeName);
+                UIElementFactory<?> elementFactory = elementFactories.get(nodeName);
                 Object element = elementFactory.createElement(toolbox, node, attributes);
 
                 switch (elementFactory.getType()) {
@@ -156,7 +173,7 @@ public class UILoader {
                         parent.add(component);
                         break;
                     case LAYOUT:
-                        Layout layout = (Layout) element;
+                        Layout<?,?> layout = (Layout<?,?>) element;
                         parent.setLayout(layout);
                         break;
                     case FONT:
@@ -186,7 +203,7 @@ public class UILoader {
             String nodeName = node.getNodeName().toLowerCase();
 
             if (elementFactories.containsKey(nodeName)) {
-                UIElementFactory elementFactory = elementFactories.get(nodeName);
+                UIElementFactory<?> elementFactory = elementFactories.get(nodeName);
                 Object element = elementFactory.createElement(toolbox, node, attributes);
 
                 switch (elementFactory.getType()) {

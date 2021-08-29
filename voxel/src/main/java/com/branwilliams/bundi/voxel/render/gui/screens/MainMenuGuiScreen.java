@@ -7,7 +7,7 @@ import com.branwilliams.bundi.voxel.render.gui.VoxelGuiScreen;
 public class MainMenuGuiScreen extends VoxelGuiScreen {
 
     public MainMenuGuiScreen(VoxelScene scene) {
-        super(scene, "ui/voxel-main-menu.xml");
+        super(scene, "voxel/ui/voxel-main-menu.xml");
 
     }
 }

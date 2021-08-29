@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
@@ -13,6 +14,7 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum IOUtils {
@@ -132,7 +134,7 @@ public enum IOUtils {
      * @author LWJGL
      * @author Spasi
      */
-    public static ByteBuffer ioResourceToByteBuffer(String resource, int bufferSize) throws IOException {
+    public static ByteBuffer readResourceAsByteBuffer(String resource, int bufferSize) throws IOException {
         ByteBuffer buffer;
 
         Path path = Paths.get(resource);
@@ -146,7 +148,7 @@ public enum IOUtils {
             }
         } else {
             try (
-                    InputStream source = IOUtils.class.getClassLoader().getResourceAsStream(resource);
+                    InputStream source = getResourceAsInputStream(resource);
                     ReadableByteChannel rbc = Channels.newChannel(source)
             ) {
                 buffer = MemoryUtil.memAlloc(bufferSize);
@@ -167,11 +169,42 @@ public enum IOUtils {
         return buffer;
     }
 
+    /**
+     * Creates a new buffer with the capacity provided, copies the old buffer into the new one, and frees the old one.
+     * */
     private static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
         ByteBuffer newBuffer = MemoryUtil.memAlloc(newCapacity);
         buffer.flip();
         newBuffer.put(buffer);
+        MemoryUtil.memFree(buffer);
         return newBuffer;
+    }
+
+    /**
+     *
+     * */
+    public static Path getResourceAsPath(String resource) {
+        URL res = getResourceAsUrl(resource);
+        try {
+            return Paths.get(res.toURI());
+        } catch (URISyntaxException e) {
+            LOG.error("Unable to find resource");
+            return null;
+        }
+    }
+
+    /**
+     *
+     * */
+    public static InputStream getResourceAsInputStream(String resource) {
+        return tryEachClassLoader((classLoader) -> classLoader.getResourceAsStream(resource));
+    }
+
+    /**
+     *
+     * */
+    public static URL getResourceAsUrl(String resource) {
+        return tryEachClassLoader((classLoader) -> classLoader.getResource(resource));
     }
 
     /**
@@ -180,31 +213,27 @@ public enum IOUtils {
      * https://stackoverflow.com/a/3862134
      *
      * */
-    public static InputStream getResourceAsInputStream(String resource) {
-        InputStream inputStream;
+    private static <T> T tryEachClassLoader(Function<ClassLoader,T> classLoaderFunction) {
+        T value;
 
-        //Try with the Thread Context Loader.
+        // Try with the current thread context ClassLoader.
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader != null) {
-            inputStream = classLoader.getResourceAsStream(resource);
-            if (inputStream != null) {
-                System.out.println("ThreadContext found: " + inputStream);
-                return inputStream;
+            value = classLoaderFunction.apply(classLoader);
+            if (value != null) {
+                return value;
             }
         }
 
-        //Let's now try with the classloader that loaded this class.
+        // Let us now try with the ClassLoader that loaded this class.
         classLoader = IOUtils.class.getClassLoader();
         if (classLoader != null) {
-            inputStream = classLoader.getResourceAsStream(resource);
-            if (inputStream != null) {
-                System.out.println("IOUtils.class found: " + inputStream);
-                return inputStream;
+            value = classLoaderFunction.apply(classLoader);
+            if (value != null) {
+                return value;
             }
         }
 
-        //Last ditch attempt. Get the resource from the classpath.
-        return ClassLoader.getSystemResourceAsStream(resource);
+        return classLoaderFunction.apply(ClassLoader.getSystemClassLoader());
     }
-
 }

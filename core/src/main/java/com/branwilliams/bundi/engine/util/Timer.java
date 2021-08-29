@@ -12,7 +12,7 @@ public final class Timer {
     /**
      * Checks if the passed time reached the targetted time.
      */
-    public boolean hasReach(int targetTime) {
+    public boolean hasReach(long targetTime) {
         return getTimePassed() >= targetTime;
     }
 

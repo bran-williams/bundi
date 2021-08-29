@@ -13,29 +13,20 @@ import com.branwilliams.bundi.engine.sprite.Sprite;
 import com.branwilliams.bundi.engine.sprite.SpriteSheet;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.IOUtils;
-import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.engine.util.RateLimiter;
 import com.branwilliams.frogger.components.ScaledTexture;
-import com.branwilliams.frogger.gson.TilemapDeserializer;
-import com.branwilliams.frogger.gson.TilemapSerializer;
 import com.branwilliams.frogger.parallax.ParallaxBackground;
-import com.branwilliams.frogger.parallax.ParallaxLayer;
-import com.branwilliams.frogger.parallax.ParallaxObject;
+import com.branwilliams.frogger.parallax.ParallaxLoader;
 import com.branwilliams.frogger.pipeline.pass.ParallaxBackgroundRenderPass;
-import com.branwilliams.frogger.pipeline.pass.ParallaxUIRenderPass;
+import com.branwilliams.frogger.pipeline.pass.HelpUIRenderPass;
 import com.branwilliams.frogger.pipeline.pass.SpriteRenderPass;
-import com.branwilliams.frogger.pipeline.pass.TilemapRenderPass;
 import com.branwilliams.frogger.system.FocalPointFollowSystem;
 import com.branwilliams.frogger.system.ParallaxBackgroundMovementSystem;
-import com.branwilliams.frogger.system.TilemapUpdateSystem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import org.joml.Vector2f;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -46,11 +37,7 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 public class FroggerScene extends AbstractScene {
 
-    private Tilemap tilemap;
-
-    private Vector2f focalPoint = new Vector2f();
-
-    private Vector2f targetFocalPoint = new Vector2f();
+    private Camera2D camera;
 
     private Transformable mouseTransform = new Transformation();
 
@@ -65,26 +52,20 @@ public class FroggerScene extends AbstractScene {
     private float spriteScale = 4F;
 
     public FroggerScene() {
-        super("template-2d");
+        super("frogger");
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
         textureLoader = new TextureLoader(engine.getContext());
+        camera = new Camera2D(window.getWidth(), window.getHeight());
 
-        parallaxBackground = loadParallaxBackground(FroggerConstants.PARALLAX_BACKGROUND_FILE);
-        createParallaxBackgroundTextures(parallaxBackground);
+        parallaxBackground = ParallaxLoader.loadParallaxBackground(FroggerConstants.PARALLAX_BACKGROUND_FILE);
+        ParallaxLoader.createParallaxBackgroundTextures(textureLoader, parallaxBackground);
 
-//        SpriteAtlas spriteAtlas = loadSpriteAtlas(FroggerConstants.TILEMAP_ATLAS_FILE);
-//        spriteAtlas.load(textureLoader);
-
-//        tilemap = createTilemap();
-//        tilemap.setSpriteAtlas(spriteAtlas);
-
-        es.addSystem(new FocalPointFollowSystem(this::getFocalPoint, this::setFocalPoint, this::getTargetFocalPoint,
+        es.addSystem(new FocalPointFollowSystem(camera::getFocalPoint, camera::setFocalPoint, camera::getTargetFocalPoint,
                 FroggerConstants.CAMERA_MOVE_SPEED));
-//        es.addSystem(new TilemapUpdateSystem(this::getTilemap));
-        es.addSystem(new ParallaxBackgroundMovementSystem(this::getFocalPoint, this::getParallaxBackground));
+        es.addSystem(new ParallaxBackgroundMovementSystem(camera::getFocalPoint, this::getParallaxBackground));
         es.initSystems(engine, window);
 
         Projection worldProjection = new Projection(window);
@@ -92,18 +73,14 @@ public class FroggerScene extends AbstractScene {
 
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addFirst(new ParallaxBackgroundRenderPass<>(this::getParallaxBackground));
-//        renderPipeline.addLast(new TilemapRenderPass(this::getFocalPoint, this::getTilemap));
         renderPipeline.addLast(new SpriteRenderPass(this));
-        renderPipeline.addLast(new ParallaxUIRenderPass());
+        renderPipeline.addLast(new HelpUIRenderPass(new String[] {
+                "Use the arrow keys to move the background",
+                "Left Shift + Left click to move the background"
+        }));
         // Add render passes here.
         FroggerRenderer<RenderContext> renderer = new FroggerRenderer<>(this, renderPipeline);
         setRenderer(renderer);
-    }
-
-    private Tilemap createTilemap() {
-        Tilemap tilemap = new Tilemap(FroggerConstants.SCREEN_WIDTH_TILES * 10, FroggerConstants.SCREEN_HEIGHT_TILES * 10,
-                FroggerConstants.TILE_WIDTH_SCALED, FroggerConstants.TILE_HEIGHT_SCALED);
-        return tilemap;
     }
 
     @Override
@@ -121,7 +98,7 @@ public class FroggerScene extends AbstractScene {
             SpriteSheet frogger = textureLoader.loadSpriteSheet("textures/frogger.png",
                     16, 16);
 
-            Sprite frogmanTheSprite = new AnimatedSprite(frogger, new int[] { 0, 1, 2, 3, 0 },
+            Sprite frogmanTheSprite = new AnimatedSprite(frogger, FroggerConstants.FROGMAN_FRAMES,
                     new RateLimiter(TimeUnit.MILLISECONDS, 80L), fireballScale);
 
             es.entity("frogman").component(
@@ -146,6 +123,7 @@ public class FroggerScene extends AbstractScene {
 
     @Override
     public void update(Engine engine, double deltaTime) {
+        camera.updateScreen(engine.getWindow().getWidth(), engine.getWindow().getHeight());
         mouseTransform.setPosition(engine.getWindow().getMouseX(), engine.getWindow().getMouseY(), 0F);
         super.update(engine, deltaTime);
     }
@@ -157,21 +135,20 @@ public class FroggerScene extends AbstractScene {
         float keyMoveSpeed = 600F;
 
         if (engine.getWindow().isKeyPressed(GLFW_KEY_RIGHT)) {
-            targetFocalPoint.x -= keyMoveSpeed * deltaTime;
+            camera.getTargetFocalPoint().x -= keyMoveSpeed * deltaTime;
         }
 
         if (engine.getWindow().isKeyPressed(GLFW_KEY_LEFT)) {
-            targetFocalPoint.x += keyMoveSpeed * deltaTime;
+            camera.getTargetFocalPoint().x += keyMoveSpeed * deltaTime;
         }
 
         if (engine.getWindow().isKeyPressed(GLFW_KEY_UP)) {
-            targetFocalPoint.y += keyMoveSpeed * deltaTime;
+            camera.getTargetFocalPoint().y += keyMoveSpeed * deltaTime;
         }
 
         if (engine.getWindow().isKeyPressed(GLFW_KEY_DOWN)) {
-            targetFocalPoint.y -= keyMoveSpeed * deltaTime;
+            camera.getTargetFocalPoint().y -= keyMoveSpeed * deltaTime;
         }
-
     }
 
     @Override
@@ -193,7 +170,7 @@ public class FroggerScene extends AbstractScene {
                 case GLFW_MOUSE_BUTTON_1:
                     float movementX = mouseX - (window.getWidth() * 0.5F);
                     float movementY = mouseY - (window.getHeight() * 0.5F);
-                    targetFocalPoint.set(focalPoint.x - movementX, targetFocalPoint.y - movementY);
+                    camera.getTargetFocalPoint().set(camera.getFocalPoint().x - movementX, camera.getTargetFocalPoint().y - movementY);
                     break;
             }
         }
@@ -209,21 +186,6 @@ public class FroggerScene extends AbstractScene {
         }
     }
 
-    private ParallaxBackground<ScaledTexture> loadParallaxBackground(String backgroundJsonFile) {
-        String fileText = IOUtils.readFile(backgroundJsonFile, null);
-        Gson gson = new GsonBuilder().create();
-        Type parallaxBackgroundType = new TypeToken<ParallaxBackground<ScaledTexture>>() {}.getType();
-        return gson.fromJson(fileText, parallaxBackgroundType);
-    }
-
-    private void createParallaxBackgroundTextures(ParallaxBackground<ScaledTexture> background) throws IOException {
-        for (ParallaxLayer<ScaledTexture> layer : background.getLayers()) {
-            for (ParallaxObject<ScaledTexture> object : layer.getObjects()) {
-                object.getObject().load(textureLoader);
-            }
-        }
-    }
-
     private SpriteAtlas loadSpriteAtlas(String fileLocation) throws IOException {
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
@@ -235,27 +197,8 @@ public class FroggerScene extends AbstractScene {
         return null;
     }
 
-    public Vector2f getMouseRelativeToFocalPoint(float mouseX, float mouseY) {
-        return new Vector2f(mouseX - focalPoint.x, mouseY - focalPoint.y);
-    }
-
     public ParallaxBackground getParallaxBackground() {
         return parallaxBackground;
     }
 
-    public Vector2f getFocalPoint() {
-        return focalPoint;
-    }
-
-    public void setFocalPoint(Vector2f focalPoint) {
-        this.focalPoint = focalPoint;
-    }
-
-    public Vector2f getTargetFocalPoint() {
-        return targetFocalPoint;
-    }
-
-    public Tilemap getTilemap() {
-        return tilemap;
-    }
 }

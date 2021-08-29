@@ -23,9 +23,9 @@ uniform sampler2D diffuse;
 uniform vec3 viewPos;
 
 const vec4 specular = vec4(1, 1, 1, 1.0);
-const float shininess = 10;
+const float shininess = 16;
 
-const float transparencyThreshold = 0.5;
+const float transparencyThreshold = 0.1;
 
 void main() {
     vec4 textureColor = texture(diffuse, passTextureCoordinates);

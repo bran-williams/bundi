@@ -86,12 +86,13 @@ public class NoiseChunkGenerator implements VoxelChunkGenerator {
             boolean isTopBlock = j >= VoxelConstants.CHUNK_Y_SIZE - 1;
             if (yGradient > 0.45F) {
                 voxel = Voxels.sand;
-            } else
-            // top block or a block with nothing above it becomes grass.
-            if (isTopBlock || Voxel.isAir(kernel[i][j + 1][k])) {
-                voxel = Voxels.grass;
             } else {
-                voxel = Voxels.dirt;
+                // top block or a block with nothing above it becomes grass.
+                if (isTopBlock || Voxel.isAir(kernel[i][j + 1][k])) {
+                    voxel = Voxels.grass;
+                } else {
+                    voxel = Voxels.dirt;
+                }
             }
 
         }

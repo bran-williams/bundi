@@ -5,9 +5,6 @@ import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
-import com.branwilliams.bundi.engine.deserializers.Vector2fDeserializer;
-import com.branwilliams.bundi.engine.deserializers.Vector3fDeserializer;
-import com.branwilliams.bundi.engine.deserializers.Vector4fDeserializer;
 import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.mesh.Mesh;
@@ -21,10 +18,10 @@ import com.branwilliams.bundi.engine.util.GsonUtils;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.fog.pipeline.FogRenderPipeline;
+import com.branwilliams.fog.systems.ParticleUpdateSystem;
 import com.branwilliams.fog.systems.RotationAnimationSystem;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.joml.Vector2f;
+import org.joml.AxisAngle4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -55,7 +52,29 @@ public class FogScene extends AbstractScene {
     private static final String MODEL_LOCATION = "models/cartoonland2/cartoonland2.obj";
     private static final String MODEL_TEXTURES = "models/cartoonland2/";
 
-    private final GuiScreenManager<FogScene> guiScreenManager = new GuiScreenManager<>(this);;
+    private static final String[] SMOKE_PARTICLES = {
+            "textures/particle/smoke_01.png",
+            "textures/particle/smoke_02.png",
+            "textures/particle/smoke_03.png",
+            "textures/particle/smoke_04.png",
+            "textures/particle/smoke_05.png",
+            "textures/particle/smoke_06.png",
+            "textures/particle/smoke_07.png"
+    };
+
+//    private static final String[] FLAME_PARTICLES = {
+//            "textures/particle/flame_01.png",
+////            "textures/particle/flame_02.png",
+////            "textures/particle/flame_03.png",
+//            "textures/particle/flame_04.png"
+//    };
+
+    private static final String[] FLAME_PARTICLES = {
+            "textures/particle/flame_05.png",
+            "textures/particle/flame_06.png"
+    };
+
+    private final GuiScreenManager<FogScene> guiScreenManager = new GuiScreenManager<>(this);
 
     private Vector3f cameraStartingPosition = new Vector3f(-2, 0, 0);
 
@@ -93,6 +112,7 @@ public class FogScene extends AbstractScene {
 
         es.addSystem(new RotationAnimationSystem());
         es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 6F));
+        es.addSystem(new ParticleUpdateSystem());
         es.initSystems(engine, window);
 
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
@@ -116,32 +136,59 @@ public class FogScene extends AbstractScene {
 
         atmosphere = new Atmosphere(sun, SKY_COLOR, SUN_COLOR, fog);
         skydome = new SphereMesh(300, 90, 90, VertexFormat.POSITION, true);
-
 //        try {
 //            CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/one.csv");
 //            skybox = new Skybox(500, new Material(skyboxTexture));
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
+
+        ParticleEmitter smokeEmitter = new ParticleEmitter(200, 200,
+                loadTextures(textureLoader, SMOKE_PARTICLES));
+        smokeEmitter.setVelocity(new Vector3f(0.05F));
+        smokeEmitter.setDispurseAmount(new Vector3f(30F, 2F, 30F));
+        smokeEmitter.setGravity(1F);
+        smokeEmitter.setScale(4F);
+        smokeEmitter.respawnParticles();
+
+        es.entity("smokeParticles").component(
+                new Transformation().position(0, 0, 0),
+                smokeEmitter
+        ).build();
+
+        ParticleEmitter fireEmitter = new ParticleEmitter(50, 50,
+                loadTextures(textureLoader, FLAME_PARTICLES));
+        fireEmitter.setVelocity(new Vector3f(0.25F));
+        fireEmitter.setDispurseAmount(new Vector3f(4F, 6F, 4F));
+        fireEmitter.setGravity(16F);
+        fireEmitter.setScale(4F);
+        fireEmitter.respawnParticles();
+
+        es.entity("fireParticles").component(
+                new Transformation().position(20, 20, 20),
+                fireEmitter
+        ).build();
+
         CubeMesh cubeMesh = new CubeMesh(1, 1, 1, VertexFormat.POSITION_UV_NORMAL);
-        CubeMesh cubeMeshWithTangents = new CubeMesh(1, 1, 1, 2F, VertexFormat.POSITION_UV_NORMAL_TANGENT);
-        CubeMesh cubeFloor0 = new CubeMesh(50, 0.05F, 50, 24F,
+        CubeMesh cubeMeshWithTangents = new CubeMesh(1, 1, 1, 2F,
+                VertexFormat.POSITION_UV_NORMAL_TANGENT);
+        CubeMesh cubeFloor0 = new CubeMesh(50, 0.05F, 50, 16F,
                 VertexFormat.POSITION_UV_NORMAL_TANGENT);
 
         Material material0 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material0.setProperty("specular", toVector4(new Color(0xFFFFFFFF)));
+        material0.setProperty("specular", toVector4(new Color(0xFF333333)));
         material0.setProperty("diffuse", toVector4(new Color(0xFF021eDD)));
 
         Material material1 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material1.setProperty("specular", toVector4(new Color(0xFFFFFFFF)));
+        material1.setProperty("specular", toVector4(new Color(0xFF333333)));
         material1.setProperty("diffuse", toVector4(new Color(0xFFffb800)));
 
         Material material2 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material2.setProperty("specular", toVector4(new Color(0xFFFFFFFF)));
+        material2.setProperty("specular", toVector4(new Color(0xFF333333)));
         material2.setProperty("diffuse", toVector4(new Color(0xFFAE1500)));
 
         Material material4 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material4.setProperty("specular", toVector4(new Color(0xFFFFFFFF)));
+        material4.setProperty("specular", toVector4(new Color(0xFF333333)));
         material4.setProperty("diffuse", toVector4(new Color(0xFF007700)));
 
         es.entity("cube0").component(
@@ -156,21 +203,29 @@ public class FogScene extends AbstractScene {
                 new Transformation().position(4, 1, -12F).scale(2)
         ).build();
 
+//        es.entity("cube3").component(
+//                cubeMesh,
+//                material2,
+//                new Transformation().position(10, 3, -4F).scale(3)
+//        ).build();
+
         es.entity("cube3").component(
-                cubeMesh,
-                material2,
+                cubeMeshWithTangents,
+                createDiffuseNormalSpecularMaterial(textureLoader,
+                        "textures/wooden_deck/texture_diffuse.jpg",
+                        "textures/wooden_deck/texture_normal.jpg",
+                        "textures/wooden_deck/texture_specular.jpg"),
                 new Transformation().position(10, 3, -4F).scale(3)
         ).build();
+
+        Material boxMaterial = createDiffuseNormalMaterial(textureLoader,
+                "textures/wooden_deck/texture_diffuse.jpg",
+                "textures/wooden_deck/texture_normal.jpg");
 
         Material floorMaterial = createDiffuseNormalSpecularMaterial(textureLoader,
                 "textures/logl/floor_diffuse.jpg",
                 "textures/logl/floor_normal.jpg",
                 "textures/logl/floor_specular.jpg");
-
-        Material boxMaterial = createDiffuseNormalSpecularMaterial(textureLoader,
-                "textures/wooden_deck/texture_diffuse.jpg",
-                "textures/wooden_deck/texture_normal.jpg",
-                "textures/wooden_deck/texture_specular.jpg");
 
         es.entity("floor0").component(
                 cubeFloor0,
@@ -180,27 +235,27 @@ public class FogScene extends AbstractScene {
 
         es.entity("cube5").component(
                 cubeMeshWithTangents,
-                new Transformation().position(-8, 2, 15F).scale(4),
+                new Transformation().position(-8, 2, 15).scale(4),
                 boxMaterial
         ).build();
 
         es.entity("cube6").component(
                 cubeMeshWithTangents,
-                new Transformation().position(4, 1, 12F).scale(2),
+                new Transformation().position(4, 1, 12).scale(2),
                 boxMaterial
         ).build();
 
         es.entity("cube7").component(
                 cubeMeshWithTangents,
-                new Transformation().position(10, 3, 4F).scale(3),
+                new Transformation().position(10, 3, 4).scale(3),
                 boxMaterial
         ).build();
 
         es.entity("cube8").component(
                 cubeMeshWithTangents,
-                new Transformation().position(-10, 2, 20 * 0.5F).scale(5),
+                new Transformation().position(-12, 2, 5).scale(3),
                 boxMaterial,
-                new RotationAnimation(new Vector3f(1F, 0F, 0F), 0.3F)
+                new RotationAnimation(new AxisAngle4f(0, new Vector3f(1F, 0F, 0F)), 0.3F)
         ).build();
     }
 
@@ -252,13 +307,25 @@ public class FogScene extends AbstractScene {
                 && buttonId == GLFW_MOUSE_BUTTON_1) {
             movingSun = true;
         }
-
     }
 
     @Override
     public void release(Window window, float mouseX, float mouseY, int buttonId) {
         super.release(window, mouseX, mouseY, buttonId);
         movingSun = false;
+    }
+
+    private Texture[] loadTextures(TextureLoader textureLoader, String[] images) {
+        Texture[] textures = new Texture[images.length];
+        try {
+            for (int i = 0; i < images.length; i++) {
+                TextureData textureData = textureLoader.loadTexture(images[i]);
+                textures[i] = new Texture(textureData, true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return textures;
     }
 
     private void loadIngameUI(Engine engine, Window window) {
@@ -268,12 +335,12 @@ public class FogScene extends AbstractScene {
         env.put("reloadenv_controls", "H");
 
         this.guiScreenManager.init(engine, window);
-        this.guiScreenManager.loadAsGuiScreen(UI_INGAME_HUD, env);
+        this.guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromResources(UI_INGAME_HUD, env));
     }
 
     private void loadEnvironmentFile() {
         Gson gson = GsonUtils.defaultGson();
-        this.environment = gson.fromJson(IOUtils.readFile(ENVIRONMENT_FILE, null),
+        this.environment = gson.fromJson(IOUtils.readResource(ENVIRONMENT_FILE, null),
                 Environment.class);
         this.environment.getPointLights()[0] = playerLight;
     }
@@ -290,6 +357,25 @@ public class FogScene extends AbstractScene {
             material = new Material(MaterialFormat.DIFFUSE_SPECULAR);
             material.setTexture(0, diffuse);
             material.setTexture(1, specular);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return material;
+    }
+
+    public Material createDiffuseNormalMaterial(TextureLoader textureLoader, String diffusePath,
+                                                        String normalPath) {
+        Material material = null;
+        try {
+            TextureData textureData = textureLoader.loadTexture(diffusePath);
+            Texture diffuse = new Texture(textureData, true);
+
+            textureData = textureLoader.loadTexture(normalPath);
+            Texture normal = new Texture(textureData, true);
+
+            material = new Material(MaterialFormat.DIFFUSE_NORMAL);
+            material.setTexture(0, diffuse);
+            material.setTexture(1, normal);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -319,6 +405,7 @@ public class FogScene extends AbstractScene {
         }
         return material;
     }
+
     public Environment getEnvironment() {
         return environment;
     }

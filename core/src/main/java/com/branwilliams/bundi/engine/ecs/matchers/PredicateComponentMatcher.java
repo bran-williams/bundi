@@ -12,6 +12,7 @@ public class PredicateComponentMatcher implements IComponentMatcher {
 
     private final Predicate<IEntity>[] predicates;
 
+    @SafeVarargs
     public PredicateComponentMatcher(Predicate<IEntity>... predicates) {
         this.predicates = predicates;
     }

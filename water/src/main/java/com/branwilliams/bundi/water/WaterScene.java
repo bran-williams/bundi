@@ -28,6 +28,7 @@ import org.joml.Vector4f;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -54,7 +55,6 @@ public class WaterScene extends AbstractScene {
 
     public WaterScene() {
         super("water_scene");
-        addKeyListener(this);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class WaterScene extends AbstractScene {
         textureLoader = new TextureLoader(engine.getContext());
 
         try {
-            CubeMapTexture environment = textureLoader.loadCubeMapTexture("assets/mp_drakeq.csv");
+            CubeMapTexture environment = textureLoader.loadCubeMapTexture("assets/stormydays.csv");
 
             skybox = new Skybox(500, new Material(environment));
 
@@ -160,7 +160,6 @@ public class WaterScene extends AbstractScene {
                 new Wave(0.05F, 0.007F, 0.2F, overallSteepness / (0.4F * 0.01F * Water.NUMBERWAVES),
                         new Vector2f(-0.4F, -0.3F)),
         };
-
         Wave[] surfaceWaves = {
                 new Wave(1F, 0.01F, 4F, overallSteepness / (4F * 0.01F * Water.NUMBERWAVES),
                         new Vector2f(1F, 1F)),

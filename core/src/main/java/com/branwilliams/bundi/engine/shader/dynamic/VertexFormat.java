@@ -1,5 +1,7 @@
 package com.branwilliams.bundi.engine.shader.dynamic;
 
+import com.branwilliams.bundi.engine.util.ShaderUtils;
+
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +33,9 @@ public class VertexFormat <VertexElementType extends VertexElement> implements I
     public static final VertexFormat<VertexElements> POSITION_UV_NORMAL = new VertexFormat<>(VertexElements.POSITION, VertexElements.UV,
             VertexElements.NORMAL);
 
+    public static final VertexFormat<VertexElements> POSITION_NORMAL_UV = new VertexFormat<>(VertexElements.POSITION,
+            VertexElements.NORMAL, VertexElements.UV);
+
     public static final VertexFormat<VertexElements> POSITION_UV_COLOR_NORMAL = new VertexFormat<>(VertexElements.POSITION, VertexElements.UV,
             VertexElements.COLOR, VertexElements.NORMAL);
 
@@ -46,8 +51,11 @@ public class VertexFormat <VertexElementType extends VertexElement> implements I
 
     public static final VertexFormat<VertexElements> POSITION_2D_UV = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.UV);
 
-    public static final VertexFormat<VertexElements> POSITION_2D_UV_COLOR = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.UV,
-            VertexElements.COLOR);
+    public static final VertexFormat<VertexElements> POSITION_2D_UV_COLOR = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.UV, VertexElements.COLOR);
+
+    public static final VertexFormat<VertexElements> POSITION_2D_NORMAL = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.NORMAL);
+
+    public static final VertexFormat<VertexElements> POSITION_2D_UV_NORMAL = new VertexFormat<>(VertexElements.POSITION_2D, VertexElements.UV, VertexElements.NORMAL);
 
     /**
      * The list of elements this vertex format contains.
@@ -136,6 +144,22 @@ public class VertexFormat <VertexElementType extends VertexElement> implements I
 
     public int getElementCount() {
         return vertexElements.size();
+    }
+
+    /**
+     * Creates the GLSL input from a {@link VertexFormat}.
+     * */
+    public String toVertexShaderInputGLSL() {
+        StringBuilder vertexShaderInput = new StringBuilder();
+        for (int i = 0; i < vertexElements.size(); i++) {
+            VertexElement vertexElement = vertexElements.get(i);
+            vertexShaderInput.append(ShaderUtils.createLayout(i, "in "
+                    + vertexElement.getType()
+                    + " "
+                    + vertexElement.getVariableName()
+                    + ";"));
+        }
+        return vertexShaderInput.toString();
     }
 
     @Override

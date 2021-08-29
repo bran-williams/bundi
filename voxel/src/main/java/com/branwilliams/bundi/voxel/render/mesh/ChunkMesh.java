@@ -8,13 +8,12 @@ import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Timer;
 import com.branwilliams.bundi.voxel.VoxelConstants;
-import com.branwilliams.bundi.voxel.builder.ChunkMeshVertex;
+import com.branwilliams.bundi.voxel.render.mesh.builder.ChunkMeshVertex;
 import com.branwilliams.bundi.voxel.util.Easings;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

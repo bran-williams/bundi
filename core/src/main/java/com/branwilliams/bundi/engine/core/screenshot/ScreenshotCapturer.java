@@ -14,6 +14,8 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class ScreenshotCapturer {
 
+    private static final String FILE_NAME = "yyyy-MM-dd-hh-mm-ss'.png'";
+
     private final Path screenshots;
 
     public ScreenshotCapturer(EngineContext context) {
@@ -32,7 +34,7 @@ public class ScreenshotCapturer {
      * TODO move this into the Window class and make the screenshots directory be configurable.
      * */
     public static boolean screenshot(Path screenshotsDirectory) {
-        String filename =  new SimpleDateFormat("yyyy-MM-dd-hh-mm-ss'.png'").format(new Date());
+        String filename =  new SimpleDateFormat(FILE_NAME).format(new Date());
         return screenshot(new File(screenshotsDirectory.toFile(), filename));
     }
 

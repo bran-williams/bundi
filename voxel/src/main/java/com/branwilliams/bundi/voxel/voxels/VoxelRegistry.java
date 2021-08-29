@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.voxel.voxels;
 
-import com.branwilliams.bundi.voxel.builder.VoxelBuilder;
+import com.branwilliams.bundi.voxel.voxels.builder.VoxelBuilder;
 import com.branwilliams.bundi.voxel.voxels.model.VoxelProperties;
 
 import java.util.*;
@@ -56,7 +56,6 @@ public class VoxelRegistry {
                 .filter((v) -> !v.equalsIgnoreCase(VoxelIdentifiers.AIR.normalized()))
                 .sorted()
                 .collect(Collectors.toList());
-
     }
 
     public VoxelProperties getVoxelProperties(VoxelIdentifier voxelId) {

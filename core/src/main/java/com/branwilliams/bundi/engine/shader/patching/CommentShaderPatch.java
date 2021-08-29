@@ -50,16 +50,17 @@ public class CommentShaderPatch implements ShaderPatch {
         while (commentMatcher.find()) {
 
             String comment = commentMatcher.group();
-//            System.out.println("comment=" + comment);
+
             if (linePattern.matcher(comment).find()) {
-//                System.out.println("match found: comment=" + comment);
                 String beforeComment = code.substring(0, code.indexOf(comment));
 
                 switch (modificationType) {
                     case PREPEND:
-                        return beforeComment + lineModifier.apply(comment) + code.substring(code.indexOf(comment));
+                        code = beforeComment + lineModifier.apply(comment) + code.substring(code.indexOf(comment));
+                        break;
                     case REPLACE:
-                        return beforeComment + lineModifier.apply(comment) + code.substring(code.indexOf(comment) + comment.length());
+                        code = beforeComment + lineModifier.apply(comment) + code.substring(code.indexOf(comment) + comment.length());
+                        break;
                     default:
                 }
             }

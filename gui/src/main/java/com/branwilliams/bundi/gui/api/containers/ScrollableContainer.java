@@ -1,12 +1,14 @@
 package com.branwilliams.bundi.gui.api.containers;
 
 import com.branwilliams.bundi.gui.api.*;
+import com.branwilliams.bundi.gui.api.Container;
 import com.branwilliams.bundi.gui.api.layouts.PaddedLayout;
 import com.branwilliams.bundi.gui.api.layouts.ScrollableLayout;
-import com.branwilliams.bundi.gui.api.actions.Actions;
 import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 import com.branwilliams.bundi.gui.api.actions.MouseWheelDirection;
 import com.branwilliams.bundi.gui.api.actions.WheelActionListener;
+
+import java.awt.*;
 
 /**
  * Implementation of a scrollable container. <br/>
@@ -15,6 +17,10 @@ import com.branwilliams.bundi.gui.api.actions.WheelActionListener;
 public class ScrollableContainer extends Container {
 
     private Scrollbar verticalScrollbar, horizontalScrollbar;
+
+    private Color scrollbarBackgroundColor;
+
+    private Color scrollbarColor;
 
     public ScrollableContainer() {
         super();
@@ -129,5 +135,21 @@ public class ScrollableContainer extends Container {
 
     public Scrollbar getHorizontalScrollbar() {
         return horizontalScrollbar;
+    }
+
+    public Color getScrollbarBackgroundColor() {
+        return scrollbarBackgroundColor;
+    }
+
+    public void setScrollbarBackgroundColor(Color scrollbarBackgroundColor) {
+        this.scrollbarBackgroundColor = scrollbarBackgroundColor;
+    }
+
+    public Color getScrollbarColor() {
+        return scrollbarColor;
+    }
+
+    public void setScrollbarColor(Color scrollbarColor) {
+        this.scrollbarColor = scrollbarColor;
     }
 }

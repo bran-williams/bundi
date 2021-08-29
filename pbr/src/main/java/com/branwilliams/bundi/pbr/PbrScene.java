@@ -61,7 +61,6 @@ public class PbrScene extends AbstractScene {
 
     public PbrScene() {
         super("pbr_scene");
-        addKeyListener(this);
     }
 
     @Override
@@ -72,7 +71,8 @@ public class PbrScene extends AbstractScene {
         es.initSystems(engine, window);
 
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
-        PbrRenderPipeline renderPipeline = new PbrRenderPipeline(this, this::getCamera, this::getExposure, worldProjection);
+        PbrRenderPipeline renderPipeline = new PbrRenderPipeline(this, this::getCamera, this::getExposure,
+                worldProjection);
         renderPipeline.addFirst(new SkyboxRenderPass<>(this::getCamera, this::getSkybox));
         renderPipeline.addLast(new PbrDebugRenderPass(this));
         PbrRenderer renderer = new PbrRenderer(this, renderPipeline);
@@ -164,7 +164,8 @@ public class PbrScene extends AbstractScene {
             }
 
             PbrMaterial material = readMaterial(assetDirectory, this.materials[materialIndex]);
-            SphereMesh sphereMesh = new SphereMesh(1F, 50, 50, VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
+            SphereMesh sphereMesh = new SphereMesh(1F, 50, 50,
+                    VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
             Model sphereModel = new Model(sphereMesh, material.createMaterial(textureLoader));
             sphereEntity.addComponent(sphereModel);
         } catch (IOException e) {

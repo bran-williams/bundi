@@ -4,6 +4,7 @@ import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.actions.*;
 
 import java.awt.*;
+import java.util.function.Consumer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -33,6 +34,8 @@ public class TextField extends Component {
 
     private boolean typing = false;
 
+    private Consumer<TextField> onSubmit;
+
     public TextField(String tag, String text) {
         this(tag, text, text);
     }
@@ -43,10 +46,14 @@ public class TextField extends Component {
         this.defaultText = defaultText;
 
         this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener)
-                event ->
-                        typing = (event.mouseClickAction == ClickEvent.MouseClickAction.MOUSE_PRESS
-                                && isHovered()
-                                && isPointInside(event.x, event.y) && event.buttonId == 0));
+                event -> {
+            if (event.mouseClickAction == ClickEvent.MouseClickAction.MOUSE_RELEASE) {
+                typing = isHovered() && isPointInside(event.x, event.y) && event.buttonId == 0;
+            } else {
+                typing = false;
+            }
+            return typing;
+        });
 
 
         this.addListener(CharTypedEvent.class, (CharacterTypedActionListener) charTypedEvent -> {
@@ -87,6 +94,12 @@ public class TextField extends Component {
                     if (toolbox.getWindow().isKeyPressed(GLFW_KEY_LEFT_CONTROL)
                             || toolbox.getWindow().isKeyPressed(GLFW_KEY_RIGHT_CONTROL))
                         this.append(toolbox.getClipboard());
+                    break;
+                case GLFW_KEY_ENTER:
+                    if (onSubmit != null) {
+                        onSubmit.accept(this);
+                    }
+                    break;
                 default:
                     break;
             }
@@ -270,5 +283,13 @@ public class TextField extends Component {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+
+    public Consumer<TextField> getOnSubmit() {
+        return onSubmit;
+    }
+
+    public void setOnSubmit(Consumer<TextField> onSubmit) {
+        this.onSubmit = onSubmit;
     }
 }

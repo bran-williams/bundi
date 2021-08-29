@@ -42,10 +42,13 @@ public interface Scene extends Nameable, Destructible, Updateable, WindowEventLi
     /**
      * @return True if this scene is ready to be set.
      * */
-    boolean isReady();
+    default boolean isReady() {
+        return true;
+    }
 
     /**
-     * @return True if this scene should be destroyed if it is replaced with another of the same type.
+     * @return True if this scene should be destroyed if it is replaced with another of the same type. The scene manager
+     * will also remove the scene from its cache and therefore will be initialized next time it is set.
      * */
     default boolean destroyUponReplacement() {
         return false;
@@ -66,6 +69,8 @@ public interface Scene extends Nameable, Destructible, Updateable, WindowEventLi
      * scene.
      * */
     EventManager getEventManager();
+
+    void setEventManager(EventManager eventManager);
 
     EntitySystemManager getEs();
 

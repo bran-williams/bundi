@@ -12,14 +12,13 @@ import com.branwilliams.bundi.gui.api.loader.UILoader;
 import com.branwilliams.bundi.gui.impl.BasicRenderer;
 import com.branwilliams.bundi.gui.impl.BasicToolbox;
 import com.branwilliams.bundi.gui.impl.ColorPack;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static com.branwilliams.bundi.gui.impl.Pointers.FONT_TOOLTIP;
 
@@ -70,29 +69,39 @@ public class GuiScreenManager <SceneType extends Scene> {
             this.guiScreen.update();
         }
     }
-    public ContainerManager load(String ui) {
-        return load(ui, new HashMap<>());
+
+    public ContainerManager loadFromResources(String ui, Map<String, Object> env) {
+        return load(() -> uiLoader.loadUIFromResources(ui, env));
     }
 
-    public ContainerManager load(String ui, Map<String, Object> env) {
-        try {
-            ContainerManager containerManager = new ContainerManager(scene, window, renderManager, toolbox);
-            List<Container> containers = uiLoader.loadUI(ui, env);
-            for (Container container : containers)
-                containerManager.add(container);
-            return containerManager;
-        } catch (IOException | SAXException | ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public ContainerManager loadFromAssetDirectory(String ui, Map<String, Object> env) {
+        return load(() -> uiLoader.loadUIFromAssetDirectory(ui, env));
+    }
+
+    public ContainerManager loadFromFileContents(String fileContents, Map<String, Object> env) {
+        return load(() -> uiLoader.loadUIFromFileContents(fileContents, env));
+    }
+
+    private ContainerManager load(Supplier<List<Container>> loadUI) {
+        List<Container> containers = loadUI.get();
+        if (containers == null)
+            return null;
+
+        ContainerManager containerManager = new ContainerManager(scene, window, renderManager, toolbox);
+        for (Container container : containers)
+            containerManager.add(container);
+        return containerManager;
     }
 
     public ContainerManager loadAsGuiScreen(String ui) {
         return loadAsGuiScreen(ui, new HashMap<>());
     }
 
-    public ContainerManager loadAsGuiScreen(String ui, Map<String, Object> env) {
-        ContainerManager containerManager = load(ui, env);
+    public ContainerManager loadAsGuiScreen(String fileContents, Map<String, Object> env) {
+        return loadAsGuiScreen(loadFromFileContents(fileContents, env));
+    }
+
+    public ContainerManager loadAsGuiScreen(ContainerManager containerManager) {
         if (containerManager != null)
             setGuiScreen(new AbstractContainerScreen<>(containerManager));
         return containerManager;

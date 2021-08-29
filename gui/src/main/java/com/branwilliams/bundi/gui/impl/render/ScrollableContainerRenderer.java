@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.gui.impl.render;
 
 import com.branwilliams.bundi.engine.font.FontRenderer;
+import com.branwilliams.bundi.engine.util.ColorUtils;
 import com.branwilliams.bundi.gui.api.Toolbox;
 import com.branwilliams.bundi.gui.api.containers.ScrollableContainer;
 import com.branwilliams.bundi.gui.api.render.ImageRenderer;
@@ -38,22 +39,17 @@ public class ScrollableContainerRenderer extends AbstractComponentRenderer<Scrol
 
     @Override
     public void render(ScrollableContainer container) {
-        /*if (!container.getTag().equals("invisible-background")) {
-            GLUtils.glColor(toolbox.get(COLOR_BACKGROUND));
-            GLUtils.drawRect(container.getRenderArea());
+        if (container.getOpacity() > 0F) {
+            shapeRenderer.drawRect(container.getRenderArea().getArea(), container.getBackgroundColor());
         }
         if (container.getVerticalScrollbar().has()) {
-            GLUtils.glColor(toolbox.get(COLOR_DEFAULT));
-            GLUtils.drawRect(container.getVerticalScrollbar().getArea());
-            GLUtils.glColor(GLUtils.getColorWithEffects(toolbox.<Color>get(COLOR_DEFAULT).brighter(), container.getVerticalScrollbar().isScrolling() || (container.isHovered() && container.getVerticalScrollbar().isPointInsideBar(toolbox.getMouseX(), toolbox.getMouseY())), false));
-            GLUtils.drawRect(container.getVerticalScrollbar().getScrollbar());
+            shapeRenderer.drawRect(container.getVerticalScrollbar().getArea(), container.getScrollbarBackgroundColor());
+            shapeRenderer.drawRect(container.getVerticalScrollbar().getScrollbar(), ColorUtils.getColorWithEffects(container.getScrollbarColor(), container.getVerticalScrollbar().isScrolling() || (container.isHovered() && container.getVerticalScrollbar().isPointInsideBar(toolbox.getMouseX(), toolbox.getMouseY())), false));
         }
         if (container.getHorizontalScrollbar().has()) {
-            GLUtils.glColor(toolbox.get(COLOR_DEFAULT));
-            GLUtils.drawRect(container.getHorizontalScrollbar().getArea());
-            GLUtils.glColor(GLUtils.getColorWithEffects(toolbox.<Color>get(COLOR_DEFAULT).brighter(), container.getHorizontalScrollbar().isScrolling() || (container.isHovered() && container.getHorizontalScrollbar().isPointInsideBar(toolbox.getMouseX(), toolbox.getMouseY())), false));
-            GLUtils.drawRect(container.getHorizontalScrollbar().getScrollbar());
-        }*/
+            shapeRenderer.drawRect(container.getHorizontalScrollbar().getArea(), container.getScrollbarBackgroundColor());
+            shapeRenderer.drawRect(container.getHorizontalScrollbar().getScrollbar(), ColorUtils.getColorWithEffects(container.getScrollbarColor(), container.getHorizontalScrollbar().isScrolling() || (container.isHovered() && container.getHorizontalScrollbar().isPointInsideBar(toolbox.getMouseX(), toolbox.getMouseY())), false));
+        }
     }
 
     @Override

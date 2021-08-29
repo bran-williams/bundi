@@ -12,6 +12,10 @@ public class MaterialFormat {
 
     public static final int NO_TEXTURE_INDEX = -1;
 
+    public static MaterialFormat DIFFUSE_NORMAL = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
+            MaterialElementType.SAMPLER_2D, "diffuse").addElement(MaterialElement.NORMAL,
+            MaterialElementType.SAMPLER_2D, "normal");
+
     public static MaterialFormat DIFFUSE_NORMAL_SPECULAR = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
             MaterialElementType.SAMPLER_2D, "diffuse").addElement(MaterialElement.NORMAL,
             MaterialElementType.SAMPLER_2D, "normal").addElement(MaterialElement.SPECULAR,
@@ -39,12 +43,13 @@ public class MaterialFormat {
     public static MaterialFormat DIFFUSE_VEC4_SPECULAR_VEC4 = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
             MaterialElementType.VEC4, "diffuse").addElement(MaterialElement.SPECULAR,
             MaterialElementType.VEC4, "specular");
+
     private final Map<MaterialElement, MaterialEntry> elements;
 
     /**
      * Count the texture entries in order to determine their indices.
      * */
-    private int textureCount = 0;
+    private int samplerCount = 0;
 
     public MaterialFormat() {
         this.elements = new HashMap<>();
@@ -58,9 +63,9 @@ public class MaterialFormat {
 
         int index = NO_TEXTURE_INDEX;
 
-        if (materialElementType.isTexture) {
-            index = textureCount;
-            textureCount++;
+        if (materialElementType.isSampler) {
+            index = samplerCount;
+            samplerCount++;
         }
 
         elements.put(materialElement, new MaterialEntry(materialElement, materialElementType, variableName, index));
@@ -80,6 +85,10 @@ public class MaterialFormat {
 
     public boolean hasElement(MaterialElement materialElement) {
         return elements.containsKey(materialElement);
+    }
+
+    public boolean hasSampler() {
+        return samplerCount > 0;
     }
 
     public MaterialEntry getElement(MaterialElement element) {
@@ -110,6 +119,10 @@ public class MaterialFormat {
             this.elementType = elementType;
             this.variableName = variableName;
             this.textureIndex = textureIndex;
+        }
+
+        public String getVariable(String materialName) {
+            return materialName + "." + variableName;
         }
 
         @Override
@@ -156,7 +169,7 @@ public class MaterialFormat {
     public String toString() {
         return "MaterialFormat{" +
                 "elements=" + elements +
-                ", textureCount=" + textureCount +
+                ", textureCount=" + samplerCount +
                 '}';
     }
 

@@ -29,6 +29,7 @@ public class FogRenderer<Context extends RenderContext> extends AbstractRenderer
 
         glClearColor(clearColor.x, clearColor.y, clearColor.z, clearColor.w);
         glEnable(GL_CULL_FACE);
+//        glDisable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
 

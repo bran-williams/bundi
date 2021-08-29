@@ -88,10 +88,8 @@ public class Grid3i<T> implements Iterable<T> {
             private int i;
 
             private Grid3fIterator() {
-                if (hasNext() && Grid3i.this.getKernel()[i] == null) {
-                    do {
-                        i++;
-                    } while (hasNext() && Grid3i.this.getKernel()[i] == null);
+                while (hasNext() && Grid3i.this.getKernel()[i] == null) {
+                    i++;
                 }
             }
 

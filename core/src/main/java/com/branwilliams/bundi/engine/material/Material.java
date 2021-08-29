@@ -36,6 +36,20 @@ public class Material implements Destructible {
         this.materialFormat = materialFormat;
     }
 
+    public Texture getElementAsTexture(MaterialElement materialElement) {
+        if (hasMaterialFormat() && materialFormat.hasElement(materialElement)) {
+            MaterialFormat.MaterialEntry materialEntry = materialFormat.getElement(materialElement);
+            if (materialEntry.elementType.isSampler) {
+                return getTexture(materialEntry.textureIndex);
+            }
+        }
+        return null;
+    }
+
+    private boolean hasMaterialFormat() {
+        return materialFormat != null;
+    }
+
     public <T> void setProperty(String name, T value) {
         properties.put(name, value);
     }
@@ -104,6 +118,12 @@ public class Material implements Destructible {
         return textures;
     }
 
+    public Texture getTexture(int id) {
+        if (id > 0 && id < textures.length) {
+            return textures[id];
+        }
+        return null;
+    }
     /**
      * @return True if this material has any textures.
      * */
@@ -121,7 +141,9 @@ public class Material implements Destructible {
 
     @Override
     public void destroy() {
-        Arrays.stream(textures).forEach(Texture::destroy);
+        if (textures != null) {
+            Arrays.stream(textures).forEach(Texture::destroy);
+        }
     }
 
     @Override

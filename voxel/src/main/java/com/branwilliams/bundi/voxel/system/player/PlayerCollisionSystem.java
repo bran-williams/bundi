@@ -7,6 +7,7 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
+import com.branwilliams.bundi.voxel.components.MovementComponent;
 import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.components.PlayerState;
@@ -24,7 +25,7 @@ public class PlayerCollisionSystem extends AbstractSystem {
     private final VoxelScene scene;
 
     public PlayerCollisionSystem(VoxelScene scene) {
-        super(new ClassComponentMatcher(Transformable.class, PlayerState.class));
+        super(new ClassComponentMatcher(Transformable.class, MovementComponent.class, PlayerState.class));
         this.scene = scene;
         this.scene.getEventManager().subscribe(PhysicsSystem.EntityMoveEvent.class, this::onEntityMove);
     }
@@ -49,6 +50,8 @@ public class PlayerCollisionSystem extends AbstractSystem {
 
     protected void onEntityMove(PhysicsSystem.EntityMoveEvent event) {
         if (this.getMatcher().matches(event.getEntity())) {
+            // TODO update velocity/acceleration based on collision
+            MovementComponent movementComponent = event.getEntity().getComponent(MovementComponent.class);
             PlayerState playerState = event.getEntity().getComponent(PlayerState.class);
             if (playerState.isNoClip()) {
                 return;
@@ -101,7 +104,6 @@ public class PlayerCollisionSystem extends AbstractSystem {
 //                movement.y = 0F;
                 movement.z = 0F;
             }
-
         }
     }
 }

@@ -1,0 +1,185 @@
+{
+  "spriteSize":{"x": 32, "y": 32},
+  "atlas": {
+  "44": {
+    "diffuse": "textures/swamptileset/tiles/Tile_44.png"
+  },
+  "45": {
+    "diffuse": "textures/swamptileset/tiles/Tile_45.png"
+  },
+  "46": {
+    "diffuse": "textures/swamptileset/tiles/Tile_46.png"
+  },
+  "47": {
+    "diffuse": "textures/swamptileset/tiles/Tile_47.png"
+  },
+  "48": {
+    "diffuse": "textures/swamptileset/tiles/Tile_48.png"
+  },
+  "49": {
+    "diffuse": "textures/swamptileset/tiles/Tile_49.png"
+  },
+  "50": {
+    "diffuse": "textures/swamptileset/tiles/Tile_50.png"
+  },
+  "51": {
+    "diffuse": "textures/swamptileset/tiles/Tile_51.png"
+  },
+  "52": {
+    "diffuse": "textures/swamptileset/tiles/Tile_52.png"
+  },
+  "53": {
+    "diffuse": "textures/swamptileset/tiles/Tile_53.png"
+  },
+  "10": {
+    "diffuse": "textures/swamptileset/tiles/Tile_10.png"
+  },
+  "54": {
+    "diffuse": "textures/swamptileset/tiles/Tile_54.png"
+  },
+  "11": {
+    "diffuse": "textures/swamptileset/tiles/Tile_11.png"
+  },
+  "55": {
+    "diffuse": "textures/swamptileset/tiles/Tile_55.png"
+  },
+  "12": {
+    "diffuse": "textures/swamptileset/tiles/Tile_12.png"
+  },
+  "56": {
+    "diffuse": "textures/swamptileset/tiles/Tile_56.png"
+  },
+  "13": {
+    "diffuse": "textures/swamptileset/tiles/Tile_13.png"
+  },
+  "57": {
+    "diffuse": "textures/swamptileset/tiles/Tile_57.png"
+  },
+  "14": {
+    "diffuse": "textures/swamptileset/tiles/Tile_14.png"
+  },
+  "58": {
+    "diffuse": "textures/swamptileset/tiles/Tile_58.png"
+  },
+  "15": {
+    "diffuse": "textures/swamptileset/tiles/Tile_15.png"
+  },
+  "59": {
+    "diffuse": "textures/swamptileset/tiles/Tile_59.png"
+  },
+  "16": {
+    "diffuse": "textures/swamptileset/tiles/Tile_16.png"
+  },
+  "17": {
+    "diffuse": "textures/swamptileset/tiles/Tile_17.png"
+  },
+  "18": {
+    "diffuse": "textures/swamptileset/tiles/Tile_18.png"
+  },
+  "19": {
+    "diffuse": "textures/swamptileset/tiles/Tile_19.png"
+  },
+  "1": {
+    "diffuse": "textures/swamptileset/tiles/Tile_01.png"
+  },
+  "2": {
+    "diffuse": "textures/swamptileset/tiles/Tile_02.png"
+  },
+  "3": {
+    "diffuse": "textures/swamptileset/tiles/Tile_03.png"
+  },
+  "4": {
+    "diffuse": "textures/swamptileset/tiles/Tile_04.png"
+  },
+  "5": {
+    "diffuse": "textures/swamptileset/tiles/Tile_05.png"
+  },
+  "6": {
+    "diffuse": "textures/swamptileset/tiles/Tile_06.png"
+  },
+  "7": {
+    "diffuse": "textures/swamptileset/tiles/Tile_07.png"
+  },
+  "8": {
+    "diffuse": "textures/swamptileset/tiles/Tile_08.png"
+  },
+  "9": {
+    "diffuse": "textures/swamptileset/tiles/Tile_09.png"
+  },
+  "60": {
+    "diffuse": "textures/swamptileset/tiles/Tile_60.png"
+  },
+  "20": {
+    "diffuse": "textures/swamptileset/tiles/Tile_20.png"
+  },
+  "21": {
+    "diffuse": "textures/swamptileset/tiles/Tile_21.png"
+  },
+  "22": {
+    "diffuse": "textures/swamptileset/tiles/Tile_22.png"
+  },
+  "23": {
+    "diffuse": "textures/swamptileset/tiles/Tile_23.png"
+  },
+  "24": {
+    "diffuse": "textures/swamptileset/tiles/Tile_24.png"
+  },
+  "25": {
+    "diffuse": "textures/swamptileset/tiles/Tile_25.png"
+  },
+  "26": {
+    "diffuse": "textures/swamptileset/tiles/Tile_26.png"
+  },
+  "27": {
+    "diffuse": "textures/swamptileset/tiles/Tile_27.png"
+  },
+  "28": {
+    "diffuse": "textures/swamptileset/tiles/Tile_28.png"
+  },
+  "29": {
+    "diffuse": "textures/swamptileset/tiles/Tile_29.png"
+  },
+  "30": {
+    "diffuse": "textures/swamptileset/tiles/Tile_30.png"
+  },
+  "31": {
+    "diffuse": "textures/swamptileset/tiles/Tile_31.png"
+  },
+  "32": {
+    "diffuse": "textures/swamptileset/tiles/Tile_32.png"
+  },
+  "33": {
+    "diffuse": "textures/swamptileset/tiles/Tile_33.png"
+  },
+  "34": {
+    "diffuse": "textures/swamptileset/tiles/Tile_34.png"
+  },
+  "35": {
+    "diffuse": "textures/swamptileset/tiles/Tile_35.png"
+  },
+  "36": {
+    "diffuse": "textures/swamptileset/tiles/Tile_36.png"
+  },
+  "37": {
+    "diffuse": "textures/swamptileset/tiles/Tile_37.png"
+  },
+  "38": {
+    "diffuse": "textures/swamptileset/tiles/Tile_38.png"
+  },
+  "39": {
+    "diffuse": "textures/swamptileset/tiles/Tile_39.png"
+  },
+  "40": {
+    "diffuse": "textures/swamptileset/tiles/Tile_40.png"
+  },
+  "41": {
+    "diffuse": "textures/swamptileset/tiles/Tile_41.png"
+  },
+  "42": {
+    "diffuse": "textures/swamptileset/tiles/Tile_42.png"
+  },
+  "43": {
+    "diffuse": "textures/swamptileset/tiles/Tile_43.png"
+  }
+  }
+}

@@ -41,7 +41,7 @@ public enum HttpUtils {
                 System.err.println("Error code: " + connection.getResponseCode());
                 br.lines().forEach(System.err::println);
                 connection.disconnect();
-                System.exit(1);
+                return null;
             }
 
             if (addExtension) {

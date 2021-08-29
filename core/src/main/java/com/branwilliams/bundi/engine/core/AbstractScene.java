@@ -9,6 +9,7 @@ import com.branwilliams.bundi.tukio.EventManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_F9;
 
 /**
@@ -20,6 +21,8 @@ public abstract class AbstractScene extends AbstractWindowEventListener implemen
 
     public static final int KEY_SCREENSHOT = GLFW_KEY_F9;
 
+    public static final int KEY_TOGGLE_FULLSCREEN = GLFW_KEY_F11;
+
     private final String name;
 
     protected ScreenshotCapturer screenshotCapturer;
@@ -29,6 +32,8 @@ public abstract class AbstractScene extends AbstractWindowEventListener implemen
     protected EventManager eventManager = new EventManager();
 
     protected Renderer renderer;
+
+    protected boolean fullscreen;
 
     public AbstractScene(String name) {
         this(name, null);
@@ -41,6 +46,9 @@ public abstract class AbstractScene extends AbstractWindowEventListener implemen
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
+        this.fullscreen = window.isFullscreen();
+        this.addKeyListener(new FullscreenToggleListener(KEY_TOGGLE_FULLSCREEN));
+
         screenshotCapturer = new ScreenshotCapturer(engine.getContext());
         this.addKeyListener(screenshotCapturer.screenshotOnKeyPress(KEY_SCREENSHOT));
     }
@@ -99,9 +107,36 @@ public abstract class AbstractScene extends AbstractWindowEventListener implemen
     }
 
     @Override
+    public void setEventManager(EventManager eventManager) {
+        this.eventManager = eventManager;
+    }
+
+    @Override
     public String toString() {
-        return "["
+        return "Scene["
                 + getName()
                 + "]";
+    }
+
+    private class FullscreenToggleListener implements KeyListener {
+
+        private int keyCode;
+
+        public FullscreenToggleListener(int keyCode) {
+            this.keyCode = keyCode;
+        }
+
+        @Override
+        public void keyPress(Window window, int key, int scancode, int mods) {
+            if (key == keyCode) {
+                fullscreen = !fullscreen;
+                window.setFullscreen(fullscreen);
+            }
+        }
+
+        @Override
+        public void keyRelease(Window window, int key, int scancode, int mods) {
+
+        }
     }
 }

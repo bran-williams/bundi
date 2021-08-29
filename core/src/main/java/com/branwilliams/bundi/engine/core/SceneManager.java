@@ -40,64 +40,98 @@ public class SceneManager implements Destructible {
      * @return True if the current scene is not null.
      * */
     public boolean updateScene(Engine engine, Window window) {
-        if (next != null) {
-            // When a scene isn't within this map, it means that it is a new scene. Initialize it and put it there!
-            if (!sceneCache.containsKey(next.getName())) {
-                sceneCache.put(next.getName(), next);
-                try {
-                    log.info("Initializing scene " + next.getName() + ".");
-                    profiler.begin("init_scene:" + next.getName());
-                    next.init(engine, window);
-
-                    if (next.getRenderer() != null) {
-                        profiler.endBegin("renderer_init");
-                        log.info("Initializing renderer " + next.getRenderer().getName() + ".");
-                        next.getRenderer().init(engine, window);
-                    }
-                } catch (Exception e) {
-                    log.error("Unable to initialize scene " + next.getName() + ":");
-                    handleException(e);
-                    return hasCurrentScene();
-                } finally {
-                    profiler.end();
-                }
-            }
+        if (hasNext()) {
+            initSceneAndCache(engine, window, next);
 
             // When the scene is ready, pause the old one, set the new one, and play it!
             if (next.isReady()) {
                 // Pause and destroy the old scene.
-                if (current != null) {
-                    window.removeWindowEventListener(current);
-                    current.pause(engine);
-                    if (current.destroyUponReplacement()) {
-                        current.destroy();
-                        sceneCache.remove(current.getName());
-                    }
+                if (hasCurrentScene()) {
+                    pauseScene(engine, window, current);
                 }
 
                 // Replace the current scene.
                 current = next;
-                window.addWindowEventListener(current);
                 next = null;
 
-                // Replace the renderer if necessary.
-                if (current.getRenderer() != null)
-                    engine.setRenderer(current.getRenderer());
-
-                // Play the scene.
-                log.info("Playing scene " + current.getName() + ".");
-                profiler.begin("play_scene:" + current.getName());
-                try {
-                    current.play(engine);
-                } catch (Exception e) {
-                    log.error("Unable to play scene " + current.getName() + ":");
-                    handleException(e);
-                } finally {
-                    profiler.end();
-                }
+                playScene(engine, window, current);
             }
         }
         return hasCurrentScene();
+    }
+
+    /**
+     * Initializes a scene if it is not within the cache.
+     * */
+    private void initSceneAndCache(Engine engine, Window window, Scene scene) {
+        // When a scene isn't within this map, it means that it is a new scene or it was destroyed beforehand.
+        // Initialize it and put it there!
+        if (!sceneCache.containsKey(scene.getName())) {
+            sceneCache.put(scene.getName(), scene);
+            try {
+                log.info("Initializing scene " + scene.getName() + ".");
+                profiler.begin("init_scene:" + scene.getName());
+                scene.init(engine, window);
+
+                if (scene.getRenderer() != null) {
+                    profiler.endBegin("renderer_init");
+                    log.info("Initializing renderer " + scene.getRenderer().getName() + ".");
+                    scene.getRenderer().init(engine, window);
+                }
+            } catch (Exception e) {
+                log.error("Unable to initialize scene " + scene.getName() + ":");
+                handleException(e);
+            } finally {
+                profiler.end();
+            }
+        }
+    }
+
+    /**
+     * Pauses the current scene and removes it from the window as a window event listener.
+     * */
+    private void pauseScene(Engine engine, Window window, Scene scene) {
+        window.removeWindowEventListener(scene);
+
+        profiler.begin("pause_scene:" + scene.getName());
+        try {
+            scene.pause(engine);
+        } catch (Exception e) {
+            log.error("Unable to pause scene " + scene.getName() + ":");
+            handleException(e);
+        } finally {
+            profiler.end();
+        }
+
+        if (scene.destroyUponReplacement()) {
+            scene.destroy();
+            sceneCache.remove(scene.getName());
+        }
+    }
+
+    /**
+     * Play the scene which involves adding it as a window listener and setting the engine renderer if the scenes is not
+     * null.
+     * */
+    private void playScene(Engine engine, Window window, Scene scene) {
+        window.addWindowEventListener(current);
+
+        // Replace the renderer if necessary.
+        if (current.getRenderer() != null) {
+            engine.setRenderer(current.getRenderer());
+        }
+
+        // Play the scene.
+        log.info("Playing scene " + scene.getName() + ".");
+        profiler.begin("play_scene:" + scene.getName());
+        try {
+            scene.play(engine);
+        } catch (Exception e) {
+            log.error("Unable to play scene " + scene.getName() + ":");
+            handleException(e);
+        } finally {
+            profiler.end();
+        }
     }
 
     /**
@@ -113,6 +147,13 @@ public class SceneManager implements Destructible {
      * */
     public boolean hasCurrentScene() {
         return current != null;
+    }
+
+    /**
+     * @return True if the next scene is not null.
+     * */
+    public boolean hasNext() {
+        return next != null;
     }
 
     /**

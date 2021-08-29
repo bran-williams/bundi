@@ -28,8 +28,8 @@ public enum MeshUtils {
         // This operation is done with 3 vertices.
         for (int i = 0; i < indices.length; i += 3) {
             int index0 = indices[i];
-            int index1 = indices[i+1];
-            int index2 = indices[i+2];
+            int index1 = indices[i + 1];
+            int index2 = indices[i + 2];
 
             Vector3f v0 = new Vector3f(vertices[index0], vertices[index0 + 1], vertices[index0 + 2]);
             Vector3f v1 = new Vector3f(vertices[index1], vertices[index1 + 1], vertices[index1 + 2]);
@@ -83,9 +83,14 @@ public enum MeshUtils {
 
         // This operation is done with 3 vertices.
         for (int i = 0; i < totalVertices; i += 3) {
-            Vector3f v0 = new Vector3f(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
-            Vector3f v1 = new Vector3f(vertices[(i + 1) * 3], vertices[(i + 1) * 3 + 1], vertices[(i + 1) * 3 + 2]);
-            Vector3f v2 = new Vector3f(vertices[(i + 2) * 3], vertices[(i + 2) * 3 + 1], vertices[(i + 2) * 3 + 2]);
+
+            int i0 = i * 3;
+            int i1 = (i + 1) * 3;
+            int i2 = (i + 2) * 3;
+
+            Vector3f v0 = new Vector3f(vertices[i0], vertices[i0 + 1], vertices[i0 + 2]);
+            Vector3f v1 = new Vector3f(vertices[i1], vertices[i1 + 1], vertices[i1 + 2]);
+            Vector3f v2 = new Vector3f(vertices[i2], vertices[i2 + 1], vertices[i2 + 2]);
 
             Vector2f uv0 = new Vector2f(textureCoordinates[i * 2], textureCoordinates[i * 2 + 1]);
             Vector2f uv1 = new Vector2f(textureCoordinates[(i + 1) * 2], textureCoordinates[(i + 1) * 2 + 1]);
@@ -93,31 +98,31 @@ public enum MeshUtils {
 
             Vector3f tangent = calculateTangent(v0, v1, v2, uv0, uv1, uv2);
 
-            tangents[i * 3] = tangent.x;
-            tangents[i * 3 + 1] = tangent.y;
-            tangents[i * 3 + 2] = tangent.z;
+            tangents[i0]     = tangent.x;
+            tangents[i0 + 1] = tangent.y;
+            tangents[i0 + 2] = tangent.z;
 
-            tangents[(i + 1) * 3] = tangent.x;
-            tangents[(i + 1) * 3 + 1] = tangent.y;
-            tangents[(i + 1) * 3 + 2] = tangent.z;
+            tangents[i1]     = tangent.x;
+            tangents[i1 + 1] = tangent.y;
+            tangents[i1 + 2] = tangent.z;
 
-            tangents[(i + 2) * 3] = tangent.x;
-            tangents[(i + 2) * 3 + 1] = tangent.y;
-            tangents[(i + 2) * 3 + 2] = tangent.z;
+            tangents[i2]     = tangent.x;
+            tangents[i2 + 1] = tangent.y;
+            tangents[i2 + 2] = tangent.z;
 
             Vector3f bitangent = calculateBitangent(v0, v1, v2, uv0, uv1, uv2);
 
-            bitangents[i * 3] = bitangent.x;
-            bitangents[i * 3 + 1] = bitangent.y;
-            bitangents[i * 3 + 2] = bitangent.z;
+            bitangents[i0] = bitangent.x;
+            bitangents[i0] = bitangent.y;
+            bitangents[i0] = bitangent.z;
 
-            bitangents[(i + 1) * 3] = bitangent.x;
-            bitangents[(i + 1) * 3 + 1] = bitangent.y;
-            bitangents[(i + 1) * 3 + 2] = bitangent.z;
+            bitangents[i1]     = bitangent.x;
+            bitangents[i1 + 1] = bitangent.y;
+            bitangents[i1 + 2] = bitangent.z;
 
-            bitangents[(i + 2) * 3] = bitangent.x;
-            bitangents[(i + 2) * 3 + 1] = bitangent.y;
-            bitangents[(i + 2) * 3 + 2] = bitangent.z;
+            bitangents[i2]     = bitangent.x;
+            bitangents[i2 + 1] = bitangent.y;
+            bitangents[i2 + 2] = bitangent.z;
         }
     }
 

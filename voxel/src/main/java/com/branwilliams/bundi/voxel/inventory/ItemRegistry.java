@@ -4,6 +4,9 @@ import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
 
 public class ItemRegistry extends Inventory {
+    public ItemRegistry() {
+        super(Integer.MAX_VALUE);
+    }
 
     public ItemRegistry(VoxelRegistry voxelRegistry) {
         // Create voxel items for every voxel in registry.

@@ -7,6 +7,7 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.frogger.Camera2D;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,6 @@ import java.util.function.Supplier;
  * @since September 08, 2019
  */
 public class FocalPointFollowSystem extends AbstractSystem {
-
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
-    private final float FOCAL_POINT_EQUALS_EPSILON = 0.01F;
 
     private final Supplier<Vector2f> focalPoint;
 
@@ -66,18 +63,11 @@ public class FocalPointFollowSystem extends AbstractSystem {
             return;
         }
 
-        if (equalsWithEpsilon(focalPoint.x, targetFocalPoint.x, FOCAL_POINT_EQUALS_EPSILON)
-                && equalsWithEpsilon(focalPoint.y, targetFocalPoint.y, FOCAL_POINT_EQUALS_EPSILON)) {
+        if (Mathf.equalsWithEpsilon(focalPoint, targetFocalPoint, Camera2D.FOCALPOINT_MOVEMENT_EPSILON)) {
             this.focalPointSetter.accept(new Vector2f(targetFocalPoint));
         } else {
-            focalPointSetter.accept(Mathf.lerp(focalPoint, targetFocalPoint,
-                    (float) deltaTime * moveSpeed));
+            focalPointSetter.accept(Mathf.lerp(focalPoint, targetFocalPoint, (float) deltaTime * moveSpeed));
         }
     }
 
-    /**
-     */
-    public static boolean equalsWithEpsilon(float a, float b, float epsilon) {
-        return a == b || Math.abs(a - b) < epsilon;
-    }
 }

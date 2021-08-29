@@ -2,6 +2,7 @@ package com.branwilliams.bundi.voxel.render.gui;
 
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.window.Window;
+import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.gui.api.ContainerManager;
 import com.branwilliams.bundi.gui.screen.ContainerScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
@@ -20,18 +21,18 @@ public class VoxelGuiScreen extends ContainerScreen<VoxelScene> {
         this.scene = scene;
     }
 
-    public VoxelGuiScreen(VoxelScene scene, String fileName) {
-        this(scene, null, fileName, new HashMap<>());
+    public VoxelGuiScreen(VoxelScene scene, String resourcePath) {
+        this(scene, null, resourcePath, new HashMap<>());
     }
 
-    public VoxelGuiScreen(VoxelScene scene, GuiScreen<VoxelScene> previous, String fileName) {
-        this(scene, previous, fileName, new HashMap<>());
+    public VoxelGuiScreen(VoxelScene scene, GuiScreen<VoxelScene> previous, String resourcePath) {
+        this(scene, previous, resourcePath, new HashMap<>());
     }
 
-    public VoxelGuiScreen(VoxelScene scene, GuiScreen<VoxelScene> previous, String fileName, Map<String, Object> env) {
+    public VoxelGuiScreen(VoxelScene scene, GuiScreen<VoxelScene> previous, String resourcePath, Map<String, Object> env) {
         this(scene);
         this.previous = previous;
-        ContainerManager containerManager = scene.getGuiScreenManager().load(fileName, env);
+        ContainerManager containerManager = scene.getGuiScreenManager().loadFromResources(resourcePath, env);
         this.setContainerManager(containerManager);
     }
 

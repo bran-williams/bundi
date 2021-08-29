@@ -3,6 +3,9 @@ package com.branwilliams.bundi.engine.util;
 import com.branwilliams.bundi.engine.material.MaterialElement;
 import com.branwilliams.bundi.engine.material.MaterialElementType;
 import com.branwilliams.bundi.engine.material.MaterialFormat;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.shader.patching.ShaderPatch;
 
 import java.util.List;
@@ -53,29 +56,34 @@ public class ShaderUtils {
         return code;
     }
 
-    public static String getMaterialDiffuseAsVec4(MaterialFormat materialFormat, String materialName, String uv) {
+    public static String getMaterialDiffuseAsVec4(MaterialFormat materialFormat, String materialName) {
         return getMaterialElementAs(materialFormat, MaterialElement.DIFFUSE, MaterialElementType.VEC4,
-                materialName, uv, "vec4(1.0)");
+                materialName, VertexElements.UV.getPassName(), "vec4(1.0)");
     }
 
-    public static String getMaterialDiffuseAsVec3(MaterialFormat materialFormat, String materialName, String uv) {
+    public static String getMaterialDiffuseAsVec3(MaterialFormat materialFormat, String materialName) {
         return getMaterialElementAs(materialFormat, MaterialElement.DIFFUSE, MaterialElementType.VEC3,
-                materialName, uv, "vec3(1.0)");
+                materialName, VertexElements.UV.getPassName(), "vec3(1.0)");
     }
 
-    public static String getMaterialSpecularAsVec3(MaterialFormat materialFormat, String materialName, String uv) {
+    public static String getMaterialSpecularAsVec3(MaterialFormat materialFormat, String materialName) {
         return getMaterialElementAs(materialFormat, MaterialElement.SPECULAR, MaterialElementType.VEC3,
-                materialName, uv, "vec3(1.0)");
+                materialName, VertexElements.UV.getPassName(), "vec3(1.0)");
     }
 
-    public static String getMaterialEmissiveAsVec4(MaterialFormat materialFormat, String materialName, String uv) {
+    public static String getMaterialSpecularAsVec4(MaterialFormat materialFormat, String materialName) {
+        return getMaterialElementAs(materialFormat, MaterialElement.SPECULAR, MaterialElementType.VEC4,
+                materialName, VertexElements.UV.getPassName(), "vec4(1.0)");
+    }
+
+    public static String getMaterialEmissiveAsVec4(MaterialFormat materialFormat, String materialName) {
         return getMaterialElementAs(materialFormat, MaterialElement.EMISSIVE, MaterialElementType.VEC4,
-                materialName, uv, "vec4(0.0)");
+                materialName, VertexElements.UV.getPassName(), "vec4(0.0)");
     }
 
-    public static String getMaterialEmissiveAsVec3(MaterialFormat materialFormat, String materialName, String uv) {
+    public static String getMaterialEmissiveAsVec3(MaterialFormat materialFormat, String materialName) {
         return getMaterialElementAs(materialFormat, MaterialElement.EMISSIVE, MaterialElementType.VEC3,
-                materialName, uv, "vec3(0.0)");
+                materialName, VertexElements.UV.getPassName(), "vec3(0.0)");
     }
 
     private static String getMaterialElementAs(MaterialFormat materialFormat, MaterialElement materialElement,

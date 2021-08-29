@@ -1,11 +1,9 @@
 package com.branwilliams.bundi.voxel;
 
-import com.branwilliams.bundi.voxel.builder.VoxelChunkMeshBuilder;
+import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelChunkMeshBuilder;
 import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;
-
-import java.util.function.Consumer;
 
 public class VoxelChunkLoadTask implements Runnable {
 

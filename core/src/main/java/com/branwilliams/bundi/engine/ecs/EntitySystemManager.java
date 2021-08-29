@@ -31,7 +31,7 @@ public class EntitySystemManager implements Destructible {
     private ISystem runningSystem = null;
     private final List<Runnable> queuedTasks = new ArrayList<>();
     
-    private List<EntityListener> entityListeners = new ArrayList<>();
+    private final List<EntityListener> entityListeners = new ArrayList<>();
 
     /**
      * Listens for the creation and destruction of entities within an {@link EntitySystemManager}.

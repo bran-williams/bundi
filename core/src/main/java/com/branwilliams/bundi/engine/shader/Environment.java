@@ -45,6 +45,10 @@ public class Environment {
         this.fog = fog;
     }
 
+    public int getPointLightCount() {
+        return hasPointLights() ? pointLights.length : 0;
+    }
+
     public PointLight[] getPointLights() {
         return pointLights;
     }
@@ -53,12 +57,20 @@ public class Environment {
         this.pointLights = pointLights;
     }
 
+    public int getDirectionalLightCount() {
+        return hasDirectionalLights() ? directionalLights.length : 0;
+    }
+
     public DirectionalLight[] getDirectionalLights() {
         return directionalLights;
     }
 
     public void setDirectionalLights(DirectionalLight[] directionalLights) {
         this.directionalLights = directionalLights;
+    }
+
+    public int getSpotLightCount() {
+        return hasSpotLights() ? spotLights.length : 0;
     }
 
     public SpotLight[] getSpotLights() {

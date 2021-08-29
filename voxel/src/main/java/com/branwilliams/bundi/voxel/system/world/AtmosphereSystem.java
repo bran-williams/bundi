@@ -36,7 +36,7 @@ public class AtmosphereSystem extends AbstractSystem {
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
         Vector3f direction = new Vector3f();
 
-        sunPitch += (float) (pitchPerSecond * deltaTime);
+//        sunPitch += (float) (pitchPerSecond * deltaTime);
         float yaw   = Mathf.toRadians(sunYaw);
         float pitch = Mathf.toRadians(sunPitch);
 

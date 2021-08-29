@@ -2,6 +2,7 @@ package com.branwilliams.bundi.cloth;
 
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.material.Material;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -23,11 +24,8 @@ public class Cloth {
 
     private List<ClothConstraint> constraints;
 
-    private Material material;
-
-    private Mesh mesh;
-
-    public Cloth(ClothPhysicsParameters parameters, int width, int height, int particleSizeX, int particleSizeY) {
+    public Cloth(int width, int height, ClothPhysicsParameters parameters,
+                 int particleSizeX, int particleSizeY, float particleMass) {
         this.parameters = parameters;
         this.particleSizeX = particleSizeX;
         this.particleSizeY = particleSizeY;
@@ -37,7 +35,7 @@ public class Cloth {
         for (int x = 0; x < particleSizeX; x++) {
             for (int y = 0; y < particleSizeY; y++) {
                 Vector3f position = new Vector3f(width * (x / (float) particleSizeX), -height * (y / (float) particleSizeY), 0);
-                particles[x + y * particleSizeX] = (new ClothParticle(parameters, position));
+                particles[x + y * particleSizeX] = new ClothParticle(parameters, position, particleMass);
             }
         }
 
@@ -117,23 +115,15 @@ public class Cloth {
         constraints.add(new ClothConstraint(particle1, particle2));
     }
 
-    public void collideWithSphere(Vector3f position, float radius) {
-        radius = radius + 0.15F;
+    public void collideWithSphere(Vector3f clothPos, Vector3f position, float radius) {
+        radius = radius + 0.5F;
         for (ClothParticle particle : particles) {
-            Vector3f difference = particle.getPosition().sub(position, new Vector3f());
+            Vector3f difference = particle.getPosition().add(clothPos, new Vector3f()).sub(position);
             float distance = difference.length();
             if (distance < radius) {
                 particle.offsetPosition(difference.normalize().mul(radius - distance));
             }
         }
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(Material material) {
-        this.material = material;
     }
 
     public int getParticleSizeX() {
@@ -148,15 +138,8 @@ public class Cloth {
         return particles;
     }
 
-    public Mesh getMesh() {
-        return mesh;
-    }
-
-    public void setMesh(Mesh mesh) {
-        this.mesh = mesh;
-    }
-
     public ClothPhysicsParameters getParameters() {
         return parameters;
     }
+
 }

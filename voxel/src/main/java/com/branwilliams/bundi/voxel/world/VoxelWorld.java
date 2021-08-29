@@ -6,6 +6,7 @@ import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.bundi.engine.util.Timer;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.math.RaycastResult;
@@ -34,6 +35,8 @@ import java.util.function.Predicate;
  */
 public class VoxelWorld implements Destructible {
 
+//    private static final long CHUNK_LOAD_DELAY = 2L;
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final VoxelRegistry voxelRegistry;
@@ -50,6 +53,8 @@ public class VoxelWorld implements Destructible {
 
     private IComponentMatcher playerMatcher;
 
+//    private Timer chunkLoadTimer;
+
     public VoxelWorld(VoxelRegistry voxelRegistry, VoxelChunkGenerator voxelChunkGenerator, ChunkStorage chunks,
                       ChunkMeshStorage chunkMeshStorage, EntitySystemManager loadedEntities) {
         this.voxelRegistry = voxelRegistry;
@@ -59,6 +64,7 @@ public class VoxelWorld implements Destructible {
         this.visibleChunks = new HashSet<>();
         this.loadedEntities = loadedEntities;
         this.playerMatcher = this.loadedEntities.matcher(PlayerState.class, Transformable.class);
+//        this.chunkLoadTimer = new Timer();
     }
 
     /**
@@ -72,20 +78,25 @@ public class VoxelWorld implements Destructible {
 
         for (int i = chunkX - radius; i < chunkX + radius; i++) {
             for (int j = chunkZ - radius; j < chunkZ + radius; j++) {
-                VoxelChunk voxelChunk;
-
-                if (chunks.isLoaded(i, j)) {
-                    voxelChunk = chunks.getChunk(i, j);
-                } else {
-                    voxelChunk = voxelChunkGenerator.generateChunk(voxelRegistry, i, j);
-                    chunks.loadChunk(voxelChunk.chunkPos, voxelChunk);
-                }
-
-                if (!visibleChunks.contains(voxelChunk.chunkPos)) {
-                    visibleChunks.add(voxelChunk.chunkPos);
-                    chunkMeshStorage.loadChunkMesh(voxelChunk.chunkPos, voxelChunk);
-                }
+                loadChunk(i, j);
             }
+        }
+    }
+
+    private void loadChunk(int i, int j) {
+        VoxelChunk voxelChunk = null;
+
+        if (chunks.isLoaded(i, j)) {
+            voxelChunk = chunks.getChunk(i, j);
+        } else /*if (chunkLoadTimer.hasReach(CHUNK_LOAD_DELAY))*/ {
+            voxelChunk = voxelChunkGenerator.generateChunk(voxelRegistry, i, j);
+            chunks.loadChunk(voxelChunk.chunkPos, voxelChunk);
+//            chunkLoadTimer.reset();
+        }
+
+        if (voxelChunk != null && !visibleChunks.contains(voxelChunk.chunkPos)) {
+            visibleChunks.add(voxelChunk.chunkPos);
+            chunkMeshStorage.loadChunkMesh(voxelChunk.chunkPos, voxelChunk);
         }
     }
 

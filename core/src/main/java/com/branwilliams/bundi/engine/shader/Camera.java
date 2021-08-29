@@ -108,15 +108,6 @@ public class Camera {
         Vector3f movement = this.front.mul(forward, new Vector3f());
         movement.add(this.right.mul(strafe, new Vector3f()));
         move(movement.x, movement.y, movement.z);
-
-        // forward movement.
-//        float x = Mathf.sin(Mathf.toRadians(yaw)) * forward;
-//        float z = -Mathf.cos(Mathf.toRadians(yaw)) * forward;
-
-        // strafing movement.
-//        x += Mathf.sin(Mathf.toRadians(yaw - 90)) * strafe;
-//        z -= Mathf.cos(Mathf.toRadians(yaw - 90)) * strafe;
-//        move(x, 0F, z);
     }
 
     /**
@@ -162,16 +153,6 @@ public class Camera {
      * */
     public Vector3f getFacingDirection() {
         return new Vector3f(front);
-//        Vector3f direction = new Vector3f();
-//
-//        float yawRad   = Mathf.toRadians(this.yaw);
-//        float pitchRad = Mathf.toRadians(this.pitch);
-//
-//        direction.x = Mathf.cos(pitchRad) * Mathf.sin(yawRad);
-//        direction.y = -Mathf.sin(pitchRad);
-//        direction.z = -Mathf.cos(pitchRad) * Mathf.cos(yawRad);
-//
-//        return direction.normalize();
     }
 
     public Vector3f getPosition() {
@@ -233,6 +214,10 @@ public class Camera {
 
     public Vector3f getRight() {
         return right;
+    }
+
+    public Vector3f getWorldUp() {
+        return worldUp;
     }
 
     @Override

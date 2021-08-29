@@ -1,11 +1,12 @@
 package com.branwilliams.bundi.engine.shape;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ListSpatial3f<T> implements Spatial<Shape3f, T> {
+public class ListSpatial3f<T> implements Spatial<Shape3f, Vector3f, T> {
 
     private List<ListElement> shapes;
 
@@ -53,6 +54,14 @@ public class ListSpatial3f<T> implements Spatial<Shape3f, T> {
     public Iterable<Shape3f> query(Shape3f shape3f) {
         return shapes.stream()
                 .filter(e -> e.shape.collides(shape3f))
+                .map(e -> e.shape)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Iterable<Shape3f> queryVector(Vector3f vector3f) {
+        return shapes.stream()
+                .filter(e -> e.shape.contains(vector3f))
                 .map(e -> e.shape)
                 .collect(Collectors.toList());
     }

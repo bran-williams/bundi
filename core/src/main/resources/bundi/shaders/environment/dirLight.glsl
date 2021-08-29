@@ -1,20 +1,32 @@
-    // directional lighting below:
-    for (int i = 0; i < light_count; i++) {
-        DirLight dirLight = dirLights[i];
-        vec3 lightDir = normalize(-dirLight.direction);
-        vec3 halfwayDir = normalize(lightDir + viewDir);
+// vec3 normal - the normal for this fragment
+// vec3 materialDiffuse.rgb - diffuse color of the material
+// vec3 materialSpecular.rgb - specular color of the material
+// float materialShininess - shininess of the material
+// int dirLightCount - number of lights
 
-        // diffuse calculation
-        float diff = max(dot(normal, lightDir), 0.0);
+// directional lighting below:
+for (int i = 0; i < dirLightCount; i++) {
+    DirLight dirLight = dirLights[i];
+    vec3 lightDir = normalize(-dirLight.direction);
+    vec3 halfwayDir = normalize(lightDir + viewDir);
 
-        // specular calculation
-        float spec = pow(max(dot(normal, halfwayDir), 0.0),     material_shininess);
+    // diffuse calculation
+    float diff = max(dot(normal, lightDir), 0.0);
 
-        vec3 ambient  = dirLight.ambient  *        material_diffuse;
-        vec3 diffuse  = dirLight.diffuse  * diff * material_diffuse;
-        vec3 specular = dirLight.specular * spec * material_specular;
+    vec3 ambient  = dirLight.ambient  *        materialDiffuse.rgb;
+    vec3 diffuse  = dirLight.diffuse  * diff * materialDiffuse.rgb;
 
-        vec4 lightColor = vec4(ambient + diffuse + specular, 0.0);
-        pixelColor += lightColor;
+    vec4 lightColor = vec4(ambient + diffuse, 0.0);
+
+    // specular calculation
+    float spec = max(dot(normal, halfwayDir), 0.0);
+    if (spec > 0) {
+        spec = pow(spec, materialShininess);
+        vec3 specular = dirLight.specular * spec * materialSpecular.rgb;
+        lightColor.r += specular.r;
+        lightColor.g += specular.g;
+        lightColor.b += specular.b;
     }
+    pixelColor += lightColor;
+}
 

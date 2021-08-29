@@ -5,7 +5,7 @@
   "vsync": true,
   "keycodes": "./keycodes.json",
 
-  "launchScene": "com.branwilliams.imageviewer.GallerySelectorScene",
+  "launchScene": "com.branwilliams.imageviewer.scene.GallerySelectorScene",
 
   "assetDirectory": ".",
   "tempDirectory": "./temp",

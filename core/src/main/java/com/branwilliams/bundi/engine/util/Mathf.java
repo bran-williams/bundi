@@ -36,6 +36,20 @@ public enum Mathf {
     private static final float degToIndex = SIN_COUNT / degFull;
     public static final float degreesToRadians = PI / 180;
 
+    public static boolean equalsWithEpsilon(float a, float b, float epsilon) {
+        return a == b || Math.abs(a - b) < epsilon;
+    }
+
+    public static boolean equalsWithEpsilon(Vector2f a, Vector2f b, float epsilon) {
+        return equalsWithEpsilon(a.x, b.x, epsilon) && equalsWithEpsilon(a.y, b.y, epsilon);
+    }
+
+    public static boolean equalsWithEpsilon(Vector3f a, Vector3f b, float epsilon) {
+        return equalsWithEpsilon(a.x, b.x, epsilon) && equalsWithEpsilon(a.y, b.y, epsilon)
+                && equalsWithEpsilon(a.z, b.z, epsilon);
+    }
+
+
     /**
      * Example usage
      * <pre>

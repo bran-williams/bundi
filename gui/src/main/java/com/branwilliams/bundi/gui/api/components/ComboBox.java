@@ -4,11 +4,17 @@ import com.branwilliams.bundi.gui.api.Component;
 import com.branwilliams.bundi.gui.api.actions.Actions;
 import com.branwilliams.bundi.gui.api.actions.ClickEvent;
 
+import java.util.function.BiFunction;
+
 /**
  * Simple combo box implementation. <br/>
  * Created by Brandon Williams on 3/5/2017.
  */
 public class ComboBox<I> extends Component {
+
+    public interface SelectionChangeListener <I> {
+        void onSelectionChange(ComboBox<I> comboBox, ClickEvent clickEvent, int oldIndex, int selectedIndex);
+    }
 
     private static final int ITEM_NAME_PADDING = 2;
 
@@ -19,6 +25,8 @@ public class ComboBox<I> extends Component {
     private int selected = 0;
 
     private int itemHeight = 15;
+
+    private SelectionChangeListener<I> onSelectionChange;
 
     public ComboBox(I... items) {
         super();
@@ -34,7 +42,11 @@ public class ComboBox<I> extends Component {
                             // Find the hovered item and set it selected.
                             int index = getHoveredItem(event.x, event.y);
                             if (index != -1) {
+                                int oldIndex = selected;
                                 setSelected(index);
+                                if (onSelectionChange != null) {
+                                    onSelectionChange.onSelectionChange(this, event, oldIndex, selected);
+                                }
                             }
                             expanded = false;
                         } else {
@@ -59,6 +71,7 @@ public class ComboBox<I> extends Component {
         // Update the height with the font height + font height * items length.
         setHeight(itemHeight + (expanded ? itemHeight * items.length : 0));
     }
+
     @Override
     public boolean isPointInside(int x, int y) {
         return super.isPointInside(x, y) || getHoveredItem(x, y) != -1;
@@ -76,6 +89,10 @@ public class ComboBox<I> extends Component {
             }
         }
         return -1;
+    }
+
+    public void onSelectionChange(SelectionChangeListener<I> onSelectionChange) {
+        this.onSelectionChange = onSelectionChange;
     }
 
     /**

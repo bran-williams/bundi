@@ -8,7 +8,9 @@ import org.joml.Vector2f;
  *
  * Created by Brandon Williams on 10/9/2018.
  */
-public class AABB2f implements Shape2f {
+public class AABB2f implements Shape2f, SeparatingAxis.ConvexShape {
+
+    private static final int VERTEX_COUNT = 4;
 
     private Vector2f min, max;
 
@@ -37,7 +39,7 @@ public class AABB2f implements Shape2f {
 
     @Override
     public Shape2f center(float x, float y) {
-        this.center = new Vector2f(x, y);
+        this.center.set(x, y);
         return this;
     }
 
@@ -163,8 +165,16 @@ public class AABB2f implements Shape2f {
         return new AABB2f(this.min, this.max).center(this.center);
     }
 
+    public void setMin(Vector2f min) {
+        this.min = min;
+    }
+
     public Vector2f getMin() {
         return min;
+    }
+
+    public void setMax(Vector2f max) {
+        this.max = max;
     }
 
     public Vector2f getMax() {
@@ -180,5 +190,30 @@ public class AABB2f implements Shape2f {
                 ", maxY=" + getMaxY() +
                 ", center=" + getCenter() +
                 '}';
+    }
+
+    @Override
+    public int getVertexCount() {
+        return VERTEX_COUNT;
+    }
+
+    @Override
+    public Vector2f getVertex(int index) {
+        Vector2f pos = new Vector2f(center);
+        switch (index) {
+            case 0:
+                pos.add(min.x, max.y);
+                break;
+            case 1:
+                pos.add(min);
+                break;
+            case 2:
+                pos.add(max.x, min.y);
+                break;
+            case 4:
+                pos.add(max);
+                break;
+        }
+        return pos;
     }
 }

@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.engine.ecs;
 
+import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.window.Window;
 
@@ -7,7 +8,7 @@ import com.branwilliams.bundi.engine.core.window.Window;
  * A System performs any logic on a list of entities who have the components that satisfy the systems component matcher.
  * Created by Brandon Williams on 6/24/2018.
  */
-public interface ISystem {
+public interface ISystem extends Destructible {
 
     /**
      * Initialized by the {@link EntitySystemManager}.

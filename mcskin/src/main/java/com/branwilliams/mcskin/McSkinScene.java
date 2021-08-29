@@ -25,6 +25,7 @@ import com.branwilliams.mcskin.steve.HumanoidModel;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -40,7 +41,7 @@ public class McSkinScene extends AbstractScene {
 
     private Camera camera;
 
-    private GuiScreenManager guiScreenManager;
+    private GuiScreenManager<?> guiScreenManager;
 
     private MCModel mcModel;
 
@@ -58,7 +59,6 @@ public class McSkinScene extends AbstractScene {
 
     public McSkinScene() {
         super("mc skin");
-        this.addKeyListener(this);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class McSkinScene extends AbstractScene {
 
         window.disableCursor();
 
-        guiScreenManager = new GuiScreenManager(this);
+        guiScreenManager = new GuiScreenManager<>(this);
         guiScreenManager.init(engine, window);
 
         es.addSystem(new DebugCameraMoveSystem(this, guiLock, this::getCamera, 0.16F, 1F, true));
@@ -112,7 +112,7 @@ public class McSkinScene extends AbstractScene {
     private Button fixButton;
 
     private void loadUI() {
-        ContainerManager containerManager = guiScreenManager.loadAsGuiScreen("./ui/mcskin.xml");
+        ContainerManager containerManager = guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromResources("ui/mcskin.xml", new HashMap<>()));
 
         usernameField = containerManager.getByTag("lined");
         submitButton = containerManager.getByTag("submit");
@@ -250,7 +250,7 @@ public class McSkinScene extends AbstractScene {
         return mcModel;
     }
 
-    public GuiScreenManager getGuiScreenManager() {
+    public GuiScreenManager<?> getGuiScreenManager() {
         return guiScreenManager;
     }
 }

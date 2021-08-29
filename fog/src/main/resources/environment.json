@@ -1,0 +1,148 @@
+{
+  "fog": {
+    "density": 0.005,
+    "color": {
+      "argb": "#87CEEB"
+    }
+  },
+  "pointLights": [
+    {},
+    {
+      "position": {
+        "x": 10,
+        "y": 20,
+        "z": 10
+      },
+      "ambient": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0
+      },
+      "diffuse": {
+        "r": 3.0,
+        "g": 0.0,
+        "b": 0.0
+      },
+      "specular": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0
+      },
+      "ambiance": 0.0005,
+      "attenuation": {
+        "constant": 1.0,
+        "linear": 0.09,
+        "quadratic": 0.032
+      }
+    },
+    {
+      "position": {
+        "x": -10,
+        "y": 20,
+        "z": 10
+      },
+      "ambient": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0
+      },
+      "diffuse": {
+        "r": 0.0,
+        "g": 3.0,
+        "b": 0.0
+      },
+      "specular": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0
+      },
+      "ambiance": 0.0005,
+      "attenuation": {
+        "constant": 1.0,
+        "linear": 0.09,
+        "quadratic": 0.032
+      }
+    },
+    {
+      "position": {
+        "x": 10,
+        "y": 20,
+        "z": -10
+      },
+      "ambient": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0
+      },
+      "diffuse": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 3.0
+      },
+      "specular": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0
+      },
+      "ambiance": 0.0005,
+      "attenuation": {
+        "constant": 1.0,
+        "linear": 0.09,
+        "quadratic": 0.032
+      }
+    },
+    {
+      "position": {
+        "x": -10,
+        "y": 20,
+        "z": -10
+      },
+      "ambient": {
+        "r": 0.0,
+        "g": 0.0,
+        "b": 0.0
+      },
+      "diffuse": {
+        "r": 3.0,
+        "g": 1.0,
+        "b": 0.0
+      },
+      "specular": {
+        "r": 1.0,
+        "g": 1.0,
+        "b": 1.0
+      },
+      "ambiance": 0.0005,
+      "attenuation": {
+        "constant": 1.0,
+        "linear": 0.09,
+        "quadratic": 0.032
+      }
+    }
+  ],
+  "directionalLights": [
+    {
+      "direction": {
+        "x": -4.846E-1,
+        "y": -6.597E-1,
+        "z":  5.744E-1
+      },
+      "ambient": {
+        "r": 0.05,
+        "g": 0.05,
+        "b": 0.05
+      },
+      "diffuse": {
+        "r": 0.60,
+        "g": 0.60,
+        "b": 0.60
+      },
+      "specular": {
+        "r": 0.5,
+        "g": 0.5,
+        "b": 0.5
+      }
+    }
+  ],
+  "spotLights": []
+}

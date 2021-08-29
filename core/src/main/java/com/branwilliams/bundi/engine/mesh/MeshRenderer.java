@@ -26,7 +26,7 @@ public enum MeshRenderer {
         mesh.bind();
         mesh.enable();
 
-        if (material != null && material.hasTextures()) {
+        if (doesMaterialHaveTextures(material)) {
             Texture[] textures = material.getTextures();
             for (int i = 0; i < textures.length; i++) {
                 if (textures[i] != null) {
@@ -75,7 +75,7 @@ public enum MeshRenderer {
      * Undoes everything the setup function did to enable this mesh to be rendered.
      * */
     public static void unbind(Mesh mesh, Material material) {
-        if (material != null && material.hasTextures()) {
+        if (doesMaterialHaveTextures(material)) {
             Texture[] textures = material.getTextures();
             for (int i = 0; i < textures.length; i++) {
                 if (textures[i] != null) {
@@ -91,8 +91,9 @@ public enum MeshRenderer {
 
         mesh.disable();
         mesh.unbind();
-
     }
 
-
+    private static boolean doesMaterialHaveTextures(Material material) {
+        return material != null && material.hasTextures();
+    }
 }

@@ -36,5 +36,5 @@ public class VoxelConstants {
     /** Maximum z value within kernel */
     public static final int MAX_KERNEL_Z = 15;
 
-    public static final long CHUNK_ANIMATION_TIME_MS = 1000L;
+    public static final long CHUNK_ANIMATION_TIME_MS = 250L;
 }

@@ -40,18 +40,18 @@ public class GuiDemoScene extends AbstractScene {
         return env;
     }
 
-    private final GuiScreenManager guiScreenManager;
+    private final GuiScreenManager<?> guiScreenManager;
 
     public GuiDemoScene() {
         super("gui_demo");
         this.addKeyListener(this);
-        this.guiScreenManager = new GuiScreenManager(this);
+        this.guiScreenManager = new GuiScreenManager<>(this);
     }
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
         this.guiScreenManager.init(engine, window);
-        this.guiScreenManager.loadAsGuiScreen(UI_FILE, UI_ENVIRONMENT);
+        this.guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromAssetDirectory(UI_FILE, UI_ENVIRONMENT));
 
         Projection orthoProjection = new Projection(window);
         RenderContext renderContext = new RenderContext(orthoProjection);
@@ -84,7 +84,7 @@ public class GuiDemoScene extends AbstractScene {
         super.keyPress(window, key, scancode, mods);
         if (key == GLFW_KEY_ESCAPE) {
             this.guiScreenManager.setGuiScreen(null);
-            this.guiScreenManager.loadAsGuiScreen(UI_FILE, UI_ENVIRONMENT);
+            this.guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromAssetDirectory(UI_FILE, UI_ENVIRONMENT));
         }
     }
 

@@ -10,6 +10,7 @@ import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Transformable;
+import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.voxel.components.*;
 import com.branwilliams.bundi.voxel.VoxelScene;
 import org.joml.Vector3f;
@@ -50,9 +51,6 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
             CameraComponent cameraComponent = entity.getComponent(CameraComponent.class);
             Camera camera = cameraComponent.getCamera();
 
-            float yaw = camera.getYaw();
-            float pitch = camera.getPitch();
-
             float forwardSpeed = 0F, strafeSpeed = 0F, upwardSpeed = 0F;
 
             if (engine.getWindow().isKeyPressed(playerControls.getForward())) {
@@ -89,19 +87,19 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
             strafeSpeed  *= walkComponent.getAccelerationFactor();
             upwardSpeed  *= walkComponent.getAccelerationFactor();
 
-            float dx = 0, dz = 0;
+//            float dx = 0, dz = 0;
+//            dx += camera.getFront().x * forwardSpeed;
+//            dz +=  camera.getFront().z * forwardSpeed;
+//
+//            Vector3f frontCrossUp = new Vector3f(camera.getFront()).cross(camera.getUp());
+//            dx += frontCrossUp.x * strafeSpeed;
+//            dz += frontCrossUp.z * strafeSpeed;
 
-            dx += camera.getFront().x * forwardSpeed;
-            dz +=  camera.getFront().z * forwardSpeed;
-
-            Vector3f frontCrossUp = new Vector3f(camera.getFront()).cross(camera.getUp());
-            dx += frontCrossUp.x * strafeSpeed;
-            dz += frontCrossUp.z * strafeSpeed;
-
-//            float dx = Mathf.sin(Mathf.toRadians(yaw)) * forwardSpeed;
-//            float dz = Mathf.cos(Mathf.toRadians(yaw)) * -1F * forwardSpeed;
-//            dx += Mathf.sin(Mathf.toRadians(yaw - 90)) * strafeSpeed;
-//            dz += Mathf.cos(Mathf.toRadians(yaw - 90)) * -1F * strafeSpeed;
+            float yaw = camera.getYaw() + 90;
+            float dx = Mathf.sin(Mathf.toRadians(yaw)) * forwardSpeed;
+            float dz = Mathf.cos(Mathf.toRadians(yaw)) * -1F * forwardSpeed;
+            dx += Mathf.sin(Mathf.toRadians(yaw - 90)) * -1F * strafeSpeed;
+            dz += Mathf.cos(Mathf.toRadians(yaw - 90)) * strafeSpeed;
 
             movementComponent.getAcceleration().x = dx;
             movementComponent.getAcceleration().y = upwardSpeed;

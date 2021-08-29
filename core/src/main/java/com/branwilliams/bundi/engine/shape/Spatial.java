@@ -1,6 +1,6 @@
 package com.branwilliams.bundi.engine.shape;
 
-public interface Spatial <Shape, ElementType> extends Iterable<ElementType> {
+public interface Spatial <Shape, Vector, ElementType> extends Iterable<ElementType> {
 
     boolean add(Shape shape, ElementType element);
 
@@ -21,5 +21,10 @@ public interface Spatial <Shape, ElementType> extends Iterable<ElementType> {
      * @return Every {@link Shape} the provided shape intersects with.
      * */
     Iterable<Shape> query(Shape shape);
+
+    /**
+     * @return Every {@link Shape} which contains the vector.
+     * */
+    Iterable<Shape> queryVector(Vector vector);
 
 }

@@ -22,6 +22,8 @@ import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.util.HashMap;
+
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 
 /**
@@ -39,7 +41,7 @@ public class AtmosphereScene extends AbstractScene implements KeyListener {
 
     private float weather;
 
-    private GuiScreenManager guiScreenManager;
+    private GuiScreenManager<?> guiScreenManager;
 
     private final Lock guiLock = new Lock();
 
@@ -50,7 +52,7 @@ public class AtmosphereScene extends AbstractScene implements KeyListener {
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
-        guiScreenManager = new GuiScreenManager(this);
+        guiScreenManager = new GuiScreenManager<>(this);
         guiScreenManager.init(engine, window);
 
         sunPosition = new Vector3f(-0.0625F, 0.15F, 0F);
@@ -99,7 +101,7 @@ public class AtmosphereScene extends AbstractScene implements KeyListener {
     }
 
     private void loadUI() {
-        ContainerManager containerManager = guiScreenManager.loadAsGuiScreen("./ui/atmosphere.xml");
+        ContainerManager containerManager = guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromResources("ui/atmosphere.xml", new HashMap<>()));
 
         final Label xLabel = containerManager.getByTag("x_slider_value");
         final Label yLabel = containerManager.getByTag("y_slider_value");

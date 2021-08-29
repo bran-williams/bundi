@@ -43,7 +43,7 @@ public class SphereRenderPass extends RenderPass<RenderContext> {
         try {
             shaderProgram = new DynamicShaderProgram(VertexFormat.POSITION, DynamicShaderProgram.VIEW_MATRIX);
         } catch (ShaderInitializationException | ShaderUniformException e) {
-            throw new InitializationException("Unable to create ClothShaderProgram: ", e);
+            throw new InitializationException("Unable to create DynamicShaderProgram: ", e);
         }
         sphereMesh = new SphereMesh(1.0F, 32, 32, VertexFormat.POSITION);
     }

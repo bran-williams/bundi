@@ -7,12 +7,15 @@ import com.branwilliams.bundi.engine.util.*;
 import static com.branwilliams.bundi.engine.util.TextureUtils.getFormatFromChannels;
 
 import org.lwjgl.stb.STBImage;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Path;
 
 /**
@@ -44,6 +47,36 @@ public class TextureLoader {
         return loadTexture(file);
     }
 
+    public TextureInfo loadTextureInfo(File textureLocation) {
+        ByteBuffer imageBuffer;
+        try {
+            imageBuffer = IOUtils.readResourceAsByteBuffer(textureLocation.getPath(), 8 * 1024);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        int width = 0, height = 0, components = 0;
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer w    = stack.mallocInt(1);
+            IntBuffer h    = stack.mallocInt(1);
+            IntBuffer comp = stack.mallocInt(1);
+
+            // Use info to read image metadata without decoding the entire image.
+            // We don't need this for this demo, just testing the API.
+            if (!STBImage.stbi_info_from_memory(imageBuffer, w, h, comp)) {
+                throw new RuntimeException("Failed to read texture info: " + STBImage.stbi_failure_reason());
+            }
+
+            width = w.get(0);
+            height = h.get(0);
+            components = comp.get(0);
+//            System.out.println("Image HDR: " + STBImage.stbi_is_hdr_from_memory(imageBuffer));
+        }
+        MemoryUtil.memFree(imageBuffer);
+
+        return new TextureInfo(width, height, components);
+    }
+
     public TextureData loadTexture(File textureLocation) throws IOException {
         int[] width = new int[1];
         int[] height = new int[1];
@@ -62,6 +95,18 @@ public class TextureLoader {
         return new TextureData(width[0], height[0], channels[0], format, buffer);
     }
 
+    /**
+     * Creates a {@link CubeMapTexture} from a CSV file with one row and six columns where each cell contains an asset
+     * location. <br/>
+     * The order is defined by {@link CubeMapTexture.CubeMapPosition}. Here is an example of how one should look:
+     * <pre>
+     * +---+-----------+----------+---------+------------+-----------+----------+
+     * |   |     A     |    B     |    C    |     D      |     E     |    F     |
+     * +---+-----------+----------+---------+------------+-----------+----------+
+     * | 1 | right.png | left.png | top.png | bottom.png | front.png | back.png |
+     * +---+-----------+----------+---------+------------+-----------+----------+
+     * </pre>
+     * */
     public CubeMapTexture loadCubeMapTexture(String csvFile) throws IOException {
         String lines = IOUtils.readFile(directory, csvFile, null);
 
@@ -75,14 +120,14 @@ public class TextureLoader {
 
             if (width == -1) {
                 width = textureData.getWidth();
-            } else if (width != textureData.getWidth()){
-                throw new IOException("Images must have the same width!");
+            } else if (width != textureData.getWidth()) {
+                throw new IOException("Textures must have the same width!");
             }
 
             if (height == -1) {
                 height = textureData.getHeight();
             } else if (height != textureData.getHeight()) {
-                throw new IOException("Images must have the same height!");
+                throw new IOException("Textures must have the same height!");
             }
 
             textureDatas[index] = textureData;
@@ -92,9 +137,9 @@ public class TextureLoader {
     }
 
     public SpriteSheet loadSpriteSheet(String spriteSheetFile, int spriteWidth, int spriteHeight) throws IOException {
-        TextureData spriteImage = loadTexture(spriteSheetFile);
+        TextureData spriteData = loadTexture(spriteSheetFile);
 
-        Texture spriteTexture = new Texture(spriteImage, false)
+        Texture spriteTexture = new Texture(spriteData, false)
                 .bind().nearestFilter().clampToEdges();
          Texture.unbind();
 

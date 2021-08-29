@@ -1,0 +1,12 @@
+{
+  "windowTitle": "SAT",
+  "windowWidth": 1024,
+  "windowHeight": 768,
+  "vsync": true,
+  "keycodes": "./keycodes.json",
+
+  "launchScene": "com.branwilliams.frogger.SpatialScene",
+
+  "assetDirectory": ".",
+  "tempDirectory": "./temp"
+}

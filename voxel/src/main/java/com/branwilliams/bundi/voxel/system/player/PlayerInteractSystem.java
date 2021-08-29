@@ -1,7 +1,5 @@
 package com.branwilliams.bundi.voxel.system.player;
 
-import com.branwilliams.bundi.engine.audio.AudioData;
-import com.branwilliams.bundi.engine.audio.AudioLoader;
 import com.branwilliams.bundi.engine.audio.AudioSource;
 import com.branwilliams.bundi.engine.audio.Sound;
 import com.branwilliams.bundi.engine.core.Engine;
@@ -60,15 +58,11 @@ public class PlayerInteractSystem extends AbstractSystem implements MouseListene
 
     @Override
     public void init(Engine engine, EntitySystemManager entitySystemManager, Window window) {
-        AudioLoader audioLoader = new AudioLoader(engine.getContext());
+        bonk = scene.getVoxelSoundManager().loadSound("sounds/bonk1.ogg");
+        bonkSource = scene.getVoxelSoundManager().loadAudioSource("bonk1_source");
 
-        AudioData bonkData = audioLoader.loadAudio("sounds/bonk1.ogg");
-        bonk = new Sound(bonkData);
-        bonkSource = new AudioSource(bonk);
-
-        AudioData flipData = audioLoader.loadAudio("sounds/slip1.ogg");
-        slip = new Sound(flipData);
-        slipSource = new AudioSource(slip);
+        slip = scene.getVoxelSoundManager().loadSound("sounds/slip1.ogg");
+        slipSource = scene.getVoxelSoundManager().loadAudioSource("slip1_source");
     }
 
     @Override
@@ -141,4 +135,5 @@ public class PlayerInteractSystem extends AbstractSystem implements MouseListene
             }
         }
     }
+
 }

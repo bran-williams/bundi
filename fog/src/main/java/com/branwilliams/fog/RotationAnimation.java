@@ -1,20 +1,24 @@
 package com.branwilliams.fog;
 
-import org.joml.Vector3f;
+import org.joml.AxisAngle4f;
 
 public class RotationAnimation {
 
-    private final Vector3f axis;
+    private AxisAngle4f axisAngle;
 
     private final float rotationSpeed;
 
-    public RotationAnimation(Vector3f axis, float rotationSpeed) {
-        this.axis = axis;
+    public RotationAnimation(AxisAngle4f axisAngle, float rotationSpeed) {
+        this.axisAngle = axisAngle;
         this.rotationSpeed = rotationSpeed;
     }
 
-    public Vector3f getAxis() {
-        return axis;
+    public AxisAngle4f getAxisAngle() {
+        return axisAngle;
+    }
+
+    public void setAxisAngle(AxisAngle4f axisAngle) {
+        this.axisAngle = axisAngle;
     }
 
     public float getRotationSpeed() {

@@ -7,7 +7,10 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
+import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.fog.AxisAngle;
 import com.branwilliams.fog.RotationAnimation;
+import org.joml.AxisAngle4f;
 
 public class RotationAnimationSystem extends AbstractSystem {
 
@@ -25,11 +28,12 @@ public class RotationAnimationSystem extends AbstractSystem {
         for (IEntity entity : entitySystemManager.getEntities(this)) {
             Transformable transformable = entity.getComponent(Transformable.class);
             RotationAnimation rotationAnimation = entity.getComponent(RotationAnimation.class);
-
-            transformable.getRotation().x = rotationAnimation.getAxis().x;
-            transformable.getRotation().y = rotationAnimation.getAxis().y;
-            transformable.getRotation().z = rotationAnimation.getAxis().z;
-            transformable.getRotation().w += rotationAnimation.getRotationSpeed() * deltaTime;
+            AxisAngle4f axisAngle = rotationAnimation.getAxisAngle();
+            axisAngle.rotate((float) (rotationAnimation.getRotationSpeed() * deltaTime));
+            transformable.getRotation().set(axisAngle);
+//            AxisAngle axisAngle = rotationAnimation.getAxisAngle();
+//            axisAngle.setAngle((float) (axisAngle.getAngle() + rotationAnimation.getRotationSpeed() * deltaTime));
+//            axisAngle.toQuaternion(transformable.getRotation());
         }
     }
 

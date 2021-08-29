@@ -29,7 +29,8 @@ public class CubeMapTexture extends Texture {
         bind();
 
         for (int i = 0; i < textureData.length; i++) {
-            glTexImage2D(positions[i].glTarget, 0, GL_RGBA8, width, height, 0, textureData[i].getFormat(), GL_UNSIGNED_BYTE, textureData[i].getData());
+            glTexImage2D(positions[i].glTarget, 0, GL_RGBA8, width, height, 0, textureData[i].getFormat(),
+                    GL_UNSIGNED_BYTE, textureData[i].getData());
         }
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -52,7 +53,17 @@ public class CubeMapTexture extends Texture {
         FRONT_FACE(GL_TEXTURE_CUBE_MAP_POSITIVE_Z),
         BACK_FACE(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 
-        private final int glTarget;
+        /**
+         * The OpenGl texture target parameter. <br/>
+         * <pre>
+         *     +--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+
+         *     | CubeMapTexture.CubeMapPosition |           RIGHT_FACE           |           LEFT_FACE            |            TOP_FACE            |          BOTTOM_FACE           |           FRONT_FACE           |           BACK_FACE            |
+         *     +--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+\
+         *     | coresponding texture target   | GL_TEXTURE_CUBE_MAP_POSITIVE_X | GL_TEXTURE_CUBE_MAP_NEGATIVE_X | GL_TEXTURE_CUBE_MAP_POSITIVE_Y | GL_TEXTURE_CUBE_MAP_NEGATIVE_Y | GL_TEXTURE_CUBE_MAP_POSITIVE_Z | GL_TEXTURE_CUBE_MAP_NEGATIVE_Z |
+         *     +--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+--------------------------------+
+         * </pre>
+         * */
+        public final int glTarget;
 
         CubeMapPosition(int glTarget) {
             this.glTarget = glTarget;

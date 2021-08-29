@@ -26,7 +26,7 @@ public class MaterialBinder {
                                               String materialName)
             throws ShaderUniformException {
         for (MaterialFormat.MaterialEntry materialEntry : materialFormat.getElements().values()) {
-            if (materialEntry.elementType.isSampler()) {
+            if (materialEntry.elementType.isSampler) {
                 String uniformName = getMaterialEntryUniformName(materialName, materialEntry);
                 shaderProgram.setUniform(uniformName, materialEntry.textureIndex);
             }
@@ -63,7 +63,7 @@ public class MaterialBinder {
 
         shaderProgram.createUniform(uniformName);
 
-        if (materialEntry.elementType.isSampler()) {
+        if (materialEntry.elementType.isSampler) {
             shaderProgram.setUniform(uniformName, materialEntry.textureIndex);
         }
     }

@@ -1,9 +1,11 @@
 package com.branwilliams.bundi.engine.shape;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector2f;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -11,7 +13,7 @@ import java.util.stream.Collectors;
  *
  * Created by Brandon Williams on 10/3/2018.
  */
-public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
+public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, Vector2f, T> {
 
     private TreeNode<T> root;
 
@@ -32,74 +34,55 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
      * @throws NullPointerException If the provided element and/or shape is null.
      * @return True if the element was added to this tree.
      * */
-    public boolean add(Shape shape, T e) {
-        if (e == null || shape == null) {
-            throw new IllegalArgumentException("Element must not be null!");
+    @Override
+    public boolean add(Shape shape, T element) {
+        if (element == null || shape == null) {
+            throw new IllegalArgumentException("Element and shape must not be null!");
         }
-        TreeElement<T> element = new TreeElement<>(shape, e);
-        return root.add(element);
+        return root.add(new TreeElement<>(shape, element));
     }
 
     /**
-     * TODO fix
+     *
      * */
     @Override
     public boolean remove(Shape shape, T element) {
-        final List<T> elements = new ArrayList<>();
-
-        // This consumer accepts the elements which shape collides with.
-        Consumer<TreeNode<T>> elementCollector = (node) -> {
-            for (TreeElement<T> treeElement : node.getTreeElements()) {
-                if (shape.equals(treeElement.shape) && element.equals(treeElement.element)) {
-
-                }
-            }
-        };
-
-        root.traverse(shape, elementCollector);
-
-        for (T t : elements) {
-            removeByElement(t);
+        if (element == null || shape == null) {
+            throw new IllegalArgumentException("Element and shape must not be null!");
         }
-
-        return false;
+        return root.remove(shape, element);
     }
 
     /**
      * Forcibly removes this element within the provided bounds.
      * */
-    public boolean removeByElement(T e) {
-        if (e == null) {
+    public boolean removeByElement(T element) {
+        if (element == null) {
             throw new IllegalArgumentException("Element must not be null!");
         }
-        return root.remove(e);
+        return root.removeByElement(element);
     }
-
-    @Override
-    public int size() {
-        return 0;
-    }
-
 
     /**
      * Forcibly removes this element within the provided bounds.
      * */
+    @Override
     public boolean removeByShape(Shape shape) {
         if (shape == null) {
             throw new IllegalArgumentException("Shape must not be null!");
         }
-        return false;
-//        final List<T> elements = new ArrayList<>();
-//
-//        // This consumer accepts the elements which shape collides with.
-//        Consumer<TreeNode<T>> elementCollector = (node) -> {
-//            if (node.getElements())
-//            elements.addAll(node.getElements());
-//        };
-//        root.traverse(shape, elementCollector);
-//        return root.remove(e);
+        return root.remove(shape);
     }
-    public List<T> rangeQuery(Shape2f shape) {
+
+    public List<T> rangeQuery(Vector2f vector2f) {
+        return rangeQuery((node) -> node.boundaries.contains(vector2f));
+    }
+
+    public List<T> rangeQuery(Shape shape) {
+        return rangeQuery((node) -> node.boundaries.collides(shape));
+    }
+
+    public List<T> rangeQuery(Function<TreeNode<T>, Boolean> doesIntersect) {
         final List<T> elements = new ArrayList<>();
 
         // This consumer accepts the elements which shape collides with.
@@ -107,7 +90,7 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
                 elements.addAll(node.getElements());
         };
 
-        root.traverse(shape, elementCollector);
+        root.traverse(doesIntersect, elementCollector);
 
         return elements;
     }
@@ -137,6 +120,11 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
         return root.getElements(true);
     }
 
+    @Override
+    public int size() {
+        return getElements().size();
+    }
+
     /**
      * Clears all elements from this tree, including children.
      * */
@@ -147,6 +135,11 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
     @Override
     public Iterable<Shape> query(Shape shape) {
         return (Iterable<Shape>) rangeQuery(shape);
+    }
+
+    @Override
+    public Iterable<Shape> queryVector(Vector2f vector2f) {
+        return (Iterable<Shape>) rangeQuery(vector2f);
     }
 
 //    /**
@@ -193,11 +186,14 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        return null;
+        return root.getElements().iterator();
     }
 
     /**
      * Contains the shape of a node and its elements.
+     *
+     * Each node is divided into four quadrants, north west (nw), north east (me), south west (sw), and south east (se).
+     *
      * */
     public static class TreeNode <T> {
 
@@ -232,25 +228,61 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
             return true;
         }
 
+        public boolean remove(Function<TreeNode<T>, Boolean> doesIntersect,
+                              Function<TreeElement<T>, Boolean> shouldRemove) {
+            class TempClass {
+                boolean hasRemoved;
+            }
+            TempClass tempClass = new TempClass();
+            traverse(doesIntersect,
+                    (node) -> tempClass.hasRemoved = node.removeByElement(shouldRemove) || tempClass.hasRemoved);
+            return tempClass.hasRemoved;
+        }
+
         /**
-         * Attempts to remove the element from this quadtree.
          * */
-        public boolean remove(T e) {
+        public boolean remove(Function<TreeNode<T>, Boolean> doesIntersect, T element) {
+            return remove(doesIntersect, (e) -> e.getElement().equals(element));
+        }
+
+        /**
+         * Removes any shape colliding with this shape and only if the element matches this element.
+         * */
+        public boolean remove(Shape2f shape, T element) {
+            return remove((node) -> node.boundaries.collides(shape), element);
+        }
+
+        /**
+         * Removes any elements which collides with this shape.
+         * */
+        public boolean remove(Shape2f shape) {
+            return remove((node) -> node.boundaries.collides(shape), (element) -> true);
+        }
+
+        /**
+         * Remove the element from this quadtree.
+         * */
+        public boolean removeByElement(T element) {
+            return removeByElement((e) -> e.getElement().equals(element));
+        }
+
+
+        public boolean removeByElement(Function<TreeElement<T>, Boolean> shouldRemove) {
             if (isLeaf()) {
-                return elements.removeIf((node) -> node.getElement().equals(e));
+                return elements.removeIf(shouldRemove::apply);
             } else {
-                boolean removed = nw.remove(e);
-                removed = ne.remove(e) || removed;
-                removed = sw.remove(e) || removed;
-                removed = se.remove(e) || removed;
+                boolean removed = nw.removeByElement(shouldRemove);
+                removed = ne.removeByElement(shouldRemove) || removed;
+                removed = sw.removeByElement(shouldRemove) || removed;
+                removed = se.removeByElement(shouldRemove) || removed;
                 return removed;
             }
         }
 
-        /**
-         * Clears the list of elements within this tree node. If it is not a leaf, then the children will be cleared and
-         * this node will become a leaf.
-         * */
+            /**
+             * Clears the list of elements within this tree node. If it is not a leaf, then the children will be cleared and
+             * this node will become a leaf.
+             * */
         public void clear() {
             if (isLeaf()) {
                 elements.clear();
@@ -268,10 +300,13 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
 
         /**
          * Traverses through the nodes, beginning with this node.
+         *
+         * @param doesIntersect The function which calculates whether a node intersects
+         * @param nodeConsumer The consumer which accepts the nodes intersecting
          * */
-        public void traverse(Shape2f shape, Consumer<TreeNode<T>> nodeConsumer) {
+        public void traverse(Function<TreeNode<T>, Boolean> doesIntersect, Consumer<TreeNode<T>> nodeConsumer) {
             // No collision, then no reason to traverse any further.
-            if (!boundaries.collides(shape))
+            if (!doesIntersect.apply(this))
                 return;
 
             // If this node is a leaf, then the consumer must consume.
@@ -280,17 +315,93 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
                 return;
             }
             // Otherwise, we find children suitable and continue traversing.
-            TreeNode<T> child = findChildContaining(shape);
+            TreeNode<T> child = findChildContaining(doesIntersect);
 
             if (child != null) {
-                child.traverse(shape, nodeConsumer);
+                child.traverse(doesIntersect, nodeConsumer);
             } else {
-                nw.traverse(shape, nodeConsumer);
-                ne.traverse(shape, nodeConsumer);
-                sw.traverse(shape, nodeConsumer);
-                se.traverse(shape, nodeConsumer);
+                nw.traverse(doesIntersect, nodeConsumer);
+                ne.traverse(doesIntersect, nodeConsumer);
+                sw.traverse(doesIntersect, nodeConsumer);
+                se.traverse(doesIntersect, nodeConsumer);
             }
         }
+
+        public void traverse(Vector2f vector2f, Consumer<TreeNode<T>> nodeConsumer) {
+            traverse((node) -> node.boundaries.contains(vector2f), nodeConsumer);
+        }
+        /**
+         * Traverses through the nodes, beginning with this node.
+         * */
+        public void traverse(Shape2f shape, Consumer<TreeNode<T>> nodeConsumer) {
+            traverse((node) -> node.boundaries.collides(shape), nodeConsumer);
+        }
+
+        /**
+         * Creates the children for this tree node. This node will no longer be considered a leaf node.
+         * */
+        private void createChildren() {
+            float minX = boundaries.getMinX();
+            float minY = boundaries.getMinY();
+            float maxX = boundaries.getMaxX();
+            float maxY = boundaries.getMaxY();
+
+            float halfWidth = boundaries.getHalfX();
+            float halfHeight = boundaries.getHalfY();
+
+            nw = new TreeNode<>(new AABB2f(minX, minY, minX + halfWidth, minY + halfHeight), maxSize);
+
+            ne = new TreeNode<>(new AABB2f(minX + halfWidth, minY, maxX, minY + halfHeight), maxSize);
+
+            sw = new TreeNode<>(new AABB2f(minX, minY + halfHeight, minX + halfWidth, maxY), maxSize);
+
+            se = new TreeNode<>(new AABB2f(minX + halfWidth, minY + halfHeight, maxX, maxY), maxSize);
+        }
+
+
+        /**
+         * @return The child tree node which contains this shape fully. If no child contains the shape fully, then it
+         * will return null.
+         * */
+        private TreeNode<T> findChildContaining(Function<TreeNode<T>, Boolean> doesIntersect) {
+            if (doesIntersect.apply(nw)) {
+                return nw;
+            } else if (doesIntersect.apply(ne)) {
+                return ne;
+            } else if (doesIntersect.apply(sw)) {
+                return sw;
+            } else if (doesIntersect.apply(se)) {
+                return se;
+            }
+            return null;
+        }
+
+        private TreeNode<T> findChildContaining(Vector2f vector2f) {
+            return findChildContaining((node) -> node.boundaries.contains(vector2f));
+        }
+
+        /**
+         * @return The child tree node which contains this shape fully. If no child contains the shape fully, then it
+         * will return null.
+         * */
+        private TreeNode<T> findChildContaining(Shape2f boundary) {
+            return findChildContaining((node) -> node.boundaries.contains(boundary));
+        }
+
+        /**
+         * Fills up the children of this node. This is done once a node reaches max capacity and the children must be
+         * created.
+         * */
+        private void addElementsToChildren(Iterable<TreeElement<T>> elements) {
+            for (TreeElement<T> element : elements) {
+                addElementToChildren(element);
+            }
+        }
+
+        private void addElementToChildren(TreeElement<T> element) {
+            traverse(element.getShape(), node -> node.add(element));
+        }
+
 
         /**
          * @return True if this tree node does not contain children.
@@ -323,6 +434,13 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
             return elements;
         }
 
+        /**
+         * @return True if this tree node breaches the max capacity.
+         * */
+        private boolean isOverFilled() {
+            return elements.size() > maxSize;
+        }
+
         public List<TreeElement<T>> getTreeElements() {
             return elements;
         }
@@ -349,66 +467,6 @@ public class QuadTree <Shape extends Shape2f, T> implements Spatial<Shape, T> {
                     + ", sw=" + (sw == null ? "null" : (sw.isLeaf() && sw.elements.isEmpty() ? "empty" : sw))
                     + ", se=" + (se == null ? "null" : (se.isLeaf() && se.elements.isEmpty() ? "empty" : se));
         }
-
-        /**
-         * Creates the children for this tree node. This node will no longer be considered a leaf node.
-         * */
-        private void createChildren() {
-            float minX = boundaries.getMinX();
-            float minY = boundaries.getMinY();
-            float maxX = boundaries.getMaxX();
-            float maxY = boundaries.getMaxY();
-
-            float halfWidth = boundaries.getHalfX();
-            float halfHeight = boundaries.getHalfY();
-
-            nw = new TreeNode<>(new AABB2f(minX, minY, minX + halfWidth, minY + halfHeight), maxSize);
-
-            ne = new TreeNode<>(new AABB2f(minX + halfWidth, minY, maxX, minY + halfHeight), maxSize);
-
-            sw = new TreeNode<>(new AABB2f(minX, minY + halfHeight, minX + halfWidth, maxY), maxSize);
-
-            se = new TreeNode<>(new AABB2f(minX + halfWidth, minY + halfHeight, maxX, maxY), maxSize);
-        }
-
-        /**
-         * @return The child tree node which contains this shape fully. If no child contains the shape fully, then it
-         * will return null.
-         * */
-        private TreeNode<T> findChildContaining(Shape2f boundary) {
-            if (nw.boundaries.contains(boundary)) {
-                return nw;
-            } else if (ne.boundaries.contains(boundary)) {
-                return ne;
-            } else if (sw.boundaries.contains(boundary)) {
-                return sw;
-            } else if (se.boundaries.contains(boundary)) {
-                return se;
-            }
-            return null;
-        }
-
-        /**
-         * Fills up the children of this node. This is done once a node reaches max capacity and the children must be
-         * created.
-         * */
-        private void addElementsToChildren(Iterable<TreeElement<T>> elements) {
-            for (TreeElement<T> element : elements) {
-                addElementToChildren(element);
-            }
-        }
-
-        private void addElementToChildren(TreeElement<T> element) {
-            traverse(element.getShape(), node -> node.add(element));
-        }
-
-        /**
-         * @return True if this tree node breaches the max capacity.
-         * */
-        private boolean isOverFilled() {
-            return elements.size() > maxSize;
-        }
-
     }
 
     /**
