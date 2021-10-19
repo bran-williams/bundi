@@ -7,13 +7,9 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
-import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
-import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.frogger.Camera2D;
-import com.branwilliams.frogger.Tilemap;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import com.branwilliams.frogger.builder.TilemapMeshBuilder;
-import com.branwilliams.frogger.pipeline.shader.TilemapShaderProgram;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 

@@ -32,6 +32,7 @@ public class SphereMesh extends Mesh {
      */
     public SphereMesh(float radius, int slices, int stacks, VertexFormat vertexFormat, boolean invNormals) {
         super();
+        this.setVertexFormat(vertexFormat);
         this.setRenderMode(GL_TRIANGLE_STRIP);
         List<Float> vertices = new ArrayList<>();
         List<Float> normals = new ArrayList<>();

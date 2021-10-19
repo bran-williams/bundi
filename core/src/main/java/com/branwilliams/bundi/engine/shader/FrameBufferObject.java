@@ -161,13 +161,11 @@ public class FrameBufferObject implements Destructible {
      * Binds the provided texture to this frame buffer's depth attachment.
      * */
     protected void bindDepthTexture(Texture texture, int target) {
-        glFramebufferTexture2D(target, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.getId(),
-                0);
+        glFramebufferTexture2D(target, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.getId(), 0);
     }
 
     protected void bindDepthStencilTexture(Texture texture, int target) {
-        glFramebufferTexture2D(target, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.getId(),
-                0);
+        glFramebufferTexture2D(target, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.getId(), 0);
     }
 
     @Override

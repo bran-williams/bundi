@@ -1,5 +1,6 @@
 package com.branwilliams.cubes;
 
+import com.branwilliams.cubes.world.MarchingCubeWorld;
 import org.joml.Vector3f;
 
 import java.util.Arrays;
@@ -344,7 +345,8 @@ public class GridCell {
         return cubeIndex;
     }
 
-    public int getTriangles(float isoLevel, List<Vector3f> vertices) {
+    public int getTriangles(MarchingCubeWorld world, List<Vector3f> vertices) {
+        float isoLevel = world.getIsoLevel();
         int cubeIndex = getCubeIndex(isoLevel);
 
         Vector3f[] vertexList = new Vector3f[12];
@@ -438,6 +440,10 @@ public class GridCell {
 
     public void setIsoValues(float[] isoValues) {
         this.isoValues = isoValues;
+    }
+
+    public Vector3f getCenter() {
+        return center;
     }
 
     @Override

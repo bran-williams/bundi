@@ -57,13 +57,11 @@ public class EntityAABBRenderPass extends RenderPass<RenderContext> {
     public void render(RenderContext renderContext, Engine engine, Window window, double deltaTime) {
         shaderProgram.bind();
         shaderProgram.setProjectionMatrix(renderContext.getProjection());
+        shaderProgram.setModelMatrix(Transformable.empty());
 
         dynamicVAO.begin();
         for (IEntity entity : scene.getEs().getEntities(matcher)) {
 //            Transformable transformable = entity.getComponent(Transformable.class);
-            Transformable transformable = Transformable.empty();
-            shaderProgram.setModelMatrix(transformable);
-
             AABB2f aabb = entity.getComponent(AABB2f.class);
             dynamicVAO.addRect(aabb.getMinX(), aabb.getMinY(), aabb.getMaxX(), aabb.getMaxY(), 0xFFFFFFFF);
         }

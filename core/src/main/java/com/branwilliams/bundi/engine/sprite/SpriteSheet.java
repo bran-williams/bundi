@@ -120,7 +120,7 @@ public class SpriteSheet implements Destructible {
     }
 
     public static float getSpriteV(SpriteSheet spriteSheet, int index) {
-        return (float) Math.floor(index / spriteSheet.numSpritesHorizontal) / (float) spriteSheet.numSpritesVertical;
+        return (float) Math.floor((float) index / spriteSheet.numSpritesHorizontal) / (float) spriteSheet.numSpritesVertical;
     }
 
     public static float getSpriteS(SpriteSheet spriteSheet, int index) {
@@ -244,6 +244,17 @@ public class SpriteSheet implements Destructible {
 
     public int getNumSpritesVertical() {
         return numSpritesVertical;
+    }
+
+    @Override
+    public String toString() {
+        return "SpriteSheet{" +
+                "spriteWidth=" + spriteWidth +
+                ", spriteHeight=" + spriteHeight +
+                ", numSpritesHorizontal=" + numSpritesHorizontal +
+                ", numSpritesVertical=" + numSpritesVertical +
+                ", centeredSprite=" + centeredSprite +
+                '}';
     }
 
     @Override

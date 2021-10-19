@@ -2,6 +2,8 @@ package com.branwilliams.bundi.engine.util.noise;
 
 import com.branwilliams.bundi.engine.util.noise.Noise;
 
+import java.util.Random;
+
 /*
  * OpenSimplex Noise in Java.
  * by Kurt Spencer
@@ -30,13 +32,11 @@ public class OpenSimplexNoise implements Noise {
     private static final double NORM_CONSTANT_3D = 103;
     private static final double NORM_CONSTANT_4D = 30;
 
-    private static final long DEFAULT_SEED = 0;
-
     private short[] perm;
     private short[] permGradIndex3D;
 
     public OpenSimplexNoise() {
-        this(DEFAULT_SEED);
+        this(new Random().nextLong());
     }
 
     public OpenSimplexNoise(short[] perm) {

@@ -4,6 +4,7 @@ import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
+import com.branwilliams.bundi.engine.ecs.matchers.NameMatcher;
 
 import java.util.*;
 
@@ -144,8 +145,18 @@ public class EntitySystemManager implements Destructible {
      * Creates a component matcher based on the component classes provided. The matcher is automatically added to this
      * manager.
      * */
+    public IComponentMatcher matcher(String name) {
+        return matcher(new NameMatcher(name));
+    }
     public IComponentMatcher matcher(Class<?>... components) {
-        IComponentMatcher componentMatcher = new ClassComponentMatcher(components);
+        return matcher( new ClassComponentMatcher(components));
+    }
+
+        /**
+         * Creates a component matcher based on the component classes provided. The matcher is automatically added to this
+         * manager.
+         * */
+    public IComponentMatcher matcher(IComponentMatcher componentMatcher) {
         this.addMatcher(componentMatcher);
         this.updateGrouping(componentMatcher);
         return componentMatcher;

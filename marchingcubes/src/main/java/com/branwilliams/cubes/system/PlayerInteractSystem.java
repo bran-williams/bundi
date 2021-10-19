@@ -9,10 +9,9 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.cubes.CubesScene;
-import com.branwilliams.cubes.GridCell;
-import com.branwilliams.cubes.GridCellMesh;
+import com.branwilliams.cubes.math.RaycastResult;
 import com.branwilliams.cubes.world.MarchingCubeChunk;
-import org.joml.Vector3f;
+import com.branwilliams.cubes.world.MarchingCubeData;
 
 import java.util.function.Supplier;
 
@@ -32,8 +31,10 @@ public class PlayerInteractSystem extends AbstractSystem implements KeyListener,
 
     private boolean shouldEdit;
 
+    private int editRadius = 1;
+
     public PlayerInteractSystem(CubesScene scene, Supplier<Float> raycastDistance) {
-        super(new ClassComponentMatcher(Transformable.class, GridCellMesh.class));
+        super(new ClassComponentMatcher(Transformable.class));
         this.scene = scene;
         this.scene.addMouseListener(this);
         this.scene.addKeyListener(this);
@@ -47,60 +48,42 @@ public class PlayerInteractSystem extends AbstractSystem implements KeyListener,
 
     @Override
     public void update(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
-//        RaycastResult result = scene.getWorld().raycast(scene.getCamera().getPosition(),
-//                scene.getCamera().getDirection(),
-//                raycastDistance.get());
-//        scene.setRaycast(result);
+//        Vector3f ray = scene.getCamera().getFacingDirection().mul(raycastDistance.get());
+        if (shouldEdit) {
+            RaycastResult raycast = scene.getWorld().raycast(scene.getCamera().getPosition(),
+                    scene.getCamera().getFacingDirection(), scene.getRaycastDistance());
+            scene.setRaycast(raycast);
 
-        Vector3f ray = scene.getCamera().getFacingDirection().mul(raycastDistance.get());
-        int radius = 2;
-        if (scene.getRaycast() != null && pressed != -1 && shouldEdit) {
-            MarchingCubeChunk chunk = scene.getWorld().getChunk(scene.getRaycast().position);
-            if (chunk != null) {
-                GridCell gridCell = scene.getWorld().getGridCell(scene.getRaycast().position);
-                if (gridCell != null) {
-                    for (int i = 0; i < gridCell.getIsoValues().length; i++) {
-                        gridCell.getIsoValues()[i] += pressed == 0 ? 0.01F : -0.01F;
-                    }
+            if (raycast != null && pressed != -1) {
+                MarchingCubeChunk chunk = scene.getWorld().getChunk(raycast.position);
 
-                    for (int x = -radius; x <= radius; x++) {
-                        for (int y = -radius; y <= radius; y++) {
-                            for (int z = -radius; z <= radius; z++) {
-
-                                // skip origin
-                                if (x == 0 && y == 0 && z == 0)
-                                    continue;
-                                updateNeighborCells(gridCell, scene.getRaycast().position, x, y, z);
+                if (chunk != null) {
+                    for (int x = -editRadius; x <= editRadius; x++) {
+                        for (int y = -editRadius; y <= editRadius; y++) {
+                            for (int z = -editRadius; z <= editRadius; z++) {
+                                MarchingCubeData gridData = scene.getWorld().getGridData(raycast.position.x + x,
+                                        raycast.position.y + y, raycast.position.z + z);
+                                if (gridData != null) {
+                                    chunk = scene.getWorld().getChunk(raycast.position.x + x,
+                                            raycast.position.y + y, raycast.position.z + z);
+                                    chunk.markDirty();
+                                    gridData.setIsoValue(gridData.getIsoValue() +
+                                            (pressed == 0 ? 0.2F : -0.2F) * (float) deltaTime);
+                                    scene.getWorld().updateNeighborChunks(gridData, chunk,
+                                            raycast.position.x + x, raycast.position.y + y,
+                                            raycast.position.z + z);
+                                }
                             }
                         }
                     }
-                    chunk.markDirty();
                 }
             }
-
+        } else {
+            scene.setRaycast(null);
         }
+
     }
 
-    private void updateNeighborCells(GridCell origin, Vector3f pos, float x, float y, float z) {
-        boolean markdirty = false;
-        GridCell neighbor = scene.getWorld().getGridCell(pos.x + x, pos.y + y, pos.z + z);
-
-        if (neighbor == null)
-            return;
-
-        for (int i = 0; i < origin.getPoints().length; i++) {
-            Vector3f originPosition = origin.getPoints()[i];
-            for (int j = 0; j < neighbor.getPoints().length; j++) {
-                Vector3f neighborPosition = neighbor.getPoints()[j];
-                if (originPosition.equals(neighborPosition)) {
-                    neighbor.getIsoValues()[j] = origin.getIsoValues()[i];
-                    markdirty = true;
-                }
-            }
-        }
-        if (markdirty)
-            scene.getWorld().getChunk(pos.x + x, pos.y + y, pos.z + z).markDirty();
-    }
 
     @Override
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
@@ -123,7 +106,14 @@ public class PlayerInteractSystem extends AbstractSystem implements KeyListener,
 
     @Override
     public void wheel(Window window, double xoffset, double yoffset) {
-
+        if (shouldEdit) {
+            if (yoffset > 0) {
+                editRadius++;
+            } else if (yoffset < 0) {
+                editRadius--;
+            }
+            editRadius = Math.max(1, editRadius);
+        }
     }
 
     @Override

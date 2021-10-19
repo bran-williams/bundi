@@ -1,6 +1,7 @@
 package com.branwilliams.cubes.builder;
 
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.bundi.engine.util.MeshUtils;
 import com.branwilliams.cubes.GridCell;
@@ -9,7 +10,9 @@ import com.branwilliams.cubes.world.MarchingCubeWorld;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.branwilliams.bundi.engine.util.MeshUtils.toArray3f;
 
@@ -26,7 +29,7 @@ public class GridCellMeshBuilderImpl implements GridCellMeshBuilder {
     public GridCellMesh rebuildMesh(MarchingCubeWorld world, GridCellMesh gridCellMesh, Grid3i<GridCell> gridCellGrid) {
         List<Vector3f> positions = new ArrayList<>();
         for (GridCell gridCell : gridCellGrid) {
-            gridCell.getTriangles(world.getIsoLevel(), positions);
+            gridCell.getTriangles(world, positions);
         }
 
         List<Vector3f> normals = new ArrayList<>();
@@ -35,7 +38,7 @@ public class GridCellMeshBuilderImpl implements GridCellMeshBuilder {
             Vector3f p2 = positions.get(i+1);
             Vector3f p3 = positions.get(i+2);
 
-            Vector3f normal = MeshUtils.calculateNormal(p1, p2, p3);
+            Vector3f normal = MeshUtils.calculateNormal(p1, p2, p3).normalize();
 
             normals.add(normal);
             normals.add(normal);
@@ -46,9 +49,11 @@ public class GridCellMeshBuilderImpl implements GridCellMeshBuilder {
         gridCellMesh.getMesh().storeAttribute(0, toArray3f(positions), VertexElements.POSITION.getSize());
         gridCellMesh.getMesh().storeAttribute(1, toArray3f(normals), VertexElements.NORMAL.getSize());
         gridCellMesh.getMesh().setVertexCount(positions.size());
+        gridCellMesh.getMesh().setVertexFormat(VertexFormat.POSITION_NORMAL);
         gridCellMesh.getMesh().unbind();
 
         return gridCellMesh;
     }
+
 
 }

@@ -47,8 +47,8 @@ public class DebugRenderPass extends RenderPass<RenderContext> {
             shaderProgram = new DynamicShaderProgram(VertexFormat.POSITION_COLOR, DynamicShaderProgram.VIEW_MATRIX);
 
             DebugOriginMeshBuilderImpl debugOriginMeshBuilder = new DebugOriginMeshBuilderImpl();
-            originMesh = debugOriginMeshBuilder.buildMesh(new Vector3f(0, 0.01F,0), 10);
-            gridMesh = new DebugGridMesh(new Vector3f(), 256, 1);
+            originMesh = debugOriginMeshBuilder.buildMesh(new Vector3f(-1, 0.01F,-1), 10);
+            gridMesh = new DebugGridMesh(new Vector3f(), 128, 2);
 //            gridMesh = new GridMesh(256, 512);
 
         } catch (ShaderInitializationException | ShaderUniformException e) {

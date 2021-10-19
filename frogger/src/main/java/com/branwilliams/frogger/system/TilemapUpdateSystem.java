@@ -9,11 +9,8 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.frogger.Camera2D;
-import com.branwilliams.frogger.Tilemap;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import com.branwilliams.frogger.builder.TilemapMeshBuilder;
-import org.joml.Vector2f;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.function.Supplier;
 

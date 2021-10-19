@@ -5,7 +5,10 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Brandon Williams on 9/6/2018.
@@ -303,7 +306,6 @@ public enum MeshUtils {
         }
         return array;
     }
-
     /**
      * Converts a list of {@link org.joml.Vector3f} into an array of floats. e.g.
      * <pre>
@@ -317,12 +319,30 @@ public enum MeshUtils {
      * @return An array of floats where for N vectors the values are ordered: x0, y0, z0, x1 y1, z1, ... xN, yN, zN.
      * */
     public static float[] toArray3f(List<Vector3f> vectors) {
-        float[] array = new float[vectors.size() * 3];
-        for (int i = 0; i < vectors.size(); i++) {
-            Vector3f vector = vectors.get(i);
+        return toArray3f(vectors, (v) -> v);
+    }
+
+    /**
+     * Converts a list of {@link org.joml.Vector3f} into an array of floats. e.g.
+     * <pre>
+     * List<Vector3f> myVectors = new ArrayList();
+     * myVectors.add(new Vector3f(1, 2, 3));
+     * myVectors.add(new Vector3f(4, 5, 6));
+     * float[] myValues = toArray3f(myVectors); // = { 1, 2, 3, 4, 5, 6 }
+     * </pre>
+     *
+     * @param objects The vectors to convert to an array.
+     * @return An array of floats where for N vectors the values are ordered: x0, y0, z0, x1 y1, z1, ... xN, yN, zN.
+     * */
+    public static <T> float[] toArray3f(Collection<T> objects, Function<T, Vector3f> vectorFunction) {
+        float[] array = new float[objects.size() * 3];
+        int i = 0;
+        for (T object : objects) {
+            Vector3f vector = vectorFunction.apply(object);
             array[i * 3] = vector.x;
             array[i * 3 + 1] = vector.y;
             array[i * 3 + 2] = vector.z;
+            i++;
         }
         return array;
     }

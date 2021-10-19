@@ -8,9 +8,11 @@
         <Label tag="wireframe_controls" text="Press {{ wireframe_controls }} to toggle wireframe mode." color="#ffffff" height="30" alignment="left" style="shadow">
             <FontData font="Roboto" size="24" style="bold"/>
         </Label>
-        <Label tag="reloadenv_controls" text="Press {{ reloadenv_controls }} to reload the env file." color="#ffffff" height="30" alignment="left" style="shadow">
+        <Label tag="reload_env_controls" text="Press {{ reload_env_controls }} to reload the env file." color="#ffffff" height="30" alignment="left" style="shadow">
             <FontData font="Roboto" size="24" style="bold"/>
         </Label>
-
+        <Label tag="rotate_cube_controls" text="Press {{ rotate_cube_controls }} to rotate the cube." color="#ffffff" height="30" alignment="left" style="shadow">
+            <FontData font="Roboto" size="24" style="bold"/>
+        </Label>
     </Container>
 </UI>

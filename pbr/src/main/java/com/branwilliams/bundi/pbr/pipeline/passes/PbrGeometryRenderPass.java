@@ -53,6 +53,7 @@ public class PbrGeometryRenderPass extends RenderPass<PbrRenderContext> {
     @Override
     public void render(PbrRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         renderContext.getGBuffer().bind();
+        glClearColor(0F, 0F, 0F, 1.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // No blending required.

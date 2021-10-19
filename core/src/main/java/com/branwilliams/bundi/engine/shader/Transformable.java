@@ -141,6 +141,14 @@ public interface Transformable extends Cloneable {
     /**
      * Sets the rotation of this transformable.
      * */
+    default Transformable rotate(Quaternionf rotation) {
+        this.setRotation(rotation);
+        return this;
+    }
+
+    /**
+     * Sets the rotation of this transformable.
+     * */
     default Transformable rotateFromEuler(float x, float y, float z) {
         this.setRotationFromEuler(x, y, z);
         return this;

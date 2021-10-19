@@ -6,6 +6,7 @@ import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.material.Material;
+import com.branwilliams.bundi.engine.material.MaterialElement;
 import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.primitive.CubeMesh;
@@ -16,14 +17,16 @@ import com.branwilliams.bundi.engine.systems.DebugCameraMoveSystem;
 import com.branwilliams.bundi.engine.texture.*;
 import com.branwilliams.bundi.engine.util.GsonUtils;
 import com.branwilliams.bundi.engine.util.IOUtils;
+import com.branwilliams.bundi.engine.util.Mathf;
+import com.branwilliams.bundi.gui.pipeline.GuiRenderPass;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.fog.pipeline.FogRenderPipeline;
 import com.branwilliams.fog.systems.ParticleUpdateSystem;
 import com.branwilliams.fog.systems.RotationAnimationSystem;
 import com.google.gson.Gson;
 import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import java.awt.*;
 import java.io.IOException;
@@ -38,41 +41,6 @@ import static org.lwjgl.glfw.GLFW.*;
  * @since November 30, 2019
  */
 public class FogScene extends AbstractScene {
-
-    // blueish
-    private static final Vector4f SKY_COLOR = toVector4(new Color(0xFF87CEEB));
-
-    // yellowish
-    private static final  Vector4f SUN_COLOR = toVector4(new Color(0xFFFFE5B2));
-
-    private static final String ENVIRONMENT_FILE = "environment.json";
-
-    private static final String UI_INGAME_HUD = "ui/fog-ingame-hud.xml";
-
-    private static final String MODEL_LOCATION = "models/cartoonland2/cartoonland2.obj";
-    private static final String MODEL_TEXTURES = "models/cartoonland2/";
-
-    private static final String[] SMOKE_PARTICLES = {
-            "textures/particle/smoke_01.png",
-            "textures/particle/smoke_02.png",
-            "textures/particle/smoke_03.png",
-            "textures/particle/smoke_04.png",
-            "textures/particle/smoke_05.png",
-            "textures/particle/smoke_06.png",
-            "textures/particle/smoke_07.png"
-    };
-
-//    private static final String[] FLAME_PARTICLES = {
-//            "textures/particle/flame_01.png",
-////            "textures/particle/flame_02.png",
-////            "textures/particle/flame_03.png",
-//            "textures/particle/flame_04.png"
-//    };
-
-    private static final String[] FLAME_PARTICLES = {
-            "textures/particle/flame_05.png",
-            "textures/particle/flame_06.png"
-    };
 
     private final GuiScreenManager<FogScene> guiScreenManager = new GuiScreenManager<>(this);
 
@@ -90,12 +58,12 @@ public class FogScene extends AbstractScene {
 
     private boolean movingSun;
 
-    private float floorSize = 50F;
+    private final float floorSize = 50F;
 
 //    private PointLight playerLight = null;
     private PointLight playerLight = new PointLight(new Vector3f(cameraStartingPosition),
             new Vector3f(0),
-            new Vector3f(0.3f),
+            new Vector3f(1f),
             new Vector3f(0.3F));
 
     private Environment environment;
@@ -118,7 +86,9 @@ public class FogScene extends AbstractScene {
         Projection worldProjection = new Projection(window, 70, 0.01F, 1000F);
         RenderContext renderContext = new RenderContext(worldProjection);
 
-        RenderPipeline<RenderContext> renderPipeline = new FogRenderPipeline(renderContext, this);
+        RenderPipeline<RenderContext> renderPipeline = new FogRenderPipeline(renderContext, this,
+                this::isWireframe, this::getCamera, this::getEnvironment, this::getAtmosphere, this::getSkydome);
+        renderPipeline.addLast(new GuiRenderPass<>(this, this::getGuiScreenManager));
         FogRenderer<RenderContext> renderer = new FogRenderer<>(this, renderPipeline);
         setRenderer(renderer);
     }
@@ -134,7 +104,7 @@ public class FogScene extends AbstractScene {
         DirectionalLight sun = getSun();
         Fog fog = getFog();
 
-        atmosphere = new Atmosphere(sun, SKY_COLOR, SUN_COLOR, fog);
+        atmosphere = new Atmosphere(sun, FogConstants.SKY_COLOR, FogConstants.SUN_COLOR, fog);
         skydome = new SphereMesh(300, 90, 90, VertexFormat.POSITION, true);
 //        try {
 //            CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/one.csv");
@@ -143,53 +113,52 @@ public class FogScene extends AbstractScene {
 //            e.printStackTrace();
 //        }
 
-        ParticleEmitter smokeEmitter = new ParticleEmitter(200, 200,
-                loadTextures(textureLoader, SMOKE_PARTICLES));
-        smokeEmitter.setVelocity(new Vector3f(0.05F));
-        smokeEmitter.setDispurseAmount(new Vector3f(30F, 2F, 30F));
-        smokeEmitter.setGravity(1F);
+        ParticleEmitter smokeEmitter = new ParticleEmitter(100, 260,
+                loadTextures(textureLoader, FogConstants.SMOKE_PARTICLES));
+        smokeEmitter.setVelocity(new Vector3f(0.25F));
+        smokeEmitter.setDispurseAmount(new Vector3f(4F, 1F, 4F));
+        smokeEmitter.setGravity(7F);
         smokeEmitter.setScale(4F);
         smokeEmitter.respawnParticles();
 
         es.entity("smokeParticles").component(
-                new Transformation().position(0, 0, 0),
+                new Transformation().position(-10, -4, 0),
                 smokeEmitter
-        ).build();
-
-        ParticleEmitter fireEmitter = new ParticleEmitter(50, 50,
-                loadTextures(textureLoader, FLAME_PARTICLES));
-        fireEmitter.setVelocity(new Vector3f(0.25F));
-        fireEmitter.setDispurseAmount(new Vector3f(4F, 6F, 4F));
-        fireEmitter.setGravity(16F);
-        fireEmitter.setScale(4F);
-        fireEmitter.respawnParticles();
-
-        es.entity("fireParticles").component(
-                new Transformation().position(20, 20, 20),
-                fireEmitter
         ).build();
 
         CubeMesh cubeMesh = new CubeMesh(1, 1, 1, VertexFormat.POSITION_UV_NORMAL);
         CubeMesh cubeMeshWithTangents = new CubeMesh(1, 1, 1, 2F,
                 VertexFormat.POSITION_UV_NORMAL_TANGENT);
+
+
         CubeMesh cubeFloor0 = new CubeMesh(50, 0.05F, 50, 16F,
-                VertexFormat.POSITION_UV_NORMAL_TANGENT);
+                VertexFormat.POSITION_UV_NORMAL);
+        CubeMesh cubeRoof0 = new CubeMesh(50, 0.05F, 50, 16F,
+                VertexFormat.POSITION_UV_NORMAL);
+        CubeMesh cubeWall0 = new CubeMesh(50, 10F, 0.05F, 16F,
+                VertexFormat.POSITION_UV_NORMAL);
+        CubeMesh cubeWall1 = new CubeMesh(0.05F, 10F, 50F, 16F,
+                VertexFormat.POSITION_UV_NORMAL);
 
         Material material0 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material0.setProperty("specular", toVector4(new Color(0xFF333333)));
-        material0.setProperty("diffuse", toVector4(new Color(0xFF021eDD)));
+        material0.setProperty(MaterialElement.SPECULAR, toVector4(new Color(0xFF999999)));
+        material0.setProperty(MaterialElement.DIFFUSE, toVector4(new Color(0xFF021eDD)));
 
         Material material1 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material1.setProperty("specular", toVector4(new Color(0xFF333333)));
-        material1.setProperty("diffuse", toVector4(new Color(0xFFffb800)));
+        material1.setProperty(MaterialElement.SPECULAR, toVector4(new Color(0xFF999999)));
+        material1.setProperty(MaterialElement.DIFFUSE, toVector4(new Color(0xFFffb800)));
 
         Material material2 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material2.setProperty("specular", toVector4(new Color(0xFF333333)));
-        material2.setProperty("diffuse", toVector4(new Color(0xFFAE1500)));
+        material2.setProperty(MaterialElement.SPECULAR, toVector4(new Color(0xFF999999)));
+        material2.setProperty(MaterialElement.DIFFUSE, toVector4(new Color(0xFFAE1500)));
 
         Material material4 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
-        material4.setProperty("specular", toVector4(new Color(0xFF333333)));
-        material4.setProperty("diffuse", toVector4(new Color(0xFF007700)));
+        material4.setProperty(MaterialElement.SPECULAR, toVector4(new Color(0xFF999999)));
+        material4.setProperty(MaterialElement.DIFFUSE, toVector4(new Color(0xFF007700)));
+
+        Material material5 = new Material(MaterialFormat.DIFFUSE_VEC4_SPECULAR_VEC4);
+        material5.setProperty(MaterialElement.SPECULAR, toVector4(new Color(0xFF999999)));
+        material5.setProperty(MaterialElement.DIFFUSE, toVector4(new Color(0xFFFFFFFF)));
 
         es.entity("cube0").component(
                 cubeMesh,
@@ -202,12 +171,6 @@ public class FogScene extends AbstractScene {
                 material1,
                 new Transformation().position(4, 1, -12F).scale(2)
         ).build();
-
-//        es.entity("cube3").component(
-//                cubeMesh,
-//                material2,
-//                new Transformation().position(10, 3, -4F).scale(3)
-//        ).build();
 
         es.entity("cube3").component(
                 cubeMeshWithTangents,
@@ -222,15 +185,48 @@ public class FogScene extends AbstractScene {
                 "textures/wooden_deck/texture_diffuse.jpg",
                 "textures/wooden_deck/texture_normal.jpg");
 
-        Material floorMaterial = createDiffuseNormalSpecularMaterial(textureLoader,
-                "textures/logl/floor_diffuse.jpg",
-                "textures/logl/floor_normal.jpg",
-                "textures/logl/floor_specular.jpg");
+        Material floorMaterial = createDiffuseMaterial(textureLoader,
+                "textures/dark/texture_01.png");
+
+        Material roofMaterial = createDiffuseMaterial(textureLoader,
+                "textures/dark/texture_08.png");
+
+        Material wallMaterial = createDiffuseMaterial(textureLoader,
+                "textures/dark/texture_13.png");
 
         es.entity("floor0").component(
                 cubeFloor0,
                 floorMaterial,
                 new Transformation().position(0, -2, 0)
+        ).build();
+
+        es.entity("roof0").component(
+                cubeRoof0,
+                roofMaterial,
+                new Transformation().position(0, 18, 0)
+        ).build();
+
+        es.entity("wall0").component(
+                cubeWall0,
+                material5,
+                new Transformation().position(0, 8, 50)
+        ).build();
+        es.entity("wall1").component(
+                cubeWall0,
+                material5,
+                new Transformation().position(0, 8, -50)
+        ).build();
+
+        es.entity("wall2").component(
+                cubeWall1,
+                material5,
+                new Transformation().position(50, 8, 0)
+        ).build();
+
+        es.entity("wall3").component(
+                cubeWall1,
+                material5,
+                new Transformation().position(-50, 8, 0)
         ).build();
 
         es.entity("cube5").component(
@@ -251,11 +247,17 @@ public class FogScene extends AbstractScene {
                 boxMaterial
         ).build();
 
-        es.entity("cube8").component(
-                cubeMeshWithTangents,
-                new Transformation().position(-12, 2, 5).scale(3),
-                boxMaterial,
-                new RotationAnimation(new AxisAngle4f(0, new Vector3f(1F, 0F, 0F)), 0.3F)
+        Material rotatingCubeMaterial = createDiffuseSpecularEmissiveMaterial(textureLoader,
+                "textures/logl/box_diffuse.png",
+                "textures/logl/box_specular.png",
+                "textures/logl/matrix.png");
+
+
+        es.entity("rotatingCube").component(
+                new CubeMesh(1, 1, 1, 1F, VertexFormat.POSITION_UV_NORMAL_TANGENT),
+                new Transformation().position(0, 2, 0).scale(3),
+                rotatingCubeMaterial,
+                new RotationAnimation(Mathf.randomAxisAngle(), 0.3F)
         ).build();
     }
 
@@ -298,6 +300,11 @@ public class FogScene extends AbstractScene {
         if (key == GLFW_KEY_H) {
             loadEnvironmentFile();
         }
+
+        if (key == GLFW_KEY_J) {
+            es.getEntity("rotatingCube").getComponent(RotationAnimation.class)
+                    .setAxisAngle(Mathf.randomAxisAngle());
+        }
     }
 
     @Override
@@ -332,18 +339,35 @@ public class FogScene extends AbstractScene {
         Map<String, Object> env = new HashMap<>();
         env.put("move_sun_controls", "Ctrl + Left click");
         env.put("wireframe_controls", "G");
-        env.put("reloadenv_controls", "H");
+        env.put("reload_env_controls", "H");
+        env.put("rotate_cube_controls", "J");
 
         this.guiScreenManager.init(engine, window);
-        this.guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromResources(UI_INGAME_HUD, env));
+        this.guiScreenManager.loadAsGuiScreen(guiScreenManager.loadFromResources(FogConstants.UI_INGAME_HUD, env));
     }
 
     private void loadEnvironmentFile() {
         Gson gson = GsonUtils.defaultGson();
-        this.environment = gson.fromJson(IOUtils.readResource(ENVIRONMENT_FILE, null),
+        this.environment = gson.fromJson(IOUtils.readResource(FogConstants.ENVIRONMENT_FILE, null),
                 Environment.class);
         this.environment.getPointLights()[0] = playerLight;
     }
+
+
+    public Material createDiffuseMaterial(TextureLoader textureLoader, String diffusePath) {
+        Material material = null;
+        try {
+            TextureData textureData = textureLoader.loadTexture(diffusePath);
+            Texture diffuse = new Texture(textureData, true);
+
+            material = new Material(MaterialFormat.DIFFUSE_SAMPLER2D);
+            material.setTexture(0, diffuse);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return material;
+    }
+
 
     public Material createDiffuseSpecularMaterial(TextureLoader textureLoader, String diffusePath, String specularPath) {
         Material material = null;
@@ -399,6 +423,31 @@ public class FogScene extends AbstractScene {
             material.setTexture(0, diffuse);
             material.setTexture(1, normal);
             material.setTexture(2, specular);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return material;
+    }
+
+
+    public Material createDiffuseSpecularEmissiveMaterial(TextureLoader textureLoader, String diffusePath,
+                                                          String specularPath, String emissivePath) {
+        Material material = null;
+        try {
+            TextureData textureData = textureLoader.loadTexture(diffusePath);
+            Texture diffuse = new Texture(textureData, true);
+
+            textureData = textureLoader.loadTexture(specularPath);
+            Texture specular = new Texture(textureData, true);
+
+            textureData = textureLoader.loadTexture(emissivePath);
+            Texture emissive = new Texture(textureData, true);
+
+            material = new Material(MaterialFormat.DIFFUSE_SPECULAR_EMISSIVE);
+            material.setTexture(0, diffuse);
+            material.setTexture(1, specular);
+            material.setTexture(2, emissive);
 
         } catch (IOException e) {
             e.printStackTrace();

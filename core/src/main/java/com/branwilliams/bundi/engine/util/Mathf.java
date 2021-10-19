@@ -8,6 +8,7 @@ import java.util.Random;
 import org.joml.*;
 
 import java.lang.Math;
+import java.util.function.Supplier;
 
 /**
  * Math utility class.
@@ -492,6 +493,18 @@ public enum Mathf {
         float z = (float) random.nextGaussian();
 
         return vector.set(x, y, z).normalize();
+    }
+
+    public static AxisAngle4f randomAxisAngle() {
+        return randomAxisAngle(() -> (float) Math.random());
+    }
+
+    public static AxisAngle4f randomAxisAngle(Supplier<Float> randomFunc) {
+        float angle = (float) (randomFunc.get() * 2F * Math.PI);
+        float z = (randomFunc.get() * 2F) - 1F;
+        float zSquared = z * z;
+        float factor = Mathf.sqrt(1 - zSquared);
+        return new AxisAngle4f(angle, factor * Mathf.cos(angle), factor * Mathf.sin(angle), z);
     }
 
     /**

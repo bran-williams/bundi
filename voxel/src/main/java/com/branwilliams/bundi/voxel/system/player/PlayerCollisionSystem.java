@@ -67,41 +67,32 @@ public class PlayerCollisionSystem extends AbstractSystem {
 
 
             // move in the y direction
-
-            for (AABB aabb : voxels)
+            for (AABB aabb : voxels) {
                 movement.y = aabb.clipYCollide(playerAABB, movement.y);
+            }
             playerAABB.move(0.0F, movement.y, 0.0F);
-
             if (originalMovement.y != movement.y) {
-//                movement.x = 0F;
                 movement.y = 0F;
-//                movement.z = 0F;
             }
 
             boolean onGround = (playerState.isOnGround() || (movement.y != originalMovement.y) && (originalMovement.y < 0.0F));
             playerState.setOnGround(onGround);
 
             // move in the x direction
-
-            for (AABB aabb : voxels)
+            for (AABB aabb : voxels) {
                 movement.x = aabb.clipXCollide(playerAABB, movement.x);
+            }
             playerAABB.move(movement.x, 0.0F, 0.0F);
-
             if (originalMovement.x != movement.x) {
                 movement.x = 0F;
-//                movement.y = 0F;
-//                movement.z = 0F;
             }
 
             // move in the z direction
-
-            for (AABB aabb : voxels)
+            for (AABB aabb : voxels) {
                 movement.z = aabb.clipZCollide(playerAABB, movement.z);
+            }
             playerAABB.move(0.0F, 0.0F, movement.z);
-
             if (originalMovement.z != movement.z) {
-//                movement.x = 0F;
-//                movement.y = 0F;
                 movement.z = 0F;
             }
         }

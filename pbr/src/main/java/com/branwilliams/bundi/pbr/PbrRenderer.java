@@ -21,7 +21,7 @@ public class PbrRenderer extends AbstractRenderer {
     @Override
     public void init(Engine engine, Window window) throws Exception {
         super.init(engine, window);
-        glClearColor(1F, 1F, 1F, 1F);
+        glClearColor(0F, 0F, 0F, 1.0F);
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
@@ -32,7 +32,7 @@ public class PbrRenderer extends AbstractRenderer {
 
     @Override
     public void render(Engine engine, Window window, double deltaTime) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         super.render(engine, window, deltaTime);
     }
 }

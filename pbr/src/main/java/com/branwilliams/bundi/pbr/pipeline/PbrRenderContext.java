@@ -61,7 +61,7 @@ public class PbrRenderContext extends RenderContext {
     /**
      * Binds the GBuffer textures for use in the light render pass.
      * */
-    public void bindGbuffer() {
+    public void bindGbufferTextures() {
         glActiveTexture(GL_TEXTURE0);
         this.gbuffer.getAlbedo().bind();
         glActiveTexture(GL_TEXTURE1);
@@ -73,13 +73,23 @@ public class PbrRenderContext extends RenderContext {
     /**
      * Unbinds the GBuffer textures.
      * */
-    public void unbindGbuffer() {
+    public void unbindGbufferTextures() {
         glActiveTexture(GL_TEXTURE0);
         Texture.unbind(this.gbuffer.getAlbedo());
         glActiveTexture(GL_TEXTURE1);
         Texture.unbind(this.gbuffer.getNormal());
         glActiveTexture(GL_TEXTURE2);
         Texture.unbind(this.gbuffer.getDepth());
+    }
+
+    public void bindColorTexture() {
+        glActiveTexture(GL_TEXTURE0);
+        this.sceneBuffer.getColor().bind();
+    }
+
+    public void unbindColorTexture() {
+        glActiveTexture(GL_TEXTURE0);
+        Texture.unbind(this.sceneBuffer.getColor());
     }
 
     public Projection getOrthoProjection() {

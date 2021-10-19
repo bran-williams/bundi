@@ -115,6 +115,7 @@ public class CubeMesh extends Mesh {
 
     public CubeMesh(float xsize, float ysize, float zsize, float uvsize, VertexFormat<VertexElements> vertexFormat) {
         super();
+        this.setVertexFormat(vertexFormat);
         float[] vertices = {
                 // bottom
                 -xsize, -ysize, -zsize,
@@ -246,7 +247,6 @@ public class CubeMesh extends Mesh {
             }
         }
         unbind();
-        this.setVertexFormat(vertexFormat);
     }
     
     public CubeMesh(float size, VertexFormat vertexFormat) {

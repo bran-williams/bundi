@@ -21,6 +21,12 @@ public class MaterialFormat {
             MaterialElementType.SAMPLER_2D, "normal").addElement(MaterialElement.SPECULAR,
             MaterialElementType.SAMPLER_2D, "specular");
 
+    public static MaterialFormat DIFFUSE_NORMAL_SPECULAR_EMISSIVE = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
+            MaterialElementType.SAMPLER_2D, "diffuse").addElement(MaterialElement.NORMAL,
+            MaterialElementType.SAMPLER_2D, "normal").addElement(MaterialElement.SPECULAR,
+            MaterialElementType.SAMPLER_2D, "specular").addElement(MaterialElement.EMISSIVE,
+            MaterialElementType.SAMPLER_2D, "emissive");
+
     public static MaterialFormat DIFFUSE_SPECULAR = new MaterialFormat().addElement(MaterialElement.DIFFUSE,
             MaterialElementType.SAMPLER_2D, "diffuse").addElement(MaterialElement.SPECULAR,
             MaterialElementType.SAMPLER_2D, "specular");
@@ -85,6 +91,10 @@ public class MaterialFormat {
 
     public boolean hasElement(MaterialElement materialElement) {
         return elements.containsKey(materialElement);
+    }
+
+    public boolean hasElementAsSampler(MaterialElement materialElement) {
+        return elements.containsKey(materialElement) && elements.get(materialElement).elementType.isSampler;
     }
 
     public boolean hasSampler() {

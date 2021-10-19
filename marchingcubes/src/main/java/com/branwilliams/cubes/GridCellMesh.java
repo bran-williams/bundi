@@ -32,4 +32,11 @@ public class GridCellMesh implements Destructible {
     public void destroy() {
         this.mesh.destroy();
     }
+
+    @Override
+    public String toString() {
+        return "GridCellMesh{" +
+                "mesh=" + mesh +
+                '}';
+    }
 }

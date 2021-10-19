@@ -9,6 +9,7 @@ import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.NameMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shape.AABB2f;
+import com.branwilliams.frogger.components.FrogmanMovementComponent;
 
 import static com.branwilliams.frogger.FroggerConstants.FROGMAN_NAME;
 import static org.lwjgl.glfw.GLFW.*;
@@ -35,6 +36,7 @@ public class FrogmanMovementSystem extends AbstractSystem {
         float keyMoveSpeed = 200F;
         for (IEntity frogman : entitySystemManager.getEntities(this)) {
             Transformable frogmanTransform = frogman.getComponent(Transformable.class);
+            FrogmanMovementComponent movementComponent = frogman.getComponent(FrogmanMovementComponent.class);
 
             if (engine.getWindow().isKeyPressed(GLFW_KEY_RIGHT)) {
                 frogmanTransform.move(keyMoveSpeed * (float) deltaTime, 0, 0);
@@ -55,9 +57,9 @@ public class FrogmanMovementSystem extends AbstractSystem {
                 doGravity = false;
             }
 
-//            if (doGravity) {
-//                frogmanTransform.move(0, 60 * (float) deltaTime, 0);
-//            }
+            if (doGravity) {
+                frogmanTransform.move(0, 90 * (float) deltaTime, 0);
+            }
 
             AABB2f frogmanAABB = frogman.getComponent(AABB2f.class);
 

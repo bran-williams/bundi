@@ -31,9 +31,6 @@ public class RotationAnimationSystem extends AbstractSystem {
             AxisAngle4f axisAngle = rotationAnimation.getAxisAngle();
             axisAngle.rotate((float) (rotationAnimation.getRotationSpeed() * deltaTime));
             transformable.getRotation().set(axisAngle);
-//            AxisAngle axisAngle = rotationAnimation.getAxisAngle();
-//            axisAngle.setAngle((float) (axisAngle.getAngle() + rotationAnimation.getRotationSpeed() * deltaTime));
-//            axisAngle.toQuaternion(transformable.getRotation());
         }
     }
 

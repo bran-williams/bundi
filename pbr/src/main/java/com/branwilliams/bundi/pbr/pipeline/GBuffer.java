@@ -12,27 +12,33 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class GBuffer extends FrameBufferObject {
 
+    public static final int ALBEDO_ATTACHMENT = 0;
+
+    public static final int NORMAL_ATTACHMENT = 1;
+
     private final Texture albedo, normal, depth;
 
     public GBuffer(int width, int height) {
         super(width, height);
         this.bind();
 
-        this.albedo = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR16F);
+        this.albedo = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR);
         this.albedo.bind();
         this.albedo.nearestFilter();
-        this.bindTexture(albedo, GL_FRAMEBUFFER, 0);
+        this.bindTexture(albedo, GL_FRAMEBUFFER, ALBEDO_ATTACHMENT);
 
         this.normal = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR16F);
         this.normal.bind();
         this.normal.nearestFilter();
-        this.bindTexture(normal, GL_FRAMEBUFFER, 1);
+        this.bindTexture(normal, GL_FRAMEBUFFER, NORMAL_ATTACHMENT);
 
-        this.depth = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.DEPTH32F);
+        this.depth = new Texture((ByteBuffer) null, width, height, false,
+                Texture.TextureType.DEPTH_COMPONENT);
         this.depth.bind();
         this.depth.nearestFilter();
 //        this.bindDepthStencilTexture(depth, GL_FRAMEBUFFER);
         this.bindDepthTexture(depth, GL_FRAMEBUFFER);
+
         Texture.unbind(this.depth);
         Texture.unbind();
 
@@ -42,7 +48,7 @@ public class GBuffer extends FrameBufferObject {
     }
 
     public void drawAlbedoNormal() {
-        drawBuffers(0, 1);
+        drawBuffers(ALBEDO_ATTACHMENT, NORMAL_ATTACHMENT);
     }
 
     public Texture getAlbedo() {

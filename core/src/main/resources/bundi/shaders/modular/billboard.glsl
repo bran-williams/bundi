@@ -1,6 +1,6 @@
 mat4 modelViewMatrix = viewMatrix * modelMatrix;
 
-// the scale is not retained.
+// the scale is not retained with this method.
 //modelViewMatrix[0][0] = 1;
 //modelViewMatrix[0][1] = 0;
 //modelViewMatrix[0][2] = 0;

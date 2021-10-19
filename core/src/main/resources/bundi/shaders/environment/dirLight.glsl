@@ -20,7 +20,7 @@ for (int i = 0; i < dirLightCount; i++) {
 
     // specular calculation
     float spec = max(dot(normal, halfwayDir), 0.0);
-    if (spec > 0) {
+    if (diff > 0 && spec > 0) {
         spec = pow(spec, materialShininess);
         vec3 specular = dirLight.specular * spec * materialSpecular.rgb;
         lightColor.r += specular.r;

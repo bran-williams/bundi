@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.branwilliams.bundi.engine.core.EngineConstants.KEYCODES_RESOURCE;
+
 /**
  * Created by Brandon Williams on 7/22/2018.
  */
@@ -89,7 +91,7 @@ public final class EngineLauncher {
      * Runs the engine with the launch configuration, engine context, and scene provided.
      * */
     private static void runEngine(LaunchConfiguration configuration, EngineContext engineContext, Scene scene) {
-        Keycodes keycodes = loadKeycodes(configuration);
+        Keycodes keycodes = loadKeycodes();
 
         Window window = new Window(configuration.windowTitle, configuration.windowWidth, configuration.windowHeight,
                 configuration.vsync, configuration.fullscreen, keycodes);
@@ -101,8 +103,8 @@ public final class EngineLauncher {
     /**
      * Loads the keycode mappings defined by the launch configuration.
      * */
-    private static Keycodes loadKeycodes(LaunchConfiguration configuration) {
-        String keycodesFileContents = IOUtils.readFile(configuration.keycodes, null);
+    private static Keycodes loadKeycodes() {
+        String keycodesFileContents = IOUtils.readResource(KEYCODES_RESOURCE, null);
 
         Gson gson = new GsonBuilder().create();
         Type keyCodesType = new TypeToken<Map<String, Integer>>() {}.getType();
@@ -110,7 +112,7 @@ public final class EngineLauncher {
             Map<String, Integer> keyCodes = gson.fromJson(keycodesFileContents, keyCodesType);
             return new Keycodes(keyCodes);
         } catch (JsonSyntaxException e) {
-            throw new RuntimeException(String.format("Unable to parse keycodes file '%s'.", configuration.keycodes));
+            throw new RuntimeException(String.format("Unable to parse keycodes file '%s'.", KEYCODES_RESOURCE));
         }
     }
 

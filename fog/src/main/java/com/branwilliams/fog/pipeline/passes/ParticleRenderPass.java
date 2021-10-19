@@ -18,16 +18,15 @@ import com.branwilliams.bundi.engine.shader.modular.AbstractShaderModule;
 import com.branwilliams.bundi.engine.shader.modular.ModularShaderConstants;
 import com.branwilliams.bundi.engine.shader.modular.ModularShaderProgram;
 import com.branwilliams.bundi.engine.shader.modular.module.BillboardShaderModule;
-import com.branwilliams.bundi.engine.shader.modular.module.EnvironmentShaderModule;
 import com.branwilliams.bundi.engine.shader.modular.patches.FragUniformPatch;
 import com.branwilliams.bundi.engine.shader.patching.CommentShaderPatch;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.fog.ParticleEmitter;
+import org.joml.Vector3f;
 
 import java.util.Arrays;
 import java.util.function.Supplier;
 
-import static com.branwilliams.bundi.engine.shader.modular.ModularShaderConstants.DEFAULT_MATERIAL_NAME;
 import static com.branwilliams.bundi.engine.util.Mathf.toCylindricalBillboardedModelMatrix;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -88,8 +87,7 @@ public class ParticleRenderPass extends RenderPass<RenderContext> {
 //                    PARTICLE_VERTEX_FORMAT, MaterialFormat.DIFFUSE_SAMPLER2D, DEFAULT_MATERIAL_NAME);
             shaderProgram = new ModularShaderProgram(PARTICLE_VERTEX_FORMAT,
                     MaterialFormat.DIFFUSE_SAMPLER2D,
-                    Arrays.asList(new BillboardShaderModule(), /*environmentShaderModule,*/
-                            new ParticleColorShaderModule()));
+                    Arrays.asList(new BillboardShaderModule(), new ParticleColorShaderModule()));
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }
@@ -115,26 +113,35 @@ public class ParticleRenderPass extends RenderPass<RenderContext> {
 //        glDisable(GL_DEPTH_TEST);
         glDepthMask(false);
 //        glBlendFunc(GL_ONE, GL_ONE);
-
+        glEnable(GL_DEPTH_TEST);
         shaderProgram.bind();
         shaderProgram.setProjectionMatrix(renderContext.getProjection());
         shaderProgram.setViewMatrix(camera.get());
 
         glActiveTexture(GL_TEXTURE0);
         for (IEntity entity : scene.getEs().getEntities(particleEmitterMatcher)) {
+            Transformable entityTransform = entity.getComponent(Transformable.class);
             ParticleEmitter particleEmitter = entity.getComponent(ParticleEmitter.class);
             tempTransform.scale(particleEmitter.getScale());
+            tempTransform.setRotation(entityTransform.getRotation());
             particleEmitter.getParticles().stream().sorted(this::compareParticleDistance).forEach(particle -> {
                 tempTransform.position(particle.getX(), particle.getY(), particle.getZ());
                 shaderProgram.setModelMatrix(tempTransform);
 
-                float alpha = Mathf.clamp(particle.getLife() / particle.getMaxLife(), 0F, 1F);
-                shaderProgram.setUniform(ParticleColorShaderModule.ALPHA_UNIFORM, alpha);
+                float minDistanceForFade = 10F;
+                float alpha = Mathf.sin((particle.getLife() / particle.getMaxLife()) * Mathf.PI);
+                float distanceFadeFactor = Math.min(particle.getDistance(camera.get().getPosition()),
+                        minDistanceForFade) / minDistanceForFade;
+                alpha = Math.min(alpha, someEasingFunc(distanceFadeFactor));
+
+                shaderProgram.setUniform(ParticleColorShaderModule.ALPHA_UNIFORM,
+                        Mathf.clamp(alpha, 0F, 1F));
 
                 particle.texture.bind();
                 MeshRenderer.render(particleMesh, null);
             });
         }
+
 
 
 //        glEnable(GL_DEPTH_TEST);
@@ -143,8 +150,13 @@ public class ParticleRenderPass extends RenderPass<RenderContext> {
         ShaderProgram.unbind();
     }
 
+    private static float someEasingFunc(float t) {
+        return t < 0.5F ? 16F * t * t * t * t * t : 1 - (float) Math.pow(-2 * t + 2, 5) / 2;
+    }
+
     private int compareParticleDistance(ParticleEmitter.Particle p1, ParticleEmitter.Particle p2) {
-        return -Float.compare(p1.getDistance(camera.get().getPosition()), p2.getDistance(camera.get().getPosition()));
+        Vector3f cameraPos = camera.get().getPosition();
+        return -Float.compare(p1.getDistance(cameraPos), p2.getDistance(cameraPos));
     }
 
     public static class ParticleColorShaderModule extends AbstractShaderModule {
@@ -152,7 +164,7 @@ public class ParticleRenderPass extends RenderPass<RenderContext> {
         public static final String ALPHA_UNIFORM = "alpha";
 
         public ParticleColorShaderModule() {
-            this.addShaderPatches(new CommentShaderPatch(ModularShaderConstants.FRAG_COLOR_COMMENT,
+            this.addShaderPatches(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
                     (s) -> "pixelColor = materialDiffuse;\n" +
                             "pixelColor.a = min(pixelColor.a, " + ALPHA_UNIFORM + ");\n",
                             CommentShaderPatch.ModificationType.PREPEND),

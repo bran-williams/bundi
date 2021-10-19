@@ -4,7 +4,7 @@ import com.branwilliams.bundi.engine.core.context.EngineContext;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.frogger.Tilemap;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 

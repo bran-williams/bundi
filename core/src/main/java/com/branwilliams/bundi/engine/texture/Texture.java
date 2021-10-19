@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.texture;
 
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.util.Mathf;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryUtil;
@@ -59,7 +60,15 @@ public class Texture implements Destructible {
         /**
          *
          * */
-        DEPTH32F_STENCIL8(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, GL_FLOAT)
+        DEPTH_COMPONENT(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GL_FLOAT),
+        /**
+         *
+         * */
+        DEPTH32F_STENCIL8(GL_DEPTH32F_STENCIL8, GL_DEPTH_COMPONENT, GL_FLOAT),
+        /**
+         *
+         * */
+        DEPTH24_STENCIL8(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_FLOAT)
         ;
 
         /** This is the internal format OpenGL uses to store the texture data. */
@@ -110,13 +119,14 @@ public class Texture implements Destructible {
      * Creates a texture object from the provided {@link ByteBuffer} with the provided width and height.
      * Mipmaps will be generated if specified and the {@link TextureType} specifies the internal format, expected buffer
      * format, and data type.
-     * @param buffer The buffer containing the data of the image.
+     * @param buffer The buffer containing the data of the image. This value can be null for creating a texture object
+     *               with an empty buffer.
      * @param width The width of this texture.
      * @param height The height of this texture.
      * @param mipmaps Creates mip maps for this image if true.
      * @param textureType Determines the internal format OpenGL uses to store this image data.
      * */
-    public Texture(ByteBuffer buffer, int width, int height, boolean mipmaps, TextureType textureType) {
+    public Texture(@Nullable ByteBuffer buffer, int width, int height, boolean mipmaps, TextureType textureType) {
         this(GL_TEXTURE_2D);
 
         this.width = width;
@@ -124,7 +134,8 @@ public class Texture implements Destructible {
 
         bind();
 
-        glTexImage2D(target, 0, textureType.glInternalFormat, width, height, 0, textureType.dataFormat, textureType.dataType, buffer);
+        glTexImage2D(target, 0, textureType.glInternalFormat, width, height, 0, textureType.dataFormat,
+                textureType.dataType, buffer);
 
         if (mipmaps) {
             generateMipmaps();

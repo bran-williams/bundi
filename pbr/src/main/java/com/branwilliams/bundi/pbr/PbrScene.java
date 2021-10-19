@@ -89,6 +89,7 @@ public class PbrScene extends AbstractScene {
 
         try {
 
+
             sphereEntity = es.entity("sphere").component(
                     new Transformation().position(objectPosition).rotateFromEuler(90F, 0F, 0F)
             ).build();
@@ -166,8 +167,8 @@ public class PbrScene extends AbstractScene {
             PbrMaterial material = readMaterial(assetDirectory, this.materials[materialIndex]);
             SphereMesh sphereMesh = new SphereMesh(1F, 50, 50,
                     VertexFormat.POSITION_UV_NORMAL_TANGENT_BITANGENT, false);
-            Model sphereModel = new Model(sphereMesh, material.createMaterial(textureLoader));
-            sphereEntity.addComponent(sphereModel);
+            model = new Model(sphereMesh, material.createMaterial(textureLoader));
+            sphereEntity.addComponent(model);
         } catch (IOException e) {
             e.printStackTrace();
         }

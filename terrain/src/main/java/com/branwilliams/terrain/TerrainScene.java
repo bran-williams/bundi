@@ -21,6 +21,7 @@ import com.branwilliams.terrain.builder.TerrainTileBuilder;
 import com.branwilliams.terrain.component.TerrainMaterial;
 import com.branwilliams.terrain.component.TerrainTexture;
 import com.branwilliams.terrain.generator.*;
+import com.branwilliams.terrain.render.LineGraphRenderPass;
 import com.branwilliams.terrain.render.TerrainRenderPass2;
 import com.branwilliams.terrain.render.TerrainRenderer;
 import com.google.gson.Gson;
@@ -56,7 +57,7 @@ public class TerrainScene extends AbstractScene {
 
     @Override
     public void init(Engine engine, Window window) throws Exception {
-        es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 6F));
+        es.addSystem(new DebugCameraMoveSystem(this, this::getCamera, 0.16F, 16F));
         es.initSystems(engine, window);
 
         worldProjection = new Projection(window, 70, 0.001F, 1000F);
@@ -64,7 +65,6 @@ public class TerrainScene extends AbstractScene {
         RenderContext renderContext = new RenderContext(worldProjection);
         RenderPipeline<RenderContext> renderPipeline = new RenderPipeline<>(renderContext);
         renderPipeline.addLast(new TerrainRenderPass2(this, this::getCamera));
-//        renderPipeline.addLast(new LineGraphRenderPass(this));
         setRenderer(new TerrainRenderer(this, renderPipeline));
     }
 

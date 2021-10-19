@@ -25,6 +25,9 @@ import com.branwilliams.frogger.parallax.ParallaxBackground;
 import com.branwilliams.frogger.parallax.ParallaxLoader;
 import com.branwilliams.frogger.pipeline.pass.*;
 import com.branwilliams.frogger.system.*;
+import com.branwilliams.frogger.tilemap.SpriteAtlas;
+import com.branwilliams.frogger.tilemap.Tile;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.joml.Vector2f;
@@ -57,9 +60,9 @@ public class TilemapCollisionScene extends AbstractScene {
 
     private static final float CAMERA_MOVE_SPEED = 2F;
 
-    private static final String PARALLAX_BACKGROUND_FILE = "assets/swamp_background.json";
+    private static final String PARALLAX_BACKGROUND_FILE = "assets/parallax/swamp_background.json";
 
-    private static final String TILEMAP_ATLAS_FILE = "assets/swamp_tiles.json";
+    private static final String TILEMAP_ATLAS_FILE = "assets/tilemap/swamp_tiles.json";
 
     private static final String TILEMAP_SAVE_FILE = "tilemap/saves/swamptiles.json";
 
@@ -117,7 +120,8 @@ public class TilemapCollisionScene extends AbstractScene {
         renderPipeline.addLast(new TilemapRenderPass(camera::getFocalPoint, this::getTilemap));
         renderPipeline.addLast(new TilemapPlacementRenderPass(this::getCurrentTileId, this::getCamera,
                 this::getTilemap));
-        renderPipeline.addLast(new EntityAABBRenderPass(this));
+//        renderPipeline.addLast(new EntityAABBRenderPass(this));
+//        renderPipeline.addLast(new SpriteCollisionAABBRenderPass(this, camera::getFocalPoint, this::getTilemap));
         renderPipeline.addLast(new SpriteRenderPass(this));
         renderPipeline.addLast(new HelpUIRenderPass(new String[] {
                 "Use the arrow keys to move around",
@@ -140,10 +144,22 @@ public class TilemapCollisionScene extends AbstractScene {
     public void play(Engine engine) {
         try {
 
-            SpriteSheet froggerSpriteSheet = textureLoader.loadSpriteSheet("textures/frogger.png",
-                    16, 16);
-            frogmanTheSprite = new AnimatedSprite(froggerSpriteSheet, FroggerConstants.FROGMAN_FRAMES,
+            SpriteSheet fireSpriteSheet = textureLoader.loadSpriteSheet("textures/spookyprops/spr_FirePlace2_strip.png",
+                    64, 64);
+            fireSpriteSheet.setCenteredSprite(true);
+            Sprite fireplaceSprite = new AnimatedSprite(fireSpriteSheet, FroggerConstants.FIREPLACE2_FRAME,
+                    new RateLimiter(TimeUnit.MILLISECONDS, 90L), 2);
+            es.entity("fireplace").component(
+                    new Transformation().position(32 * 9, 32 * 16, 0),
+                    fireplaceSprite
+            ).build();
+
+            SpriteSheet playerSpriteSheet = textureLoader.loadSpriteSheet("textures/adventurer-v1.6-Sheet.png",
+                    50, 37);
+            playerSpriteSheet.setCenteredSprite(true);
+            frogmanTheSprite = new AnimatedSprite(playerSpriteSheet, new int[] { 0, 1, 2, 3 },
                     new RateLimiter(TimeUnit.MILLISECONDS, 180L), spriteScale);
+            System.out.println(playerSpriteSheet);
 
             AABB2f frogmanAABB = (AABB2f) frogmanTheSprite.getAABB().copy();
             frogman = es.entity(FROGMAN_NAME).component(
@@ -151,6 +167,7 @@ public class TilemapCollisionScene extends AbstractScene {
                     frogmanTheSprite,
                     frogmanAABB
             ).build();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -179,18 +196,6 @@ public class TilemapCollisionScene extends AbstractScene {
                 tilemap.setEmpty(clickPosition.x, clickPosition.y);
             }
         }
-    }
-
-
-    private Tilemap.TileConsumer doTileCollision(AABB2f frogmanAABB) {
-        return (x, y, tile) -> {
-            float pX = x * tilemap.getTileWidth();
-            float pY = y * tilemap.getTileHeight();
-            AABB2f tileAABB = new AABB2f(pX, pY, pX + tilemap.getTileWidth(), pY + tilemap.getTileHeight());
-            if (SeparatingAxis.collide(tileAABB, frogmanAABB, (push) -> frogmanTransform.move(push.x, push.y, 0))) {
-                frogmanAABB.center(frogmanTransform.x(), frogmanTransform.y());
-            }
-        };
     }
 
     @Override

@@ -5,17 +5,12 @@ import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.core.window.Window;
-import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
-import com.branwilliams.frogger.Tilemap;
-import com.branwilliams.frogger.builder.TilemapMeshBuilder;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import com.branwilliams.frogger.pipeline.shader.TilemapShaderProgram;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Supplier;
 
 import static com.branwilliams.bundi.engine.util.MeshUtils.toArray3f;

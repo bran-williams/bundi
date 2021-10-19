@@ -9,7 +9,7 @@ import com.branwilliams.bundi.engine.ecs.matchers.NameMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shape.AABB2f;
 import com.branwilliams.bundi.engine.shape.SeparatingAxis;
-import com.branwilliams.frogger.Tilemap;
+import com.branwilliams.frogger.tilemap.Tilemap;
 
 import java.util.function.Supplier;
 
@@ -49,12 +49,12 @@ public class FrogmanCollisionSystem extends AbstractSystem {
 //            System.out.println("tile at x: " + x + ", y: " + y);
             float pX = x * tilemap.getTileWidth();
             float pY = y * tilemap.getTileHeight();
-            AABB2f tileAABB = new AABB2f(pX, pY, pX + tilemap.getTileWidth(), pY + tilemap.getTileHeight());
+            AABB2f tileAABB = new AABB2f(-tilemap.getTileWidth() * 0.5F, -tilemap.getTileHeight() * 0.5F,
+                    tilemap.getTileWidth() * 0.5F, tilemap.getTileHeight() * 0.5F);
+            tileAABB.center(pX + tilemap.getTileWidth() * 0.5F, pY + tilemap.getTileHeight() * 0.5F);
+
             if (SeparatingAxis.collide(tileAABB, frogmanAABB, (push) -> frogmanTransform.move(push.x, push.y, 0))) {
                 frogmanAABB.center(frogmanTransform.x(), frogmanTransform.y());
-            } else {
-                System.out.println("No collision found by SAT! But it is found in the grid! tileAABB=" + tileAABB
-                        + " frogmanAABB=" + frogmanAABB);
             }
         };
     }

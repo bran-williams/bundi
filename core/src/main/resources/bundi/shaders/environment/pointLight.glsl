@@ -27,7 +27,7 @@ for (int i = 0; i < pointLightCount; i++) {
 
     // specular calculation
     float spec = max(dot(normal, halfwayDir), 0.0);
-    if (spec > 0) {
+    if (diff > 0 && spec > 0) {
         spec = pow(spec, materialShininess);
         vec3 specular = pointLight.specular * spec * materialSpecular.rgb;
         specular *= attenuation;

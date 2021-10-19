@@ -3,10 +3,7 @@ package com.branwilliams.bundi.engine.material;
 import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.texture.Texture;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Brandon Williams on 11/21/2017.
@@ -48,6 +45,10 @@ public class Material implements Destructible {
 
     private boolean hasMaterialFormat() {
         return materialFormat != null;
+    }
+
+    public <T> void setProperty(MaterialElement element, T value) {
+        setProperty(element.name().toLowerCase(Locale.ROOT), value);
     }
 
     public <T> void setProperty(String name, T value) {

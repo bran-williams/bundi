@@ -1,14 +1,14 @@
 package com.branwilliams.frogger.gson;
 
 import com.branwilliams.bundi.engine.util.Grid2i;
-import com.branwilliams.frogger.Tile;
-import com.branwilliams.frogger.Tilemap;
+import com.branwilliams.frogger.tilemap.Tile;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
 import java.util.Scanner;
 
-import static com.branwilliams.frogger.Tile.EMPTY_TILE_ID;
+import static com.branwilliams.frogger.tilemap.Tile.EMPTY_TILE_ID;
 
 public class TilemapDeserializer implements JsonDeserializer<Tilemap> {
 

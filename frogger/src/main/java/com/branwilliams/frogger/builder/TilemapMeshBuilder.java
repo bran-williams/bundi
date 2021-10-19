@@ -5,7 +5,7 @@ import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shape.AABB2f;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.frogger.Camera2D;
-import com.branwilliams.frogger.Tilemap;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -33,10 +33,10 @@ public class TilemapMeshBuilder {
         List<Vector3f> instanceData = new ArrayList<>();
         AABB2f screenAABB = camera.getScreenAABB();
 
-        int normalizedX = Math.max(0, Mathf.floor(tilemap.toTileX(screenAABB.getMinX())) - SCREEN_TILE_PADDING);
-        int normalizedY = Math.max(0, Mathf.floor(tilemap.toTileY(screenAABB.getMinY())) - SCREEN_TILE_PADDING);
-        int normalizedX1 = Mathf.ceil(tilemap.toTileX(screenAABB.getMaxX())) + SCREEN_TILE_PADDING;
-        int normalizedY1 = Mathf.ceil(tilemap.toTileY(screenAABB.getMaxY())) + SCREEN_TILE_PADDING;
+        int normalizedX = Math.max(0, Mathf.floor(tilemap.toTileXf(screenAABB.getMinX())) - SCREEN_TILE_PADDING);
+        int normalizedY = Math.max(0, Mathf.floor(tilemap.toTileYf(screenAABB.getMinY())) - SCREEN_TILE_PADDING);
+        int normalizedX1 = Mathf.ceil(tilemap.toTileXf(screenAABB.getMaxX())) + SCREEN_TILE_PADDING;
+        int normalizedY1 = Mathf.ceil(tilemap.toTileYf(screenAABB.getMaxY())) + SCREEN_TILE_PADDING;
 
         tilemap.forTilesInRange(normalizedX, normalizedY, normalizedX1, normalizedY1, (x, y, tile) -> {
                     instanceData.add(new Vector3f(x * tilemap.getTileWidth(), y * tilemap.getTileHeight(),

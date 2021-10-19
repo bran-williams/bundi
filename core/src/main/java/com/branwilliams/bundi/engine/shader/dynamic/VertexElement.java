@@ -1,5 +1,14 @@
 package com.branwilliams.bundi.engine.shader.dynamic;
 
+/**
+ * Denotes the element of a vertex for a model.
+ * Examples are:
+ * <pre>
+ *     3d position = (size=3, type="vec3", variableName="position", passName="passPosition")
+ *     texture UV = (size=2, type="vec2", variableName="uv", passName="passUV")
+ * <pre/>
+ *
+ * */
 public interface VertexElement {
 
     /**

@@ -34,11 +34,6 @@ public class LaunchConfiguration {
     public boolean fullscreen;
 
     /**
-     * This is the file path to the keycode mappings.
-     * */
-    public String keycodes;
-
-    /**
      * This is the directory for asset storage.
      * */
     public String assetDirectory;
@@ -68,6 +63,5 @@ public class LaunchConfiguration {
      * */
     public LaunchConfiguration() {
         this.screenshotDirectory = "screenshots";
-        this.keycodes = "keycodes.json";
     }
 }

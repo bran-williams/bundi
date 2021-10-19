@@ -28,9 +28,9 @@ import com.branwilliams.frogger.pipeline.pass.SpriteAABBRenderPass;
 import com.branwilliams.frogger.pipeline.pass.SpriteRenderPass;
 import com.branwilliams.frogger.system.FocalPointFollowSystem;
 import com.branwilliams.frogger.system.ParallaxBackgroundMovementSystem;
+import com.branwilliams.frogger.tilemap.SpriteAtlas;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import org.joml.Vector2f;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;

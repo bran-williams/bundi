@@ -6,6 +6,8 @@ import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
+import com.branwilliams.bundi.engine.shader.modular.ModularShaderConstants;
+import com.branwilliams.bundi.engine.shader.patching.CommentShaderPatch;
 import com.branwilliams.bundi.engine.shader.patching.ShaderPatch;
 
 import java.util.List;
@@ -22,10 +24,15 @@ public class ShaderUtils {
     private static final Pattern C_STYLE_COMMENT_PATTERN = Pattern.compile("\\/\\*(.*)\\*\\/");
 
     /**
-     * Creates a layout with the location provided.
+     * Creates a GLSL layout with the location qualifier.
+     *
+     * @param location the value for the location qualifier. must be an integer.
+     * @param code the code following this layout declaration.
+     *
+     * @return A GLSL layout declaration with location=someValue.
      * */
     public static String createLayout(int location, String code) {
-        return "layout (location = " + location + ") " + code + "\n";
+        return String.format("layout (location = %s) %s\n", location, code);
     }
 
     public static String addDefines(String code, String defines) {
@@ -37,6 +44,16 @@ public class ShaderUtils {
         return versionDefine + "\n" + defines + "\n" + code;
     }
 
+    /**
+     * Replaces comments within some code using a function to provide the new value. A regex for said comment will be
+     * applied to each comment found by an initial regex pattern which searches for every c-style comment.
+     *
+     * @param code The code to modify.
+     * @param commentRegex The regex pattern used to identify a comment in need of replacement.
+     * @param commentModifier The function which replaces a comment.
+     *
+     * @return The modified code.
+     * */
     public static String replaceComment(String code, String commentRegex, Function<String, String> commentModifier) {
         Matcher commentMatcher = C_STYLE_COMMENT_PATTERN.matcher(code);
         if (!commentMatcher.find()) {
@@ -56,34 +73,110 @@ public class ShaderUtils {
         return code;
     }
 
+    /**
+     * See {@link ShaderUtils#createInputOutputShaderPatches(List, VertexElement, Function, String, String, String)}.
+     * <br/> <br/>
+     * This function uses the following for passValueFunction: (variableName) -> variableName
+     * */
+    public static void createInputOutputShaderPatches(List<ShaderPatch> shaderPatches, VertexElement vertexElement,
+                                                      String shaderOutPattern, String shaderMainPattern,
+                                                      String nextShaderInPattern) {
+        createInputOutputShaderPatches(shaderPatches, vertexElement, (variableName) -> variableName, shaderOutPattern,
+                shaderMainPattern, nextShaderInPattern);
+    }
+
+    /**
+     * Creates three shader patches which generate lines for the in, out, and variable assignment for a given vertex
+     * element. This also adds them to the list of shader patches.
+     *
+     * @param shaderPatches The list of patches to add to.
+     * @param vertexElement The {@link VertexElement} which defines the shader 'in' variable name, 'out' variable name
+     *                      (passName), and variable type.
+     * @param passValueFunction Provides the value assigned to the out variable.
+     * @param shaderOutPattern regex pattern for the shaders 'out' comment.
+     * @param shaderMainPattern regex pattern for the shaders 'main' comment.
+     * @param nextShaderInPattern revex pattern for the next shaders 'in' comment.
+     * */
+    public static void createInputOutputShaderPatches(List<ShaderPatch> shaderPatches, VertexElement vertexElement,
+                                                      Function<String, String> passValueFunction,
+                                                      String shaderOutPattern, String shaderMainPattern,
+                                                      String nextShaderInPattern) {
+        String variableName = vertexElement.getVariableName();
+        String passVariableName = vertexElement.getPassName();
+        String variableType = vertexElement.getType();
+        createInputOutputShaderPatches(shaderPatches, variableName, passVariableName, variableType, passValueFunction,
+                shaderOutPattern, shaderMainPattern, nextShaderInPattern);
+    }
+
+    /**
+     * Creates three shader patches which generate lines for the in, out, and variable assignment for a given vertex
+     * element. This also adds them to the list of shader patches.
+     *
+     * @param shaderPatches The list of patches to add to.
+     * @param variableName The 'in' variable name.
+     * @param passVariableName The 'out' variable name.
+     * @param variableType The GLSL type of this variable.
+     * @param passValueFunction Provides the value assigned to the out variable.
+     * @param shaderOutPattern regex pattern for the shaders 'out' comment.
+     * @param shaderMainPattern regex pattern for the shaders 'main' comment.
+     * @param nextShaderInPattern revex pattern for the next shaders 'in' comment.
+     * */
+    public static void createInputOutputShaderPatches(List<ShaderPatch> shaderPatches, String variableName,
+                                                      String passVariableName, String variableType,
+                                                      Function<String, String> passValueFunction,
+                                                      String shaderOutPattern, String shaderMainPattern,
+                                                      String nextShaderInPattern) {
+        shaderPatches.add(new CommentShaderPatch(shaderOutPattern,
+                (s) -> String.format("out %s %s;\n", variableType, passVariableName),
+                CommentShaderPatch.ModificationType.PREPEND));
+
+        shaderPatches.add(new CommentShaderPatch(shaderMainPattern,
+                (s) -> String.format("%s = %s;\n", passVariableName, passValueFunction.apply(variableName)),
+                CommentShaderPatch.ModificationType.PREPEND));
+
+        shaderPatches.add(new CommentShaderPatch(nextShaderInPattern,
+                (s) -> String.format("in %s %s;\n", variableType, passVariableName),
+                CommentShaderPatch.ModificationType.PREPEND));
+    }
+
+    public static String getMaterialNormalAsVec4(MaterialFormat materialFormat, String materialName) {
+        return getMaterialElementAsVec4(materialFormat, materialName, MaterialElement.NORMAL, "0.0");
+    }
+    public static String getMaterialNormalAsVec3(MaterialFormat materialFormat, String materialName) {
+        return getMaterialElementAsVec3(materialFormat, materialName, MaterialElement.NORMAL, "0.0");
+    }
+
     public static String getMaterialDiffuseAsVec4(MaterialFormat materialFormat, String materialName) {
-        return getMaterialElementAs(materialFormat, MaterialElement.DIFFUSE, MaterialElementType.VEC4,
-                materialName, VertexElements.UV.getPassName(), "vec4(1.0)");
+        return getMaterialElementAsVec4(materialFormat, materialName, MaterialElement.DIFFUSE, "1.0");
     }
-
     public static String getMaterialDiffuseAsVec3(MaterialFormat materialFormat, String materialName) {
-        return getMaterialElementAs(materialFormat, MaterialElement.DIFFUSE, MaterialElementType.VEC3,
-                materialName, VertexElements.UV.getPassName(), "vec3(1.0)");
-    }
-
-    public static String getMaterialSpecularAsVec3(MaterialFormat materialFormat, String materialName) {
-        return getMaterialElementAs(materialFormat, MaterialElement.SPECULAR, MaterialElementType.VEC3,
-                materialName, VertexElements.UV.getPassName(), "vec3(1.0)");
+        return getMaterialElementAsVec3(materialFormat, materialName, MaterialElement.DIFFUSE, "1.0");
     }
 
     public static String getMaterialSpecularAsVec4(MaterialFormat materialFormat, String materialName) {
-        return getMaterialElementAs(materialFormat, MaterialElement.SPECULAR, MaterialElementType.VEC4,
-                materialName, VertexElements.UV.getPassName(), "vec4(1.0)");
+        return getMaterialElementAsVec4(materialFormat, materialName, MaterialElement.SPECULAR, "0.0");
+    }
+    public static String getMaterialSpecularAsVec3(MaterialFormat materialFormat, String materialName) {
+        return getMaterialElementAsVec3(materialFormat, materialName, MaterialElement.SPECULAR, "0.0");
     }
 
     public static String getMaterialEmissiveAsVec4(MaterialFormat materialFormat, String materialName) {
-        return getMaterialElementAs(materialFormat, MaterialElement.EMISSIVE, MaterialElementType.VEC4,
-                materialName, VertexElements.UV.getPassName(), "vec4(0.0)");
+        return getMaterialElementAsVec4(materialFormat, materialName, MaterialElement.EMISSIVE, "0.0");
+    }
+    public static String getMaterialEmissiveAsVec3(MaterialFormat materialFormat, String materialName) {
+        return getMaterialElementAsVec3(materialFormat, materialName, MaterialElement.EMISSIVE, "0.0");
     }
 
-    public static String getMaterialEmissiveAsVec3(MaterialFormat materialFormat, String materialName) {
-        return getMaterialElementAs(materialFormat, MaterialElement.EMISSIVE, MaterialElementType.VEC3,
-                materialName, VertexElements.UV.getPassName(), "vec3(0.0)");
+    public static String getMaterialElementAsVec4(MaterialFormat materialFormat, String materialName,
+                                                  MaterialElement materialElement, String defaultValue) {
+        return getMaterialElementAs(materialFormat, materialElement, MaterialElementType.VEC4,
+                materialName, VertexElements.UV.getPassName(), "vec4(" + defaultValue + ")");
+    }
+
+    public static String getMaterialElementAsVec3(MaterialFormat materialFormat, String materialName,
+                                                  MaterialElement materialElement, String defaultValue) {
+        return getMaterialElementAs(materialFormat, materialElement, MaterialElementType.VEC3,
+                materialName, VertexElements.UV.getPassName(), "vec3(" + defaultValue + ")");
     }
 
     private static String getMaterialElementAs(MaterialFormat materialFormat, MaterialElement materialElement,

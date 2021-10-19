@@ -1,7 +1,6 @@
 package com.branwilliams.bundi.engine.shader.modular.module;
 
 import com.branwilliams.bundi.engine.material.MaterialElement;
-import com.branwilliams.bundi.engine.material.MaterialElementType;
 import com.branwilliams.bundi.engine.material.MaterialFormat;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
@@ -38,7 +37,7 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
                                    MaterialFormat materialFormat, String materialName) {
         this.environment = environment;
         this.materialFormat = materialFormat;
-        if (!vertexFormat.hasElement(VertexElements.NORMAL) && environment.get().hasLights()) {
+        if (!isVertexFormatValidForEnvironment(vertexFormat, environment)) {
             throw new IllegalArgumentException("VertexFormat must have a normal element for the environment!");
         }
         this.addShaderPatches(createShaderPatches(materialFormat, materialName));
@@ -153,7 +152,7 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
     }
 
     protected static String getMaterialShininess(MaterialFormat materialFormat) {
-        return "8.0";
+        return "64.0";
     }
 
     public List<ShaderPatch> createFogShaderPatches(MaterialFormat materialFormat, String materialName) {
@@ -177,7 +176,7 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
         shaderPatches.add(new FragUniformPatch("vec3 viewPos"));
 
         if (!environment.get().hasLights()) {
-            shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_COLOR_COMMENT,
+            shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
                     (s) -> "pixelColor = "
                             + ShaderUtils.getMaterialDiffuseAsVec4(materialFormat, materialName)
                             + ";\n",
@@ -186,7 +185,7 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
             return shaderPatches;
         }
 
-        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_COLOR_COMMENT,
+        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
                 (s) -> "    vec3 viewDir  = normalize(viewPos - passFragPos);\n\n",
                 CommentShaderPatch.ModificationType.PREPEND));
 
@@ -207,7 +206,7 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
 
         shaderPatches.add(new FragUniformPatch(PointLight.getStructName() + " pointLights[" + numLights + "]"));
 
-        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_COLOR_COMMENT,
+        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
                 (s) -> IOUtils.readResource(POINT_LIGHT_GLSL_LOCATION, null),
                 CommentShaderPatch.ModificationType.PREPEND));
 
@@ -229,7 +228,7 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
 
         shaderPatches.add(new FragUniformPatch(DirectionalLight.getStructName() + " dirLights[" + numLights + "]"));
 
-        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_COLOR_COMMENT,
+        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
                 (s) -> IOUtils.readResource(DIR_LIGHT_GLSL_LOCATION, null),
                 CommentShaderPatch.ModificationType.PREPEND));
 
@@ -237,10 +236,13 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
     }
 
     protected ShaderPatch createEmissiveMaterialShaderPatch(MaterialFormat materialFormat, String materialName) {
-        String emissive = ShaderUtils.getMaterialEmissiveAsVec4(materialFormat, materialName);
+        String emissive = ShaderUtils.getMaterialEmissiveAsVec3(materialFormat, materialName);
 
-        return new CommentShaderPatch(ModularShaderConstants.FRAG_COLOR_COMMENT,
-                (s) -> "    pixelColor += " + emissive + ";\n",
+        return new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
+                (s) -> "    vec3 emissiveFactor = " + emissive +";\n" +
+                       "    pixelColor.r += emissiveFactor.r;\n" +
+                       "    pixelColor.g += emissiveFactor.g;\n" +
+                       "    pixelColor.b += emissiveFactor.b;\n",
                 CommentShaderPatch.ModificationType.PREPEND);
     }
 
@@ -253,6 +255,11 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
         shaderPatches.add(new LineShaderPatch("dirLightCount",
                 (s) -> String.valueOf(numDirectionalLights)));
         return shaderPatches;
+    }
+
+    public static boolean isVertexFormatValidForEnvironment(VertexFormat<?> vertexFormat,
+                                                            Supplier<Environment> environment) {
+        return !environment.get().hasLights() || vertexFormat.hasElement(VertexElements.NORMAL);
     }
 
 }

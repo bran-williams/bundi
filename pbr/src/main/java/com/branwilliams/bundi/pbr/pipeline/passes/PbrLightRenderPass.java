@@ -80,7 +80,7 @@ public class PbrLightRenderPass extends RenderPass<PbrRenderContext> {
         this.lightShaderProgram.setProjectionMatrix(renderContext.getProjection());
         this.lightShaderProgram.setViewMatrix(camera.get());
 
-        renderContext.bindGbuffer();
+        renderContext.bindGbufferTextures();
 
         MeshRenderer.bind(renderContext.getRenderPassMesh(), null);
 
@@ -95,7 +95,7 @@ public class PbrLightRenderPass extends RenderPass<PbrRenderContext> {
         }
         MeshRenderer.unbind(renderContext.getRenderPassMesh(), null);
 
-        renderContext.unbindGbuffer();
+        renderContext.unbindGbufferTextures();
     }
 
     private List<PointLight[]> getLights(int maxSize) {

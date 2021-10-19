@@ -52,6 +52,12 @@ public class Grid3i<T> implements Iterable<T> {
         return x + width * (y + height * z);
     }
 
+    public boolean withinBounds(int x, int y, int z) {
+        return x >= 0 && x < width
+                && y >= 0 && y < height
+                && z >= 0 && z < depth;
+    }
+
     public T[] getKernel() {
         return kernel;
     }

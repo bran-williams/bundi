@@ -43,29 +43,22 @@ public class PbrPostProcessingRenderPass extends RenderPass<PbrRenderContext> {
     public void render(PbrRenderContext renderContext, Engine engine, Window window, double deltaTime) {
         // draw to screen!!
         FrameBufferObject.unbind();
+
         glDepthMask(true);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glDisable(GL_DEPTH_TEST);
+
+        glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         this.postProcessingShaderProgram.bind();
 //        this.postProcessingShaderProgram.setProjectionMatrix(renderContext.getProjection());
         this.postProcessingShaderProgram.setExposure(exposure.get());
 
-        glActiveTexture(GL_TEXTURE0);
-
-        bindTextures(renderContext);
+        renderContext.bindColorTexture();
         MeshRenderer.render(renderContext.getRenderPassMesh(), null);
-        unbindTextures(renderContext);
-    }
-
-    private void bindTextures(PbrRenderContext renderContext) {
-        renderContext.getSceneBuffer().getColor().bind();
-    }
-
-    private void unbindTextures(PbrRenderContext renderContext) {
-        Texture.unbind(renderContext.getSceneBuffer().getColor());
+        renderContext.unbindColorTexture();
     }
 
 }

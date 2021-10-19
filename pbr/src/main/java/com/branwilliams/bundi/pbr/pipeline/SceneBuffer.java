@@ -12,6 +12,8 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class SceneBuffer extends FrameBufferObject {
 
+    private static final int COLOR_ATTACHMENT = 0;
+
     private final Texture color;
 
     /**
@@ -21,17 +23,17 @@ public class SceneBuffer extends FrameBufferObject {
         super(width, height);
         this.bindForDraw();
 
-        this.color = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR16F);
+        this.color = new Texture((ByteBuffer) null, width, height, false, Texture.TextureType.COLOR32F);
         this.color.bind();
         this.color.nearestFilter();
-        this.bindTexture(color, GL_FRAMEBUFFER, 0);
+        this.bindTexture(color, GL_FRAMEBUFFER, COLOR_ATTACHMENT);
 
         gbuffer.getDepth().bind();
         this.bindDepthTexture(gbuffer.getDepth(), GL_FRAMEBUFFER);
         Texture.unbind(gbuffer.getDepth());
         Texture.unbind();
 
-        drawBuffers(0);
+        drawBuffers(COLOR_ATTACHMENT);
         this.checkStatus();
         FrameBufferObject.unbind();
     }

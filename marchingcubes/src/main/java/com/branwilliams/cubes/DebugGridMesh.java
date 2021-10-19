@@ -42,14 +42,14 @@ public class DebugGridMesh extends Mesh {
 
         for (int i = 0; i < verticesX + 1; i++) {
             vertices.add(new Vector3f(origin).add(0, 0, stepZ * i));
-            vertices.add(new Vector3f(origin).add(stepX, 0, stepZ * i));
+            vertices.add(new Vector3f(origin).add(stepX * verticesX, 0, stepZ * i));
             colors.add(new Vector4f(1, 1, 1, 1));
             colors.add(new Vector4f(1, 1, 1, 1));
         }
 
         for (int i = 0; i < verticesZ + 1; i++) {
             vertices.add(new Vector3f(origin).add(stepX * i, 0, 0));
-            vertices.add(new Vector3f(origin).add(stepX * i, 0, stepZ));
+            vertices.add(new Vector3f(origin).add(stepX * i, 0, stepZ * verticesZ));
             colors.add(new Vector4f(1, 1, 1, 1));
             colors.add(new Vector4f(1, 1, 1, 1));
         }

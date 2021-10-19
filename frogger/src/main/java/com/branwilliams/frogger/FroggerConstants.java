@@ -17,6 +17,7 @@ public class FroggerConstants {
     public static final int SCREEN_HEIGHT_TILES = SCREEN_HEIGHT_PIXELS / TILE_HEIGHT_SCALED;
     public static final int SCREEN_WIDTH_TILES = SCREEN_WIDTH_PIXELS / TILE_WIDTH_SCALED;
     public static final float CAMERA_MOVE_SPEED = 2F;
+
     public static final int[] FIREBALL_FRAMES = {
             0,  1,  2,  3,  4,  5,  6,  7,  8,  9,
             10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
@@ -25,10 +26,14 @@ public class FroggerConstants {
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
             50, 51, 52, 53, 54, 55, 56, 57, 58, 59
     };
+
     public static final int[] FROGMAN_FRAMES = { 0, 1, 2, 3, 0 };
     public static final int FROGMAN_FRAME_IDLE = 0;
 
+    public static final int[] FIREPLACE2_FRAME = { 0, 1, 2, 3, 4, 5 };
+
+
     public static final String FROGMAN_NAME = "frogman";
 
-    public static final String PARALLAX_BACKGROUND_FILE = "assets/glacial_background.json";
+    public static final String PARALLAX_BACKGROUND_FILE = "assets/parallax/glacial_background.json";
 }

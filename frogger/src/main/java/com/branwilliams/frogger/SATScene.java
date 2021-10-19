@@ -82,7 +82,7 @@ public class SATScene extends AbstractScene {
 //        renderPipeline.addLast(new SpriteAABBRenderPass(this));
         renderPipeline.addLast(new SpriteRenderPass(this));
         renderPipeline.addLast(new HelpUIRenderPass(new String[] {
-                "Use WASD to move frogman",
+                "Use the arrow keys to move frogman",
                 "Left Shift + Left Click moves the background"
         }));
         // Add render passes here.

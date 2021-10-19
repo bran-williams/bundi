@@ -6,14 +6,9 @@ import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPipeline;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.shader.Projection;
-import com.branwilliams.bundi.engine.shader.Transformation;
-import com.branwilliams.bundi.engine.sprite.AnimatedSprite;
-import com.branwilliams.bundi.engine.sprite.Sprite;
-import com.branwilliams.bundi.engine.sprite.SpriteSheet;
 import com.branwilliams.bundi.engine.texture.TextureLoader;
 import com.branwilliams.bundi.engine.util.IOUtils;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.util.RateLimiter;
 import com.branwilliams.frogger.components.ScaledTexture;
 import com.branwilliams.frogger.gson.TilemapDeserializer;
 import com.branwilliams.frogger.gson.TilemapSerializer;
@@ -23,13 +18,15 @@ import com.branwilliams.frogger.pipeline.pass.*;
 import com.branwilliams.frogger.system.FocalPointFollowSystem;
 import com.branwilliams.frogger.system.ParallaxBackgroundMovementSystem;
 import com.branwilliams.frogger.system.TilemapUpdateSystem;
+import com.branwilliams.frogger.tilemap.SpriteAtlas;
+import com.branwilliams.frogger.tilemap.Tile;
+import com.branwilliams.frogger.tilemap.Tilemap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.joml.Vector2f;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import static com.branwilliams.frogger.FroggerConstants.SCREEN_HEIGHT_PIXELS;
 import static com.branwilliams.frogger.FroggerConstants.SCREEN_WIDTH_PIXELS;
@@ -57,9 +54,9 @@ public class TilemapScene extends AbstractScene {
 
     private static final float CAMERA_MOVE_SPEED = 2F;
 
-    private static final String PARALLAX_BACKGROUND_FILE = "assets/swamp_background.json";
+    private static final String PARALLAX_BACKGROUND_FILE = "assets/parallax/swamp_background.json";
 
-    private static final String TILEMAP_ATLAS_FILE = "assets/swamp_tiles.json";
+    private static final String TILEMAP_ATLAS_FILE = "assets/tilemap/swamp_tiles.json";
 
     private static final String TILEMAP_SAVE_FILE = "tilemap/saves/swamptiles.json";
 
