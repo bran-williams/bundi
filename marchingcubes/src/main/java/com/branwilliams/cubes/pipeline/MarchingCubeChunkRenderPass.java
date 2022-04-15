@@ -50,9 +50,9 @@ public class MarchingCubeChunkRenderPass extends RenderPass<RenderContext> {
         try {
             frustum = new Frustum();
             EnvironmentShaderModule environmentShaderModule = new EnvironmentShaderModule(environment,
-                    VertexFormat.POSITION_NORMAL, MaterialFormat.DIFFUSE_NORMAL_SPECULAR);
+                    VertexFormat.POSITION_NORMAL, MaterialFormat.DIFFUSE_NORMAL);
             shaderProgram = new ModularShaderProgram(VertexFormat.POSITION_NORMAL,
-                    MaterialFormat.DIFFUSE_NORMAL_SPECULAR, Lists.newArrayList(environmentShaderModule));
+                    MaterialFormat.DIFFUSE_NORMAL, Lists.newArrayList(environmentShaderModule));
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }

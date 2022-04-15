@@ -30,45 +30,45 @@ public enum VoxelFace {
     }
 
     public static void createPositions(VoxelFace face,
-                                 ChunkMeshVertex v0, ChunkMeshVertex v1, ChunkMeshVertex v2, ChunkMeshVertex v3,
-                                 float minX, float minY, float minZ,
-                                 float maxX, float maxY, float maxZ) {
+                                       ChunkMeshVertex v0, ChunkMeshVertex v1, ChunkMeshVertex v2, ChunkMeshVertex v3,
+                                       float minX, float minY, float minZ,
+                                       float maxX, float maxY, float maxZ, int light) {
         switch (face) {
             case FRONT:
-                v0.vertex = new Vector3f(minX, minY, maxZ);
-                v1.vertex = new Vector3f(maxX, minY, maxZ);
-                v2.vertex = new Vector3f(maxX, maxY, maxZ);
-                v3.vertex = new Vector3f(minX, maxY, maxZ);
+                v0.vertex = new Vector4f(minX, minY, maxZ, light);
+                v1.vertex = new Vector4f(maxX, minY, maxZ, light);
+                v2.vertex = new Vector4f(maxX, maxY, maxZ, light);
+                v3.vertex = new Vector4f(minX, maxY, maxZ, light);
                 break;
             case BACK:
-                v0.vertex = new Vector3f(maxX, minY, minZ);
-                v1.vertex = new Vector3f(minX, minY, minZ);
-                v2.vertex = new Vector3f(minX, maxY, minZ);
-                v3.vertex = new Vector3f(maxX, maxY, minZ);
+                v0.vertex = new Vector4f(maxX, minY, minZ, light);
+                v1.vertex = new Vector4f(minX, minY, minZ, light);
+                v2.vertex = new Vector4f(minX, maxY, minZ, light);
+                v3.vertex = new Vector4f(maxX, maxY, minZ, light);
                 break;
             case TOP:
-                v0.vertex = new Vector3f(minX, maxY, maxZ);
-                v1.vertex = new Vector3f(maxX, maxY, maxZ);
-                v2.vertex = new Vector3f(maxX, maxY, minZ);
-                v3.vertex = new Vector3f(minX, maxY, minZ);
+                v0.vertex = new Vector4f(minX, maxY, maxZ, light);
+                v1.vertex = new Vector4f(maxX, maxY, maxZ, light);
+                v2.vertex = new Vector4f(maxX, maxY, minZ, light);
+                v3.vertex = new Vector4f(minX, maxY, minZ, light);
                 break;
             case BOTTOM:
-                v0.vertex = new Vector3f(minX, minY, minZ);
-                v1.vertex = new Vector3f(maxX, minY, minZ);
-                v2.vertex = new Vector3f(maxX, minY, maxZ);
-                v3.vertex = new Vector3f(minX, minY, maxZ);
+                v0.vertex = new Vector4f(minX, minY, minZ, light);
+                v1.vertex = new Vector4f(maxX, minY, minZ, light);
+                v2.vertex = new Vector4f(maxX, minY, maxZ, light);
+                v3.vertex = new Vector4f(minX, minY, maxZ, light);
                 break;
             case RIGHT:
-                v0.vertex = new Vector3f(maxX, minY, maxZ);
-                v1.vertex = new Vector3f(maxX, minY, minZ);
-                v2.vertex = new Vector3f(maxX, maxY, minZ);
-                v3.vertex = new Vector3f(maxX, maxY, maxZ);
+                v0.vertex = new Vector4f(maxX, minY, maxZ, light);
+                v1.vertex = new Vector4f(maxX, minY, minZ, light);
+                v2.vertex = new Vector4f(maxX, maxY, minZ, light);
+                v3.vertex = new Vector4f(maxX, maxY, maxZ, light);
                 break;
             case LEFT:
-                v0.vertex = new Vector3f(minX, minY, minZ);
-                v1.vertex = new Vector3f(minX, minY, maxZ);
-                v2.vertex = new Vector3f(minX, maxY, maxZ);
-                v3.vertex = new Vector3f(minX, maxY, minZ);
+                v0.vertex = new Vector4f(minX, minY, minZ, light);
+                v1.vertex = new Vector4f(minX, minY, maxZ, light);
+                v2.vertex = new Vector4f(minX, maxY, maxZ, light);
+                v3.vertex = new Vector4f(minX, maxY, minZ, light);
                 break;
         }
     }

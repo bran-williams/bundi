@@ -104,7 +104,7 @@
         "diffuse": "blocks_hd/oak_leaves.png"
       }
     },
-    "translucent": true
+    "opaque": false
   },
   "bookshelf": {
     "faces": {
@@ -195,7 +195,7 @@
         "normal": "blocks_hd/glass_n.png"
       }
     },
-    "translucent": true
+    "opaque": false
   },
   "glowstone": {
     "faces": {
@@ -204,7 +204,8 @@
         "normal": "blocks_hd/glowstone_n.png",
         "specular": "blocks_hd/glowstone_s.png"
       }
-    }
+    },
+    "light": "#0f0f0f"
   },
   "bedrock": {
     "faces": {
@@ -213,5 +214,61 @@
         "normal": "blocks_hd/bedrock_n.png"
       }
     }
+  },
+  "red_light": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/red.png"
+      }
+    },
+    "light": "#0f0000"
+  },
+  "green_light": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/green.png"
+      }
+    },
+    "light": "#000f00"
+  },
+  "blue_light": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/blue.png"
+      }
+    },
+    "light": "#00000f"
+  },
+  "cyan_light": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/cyan.png"
+      }
+    },
+    "light": "#000f0f"
+  },
+  "magenta_light": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/magenta.png"
+      }
+    },
+    "light": "#0f000f"
+  },
+  "yellow_light": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/yellow.png"
+      }
+    },
+    "light": "#ffff00"
+  },
+  "blueish": {
+    "faces": {
+      "all":  {
+        "diffuse": "blocks_hd/blueish.png"
+      }
+    },
+    "light": "#09090f"
   }
 }

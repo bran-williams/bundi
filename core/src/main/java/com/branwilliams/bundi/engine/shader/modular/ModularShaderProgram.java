@@ -197,14 +197,17 @@ public class ModularShaderProgram extends ShaderProgram {
                 (s) -> String.format("    vec4 %s = %s;\n", ModularShaderConstants.FRAG_MATERIAL_NORMAL,
                         getMaterialNormalAsVec4()), CommentShaderPatch.ModificationType.PREPEND));
 
-        // create normal mapping if necessary
-        if (hasNormals && materialFormat.hasElementAsSampler(MaterialElement.NORMAL) && !shouldUseTriplanarMapping()) {
-            shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_UNIFORMS_COMMENT,
-                    (s) -> IOUtils.readResource(ModularShaderConstants.NORMAL_FUNCTION_LOCATION, null),
-                    CommentShaderPatch.ModificationType.PREPEND));
-            // create normal value for the fragment shader to use
+        if (hasNormals && materialFormat.hasElementAsSampler(MaterialElement.NORMAL)) {
+            String materialMappedNormal = getMaterialMappedNormal();
+
+            if (!shouldUseTriplanarMapping()) {
+                shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_UNIFORMS_COMMENT,
+                        (s) -> IOUtils.readResource(ModularShaderConstants.NORMAL_FUNCTION_LOCATION, null),
+                        CommentShaderPatch.ModificationType.PREPEND));
+            }
+
             shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
-                    (s) -> "normal = " + createNormalMappedNormal() + ";\n",
+                    (s) -> "normal = " + materialMappedNormal + ";\n",
                     CommentShaderPatch.ModificationType.PREPEND));
         }
 
@@ -239,10 +242,19 @@ public class ModularShaderProgram extends ShaderProgram {
     }
 
     private String getMaterialNormalAsVec4() {
-        if (shouldUseTriplanarMapping() && materialFormat.hasElementAsSampler(MaterialElement.NORMAL)) {
+        if (shouldUseTriplanarMapping() && materialFormat.hasElement(MaterialElement.NORMAL)) {
             return getMaterialNormalTriplanarVec4(materialName, materialFormat);
         }
         return ShaderUtils.getMaterialNormalAsVec4(materialFormat, materialName);
+    }
+
+
+    private String getMaterialMappedNormal() {
+        if (shouldUseTriplanarMapping()) {
+            return getMaterialNormalTriplanarVec4(materialName, materialFormat);
+        } else {
+            return createNormalMappedNormal();
+        }
     }
 
     private String createNormalMappedNormal() {

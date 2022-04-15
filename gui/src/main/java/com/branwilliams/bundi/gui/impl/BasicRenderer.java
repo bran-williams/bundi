@@ -45,6 +45,7 @@ public class BasicRenderer extends RenderManager {
         this.setRenderer(ComboBox.class, new ComboBoxRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Frame.class, true, new FrameRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
         this.setRenderer(Image.class, true, new com.branwilliams.bundi.gui.impl.render.ImageRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
+        this.setRenderer(Button.class, new ButtonRenderer(shapeRenderer, toolbox, fontRenderer, imageRenderer));
 
     }
 

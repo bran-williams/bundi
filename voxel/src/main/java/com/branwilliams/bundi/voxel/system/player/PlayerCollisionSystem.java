@@ -9,7 +9,7 @@ import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.voxel.components.MovementComponent;
 import com.branwilliams.bundi.voxel.math.AABB;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.system.world.PhysicsSystem;
 import org.joml.Vector3f;
@@ -62,38 +62,51 @@ public class PlayerCollisionSystem extends AbstractSystem {
             List<AABB> voxels = scene.getVoxelWorld().getVoxelsWithinAABB(playerAABB.expand(event.getMovement()),
                     (v) -> !v.isAir());
 
-            Vector3f movement = event.getMovement();
+            Vector3f collidedMovement = event.getMovement();
             Vector3f originalMovement = new Vector3f(event.getMovement());
 
 
             // move in the y direction
             for (AABB aabb : voxels) {
-                movement.y = aabb.clipYCollide(playerAABB, movement.y);
+                collidedMovement.y = aabb.clipYCollide(playerAABB, collidedMovement.y);
             }
-            playerAABB.move(0.0F, movement.y, 0.0F);
-            if (originalMovement.y != movement.y) {
-                movement.y = 0F;
+            playerAABB.move(0.0F, collidedMovement.y, 0.0F);
+            boolean hasCollidedWithGround = originalMovement.y != collidedMovement.y;
+
+
+            // player touches the ground!
+            if (collidedMovement.y < 0 && hasCollidedWithGround && !playerState.isOnGround()) {
+//                System.out.println("Player touches the ground! originalY=" + originalMovement.y  + ", collidedY=" + collidedMovement.y);
+                collidedMovement.y = 0F;
+                playerState.setOnGround(true);
+                movementComponent.getVelocity().y = 0;
+                movementComponent.getAcceleration().y = 0;
             }
 
-            boolean onGround = (playerState.isOnGround() || (movement.y != originalMovement.y) && (originalMovement.y < 0.0F));
-            playerState.setOnGround(onGround);
+            if (originalMovement.y < 0 && collidedMovement.y == 0 && playerState.isOnGround()) {
+                movementComponent.getVelocity().y = 0;
+            }
+
+//            else if (collidedMovement.y < 0 && playerState.isOnGround()) {
+//                playerState.setOnGround(false);
+//            }
 
             // move in the x direction
             for (AABB aabb : voxels) {
-                movement.x = aabb.clipXCollide(playerAABB, movement.x);
+                collidedMovement.x = aabb.clipXCollide(playerAABB, collidedMovement.x);
             }
-            playerAABB.move(movement.x, 0.0F, 0.0F);
-            if (originalMovement.x != movement.x) {
-                movement.x = 0F;
+            playerAABB.move(collidedMovement.x, 0.0F, 0.0F);
+            if (originalMovement.x != collidedMovement.x) {
+                collidedMovement.x = 0F;
             }
 
             // move in the z direction
             for (AABB aabb : voxels) {
-                movement.z = aabb.clipZCollide(playerAABB, movement.z);
+                collidedMovement.z = aabb.clipZCollide(playerAABB, collidedMovement.z);
             }
-            playerAABB.move(0.0F, 0.0F, movement.z);
-            if (originalMovement.z != movement.z) {
-                movement.z = 0F;
+            playerAABB.move(0.0F, 0.0F, collidedMovement.z);
+            if (originalMovement.z != collidedMovement.z) {
+                collidedMovement.z = 0F;
             }
         }
     }

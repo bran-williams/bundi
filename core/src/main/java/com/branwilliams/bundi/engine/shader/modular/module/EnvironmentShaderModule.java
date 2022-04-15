@@ -79,7 +79,9 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
                     shaderProgram.createUniform("dirLights[" + i + "].direction");
                     shaderProgram.createUniform("dirLights[" + i + "].ambient");
                     shaderProgram.createUniform("dirLights[" + i + "].diffuse");
-                    shaderProgram.createUniform("dirLights[" + i + "].specular");
+                    if (materialFormat.hasElement(MaterialElement.SPECULAR)) {
+                        shaderProgram.createUniform("dirLights[" + i + "].specular");
+                    }
                 }
             }
 
@@ -93,7 +95,9 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
 
                     shaderProgram.createUniform("pointLights[" + i + "].ambient");
                     shaderProgram.createUniform("pointLights[" + i + "].diffuse");
-                    shaderProgram.createUniform("pointLights[" + i + "].specular");
+                    if (materialFormat.hasElement(MaterialElement.SPECULAR)) {
+                        shaderProgram.createUniform("pointLights[" + i + "].specular");
+                    }
                 }
             }
         }
@@ -122,7 +126,10 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
                 shaderProgram.setUniform("dirLights[" + i + "].direction", light.getDirection());
                 shaderProgram.setUniform("dirLights[" + i + "].ambient", light.getAmbient());
                 shaderProgram.setUniform("dirLights[" + i + "].diffuse", light.getDiffuse());
-                shaderProgram.setUniform("dirLights[" + i + "].specular", light.getSpecular());
+
+                if (materialFormat.hasElement(MaterialElement.SPECULAR)) {
+                    shaderProgram.setUniform("dirLights[" + i + "].specular", light.getSpecular());
+                }
             }
         }
 
@@ -137,7 +144,10 @@ public class EnvironmentShaderModule extends AbstractShaderModule {
 
                 shaderProgram.setUniform("pointLights[" + i + "].ambient", light.getAmbient());
                 shaderProgram.setUniform("pointLights[" + i + "].diffuse", light.getDiffuse());
-                shaderProgram.setUniform("pointLights[" + i + "].specular", light.getSpecular());
+
+                if (materialFormat.hasElement(MaterialElement.SPECULAR)) {
+                    shaderProgram.setUniform("pointLights[" + i + "].specular", light.getSpecular());
+                }
             }
         }
 

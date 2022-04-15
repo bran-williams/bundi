@@ -16,7 +16,6 @@ public enum VertexElements implements VertexElement {
     TANGENT("vec3", "tangent", 3),
     BITANGENT("vec3", "bitangent", 3);
 
-    private static final String PASS_PREFIX = "pass";
 
     private final int size;
 
@@ -46,8 +45,4 @@ public enum VertexElements implements VertexElement {
         return variableName;
     }
 
-    @Override
-    public String getPassName() {
-        return PASS_PREFIX + ShaderUtils.capitalizeFirstChar(variableName);
-    }
 }

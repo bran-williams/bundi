@@ -20,13 +20,13 @@ public class Container extends Component {
     // Enable layering of components when true.
     private boolean layering = true;
 
-    // Forces this container to take the dimensions of the layout after it's been laid out.
+    // Forces this container to take the dimensions of the layout after it has been invoked.
     private boolean useLayoutSize = false;
 
     // Forces this container to automatically layout after updating.
     private boolean autoLayout = false;
 
-    // Always calls 'alwaysLayoutChildren' when layout is invoked.
+    // Always calls 'layoutChildren' when layout is invoked.
     private boolean alwaysLayoutChildren = true;
 
     private float opacity = 1F;
@@ -50,8 +50,9 @@ public class Container extends Component {
                 this.tooltip = component.getTooltip();
                 component.setHovered(true);
                 hover = false;
-            } else
+            } else {
                 component.setHovered(false);
+            }
             component.update();
         }
         if (autoLayout)
@@ -79,12 +80,12 @@ public class Container extends Component {
      * Lays out each component within the container according to the layout specified.
      * */
     public void layout() {
-        if (alwaysLayoutChildren)
+        if (alwaysLayoutChildren) {
             this.layoutChildren();
+        }
         int[] size = this.layout.layout(this, components);
         if (useLayoutSize) {
             this.setSize(size[0], size[1]);
-            //System.out.println(getTag() + " getting size " + size[0] + ", " + size[1]);
         }
     }
 
@@ -165,6 +166,14 @@ public class Container extends Component {
         }
 
         return false;
+    }
+
+    public boolean isComponentInside(Component child) {
+        int[] area = child.getArea();
+        return super.isPointInside(area[0], area[0])
+                || super.isPointInside(area[0], area[1])
+                || super.isPointInside(area[1], area[1])
+                || super.isPointInside(area[1], area[0]);
     }
 
     public List<Component> getComponents() {

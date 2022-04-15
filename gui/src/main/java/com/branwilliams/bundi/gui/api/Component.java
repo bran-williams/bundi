@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.api;
 
+import com.branwilliams.bundi.engine.font.BasicFontData;
 import com.branwilliams.bundi.gui.api.actions.ActionListener;
 import com.branwilliams.bundi.gui.api.actions.Actions;
 import com.branwilliams.bundi.engine.font.FontData;
@@ -36,7 +37,7 @@ public abstract class Component extends BasicWidget {
     /**
      * Each component is going to have it's own font data associated with it.
      * */
-    protected FontData font = new FontData();
+    protected FontData font = new BasicFontData();
 
     protected PopupContainer tooltip = null;
 

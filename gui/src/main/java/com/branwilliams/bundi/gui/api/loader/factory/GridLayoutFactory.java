@@ -14,21 +14,21 @@ import org.w3c.dom.Node;
 public class GridLayoutFactory implements UIElementFactory<GridLayout> {
 
     @Override
-    public GridLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
+    public GridLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight) {
         int rows = XmlUtils.getAttributeInt(attributes, "rows", 0);
         int columns = XmlUtils.getAttributeInt(attributes, "columns", 0);
 
         // Padding is used whenever horizontal and vertical padding are not defined.
         int padding = XmlUtils.getAttributeInt(attributes, "padding", 0);
-        int horizontalPadding = XmlUtils.getAttributeInt(attributes, "horizontalpadding", padding);
-        int verticalPadding = XmlUtils.getAttributeInt(attributes, "verticalpadding", padding);
+        int horizontalPadding = XmlUtils.getAttributePos(attributes, "horizontalpadding", padding, parentWidth);
+        int verticalPadding = XmlUtils.getAttributePos(attributes, "verticalpadding", padding, parentHeight);
 
         // Padding is also used for component padding whenever it is not defined.
         int componentPadding = XmlUtils.getAttributeInt(attributes, "componentpadding", padding);
 
         boolean forcedSize = XmlUtils.getAttributeBoolean(attributes, "forcedsize", true);
 
-        GridLayout gridLayout = new GridLayout(rows, columns, horizontalPadding, verticalPadding, componentPadding,
+        GridLayout gridLayout = new GridLayout(rows, columns, verticalPadding, horizontalPadding, componentPadding,
                 forcedSize);
         return gridLayout;
     }

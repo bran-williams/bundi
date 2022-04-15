@@ -1,10 +1,7 @@
 package com.branwilliams.bundi.gui.impl.render;
 
-import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.engine.font.FontRenderer;
-import com.branwilliams.bundi.engine.util.ColorUtils;
 import com.branwilliams.bundi.gui.api.Toolbox;
-import com.branwilliams.bundi.gui.api.components.Button;
 import com.branwilliams.bundi.gui.api.components.Image;
 import com.branwilliams.bundi.gui.impl.AbstractComponentRenderer;
 import com.branwilliams.bundi.gui.impl.Pointers;

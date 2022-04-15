@@ -33,7 +33,6 @@ public class LabelRenderer extends AbstractComponentRenderer<Label> {
                 x = label.getX() + (label.getWidth() * 0.5F) - (label.getTextWidth() * 0.5F);
                 break;
             default:
-                System.out.println("wtf");
         }
         switch (label.getRenderStyle()) {
             case NONE:

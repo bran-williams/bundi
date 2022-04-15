@@ -7,8 +7,7 @@ import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.systems.MouseControlSystem;
-import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.components.CameraComponent;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 
@@ -25,13 +24,14 @@ public class PlayerCameraInputSystem extends MouseControlSystem {
     }
 
     @Override
-    protected void mouseMove(Engine engine, EntitySystemManager entitySystemManager, double interval, float mouseX, float mouseY, float oldMouseX, float oldMouseY) {
+    protected void mouseMove(Engine engine, EntitySystemManager entitySystemManager, double deltaTime, float mouseX,
+                             float mouseY, float oldMouseX, float oldMouseY) {
         for (IEntity entity : entitySystemManager.getEntities(this)) {
             CameraComponent cameraComponent = entity.getComponent(CameraComponent.class);
 
             Camera camera = cameraComponent.getCamera();
-            float dYaw = (mouseX - oldMouseX) * cameraComponent.getCameraSpeed();
-            float dPitch = -(mouseY - oldMouseY) * cameraComponent.getCameraSpeed();
+            float dYaw = (float) ((mouseX - oldMouseX) * cameraComponent.getCameraSpeed() * deltaTime);
+            float dPitch = (float) (-(mouseY - oldMouseY) * cameraComponent.getCameraSpeed() * deltaTime);
             camera.rotate(dYaw, dPitch);
         }
     }

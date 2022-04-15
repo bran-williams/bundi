@@ -11,7 +11,7 @@ import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.voxel.components.PlayerState;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.util.RenderUtils;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;

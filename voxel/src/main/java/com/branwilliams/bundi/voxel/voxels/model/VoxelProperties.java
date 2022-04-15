@@ -1,11 +1,15 @@
 package com.branwilliams.bundi.voxel.voxels.model;
 
+import com.branwilliams.bundi.voxel.util.LightUtils;
 import com.branwilliams.bundi.voxel.voxels.VoxelFace;
 import com.google.gson.*;
 
+import java.awt.Color;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.branwilliams.bundi.voxel.VoxelConstants.*;
 
 /**
  * @author Brandon
@@ -15,19 +19,26 @@ public class VoxelProperties {
 
     private Map<VoxelFace, VoxelFaceTexture> faces;
 
-    private boolean translucent;
+    private boolean opaque;
 
-    public VoxelProperties(Map<VoxelFace, VoxelFaceTexture> faces, boolean translucent) {
+    private int light;
+
+    public VoxelProperties(Map<VoxelFace, VoxelFaceTexture> faces, boolean opaque, int light) {
         this.faces = faces;
-        this.translucent = translucent;
+        this.opaque = opaque;
+        this.light = light;
     }
 
     public Map<VoxelFace, VoxelFaceTexture> getFaces() {
         return faces;
     }
 
-    public boolean isTranslucent() {
-        return translucent;
+    public boolean isOpaque() {
+        return opaque;
+    }
+
+    public int getLight() {
+        return light;
     }
 
     public VoxelFaceTexture getTexturePath(VoxelFace voxelFace) {
@@ -45,7 +56,9 @@ public class VoxelProperties {
 
         private static final String ALL_FACES_KEY = "all";
 
-        private static final String TRANSLUCENT_KEY = "translucent";
+        private static final String OPAQUE_KEY = "opaque";
+
+        private static final String LIGHT_KEY = "light";
 
         @Override
         public VoxelProperties deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -53,9 +66,11 @@ public class VoxelProperties {
 
             Map<VoxelFace, VoxelFaceTexture> faces = readFaces(jsonObject.getAsJsonObject("faces"), context);
 
-            boolean translucent = readTranslucent(jsonObject);
+            boolean opaque = readOpaque(jsonObject);
 
-            return new VoxelProperties(faces, translucent);
+            int light = readLight(jsonObject);
+
+            return new VoxelProperties(faces, opaque, light);
         }
 
         private Map<VoxelFace, VoxelFaceTexture> readFaces(JsonObject jsonObject, JsonDeserializationContext context) {
@@ -86,11 +101,25 @@ public class VoxelProperties {
             return faces;
         }
 
-        private boolean readTranslucent(JsonObject jsonObject) {
-            if (jsonObject.has(TRANSLUCENT_KEY)) {
-                return jsonObject.get(TRANSLUCENT_KEY).getAsBoolean();
+        private boolean readOpaque(JsonObject jsonObject) {
+            if (jsonObject.has(OPAQUE_KEY)) {
+                return jsonObject.get(OPAQUE_KEY).getAsBoolean();
             }
-            return false;
+            return true;
+        }
+
+        private int readLight(JsonObject jsonObject) {
+            int light = 0;
+            if (jsonObject.has(LIGHT_KEY)) {
+                try {
+                    Color color = Color.decode(jsonObject.get(LIGHT_KEY).getAsString());
+                    int red = Math.max(0, Math.min(MAX_LIGHT_RED, color.getRed()));
+                    int green = Math.max(0, Math.min(MAX_LIGHT_GREEN, color.getGreen()));
+                    int blue = Math.max(0, Math.min(MAX_LIGHT_BLUE, color.getBlue()));
+                    light = LightUtils.pack(red, green, blue);
+                } catch (NumberFormatException ignored) {}
+            }
+            return light;
         }
     }
 }

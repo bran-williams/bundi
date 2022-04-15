@@ -57,7 +57,8 @@ public class RenderManager {
         if (component.isVisible()) {
             // Filter the
             // ^ I'm keeping it this way.
-            Optional<Map.Entry<ComponentRendererMatcher, ComponentRenderer>> renderer = renderers.entrySet().stream().max(Comparator.comparingInt(o -> o.getKey().matches(component)));
+            Optional<Map.Entry<ComponentRendererMatcher, ComponentRenderer>> renderer = renderers.entrySet().stream()
+                    .max(Comparator.comparingInt(o -> o.getKey().matches(component)));
             if (renderer.isPresent()) {
                 renderer.get().getValue().pre(component);
                 renderer.get().getValue().render(component);
@@ -65,7 +66,9 @@ public class RenderManager {
                 // Render the children of this component if it is a container.
                 if (component instanceof Container) {
                     for (Component child : ((Container) component).getComponents()) {
-                        render(child);
+                        if (((Container) component).isComponentInside(child)) {
+                            render(child);
+                        }
                     }
                 }
                 renderer.get().getValue().post(component);

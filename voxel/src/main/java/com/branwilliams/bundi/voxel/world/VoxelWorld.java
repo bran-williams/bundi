@@ -6,17 +6,17 @@ import com.branwilliams.bundi.engine.ecs.IComponentMatcher;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.util.Mathf;
-import com.branwilliams.bundi.engine.util.Timer;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.math.RaycastResult;
 import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
-import com.branwilliams.bundi.voxel.voxels.VoxelFace;
+import com.branwilliams.bundi.voxel.util.LightUtils;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
 import com.branwilliams.bundi.voxel.world.chunk.ChunkPos;
 import com.branwilliams.bundi.voxel.world.chunk.VoxelChunk;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.world.generator.VoxelChunkGenerator;
+import com.branwilliams.bundi.voxel.world.lighting.LightmapUpdater;
 import com.branwilliams.bundi.voxel.world.storage.ChunkMeshStorage;
 import com.branwilliams.bundi.voxel.world.storage.ChunkStorage;
 import org.joml.Vector3f;
@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+
+import static com.branwilliams.bundi.voxel.VoxelConstants.ZERO_LIGHT;
 
 /**
  * @author Brandon
@@ -47,13 +49,13 @@ public class VoxelWorld implements Destructible {
 
     private ChunkMeshStorage chunkMeshStorage;
 
+    private LightmapUpdater lightmapUpdater;
+
     private Set<ChunkPos> visibleChunks;
 
     private EntitySystemManager loadedEntities;
 
     private IComponentMatcher playerMatcher;
-
-//    private Timer chunkLoadTimer;
 
     public VoxelWorld(VoxelRegistry voxelRegistry, VoxelChunkGenerator voxelChunkGenerator, ChunkStorage chunks,
                       ChunkMeshStorage chunkMeshStorage, EntitySystemManager loadedEntities) {
@@ -61,10 +63,51 @@ public class VoxelWorld implements Destructible {
         this.voxelChunkGenerator = voxelChunkGenerator;
         this.chunks = chunks;
         this.chunkMeshStorage = chunkMeshStorage;
+        this.lightmapUpdater = new LightmapUpdater();
         this.visibleChunks = new HashSet<>();
         this.loadedEntities = loadedEntities;
         this.playerMatcher = this.loadedEntities.matcher(PlayerState.class, Transformable.class);
-//        this.chunkLoadTimer = new Timer();
+    }
+
+    public void updateLightingForVoxelPlacement(Voxel voxel, Vector3f blockPosition) {
+        if (voxel.emitsLight()) {
+            getChunks().setLightAtPosition(voxel.getLight(), blockPosition.x, blockPosition.y,
+                    blockPosition.z);
+            getLightmapUpdater().addLightAdditionUpdate(this, blockPosition.x, blockPosition.y, blockPosition.z);
+        } else if (voxel.isOpaque()) {
+            int removedLight = getChunks().getLightAtPosition(blockPosition.x, blockPosition.y, blockPosition.z);
+            getChunks().setLightAtPosition(ZERO_LIGHT, blockPosition.x, blockPosition.y, blockPosition.z);
+//            int removedLight = LightUtils.decrementByAmount(getChunks().findBrightestNeighbor(blockPosition.x,
+//                    blockPosition.y, blockPosition.z), 1);
+            if (LightUtils.hasLight(removedLight)) {
+                getLightmapUpdater().addLightRemovalUpdate(this, blockPosition.x, blockPosition.y, blockPosition.z,
+                        removedLight);
+            }
+        }
+    }
+
+    public void updateLightingForVoxelRemoval(Voxel voxel, Vector3f blockPosition) {
+        if (voxel.emitsLight()) {
+            int newLight = LightUtils.removeLight(voxel.getLight(),
+                    getChunks().getLightAtPosition(blockPosition.x, blockPosition.y, blockPosition.z));
+            getChunks().setLightAtPosition(newLight, blockPosition.x, blockPosition.y, blockPosition.z);
+            getLightmapUpdater().addLightRemovalUpdate(this, blockPosition.x, blockPosition.y, blockPosition.z,
+                    voxel.getLight());
+        } else if (voxel.isOpaque()) {
+            int brightestNeighbor = LightUtils.decrementByAmount(getChunks().findBrightestNeighbor(blockPosition.x,
+                    blockPosition.y, blockPosition.z), 1);
+            if (LightUtils.hasLight(brightestNeighbor)) {
+                getChunks().setLightAtPosition(brightestNeighbor, blockPosition.x, blockPosition.y,
+                        blockPosition.z);
+                getLightmapUpdater().addLightAdditionUpdate(this, blockPosition.x, blockPosition.y,
+                        blockPosition.z);
+            }
+        }
+    }
+
+    public void updateLightmap() {
+        lightmapUpdater.propagateLightRemovals(this);
+        lightmapUpdater.propagateLightAdditions(this);
     }
 
     /**
@@ -312,6 +355,10 @@ public class VoxelWorld implements Destructible {
 
     public ChunkMeshStorage getChunkMeshStorage() {
         return chunkMeshStorage;
+    }
+
+    public LightmapUpdater getLightmapUpdater() {
+        return lightmapUpdater;
     }
 
     @Override

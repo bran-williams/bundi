@@ -6,7 +6,7 @@ import com.branwilliams.bundi.engine.ecs.AbstractSystem;
 import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.components.CameraComponent;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import org.joml.Vector3f;
@@ -37,7 +37,7 @@ public class ChunkLoadSystem extends AbstractSystem {
 
     @Override
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
-
+        scene.getVoxelWorld().updateLightmap();
     }
 
     private void onEntityMove(PhysicsSystem.EntityMoveEvent event) {

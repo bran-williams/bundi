@@ -2,6 +2,7 @@ package com.branwilliams.bundi.engine.asset;
 
 
 import com.branwilliams.bundi.engine.core.context.EngineContext;
+import com.branwilliams.bundi.engine.font.BasicFontData;
 import com.branwilliams.bundi.engine.font.FontData;
 
 import java.awt.*;
@@ -30,7 +31,7 @@ public class FontLoader {
 
         Path fontPath = directory.resolve(font);
 
-        FontData fontData = new FontData();
+        FontData fontData = new BasicFontData();
 
         Font fontObject = Font.createFont(Font.TRUETYPE_FONT, fontPath.toFile());
 

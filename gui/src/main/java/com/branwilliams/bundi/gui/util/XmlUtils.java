@@ -14,6 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
@@ -21,6 +22,8 @@ import java.util.function.Predicate;
  */
 public enum XmlUtils {
     INSTANCE;
+
+    private static final float PERCENTAGE_MAX_VALUE = 1F;
 
     private static final DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 
@@ -61,16 +64,49 @@ public enum XmlUtils {
     public static Color getAttributeColor(NamedNodeMap attributes, String attribute, Color defaultValue) {
         String text = getAttributeText(attributes, attribute, null);
 
-        if (text == null)
+        if (text == null) {
             return defaultValue;
+        }
 
         try {
-
             return Color.decode(text);
         } catch (Exception e) {
             return defaultValue;
         }
 
+    }
+
+    public static float getAttributeOpacity(NamedNodeMap attributes, String attribute, float defaultValue) {
+        return  getAttributePercentageable(attributes, attribute, defaultValue, Float::parseFloat,
+                (percentage) -> percentage);
+    }
+
+    public static int getAttributePos(NamedNodeMap attributes, String attribute, int defaultValue, int maxValue) {
+        return getAttributePercentageable(attributes, attribute, defaultValue, Integer::parseInt,
+                (percentage) -> (int) (percentage * maxValue));
+    }
+
+    public static <T> T getAttributePercentageable(NamedNodeMap attributes, String attribute, T defaultValue,
+                                                       Function<String, T> parser, Function<Float, T> fromPercentage) {
+        String value = getAttributeText(attributes, attribute, null);
+        if (value == null) {
+            return defaultValue;
+        }
+
+        if (value.endsWith("%")) {
+            try {
+                float percentage = Integer.parseInt(value.substring(0, value.indexOf("%"))) / 100F;
+                return fromPercentage.apply(Math.max(0F, Math.min(percentage, PERCENTAGE_MAX_VALUE)));
+            } catch (Exception e) {
+                return defaultValue;
+            }
+        }
+
+        try {
+            return parser.apply(value);
+        } catch (Exception e) {
+            return defaultValue;
+        }
     }
 
     public static boolean getAttributeBoolean(NamedNodeMap attributes, String attribute, boolean defaultValue) {

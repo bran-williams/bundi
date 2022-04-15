@@ -1,15 +1,17 @@
 package com.branwilliams.bundi.voxel.render.pipeline.passes;
 
 import com.branwilliams.bundi.engine.core.Engine;
-import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
+import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.material.Material;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
-import com.branwilliams.bundi.engine.shader.*;
+import com.branwilliams.bundi.engine.shader.FrameBufferObject;
+import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
+import com.branwilliams.bundi.engine.shader.ShaderUniformException;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.render.mesh.ChunkMesh;
-import com.branwilliams.bundi.voxel.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.render.pipeline.shaders.ChunkShaderProgram;
 import com.branwilliams.bundi.voxel.world.VoxelWorld;
@@ -45,13 +47,17 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
     }
 
     /**
-     * 1. Binds geometry shader program and sets the projection and view matrix.
-     * 2. Render each object within the scene.
-     * 3. Set polygon mode to fill if wireframe is enabled. Terrain shader set this to lines if wireframe is true.
      * */
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
+        renderContext.getScreenFrameBuffer().bind();
+        glClearColor(0F, 0F, 0F, 0.0F);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Write to the depth buffer.
+        glDepthMask(true);
         glEnable(GL_DEPTH_TEST);
+
         Material material = scene.getTexturePack().getMaterial();
 
         // Bind mesh shader program.
@@ -61,6 +67,7 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
         this.chunkShaderProgram.setMaterial(material);
         this.chunkShaderProgram.setLight(scene.getSun());
         this.chunkShaderProgram.setAtmosphere(scene.getAtmosphere());
+        this.chunkShaderProgram.setMinimumLight(scene.getGameSettings().getMinBlockLight());
 
         renderContext.getFrustum().update(renderContext.getProjection(), scene.getCamera());
 
@@ -79,6 +86,10 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
                 MeshRenderer.unbind(mesh, material);
             }
         }
+
+        // draw to screen!!
+        FrameBufferObject.unbind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     private boolean shouldRenderMesh(VoxelRenderContext renderContext, ChunkMesh chunkMesh, VoxelChunk voxelChunk) {

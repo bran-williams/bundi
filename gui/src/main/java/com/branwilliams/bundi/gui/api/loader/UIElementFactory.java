@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
  */
 public interface UIElementFactory<T> extends Nameable {
 
-    T createElement(Toolbox toolbox, Node node, NamedNodeMap attributes);
+    T createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight);
 
     UIElementType getType();
 }

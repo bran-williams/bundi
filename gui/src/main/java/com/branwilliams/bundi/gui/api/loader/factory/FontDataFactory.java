@@ -23,7 +23,7 @@ public class FontDataFactory implements UIElementFactory<FontData> {
     }
 
     @Override
-    public FontData createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
+    public FontData createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight) {
         String font = XmlUtils.getAttributeText(attributes, "font", "Default");
         int size = XmlUtils.getAttributeInt(attributes, "size", 18);
         String style = XmlUtils.getAttributeText(attributes, "style", "plain");

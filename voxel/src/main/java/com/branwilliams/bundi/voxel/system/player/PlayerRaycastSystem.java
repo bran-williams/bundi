@@ -8,7 +8,7 @@ import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.voxel.math.RaycastResult;
 import com.branwilliams.bundi.voxel.components.PlayerState;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import org.joml.Vector3f;
 
 /**

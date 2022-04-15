@@ -11,6 +11,7 @@ import java.nio.file.Path;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
+import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_memory;
 
 /**
  * @author Brandon
@@ -36,6 +37,7 @@ public class AudioLoader {
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer channelsBuffer = stack.stackMallocInt(1);
             IntBuffer sampleRateBuffer = stack.stackMallocInt(1);
+
             ShortBuffer audioData = stb_vorbis_decode_filename(audioLocation.toString(), channelsBuffer, sampleRateBuffer);
 
             // Find the correct OpenAL format

@@ -45,7 +45,7 @@ public class VoxelChunkMeshBuilderImpl implements VoxelChunkMeshBuilder {
         for (int x = 0; x < VoxelConstants.CHUNK_X_SIZE; x++) {
             for (int y = 0; y < VoxelConstants.CHUNK_Y_SIZE; y++) {
                 for (int z = 0; z < VoxelConstants.CHUNK_Z_SIZE; z++) {
-                    Voxel voxel = voxelChunk.getVoxelAtPosition(x, y, z);
+                    Voxel voxel = voxelChunk.getVoxel(x, y, z);
 
                     if (!Voxel.isAir(voxel)) {
                         AABB voxelAABB = voxel.getBoundingBox(Mathf.floor(x * CUBE_SIZE),
@@ -70,14 +70,6 @@ public class VoxelChunkMeshBuilderImpl implements VoxelChunkMeshBuilder {
 
         mesh.setMeshData(vertices, indices);
         mesh.loadMeshData();
-//        mesh.setVertexFormat(VertexFormat.POSITION_UV_NORMAL_TANGENT);
-//        mesh.bind();
-//        mesh.storeAttribute(0, toArray3f(vertices.stream().map((v) -> v.vertex).collect(Collectors.toList())), VertexElements.POSITION.getSize());
-//        mesh.storeAttribute(1, toArray2f(vertices.stream().map((v) -> v.uv).collect(Collectors.toList())), VertexElements.UV.getSize());
-//        mesh.storeAttribute(2, toArray3f(vertices.stream().map((v) -> v.normal).collect(Collectors.toList())), VertexElements.NORMAL.getSize());
-//        mesh.storeAttribute(3, toArray3f(vertices.stream().map((v) -> v.tangent).collect(Collectors.toList())), VertexElements.TANGENT.getSize());
-//        mesh.storeIndices(toArrayi(indices));
-//        mesh.unbind();
 
         return vertices.size() > 0;
     }
@@ -91,8 +83,8 @@ public class VoxelChunkMeshBuilderImpl implements VoxelChunkMeshBuilder {
             ChunkMeshVertex v1 = vertices.get(indices.get(i + 1));
             ChunkMeshVertex v2 = vertices.get(indices.get(i + 2));
 
-            Vector3f edge1 = new Vector3f(v1.vertex).sub(v0.vertex);
-            Vector3f edge2 = new Vector3f(v2.vertex).sub(v0.vertex);
+            Vector3f edge1 = new Vector3f(v1.vertex.x, v1.vertex.y, v1.vertex.z).sub(v0.vertex.x, v0.vertex.y, v0.vertex.z);
+            Vector3f edge2 = new Vector3f(v2.vertex.x, v2.vertex.y, v2.vertex.z).sub(v0.vertex.x, v0.vertex.y, v0.vertex.z);
 
             float deltaU1 = v1.uv.x - v0.uv.x;
             float deltaV1 = v1.uv.y - v0.uv.y;
@@ -126,18 +118,22 @@ public class VoxelChunkMeshBuilderImpl implements VoxelChunkMeshBuilder {
                                   float minX, float minY, float minZ,
                                   float maxX, float maxY, float maxZ) {
 
-        Voxel voxel = voxelChunk.getVoxelAtPosition(x, y, z);
+        Voxel voxel = voxelChunk.getVoxel(x, y, z);
 
         int index = vertices.size();
 
         for (VoxelFace face : VoxelFace.values()) {
+            float worldX = voxelChunk.chunkPos.getWorldX() + x;
+            float worldZ = voxelChunk.chunkPos.getWorldZ() + z;
             if (shouldRenderFace(voxelWorld, voxelChunk, voxel, x, y, z, face)) {
+                int light = voxelWorld.getChunks().getLightFacingPosition(worldX, y, worldZ, face);
+
                 ChunkMeshVertex v0 = new ChunkMeshVertex();
                 ChunkMeshVertex v1 = new ChunkMeshVertex();
                 ChunkMeshVertex v2 = new ChunkMeshVertex();
                 ChunkMeshVertex v3 = new ChunkMeshVertex();
 
-                VoxelFace.createPositions(face, v0, v1, v2, v3, minX, minY, minZ, maxX, maxY, maxZ);
+                VoxelFace.createPositions(face, v0, v1, v2, v3, minX, minY, minZ, maxX, maxY, maxZ, light);
                 VoxelFace.createNormals(face, v0, v1, v2, v3);
 
                 Vector4f textureCoordinates = voxelTexturePack.getTextureCoordinates(voxel, face);
@@ -168,9 +164,9 @@ public class VoxelChunkMeshBuilderImpl implements VoxelChunkMeshBuilder {
         Voxel adjacentVoxel;
 
         if (!voxelChunk.withinChunk(x, y, z, face)) {
-            float realX = voxelChunk.chunkPos.getRealX() + x;
+            float realX = voxelChunk.chunkPos.getWorldX() + x;
             float realY = y;
-            float realZ = voxelChunk.chunkPos.getRealZ() + z;
+            float realZ = voxelChunk.chunkPos.getWorldZ() + z;
             adjacentVoxel = voxelWorld.getChunks().getVoxelFacingPosition(realX, realY, realZ, face);
         } else {
             adjacentVoxel = voxelChunk.getVoxelFacingPosition(x, y, z, face);

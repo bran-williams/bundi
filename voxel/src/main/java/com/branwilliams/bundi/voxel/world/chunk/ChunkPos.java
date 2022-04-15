@@ -29,14 +29,14 @@ public class ChunkPos {
     /**
      * @return The real x position of this chunk.
      * */
-    public float getRealX() {
+    public float getWorldX() {
         return x * VoxelConstants.CHUNK_X_SIZE;
     }
 
     /**
      * @return The real z position of this chunk.
      * */
-    public float getRealZ() {
+    public float getWorldZ() {
         return z * VoxelConstants.CHUNK_Z_SIZE;
     }
 

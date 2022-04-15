@@ -11,14 +11,8 @@ import org.w3c.dom.Node;
  */
 public abstract class ComponentFactory<T extends Component> implements UIElementFactory<T> {
 
-//    private UIElementFactory<T> delegate;
-//
-//    public ComponentFactory(UIElementFactory<T> delegate) {
-//        this.delegate = delegate;
-//    }
-
     @Override
-    public T createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
+    public T createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight) {
 //        T component = delegate.createElement(toolbox, node, attributes);
         T component = this.createComponent(toolbox, node, attributes);
 
@@ -27,16 +21,16 @@ public abstract class ComponentFactory<T extends Component> implements UIElement
 
 //        String tooltip = XmlUtils.getAttributeText(attributes, "tooltip", null);
 
-        int x = XmlUtils.getAttributeInt(attributes, "x", 0);
+        int x = XmlUtils.getAttributePos(attributes, "x", 0, parentWidth);
         component.setX(x);
 
-        int y = XmlUtils.getAttributeInt(attributes, "y", 0);
+        int y = XmlUtils.getAttributePos(attributes, "y", 0, parentHeight);
         component.setY(y);
 
-        int width = XmlUtils.getAttributeInt(attributes, "width", 100);
+        int width = XmlUtils.getAttributePos(attributes, "width", 100, parentWidth);
         component.setWidth(width);
 
-        int height = XmlUtils.getAttributeInt(attributes, "height", 20);
+        int height = XmlUtils.getAttributePos(attributes, "height", 20, parentHeight);
         component.setHeight(height);
 
         component.setMinimumWidth(width);

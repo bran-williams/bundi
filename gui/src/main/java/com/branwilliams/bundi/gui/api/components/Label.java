@@ -1,5 +1,6 @@
 package com.branwilliams.bundi.gui.api.components;
 
+import com.branwilliams.bundi.engine.font.BasicFontData;
 import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.gui.api.Component;
 
@@ -71,7 +72,7 @@ public class Label extends Component {
     private RenderStyle renderStyle = RenderStyle.NONE;
 
     public Label(String text) {
-        this(text, new FontData(), Color.WHITE);
+        this(text, new BasicFontData(), Color.WHITE);
     }
 
     public Label(String text, FontData font) {

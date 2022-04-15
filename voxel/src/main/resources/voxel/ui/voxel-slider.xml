@@ -1,0 +1,21 @@
+<UI>
+    <Container tag="{{ slider_container }}" opacity="0">
+        <GridLayout rows="2" columns="1" horizontalpadding="2" componentPadding="2"/>
+
+        <Container opacity="0" autolayout="true">
+            <GridLayout rows="1" columns="2" padding="0" componentPadding="2"/>
+
+            <Label tag="{{ title }}" text="{{ title_text }}" height="36">
+                <FontData font="Roboto" size="24" style="bold"/>
+            </Label>
+
+            <Label tag="{{ value }}" text="{{ value_text }}" height="36" alignment="right" color="#aaaaaa">
+                <FontData font="Roboto" size="24" style="plain"/>
+            </Label>
+        </Container>
+
+        <Slider tag="{{ slider }}" width="296" height="32">
+            <FontData font="Roboto" size="24" style="bold"/>
+        </Slider>
+    </Container>
+</UI>

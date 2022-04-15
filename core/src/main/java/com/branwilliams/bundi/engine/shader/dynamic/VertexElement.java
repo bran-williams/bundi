@@ -1,5 +1,7 @@
 package com.branwilliams.bundi.engine.shader.dynamic;
 
+import com.branwilliams.bundi.engine.util.ShaderUtils;
+
 /**
  * Denotes the element of a vertex for a model.
  * Examples are:
@@ -10,6 +12,8 @@ package com.branwilliams.bundi.engine.shader.dynamic;
  *
  * */
 public interface VertexElement {
+
+    String PASS_PREFIX = "pass";
 
     /**
      * The size of this element.
@@ -29,5 +33,8 @@ public interface VertexElement {
     /**
      * The name of this vertex element as it's passed from the vertexShader to the next
      * */
-    String getPassName();
+    default String getPassName() {
+        return PASS_PREFIX + ShaderUtils.capitalizeFirstChar(getVariableName());
+    }
+
 }

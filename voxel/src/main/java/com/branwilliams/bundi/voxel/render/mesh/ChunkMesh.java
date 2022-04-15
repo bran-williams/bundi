@@ -4,6 +4,7 @@ import com.branwilliams.bundi.engine.core.Destructible;
 import com.branwilliams.bundi.engine.mesh.Mesh;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.shader.Transformation;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexElement;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexElements;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.util.Timer;
@@ -24,6 +25,11 @@ import static com.branwilliams.bundi.engine.util.MeshUtils.*;
  * @since August 13, 2019
  */
 public class ChunkMesh implements Destructible {
+
+    private static final VertexElement POS_LIGHT = new PositionLightVertexElement();
+
+    public static final VertexFormat<VertexElement> CHUNK_VERTEX_FORMAT = new VertexFormat<>(POS_LIGHT,
+            VertexElements.UV, VertexElements.NORMAL, VertexElements.TANGENT);
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -63,7 +69,7 @@ public class ChunkMesh implements Destructible {
     private void initializeSolidMesh() {
         int vertexCount = 8 * 6;
         this.solidMesh.bind();
-        this.solidMesh.initializeAttribute(0, 3, vertexCount * 3);
+        this.solidMesh.initializeAttribute(0, 4, vertexCount * 4);
         this.solidMesh.initializeAttribute(1, 2, vertexCount * 2);
         this.solidMesh.initializeAttribute(2, 3, vertexCount * 3);
         this.solidMesh.initializeAttribute(3, 3, vertexCount * 3);
@@ -81,11 +87,11 @@ public class ChunkMesh implements Destructible {
             return;
         }
 
-        this.solidMesh.setVertexFormat(VertexFormat.POSITION_UV_NORMAL_TANGENT);
+        this.solidMesh.setVertexFormat(CHUNK_VERTEX_FORMAT);
         this.solidMesh.bind();
         this.solidMesh.storeAttribute(0,
-                toArray3f(vertices.stream().map((v) -> v.vertex).collect(Collectors.toList())),
-                VertexElements.POSITION.getSize());
+                toArray4f(vertices.stream().map((v) -> v.vertex).collect(Collectors.toList())),
+                POS_LIGHT.getSize());
         this.solidMesh.storeAttribute(1,
                 toArray2f(vertices.stream().map((v) -> v.uv).collect(Collectors.toList())),
                 VertexElements.UV.getSize());
@@ -148,7 +154,7 @@ public class ChunkMesh implements Destructible {
             y = (getAnimation() * -animationHeight);
         }
 
-        return transformable.position(voxelChunk.chunkPos.getRealX(), y, voxelChunk.chunkPos.getRealZ());
+        return transformable.position(voxelChunk.chunkPos.getWorldX(), y, voxelChunk.chunkPos.getWorldZ());
     }
 
     /**
@@ -193,4 +199,24 @@ public class ChunkMesh implements Destructible {
         solidMesh.destroy();
     }
 
+    /**
+     * This {@link VertexElement} is a vec4 with a 3d position in the xyz and a 'light' value in the w.
+     * */
+    private static class PositionLightVertexElement implements VertexElement {
+
+        @Override
+        public int getSize() {
+            return 4;
+        }
+
+        @Override
+        public String getType() {
+            return "vec4";
+        }
+
+        @Override
+        public String getVariableName() {
+            return "pos";
+        }
+    }
 }

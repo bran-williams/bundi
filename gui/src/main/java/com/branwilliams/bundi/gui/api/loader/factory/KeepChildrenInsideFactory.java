@@ -14,7 +14,7 @@ public class KeepChildrenInsideFactory implements UIElementFactory<KeepChildrenI
 
 
     @Override
-    public KeepChildrenInside createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
+    public KeepChildrenInside createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight) {
         KeepChildrenInside keepChildrenInside = new KeepChildrenInside();
         return keepChildrenInside;
     }

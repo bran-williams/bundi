@@ -51,6 +51,8 @@ public class PhysicsSystem extends AbstractSystem {
 
     @Override
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
+//        double dt2 = deltaTime * deltaTime / 2;
+
         for (IEntity entity : entitySystemManager.getEntities(this)) {
             Transformable transformable = entity.getComponent(Transformable.class);
             MovementComponent movementComponent = entity.getComponent(MovementComponent.class);
@@ -59,13 +61,13 @@ public class PhysicsSystem extends AbstractSystem {
             float moveY = (float) (movementComponent.getVelocity().y * movementComponent.getMovementSpeed() * deltaTime);
             float moveZ = (float) (movementComponent.getVelocity().z * movementComponent.getMovementSpeed() * deltaTime);
             Vector3f movement = new Vector3f(moveX, moveY, moveZ);
-            System.out.println("moveX=" + moveX + ", moveY=" + moveY + ", moveZ=" + moveZ + "");
-            System.out.println("gravityX=" + (float) (gravity.x * deltaTime) + ", gravityY=" + (float) (gravity.y * deltaTime) + ", gravityZ=" + (float) (gravity.z * deltaTime));
 
             // Add a little splash of gravity
-            movement.add((float) (gravity.x * deltaTime), (float) (gravity.y * deltaTime), (float) (gravity.z * deltaTime));
+//            movement.add((float) (gravity.x * deltaTime * deltaTime / 2),
+//                    (float) (gravity.y * deltaTime * deltaTime / 2),
+//                    (float) (gravity.z * deltaTime * deltaTime / 2));
 
-            if (Mathf.abs(movement.lengthSquared()) >= 0F) {
+            if (Mathf.abs(movement.lengthSquared()) > 0F) {
                 EntityMoveEvent moveEvent = new EntityMoveEvent(entity, transformable, movementComponent, movement);
                 scene.getEventManager().publish(moveEvent);
             }
@@ -77,6 +79,16 @@ public class PhysicsSystem extends AbstractSystem {
             movementComponent.getVelocity().x += movementComponent.getAcceleration().x * deltaTime;
             movementComponent.getVelocity().y += movementComponent.getAcceleration().y * deltaTime;
             movementComponent.getVelocity().z += movementComponent.getAcceleration().z * deltaTime;
+
+            // Add a little splash of gravity
+            movementComponent.getVelocity().x += gravity.x * deltaTime;
+            movementComponent.getVelocity().y += gravity.y * deltaTime;
+            movementComponent.getVelocity().z += gravity.z * deltaTime;
+
+            // Add a little splash of gravity
+//            movementComponent.getAcceleration().x += (float) (gravity.x * deltaTime);
+//            movementComponent.getAcceleration().y += (float) (gravity.y * deltaTime);
+//            movementComponent.getAcceleration().z += (float) (gravity.z * deltaTime);
 
             movementComponent.getVelocity().mul(velocityDamper);
 

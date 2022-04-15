@@ -1,9 +1,8 @@
 package com.branwilliams.bundi.voxel.world.generator;
 
+import com.branwilliams.bundi.engine.util.Grid3i;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.engine.util.noise.Noise;
-import com.branwilliams.bundi.engine.util.noise.OpenSimplexNoise;
-import com.branwilliams.bundi.engine.util.noise.PerlinNoise;
 import com.branwilliams.bundi.voxel.VoxelConstants;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import com.branwilliams.bundi.voxel.voxels.VoxelRegistry;
@@ -19,15 +18,19 @@ import java.util.Random;
 public class NoiseChunkGenerator implements VoxelChunkGenerator {
 
     /** This is the threshold for a noise value to become a voxel. */
-    private static final float VOXEL_GENERATION_THRESHOLD = 0.135F;
+    private static final float TOPSOIL_GENERATION_THRESHOLD = 0.135F;
+    private static final float CAVE_GENERATION_THRESHOLD = 0.7F;
 
-    private final Noise noise;
+    private final Noise caveNoise;
+
+    private final Noise topsoilNoise;
 
     private final Random random;
 
-    public NoiseChunkGenerator(Noise noise) {
-        this.noise = noise;
-        this.random = new Random(noise.hashCode());
+    public NoiseChunkGenerator(Noise caveNoise, Noise topsoilNoise) {
+        this.caveNoise = caveNoise;
+        this.topsoilNoise = topsoilNoise;
+        this.random = new Random(caveNoise.hashCode());
     }
 
     /**
@@ -40,7 +43,8 @@ public class NoiseChunkGenerator implements VoxelChunkGenerator {
         float noiseZ = chunkZ;
 
         float noiseScale = 1F / (Mathf.average(VoxelConstants.CHUNK_X_SIZE, VoxelConstants.CHUNK_Z_SIZE));
-        Voxel[][][] kernel = new Voxel[VoxelConstants.CHUNK_X_SIZE][VoxelConstants.CHUNK_Y_SIZE][VoxelConstants.CHUNK_Z_SIZE];
+        Grid3i<Voxel> kernel = new Grid3i<>(Voxel[]::new, VoxelConstants.CHUNK_X_SIZE, VoxelConstants.CHUNK_Y_SIZE,
+                VoxelConstants.CHUNK_Z_SIZE);
 
         // Ensure the edges of each tile matches.
         noiseX = noiseX - noiseX * (1F / VoxelConstants.CHUNK_X_SIZE);
@@ -56,18 +60,9 @@ public class NoiseChunkGenerator implements VoxelChunkGenerator {
                 for (int k = 0; k < VoxelConstants.CHUNK_Z_SIZE; k++) {
                     float nz = (noiseZ * VoxelConstants.CHUNK_Z_SIZE + k + 1) * noiseScale;
 
-                    // noise value at nx, ny, nz
-                    float e = (float) noise.noise(nx, ny, nz);
+                    Voxel voxel = determineVoxel(kernel, nx, ny, nz, i, j, k);
 
-                    // Gradient in the y-axis
-                    float gradient = 1F - ((float) j / (float) VoxelConstants.CHUNK_Y_SIZE);
-
-                    // Change the -1 ~ 1 noise value to 0 ~ 1.
-                    float clampedNoiseValue = (Mathf.clamp(e, 1F) + 1F) * 0.5F;
-
-                    Voxel voxel = determineVoxel(kernel, i, j, k, clampedNoiseValue, gradient);
-
-                    kernel[i][j][k] = voxel;
+                    kernel.setValue(voxel, i, j, k);
                 }
             }
         }
@@ -75,34 +70,46 @@ public class NoiseChunkGenerator implements VoxelChunkGenerator {
         return new VoxelChunk(new ChunkPos(chunkX, chunkZ), kernel);
     }
 
-    private Voxel determineVoxel(Voxel[][][] kernel, int i, int j, int k, float noiseValue, float yGradient) {
+    private float clampNoise(float noise) {
+        // Change the -1 ~ 1 noise value to 0 ~ 1.
+        return (Mathf.clamp(noise, 1F) + 1F) * 0.5F;
+    }
+
+
+    private Voxel determineVoxel(Grid3i<Voxel> kernel, float nx, float ny, float nz, int kernelX, int kernelY,
+                                 int kernelZ) {
+        // Gradient in the y-axis
+        float gradient = 1F - ((float) kernelY / (float) VoxelConstants.CHUNK_Y_SIZE);
+
         Voxel voxel = Voxels.air;
-        if (yGradient > 0.55F) {
-
-            voxel = random.nextFloat() > 0.5F ? Voxels.bricks : Voxels.stone;
-
-        } else if (yGradient * noiseValue > VOXEL_GENERATION_THRESHOLD) {
-
-            boolean isTopBlock = j >= VoxelConstants.CHUNK_Y_SIZE - 1;
-            if (yGradient > 0.45F) {
-                voxel = Voxels.sand;
-            } else {
-                // top block or a block with nothing above it becomes grass.
-                if (isTopBlock || Voxel.isAir(kernel[i][j + 1][k])) {
-                    voxel = Voxels.grass;
-                } else {
-                    voxel = Voxels.dirt;
-                }
-            }
-
+        if (kernelY <= 60) {
+            voxel = generateCaves(kernel, nx, ny, nz, kernelX, kernelY, kernelZ);
+        } else if (gradient * clampNoise((float) topsoilNoise.noise(nx, ny, nz)) > TOPSOIL_GENERATION_THRESHOLD) {
+            voxel = generateTopsoil(kernel, nx, ny, nz, kernelX, kernelY, kernelZ);
         }
 
         // bottom layer becomes bedrock.
-        if (j == 0) {
+        if (kernelY == 0) {
             voxel = Voxels.bedrock;
         }
 
         return voxel;
+    }
+
+    private Voxel generateCaves(Grid3i<Voxel> kernel, float nx, float ny, float nz, int kernelX, int kernelY,
+                                  int kernelZ) {
+        return clampNoise((float) caveNoise.noise(nx, ny, nz)) > CAVE_GENERATION_THRESHOLD ? Voxels.air : Voxels.stone;
+    }
+
+    private Voxel generateTopsoil(Grid3i<Voxel> kernel, float nx, float ny, float nz, int kernelX, int kernelY,
+                                  int kernelZ) {
+        // top block or a block with nothing above it becomes grass.
+        if (kernelY >= VoxelConstants.CHUNK_Y_SIZE - 1 || Voxel.isAir(kernel.getValue(kernelX, kernelY + 1,
+                kernelZ))) {
+            return Voxels.grass;
+        } else {
+            return Voxels.dirt;
+        }
     }
 
 }

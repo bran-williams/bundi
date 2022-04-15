@@ -3,6 +3,7 @@ package com.branwilliams.bundi.engine.core.context;
 import com.branwilliams.bundi.engine.core.Scene;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class EngineContext {
 
     private Path toRealPath(Path path) {
         try {
+            if (!Files.exists(path)) {
+                Files.createDirectory(path);
+            }
             return path.toRealPath();
         } catch (IOException e) {
             return null;

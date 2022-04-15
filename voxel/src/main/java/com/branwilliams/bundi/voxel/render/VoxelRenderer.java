@@ -3,7 +3,8 @@ package com.branwilliams.bundi.voxel.render;
 import com.branwilliams.bundi.engine.core.AbstractRenderer;
 import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.window.Window;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
+import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderPipeline;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -11,7 +12,7 @@ import static org.lwjgl.opengl.GL11.*;
 /**
  * Created by Brandon Williams on 6/24/2018.
  */
-public class VoxelRenderer extends AbstractRenderer {
+public class VoxelRenderer extends AbstractRenderer<VoxelRenderContext> {
 
     public VoxelRenderer(VoxelScene scene, VoxelRenderPipeline renderPipeline) {
         super("VoxelRenderer", scene, renderPipeline);
@@ -20,7 +21,7 @@ public class VoxelRenderer extends AbstractRenderer {
     @Override
     public void init(Engine engine, Window window) throws Exception {
         super.init(engine, window);
-        glClearColor(0.3F, 0.3F, 0.3F, 1F);
+        glClearColor(0F, 0F, 0F, 0F);
         glEnable(GL_CULL_FACE);
 
         glEnable(GL_DEPTH_TEST);
@@ -31,7 +32,6 @@ public class VoxelRenderer extends AbstractRenderer {
 
     @Override
     public void render(Engine engine, Window window, double deltaTime) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         super.render(engine, window, deltaTime);
     }
 

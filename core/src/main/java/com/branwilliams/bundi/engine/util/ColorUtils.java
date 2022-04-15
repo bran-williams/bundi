@@ -141,6 +141,16 @@ public enum ColorUtils {
      * The rgba values are assumed to be between 0~1.
      * @return A hexadecimal representation of the rgba color values specified (between 0 - 1).
      * */
+    public static int toARGB(int rgb, float a) {
+        return toARGB(redf(rgb) / 255F, greenf(rgb) / 255F, bluef(rgb) / 255F, a);
+    }
+
+    /**
+     * Calculates a hexadecimal representation of the provided rgba color values. This format is in the following:
+     * 0xAARRGGBB. <br/>
+     * The rgba values are assumed to be between 0~1.
+     * @return A hexadecimal representation of the rgba color values specified (between 0 - 1).
+     * */
     public static int toARGB(double r, double g, double b, double a) {
         return ((int) (a * 255F) << 24) | ((int) (r * 255F) << 16) | ((int) (g * 255F) << 8) | (int) (b * 255F);
     }

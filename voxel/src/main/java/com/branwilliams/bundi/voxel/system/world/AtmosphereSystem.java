@@ -34,21 +34,21 @@ public class AtmosphereSystem extends AbstractSystem {
 
     @Override
     public void fixedUpdate(Engine engine, EntitySystemManager entitySystemManager, double deltaTime) {
-        Vector3f direction = new Vector3f();
-
-//        sunPitch += (float) (pitchPerSecond * deltaTime);
-        float yaw   = Mathf.toRadians(sunYaw);
-        float pitch = Mathf.toRadians(sunPitch);
-
-        direction.x = Mathf.cos(pitch) * Mathf.sin(yaw);
-        direction.y = -Mathf.sin(pitch);
-        direction.z = -Mathf.cos(pitch) * Mathf.cos(yaw);
-
-        Vector3f sunPosition = direction.normalize().negate();
-
-        for (IEntity entity : entitySystemManager.getEntities(this)) {
-            Atmosphere atmosphere = entity.getComponent(Atmosphere.class);
-            atmosphere.getSun().setDirection(sunPosition);
-        }
+//        Vector3f direction = new Vector3f();
+//
+////        sunPitch += (float) (pitchPerSecond * deltaTime);
+//        float yaw   = Mathf.toRadians(sunYaw);
+//        float pitch = Mathf.toRadians(sunPitch);
+//
+//        direction.x = Mathf.cos(pitch) * Mathf.sin(yaw);
+//        direction.y = -Mathf.sin(pitch);
+//        direction.z = -Mathf.cos(pitch) * Mathf.cos(yaw);
+//
+//        Vector3f sunPosition = direction.normalize().negate();
+//
+//        for (IEntity entity : entitySystemManager.getEntities(this)) {
+//            Atmosphere atmosphere = entity.getComponent(Atmosphere.class);
+//            atmosphere.getSun().setDirection(sunPosition);
+//        }
     }
 }

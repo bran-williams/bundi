@@ -19,7 +19,7 @@ public class PaddedLayout implements Layout<Widget, Widget> {
     /**
      * Store the positions of each component.
      * */
-    protected final Map<Widget, int[]> positions = new HashMap<>();
+    protected final Map<Widget, int[]> originalPositions = new HashMap<>();
 
     protected int verticalPadding, horizontalPadding;
 
@@ -40,7 +40,7 @@ public class PaddedLayout implements Layout<Widget, Widget> {
     public int[] layout(Widget container, List<Widget> components) {
         int width = 0, height = 0;
         for (Widget component : components) {
-            int[] positions = this.positions.computeIfAbsent(component, (c) -> new int[] { c.getX(), c.getY() });
+            int[] positions = this.originalPositions.computeIfAbsent(component, (c) -> new int[] { c.getX(), c.getY() });
             component.setX(container.getX() + horizontalPadding + positions[0]);
             component.setY(container.getY() + verticalPadding + positions[1]);
 

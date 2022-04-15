@@ -24,7 +24,7 @@ public class ContainerFactory extends ComponentFactory<Container> {
         boolean autoLayout = XmlUtils.getAttributeBoolean(attributes, "autolayout", false);
         boolean layering = XmlUtils.getAttributeBoolean(attributes, "layering", false);
         boolean useLayoutSize = XmlUtils.getAttributeBoolean(attributes, "uselayoutsize", true);
-        float opacity = Math.max(0F, XmlUtils.getAttributeFloat(attributes, "opacity", 1F));
+        float opacity = Math.max(0F, XmlUtils.getAttributeOpacity(attributes, "opacity", 1F));
         Color backgroundColor = XmlUtils.getAttributeColor(attributes, "color", toolbox.get(COLOR_SECONDARY_BACKGROUND));
 
         Container container = new Container();

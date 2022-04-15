@@ -1,6 +1,7 @@
 package com.branwilliams.bundi.engine.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3i;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -52,6 +53,17 @@ public class Grid3i<T> implements Iterable<T> {
         return x + width * (y + height * z);
     }
 
+    /**
+     * TODO work out this math!
+     * */
+    public Vector3i fromFlatIndex(int flatIndex) {
+        int x = flatIndex % width;
+        int y = flatIndex / (width * height);
+        int z = (flatIndex % (width * width)) / height;
+
+        return new Vector3i(x, y, z);
+    }
+
     public boolean withinBounds(int x, int y, int z) {
         return x >= 0 && x < width
                 && y >= 0 && y < height
@@ -85,6 +97,8 @@ public class Grid3i<T> implements Iterable<T> {
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
     }
+
+
 
     @NotNull
     @Override

@@ -21,6 +21,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class Engine implements Runnable {
 
+    private static final float DEFAULT_UPDATES_PER_SECOND = 60;
+
+    private static final int DEFAULT_MAX_UPDATES_PER_FRAME = 10;
+
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Profiler profiler = new Profiler(getClass());
@@ -41,8 +45,9 @@ public class Engine implements Runnable {
     // Set true when the game loop begins.
     private boolean running = false;
 
-    // Rate at which the fixedUpdate function is invoked. In invocations/second.
-    private double updateInterval = 1D / 60D;
+    private FixedUpdateCounter fixedUpdateCounter;
+
+    private int maxUpdatesPerFrame = DEFAULT_MAX_UPDATES_PER_FRAME;
 
     // Calculated frame rate.
     private int frames = 0;
@@ -59,11 +64,11 @@ public class Engine implements Runnable {
 
         if (window == null)
             throw new IllegalStateException("Window cannot be null!");
-
         this.sceneManager = new SceneManager();
         this.sceneManager.setScene(scene);
 
         this.audioManager = new AudioManager();
+
     }
 
     @Override
@@ -121,6 +126,8 @@ public class Engine implements Runnable {
         double frameTime = time;
         int frames = 0;
 
+        this.fixedUpdateCounter = new FixedUpdateCounter(DEFAULT_UPDATES_PER_SECOND, time);
+
         // Loops until the window was closed or running was set to false.
         while (running && !window.shouldClose()) {
             // Update the current scene.
@@ -133,9 +140,13 @@ public class Engine implements Runnable {
                 this.profiler.endBegin("scene_fixed_update");
 
                 // Invokes the update function as many times as necessary. This is done at a fixed interval.
-                while (elapsed >= updateInterval) {
-                    sceneManager.getCurrent().fixedUpdate(this, Math.min(updateInterval, elapsed));
-                    elapsed -= updateInterval;
+                int updatesThisFrame = fixedUpdateCounter.countUpdates(window.getTime());
+                double updateInterval = 1D / fixedUpdateCounter.getUpdatesPerSecond();
+                for (int i = 0; i < Math.min(maxUpdatesPerFrame, updatesThisFrame); i++) {
+                    sceneManager.getCurrent().fixedUpdate(this, updateInterval);
+                }
+                if (updatesThisFrame > 1) {
+                    log.debug("Scene fixedUpdate invoked " + updatesThisFrame + " times this frame!");
                 }
 
                 this.profiler.endBegin("render");
@@ -221,9 +232,9 @@ public class Engine implements Runnable {
         return running;
     }
 
-    public double getUpdateInterval() {
-        return updateInterval;
-    }
+//    public double getUpdateInterval() {
+//        return updateInterval;
+//    }
 
     /**
      * Sets the interval for fixed updates within the game loop. This interval value should be a fraction, such as the
@@ -235,8 +246,24 @@ public class Engine implements Runnable {
      * </pre>
      *
      * */
-    public void setUpdateInterval(double updateInterval) {
-        this.updateInterval = updateInterval;
+//    public void setUpdateInterval(double updateInterval) {
+//        this.updateInterval = updateInterval;
+//    }
+
+    public double getUpdatesPerSecond() {
+        return fixedUpdateCounter.getUpdatesPerSecond();
+    }
+
+    public void setUpdatesPerSecond(double updatesPerSecond) {
+        this.fixedUpdateCounter.setUpdatesPerSecond(updatesPerSecond);
+    }
+
+    public int getMaxUpdatesPerFrame() {
+        return maxUpdatesPerFrame;
+    }
+
+    public void setMaxUpdatesPerFrame(int maxUpdatesPerFrame) {
+        this.maxUpdatesPerFrame = maxUpdatesPerFrame;
     }
 
     public int getFrames() {
@@ -261,6 +288,10 @@ public class Engine implements Runnable {
 
     public AudioManager getAudioManager() {
         return audioManager;
+    }
+
+    public FixedUpdateCounter getFixedUpdateCounter() {
+        return fixedUpdateCounter;
     }
 
     /**

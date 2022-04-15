@@ -13,6 +13,10 @@ import java.nio.ByteBuffer;
  * */
 public class TextureData implements Destructible {
 
+    public interface PixelConsumer {
+        void consume(TextureData src, int x, int y, int pixel);
+    }
+
     private final int width;
 
     private final int height;
@@ -172,5 +176,13 @@ public class TextureData implements Destructible {
     public void destroy() {
         MemoryUtil.memFree(data);
         data = null;
+    }
+
+    public void forEachPixel(PixelConsumer consumer) {
+        for (int x = 0; x < getWidth(); x++) {
+            for (int y = 0; y < getHeight(); y++) {
+                consumer.consume(this, x, y, getPixel(x, y));
+            }
+        }
     }
 }

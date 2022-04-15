@@ -16,24 +16,21 @@ public class VoxelSoundManager implements Destructible {
 
     private static final Logger LOG = LoggerFactory.getLogger(VoxelSoundManager.class);
 
-    private final VoxelScene scene;
-
     private final Map<String, Sound> sounds;
 
     private final Map<String, AudioSource> sources;
 
     private AudioLoader audioLoader;
 
-    private Sound buttonSound;
+    private Sound effectSound;
 
-    private AudioSource buttonSoundSource;
+    private AudioSource effectSoundSource;
 
-    private Sound backgroundMusic;
+    private Sound musicSound;
 
-    private AudioSource backgroundMusicSource;
+    private AudioSource musicSoundSource;
 
-    public VoxelSoundManager(VoxelScene scene) {
-        this.scene = scene;
+    public VoxelSoundManager() {
         this.sounds = new HashMap<>();
         this.sources = new HashMap<>();
     }
@@ -41,16 +38,16 @@ public class VoxelSoundManager implements Destructible {
     public void initialize(Engine engine) {
         audioLoader = new AudioLoader(engine.getContext().getAssetDirectory());
 
-        buttonSound = loadSound("sounds/hit1.ogg");
+        effectSound = loadSound("sounds/hit1.ogg");
 
-        buttonSoundSource = loadAudioSource("button_source");
-        buttonSoundSource.setPlayback(buttonSound);
+        effectSoundSource = loadAudioSource("button_source");
+        effectSoundSource.setPlayback(effectSound);
 
-        backgroundMusic = loadSound("music/ffblitz.ogg");
+        musicSound = loadSound("music/Fluffing-a-Duck.ogg");
 
-        backgroundMusicSource = loadAudioSource("music_source");
-        backgroundMusicSource.setLooping(true);
-        backgroundMusicSource.setPlayback(backgroundMusic);
+        musicSoundSource = loadAudioSource("music_source");
+        musicSoundSource.setLooping(true);
+        musicSoundSource.setPlayback(musicSound);
     }
 
     public AudioSource loadAudioSource(String sourceName) {
@@ -96,21 +93,21 @@ public class VoxelSoundManager implements Destructible {
     }
 
     public void playButtonSoundEffect() {
-        buttonSoundSource.play();
+        effectSoundSource.play();
     }
 
-    public AudioSource getBackgroundMusicSource() {
-        return backgroundMusicSource;
+    public AudioSource getMusicSoundSource() {
+        return musicSoundSource;
     }
 
-    public AudioSource getButtonSoundSource() {
-        return buttonSoundSource;
+    public AudioSource getEffectSoundSource() {
+        return effectSoundSource;
     }
 
     @Override
     public void destroy() {
-        backgroundMusicSource.destroy();
-        buttonSoundSource.destroy();
+        musicSoundSource.destroy();
+        effectSoundSource.destroy();
 
         sounds.forEach((soundFile, sound) -> sound.destroy());
         sounds.clear();

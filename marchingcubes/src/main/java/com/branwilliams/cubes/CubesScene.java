@@ -196,16 +196,16 @@ public class CubesScene extends AbstractScene {
 //        material.setTextures(diffuse, normal);
 
         // diffuse + normal + specular
-        material.setMaterialFormat(MaterialFormat.DIFFUSE_NORMAL_SPECULAR);
+        material.setMaterialFormat(MaterialFormat.DIFFUSE_NORMAL);
         TextureData diffuseData = textureLoader.loadTexture("textures/grass/grass01.png");
         Texture diffuse = new Texture(diffuseData, true);
 
         TextureData normalData = textureLoader.loadTexture("textures/grass/grass01_n.png");
         Texture normal = new Texture(normalData, true);
 
-        TextureData specularData = textureLoader.loadTexture("textures/grass/grass01_s.png");
-        Texture specular = new Texture(specularData, true);
-        material.setTextures(diffuse, normal, specular);
+//        TextureData specularData = textureLoader.loadTexture("textures/grass/grass01_s.png");
+//        Texture specular = new Texture(specularData, true);
+//        material.setTextures(diffuse, normal, specular);
 
         for (MarchingCubeChunk<MarchingCubeData> chunk : world.getChunks()) {
             IEntity entity = es.entity("chunk-(" + chunk.getOffset() + ")")

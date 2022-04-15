@@ -21,7 +21,7 @@ public class FontCache implements Destructible {
         if (fonts.containsKey(description)) {
             return fonts.get(description);
         } else {
-            FontData fontData = new FontData(description);
+            FontData fontData = new BasicFontData(description);
             fonts.put(description, fontData);
             return fontData;
         }

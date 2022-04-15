@@ -114,7 +114,7 @@ public class FogScene extends AbstractScene {
 //        }
 
         ParticleEmitter smokeEmitter = new ParticleEmitter(100, 260,
-                loadTextures(textureLoader, FogConstants.SMOKE_PARTICLES));
+                loadTextures(textureLoader, FogConstants.PUFF_PARTICLES));
         smokeEmitter.setVelocity(new Vector3f(0.25F));
         smokeEmitter.setDispurseAmount(new Vector3f(4F, 1F, 4F));
         smokeEmitter.setGravity(7F);
@@ -172,18 +172,18 @@ public class FogScene extends AbstractScene {
                 new Transformation().position(4, 1, -12F).scale(2)
         ).build();
 
-        es.entity("cube3").component(
-                cubeMeshWithTangents,
-                createDiffuseNormalSpecularMaterial(textureLoader,
-                        "textures/wooden_deck/texture_diffuse.jpg",
-                        "textures/wooden_deck/texture_normal.jpg",
-                        "textures/wooden_deck/texture_specular.jpg"),
-                new Transformation().position(10, 3, -4F).scale(3)
-        ).build();
+//        es.entity("cube3").component(
+//                cubeMeshWithTangents,
+//                createDiffuseNormalSpecularMaterial(textureLoader,
+//                        "textures/free/Stylized_03_Wood_Planks/Stylized_03_Wood_Planks_basecolor.jpg",
+//                        "textures/free/Stylized_03_Wood_Planks/Stylized_03_Wood_Planks_normal.jpg",
+//                        "textures/free/Stylized_03_Wood_Planks/Stylized_03_Wood_Planks_specular.jpg"),
+//                new Transformation().position(10, 3, -4F).scale(3)
+//        ).build();
 
         Material boxMaterial = createDiffuseNormalMaterial(textureLoader,
-                "textures/wooden_deck/texture_diffuse.jpg",
-                "textures/wooden_deck/texture_normal.jpg");
+                "textures/free/Stylized_03_Wood_Planks/Stylized_03_Wood_Planks_basecolor.jpg",
+                "textures/free/Stylized_03_Wood_Planks/Stylized_03_Wood_Planks_normal.jpg");
 
         Material floorMaterial = createDiffuseMaterial(textureLoader,
                 "textures/dark/texture_01.png");

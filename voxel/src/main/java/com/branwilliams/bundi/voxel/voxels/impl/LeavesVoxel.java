@@ -11,7 +11,7 @@ import com.branwilliams.bundi.voxel.voxels.VoxelIdentifiers;
 public class LeavesVoxel extends Voxel {
 
     public LeavesVoxel() {
-        super(VoxelIdentifiers.OAK_LEAVES, true);
+        super(VoxelIdentifiers.OAK_LEAVES, false);
     }
 
     public boolean shouldRenderFace(Voxel adjacentVoxel, VoxelFace face) {

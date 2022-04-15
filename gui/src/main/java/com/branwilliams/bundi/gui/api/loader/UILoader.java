@@ -64,6 +64,7 @@ public class UILoader {
         addElementFactory(new GridLayoutFactory());
         addElementFactory(new FontDataFactory(fontCache));
         addElementFactory(new PopupContainerFactory());
+        addElementFactory(new ButtonFactory());
 
     }
 
@@ -125,7 +126,8 @@ public class UILoader {
                     UIElementFactory<?> elementFactory = elementFactories.get(nodeName);
 
                     if (elementFactory.getType() == UIElementType.CONTAINER) {
-                        Container container = (Container) elementFactory.createElement(toolbox, node, node.getAttributes());
+                        Container container = (Container) elementFactory.createElement(toolbox, node, node.getAttributes(),
+                                toolbox.getWidth(), toolbox.getHeight());
                         loadContainerElements(container, node.getChildNodes());
                         container.layout();
                         containers.add(container);
@@ -157,7 +159,8 @@ public class UILoader {
 
             if (elementFactories.containsKey(nodeName)) {
                 UIElementFactory<?> elementFactory = elementFactories.get(nodeName);
-                Object element = elementFactory.createElement(toolbox, node, attributes);
+                Object element = elementFactory.createElement(toolbox, node, attributes, parent.getWidth(),
+                        parent.getHeight());
 
                 switch (elementFactory.getType()) {
                     case CONTAINER:
@@ -168,7 +171,7 @@ public class UILoader {
                     case COMPONENT:
                         Component component = (Component) element;
                         if (node.hasChildNodes()) {
-                            loadComponentElements(component, node.getChildNodes());
+                            loadComponentElements(parent, component, node.getChildNodes());
                         }
                         parent.add(component);
                         break;
@@ -192,7 +195,7 @@ public class UILoader {
         }
     }
 
-    private void loadComponentElements(Component component, NodeList nodeList) {
+    private void loadComponentElements(Component parent, Component component, NodeList nodeList) {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
 
@@ -204,7 +207,8 @@ public class UILoader {
 
             if (elementFactories.containsKey(nodeName)) {
                 UIElementFactory<?> elementFactory = elementFactories.get(nodeName);
-                Object element = elementFactory.createElement(toolbox, node, attributes);
+                Object element = elementFactory.createElement(toolbox, node, attributes, parent.getWidth(),
+                        parent.getHeight());
 
                 switch (elementFactory.getType()) {
                     case CONTAINER:

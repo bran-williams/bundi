@@ -14,4 +14,8 @@ public interface Layout <Container extends Widget, Component extends Widget> {
      * */
     int[] layout(Container container, List<Component> components);
 
+    static <ContainerType extends Widget, ComponentType extends Widget> Layout<ContainerType, ComponentType> empty() {
+        return  (container, components) -> new int[] { container.getWidth(), container.getHeight() };
+    }
+
 }

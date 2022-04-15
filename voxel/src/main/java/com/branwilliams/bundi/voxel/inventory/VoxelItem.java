@@ -22,13 +22,15 @@ public class VoxelItem implements Item {
     public boolean place(VoxelWorld world, Vector3f blockPosition) {
         AABB voxelAABB = voxel.getBoundingBox(blockPosition);
 
-        if (world.canVoxelBePlaced(blockPosition,voxelAABB)) {
+        if (world.canVoxelBePlaced(blockPosition, voxelAABB)) {
             world.getChunks().setVoxelAtPosition(voxel, blockPosition);
+            world.updateLightingForVoxelPlacement(voxel, blockPosition);
             return true;
         }
 
         return false;
     }
+
 
     public Voxel getVoxel() {
         return voxel;

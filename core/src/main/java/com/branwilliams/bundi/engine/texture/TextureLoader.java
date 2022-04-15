@@ -84,7 +84,7 @@ public class TextureLoader {
         ByteBuffer buffer = STBImage.stbi_load(textureLocation.getPath(), width, height, channels, 0);
 
         if (buffer == null) {
-            String msg = "Failed to load texture: " + STBImage.stbi_failure_reason();
+            String msg = "Failed to load texture: " + textureLocation.getPath() + " Reason: " + STBImage.stbi_failure_reason();
             log.error(msg);
             throw new IOException(msg);
         } else {

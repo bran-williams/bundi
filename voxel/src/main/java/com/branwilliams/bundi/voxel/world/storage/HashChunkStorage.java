@@ -31,13 +31,13 @@ public class HashChunkStorage implements ChunkStorage {
     @Override
     public void loadChunk(ChunkPos chunkPos, VoxelChunk voxelChunk) {
         chunks.put(chunkPos, voxelChunk);
-        updateAllNeighbors(chunkPos.getX(), chunkPos.getZ());
+        markAllNeighborChunksDirty(chunkPos.getX(), chunkPos.getZ());
     }
 
     @Override
     public void unloadChunk(ChunkPos chunkPos) {
         chunks.remove(chunkPos);
-        updateAllNeighbors(chunkPos.getX(), chunkPos.getZ());
+        markAllNeighborChunksDirty(chunkPos.getX(), chunkPos.getZ());
     }
 
     @Override

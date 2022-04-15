@@ -9,7 +9,7 @@ import com.branwilliams.bundi.engine.mesh.MeshRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.inventory.Item;
 import com.branwilliams.bundi.voxel.inventory.VoxelItem;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;

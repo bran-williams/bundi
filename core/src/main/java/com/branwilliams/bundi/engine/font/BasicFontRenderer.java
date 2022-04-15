@@ -13,7 +13,7 @@ public class BasicFontRenderer implements FontRenderer {
 
     protected int kerning = 0;
 
-    protected FontData fontData = new FontData();
+    protected FontData fontData = new BasicFontData();
 
     public BasicFontRenderer(DynamicVAO dynamicVao) {
         this.dynamicVao = dynamicVao;

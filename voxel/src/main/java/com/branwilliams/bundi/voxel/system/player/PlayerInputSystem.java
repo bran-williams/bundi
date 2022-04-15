@@ -12,7 +12,7 @@ import com.branwilliams.bundi.engine.shader.Camera;
 import com.branwilliams.bundi.engine.shader.Transformable;
 import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.voxel.components.*;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import org.joml.Vector3f;
 
 /**
@@ -22,9 +22,13 @@ import org.joml.Vector3f;
  */
 public class PlayerInputSystem extends AbstractSystem implements MouseListener, KeyListener {
 
+    private static final double DURATION_OF_JUMP = 0.2F;
+    private static final float PLAYER_JUMP_HEIGHT = 1.2F;
+
     private final VoxelScene scene;
 
-    private int selectedIdx = 0;
+    private double jumpTime;
+
 
     public PlayerInputSystem(VoxelScene scene) {
         super(new ClassComponentMatcher(Transformable.class, CameraComponent.class, MovementComponent.class,
@@ -74,9 +78,8 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
 //                upwardSpeed = -1F;
 //            }
 
-            if (engine.getWindow().isKeyPressed(playerControls.getAscend()) && playerState.isOnGround()) {
-                upwardSpeed = 30F;
-                playerState.setOnGround(false);
+            if (engine.getWindow().isKeyPressed(playerControls.getAscend())) {
+                upwardSpeed = jump(engine, playerState, transformable);
             }
 
             if (engine.getWindow().isKeyPressed(playerControls.getUpdateSun())) {
@@ -87,28 +90,28 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
             strafeSpeed  *= walkComponent.getAccelerationFactor();
             upwardSpeed  *= walkComponent.getAccelerationFactor();
 
-//            float dx = 0, dz = 0;
-//            dx += camera.getFront().x * forwardSpeed;
-//            dz +=  camera.getFront().z * forwardSpeed;
-//
-//            Vector3f frontCrossUp = new Vector3f(camera.getFront()).cross(camera.getUp());
-//            dx += frontCrossUp.x * strafeSpeed;
-//            dz += frontCrossUp.z * strafeSpeed;
+            float dx = 0, dz = 0;
 
-            float yaw = camera.getYaw() + 90;
-            float dx = Mathf.sin(Mathf.toRadians(yaw)) * forwardSpeed;
-            float dz = Mathf.cos(Mathf.toRadians(yaw)) * -1F * forwardSpeed;
-            dx += Mathf.sin(Mathf.toRadians(yaw - 90)) * -1F * strafeSpeed;
-            dz += Mathf.cos(Mathf.toRadians(yaw - 90)) * strafeSpeed;
+            if (PlayerState.CameraType.FREE.equals(playerState.getCameraType())) {
+                dx += camera.getFront().x * forwardSpeed;
+                dz +=  camera.getFront().z * forwardSpeed;
 
+                Vector3f frontCrossUp = new Vector3f(camera.getFront()).cross(camera.getUp());
+                dx += frontCrossUp.x * strafeSpeed;
+                dz += frontCrossUp.z * strafeSpeed;
+            } else {
+                float yaw = camera.getYaw() + 90;
+                dx = Mathf.sin(Mathf.toRadians(yaw)) * forwardSpeed;
+                dz = Mathf.cos(Mathf.toRadians(yaw)) * -1F * forwardSpeed;
+                dx += Mathf.sin(Mathf.toRadians(yaw - 90)) * -1F * strafeSpeed;
+                dz += Mathf.cos(Mathf.toRadians(yaw - 90)) * strafeSpeed;
+            }
+
+//            if (dx > 0 || dx < 0)
             movementComponent.getAcceleration().x = dx;
             movementComponent.getAcceleration().y = upwardSpeed;
+//            if (dz > 0 || dz < 0)
             movementComponent.getAcceleration().z = dz;
-
-//            System.out.println("accelX=" + movementComponent.getAcceleration().x
-//                    + ", accelY=" + movementComponent.getAcceleration().y
-//                    + ", accelZ=" + movementComponent.getAcceleration().z);
-
         }
     }
 
@@ -142,20 +145,6 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
         } else {
             scene.getPlayerState().getInventory().prevItem();
         }
-//        selectedIdx += (yoffset > 0 ? 1 : -1);
-//
-//        List<String> sortedVoxelIdentifiers = scene.getVoxelRegistry().getSortedVoxelIdentifiers();
-//
-//        if (selectedIdx >= sortedVoxelIdentifiers.size()) {
-//            selectedIdx = 0;
-//        }
-//        if (selectedIdx < 0) {
-//            selectedIdx = sortedVoxelIdentifiers.size() - 1;
-//        }
-//
-//        String voxelIdentifier = sortedVoxelIdentifiers.get(selectedIdx);
-//
-//        scene.getPlayerState().setVoxelInHand(scene.getVoxelRegistry().getVoxel(voxelIdentifier));
     }
 
     @Override
@@ -165,6 +154,11 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
             PlayerState playerState = entity.getComponent(PlayerState.class);
             if (playerControls.getNoclip().getKeyCode() == key) {
                 playerState.setNoClip(!playerState.isNoClip());
+                if (playerState.isNoClip()) {
+                    playerState.setCameraType(PlayerState.CameraType.FREE);
+                } else {
+                    playerState.setCameraType(PlayerState.CameraType.FIRST_PERSON);
+                }
             }
         }
     }
@@ -172,5 +166,36 @@ public class PlayerInputSystem extends AbstractSystem implements MouseListener, 
     @Override
     public void keyRelease(Window window, int key, int scancode, int mods) {
 
+    }
+
+    private float jump(Engine engine, PlayerState playerState, Transformable transformable) {
+        if (playerState.isOnGround()) {
+            playerState.setOnGround(false);
+            playerState.setInitialJumpHeight(transformable.getPosition().y);
+
+            this.jumpTime = engine.getTime();
+//            System.out.println("Player starts jumping!");
+            return getJumpImpulse(PLAYER_JUMP_HEIGHT, 9.8F, playerState.getMass());
+        } else if (engine.getTime() - this.jumpTime <= DURATION_OF_JUMP) {
+            double t = engine.getTime() - this.jumpTime;
+            float dist = Math.max(0, (transformable.getPosition().y - playerState.getInitialJumpHeight()));
+//            System.out.println("Player jumping for " + t);
+            return getJumpForce(dist, 9.8F, playerState.getMass(), (float) t);
+        }
+        return 0;
+    }
+
+    private float getJumpImpulse(float dist, float g, float mass) {
+        float v = Mathf.sqrt(2 * g * dist);
+        return v / mass;
+    }
+
+    private float getJumpForce(float dist, float g, float mass, float t) {
+        // t is the total time the jump force can be applied, in seconds
+        float v = Mathf.sqrt(2 * g * dist);
+        float a = t * t;
+        float b = 2 * v * t - g * t * t;
+        float c = - 2 * g * dist;
+        return ((-b + Mathf.sqrt(b*b-4*a*c)) / (2*a)) / mass;
     }
 }

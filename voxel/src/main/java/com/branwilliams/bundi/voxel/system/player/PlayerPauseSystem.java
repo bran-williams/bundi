@@ -8,9 +8,9 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.voxel.VoxelGameState;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.components.PlayerControls;
-import com.branwilliams.bundi.voxel.render.gui.screens.PauseGuiScreen;
+import com.branwilliams.bundi.voxel.gui.screens.PauseGuiScreen;
 
 /**
  *

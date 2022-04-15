@@ -1,10 +1,8 @@
 package com.branwilliams.bundi.gui.api.loader.factory;
 
 import com.branwilliams.bundi.gui.api.Toolbox;
-import com.branwilliams.bundi.gui.api.components.Button;
 import com.branwilliams.bundi.gui.api.components.Checkbox;
 import com.branwilliams.bundi.gui.api.loader.ComponentFactory;
-import com.branwilliams.bundi.gui.api.loader.UIElementFactory;
 import com.branwilliams.bundi.gui.api.loader.UIElementType;
 import com.branwilliams.bundi.gui.util.XmlUtils;
 import org.w3c.dom.NamedNodeMap;

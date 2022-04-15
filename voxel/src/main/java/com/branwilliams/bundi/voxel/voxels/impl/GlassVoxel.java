@@ -11,7 +11,7 @@ import com.branwilliams.bundi.voxel.voxels.VoxelIdentifiers;
 public class GlassVoxel extends Voxel {
 
     public GlassVoxel() {
-        super(VoxelIdentifiers.GLASS, true);
+        super(VoxelIdentifiers.GLASS, false);
     }
 
     public boolean shouldRenderFace(Voxel adjacentVoxel, VoxelFace face) {

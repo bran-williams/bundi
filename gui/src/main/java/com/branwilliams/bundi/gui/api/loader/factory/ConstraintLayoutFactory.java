@@ -31,7 +31,7 @@ public class ConstraintLayoutFactory implements UIElementFactory<ConstraintLayou
     }
 
     @Override
-    public ConstraintLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
+    public ConstraintLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight) {
         List<Constraint> constraints = new ArrayList<>();
         XmlUtils.forChildren(node, (c) -> {
 

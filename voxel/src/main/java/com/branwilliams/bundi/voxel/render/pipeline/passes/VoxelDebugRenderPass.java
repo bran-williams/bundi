@@ -8,7 +8,7 @@ import com.branwilliams.bundi.engine.font.BasicFontRenderer;
 import com.branwilliams.bundi.engine.font.FontRenderer;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.components.MovementComponent;
 import com.branwilliams.bundi.voxel.components.PlayerState;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
@@ -42,7 +42,7 @@ public class VoxelDebugRenderPass extends RenderPass<VoxelRenderContext> {
             e.printStackTrace();
         }
         fontRenderer = new BasicFontRenderer();
-        fontRenderer.setFont(new Font("Roboto", Font.PLAIN, 18), true);
+        fontRenderer.setFont(new Font("Roboto", Font.PLAIN, 24), true);
 
     }
 

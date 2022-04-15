@@ -147,7 +147,7 @@ public interface ChunkStorage {
 
         if (chunk != null) {
             // Take the last 4 bits (15 decimal = 1111 binary)
-            return chunk.getVoxelAtPosition(ChunkPos.toKernelX(x), y, ChunkPos.toKernelX(z));
+            return chunk.getVoxel(ChunkPos.toKernelX(x), y, ChunkPos.toKernelX(z));
         } else {
             return Voxels.air;
         }
@@ -172,8 +172,73 @@ public interface ChunkStorage {
             int kernelX = ChunkPos.toKernelX(x);
             int kernelZ = ChunkPos.toKernelZ(z);
 
-            if (chunk.setVoxelAtPosition(voxel, kernelX, y, kernelZ)) {
-                updateNeighborChunks(kernelX, kernelZ, chunk.chunkPos.getX(), chunk.chunkPos.getZ());
+            if (chunk.setVoxel(voxel, kernelX, y, kernelZ)) {
+                markNeighborChunksDirty(kernelX, kernelZ, chunk.chunkPos.getX(), chunk.chunkPos.getZ());
+            }
+        }
+    }
+
+    /**
+     * @return The {@link Voxel} at the given position plus the face offset.
+     * */
+    default int getLightFacingPosition(float x, float y, float z, VoxelFace face) {
+        return getLightAtPosition(x + face.xDirection, y + face.yDirection, z + face.zDirection);
+    }
+
+
+    /**
+     * @return The {@link Voxel} at the given position.
+     * */
+    default int getLightAtPosition(float x, float y, float z) {
+        return getLightAtPosition(Mathf.floor(x), Mathf.floor(y), Mathf.floor(z));
+    }
+
+    /**
+     * @return The {@link Voxel} at the given position.
+     * */
+    default int getLightAtPosition(int x, int y, int z) {
+
+        // Divided by 16, converting the x and z positions to chunk positions.
+        VoxelChunk chunk = getChunk(ChunkPos.toChunkX(x), ChunkPos.toChunkZ(z));
+
+        if (chunk != null) {
+            // Take the last 4 bits (15 decimal = 1111 binary)
+            return chunk.getLight(ChunkPos.toKernelX(x), y, ChunkPos.toKernelX(z));
+        } else {
+            return 0;
+        }
+    }
+
+    default void setLightAtPosition(int light, float x, float y, float z) {
+        setLightAtPosition(light, Mathf.floor(x), Mathf.floor(y), Mathf.floor(z));
+    }
+
+    default int findBrightestNeighbor(float x, float y, float z) {
+        int brightest = 0;
+        brightest = Math.max(brightest, getLightAtPosition(x + 1, y, z));
+        brightest = Math.max(brightest, getLightAtPosition(x - 1, y, z));
+
+        brightest = Math.max(brightest, getLightAtPosition(x, y + 1, z));
+        brightest = Math.max(brightest, getLightAtPosition(x, y - 1, z));
+
+        brightest = Math.max(brightest, getLightAtPosition(x, y, z + 1));
+        brightest = Math.max(brightest, getLightAtPosition(x, y, z - 1));
+        return brightest;
+    }
+
+    /**
+     *
+     * */
+    default void setLightAtPosition(int light, int x, int y, int z) {
+        VoxelChunk chunk = getChunkAtPosition(x, z);
+
+        if (chunk != null) {
+            // Take the last 4 bits (15 decimal = 1111 binary)
+            int kernelX = ChunkPos.toKernelX(x);
+            int kernelZ = ChunkPos.toKernelZ(z);
+
+            if (chunk.setLight(light, kernelX, y, kernelZ)) {
+                markNeighborChunksDirty(kernelX, kernelZ, chunk.chunkPos.getX(), chunk.chunkPos.getZ());
             }
         }
     }
@@ -181,7 +246,7 @@ public interface ChunkStorage {
     /**
      * Marks every neighbor around these chunk positions as dirty.
      * */
-    default void updateAllNeighbors(int chunkX, int chunkZ) {
+    default void markAllNeighborChunksDirty(int chunkX, int chunkZ) {
         markChunkDirty(chunkX - 1, chunkZ);
         markChunkDirty(chunkX + 1, chunkZ);
         markChunkDirty(chunkX, chunkZ - 1);
@@ -191,7 +256,7 @@ public interface ChunkStorage {
     /**
      * Updates any neighbor chunks that may need to be marked dirty.
      * */
-    default void updateNeighborChunks(int kernelX, int kernelZ, int chunkX, int chunkZ) {
+    default void markNeighborChunksDirty(int kernelX, int kernelZ, int chunkX, int chunkZ) {
         //
         if (kernelX == VoxelConstants.MIN_KERNEL_X) {
             markChunkDirty(chunkX - 1, chunkZ);

@@ -11,9 +11,8 @@ import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
 import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.voxel.math.AABB;
 import com.branwilliams.bundi.voxel.math.RaycastResult;
-import com.branwilliams.bundi.voxel.VoxelScene;
+import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
-import com.branwilliams.bundi.voxel.util.RenderUtils;
 import com.branwilliams.bundi.voxel.voxels.Voxel;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -70,9 +69,11 @@ public class VoxelSelectionRenderPass extends RenderPass<VoxelRenderContext> {
 
         dynamicVAO.begin();
 
-        RenderUtils.addAABB(dynamicVAO, voxelAABB, SELECTION_OUTLINE_COLOR);
+//        RenderUtils.addAABB(dynamicVAO, voxelAABB, SELECTION_OUTLINE_COLOR);
 
-        dynamicVAO.position(voxelCenter.x, voxelCenter.y, voxelCenter.z).color(DIRECTION_VECTOR_COLOR).endVertex();
+        dynamicVAO.position(voxelCenter.x + + selectedVoxel.face.x * 0.5F,
+                voxelCenter.y + selectedVoxel.face.y * 0.5F,
+                voxelCenter.z + + selectedVoxel.face.z * 0.5F).color(DIRECTION_VECTOR_COLOR).endVertex();
         dynamicVAO.position(voxelCenter.x + selectedVoxel.face.x, voxelCenter.y + selectedVoxel.face.y, voxelCenter.z + selectedVoxel.face.z).color(DIRECTION_VECTOR_COLOR).endVertex();
 
         dynamicVAO.draw(GL_LINES);

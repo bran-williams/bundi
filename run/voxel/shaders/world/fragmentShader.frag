@@ -2,112 +2,38 @@
 
 // constants
 const float transparencyThreshold = 0.5;
-//const vec4 fogColor = vec4(0.5, 0.5,0.5);
-const float FogDensity = 0.025;
+const int MAX_BLOCK_LIGHT = 16;
+const int MIN_BLOCK_LIGHT = 1;
 
 in vec3 passFragPos;
-in vec3 passNormal;
 in vec2 passTextureCoordinates;
-in vec3 passTangent;
-in vec4 passViewSpace;
+flat in int blockLight;
 
 out vec4 fragColor;
 
-struct DirLight {
-    vec3 direction;
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
 struct Material {
     sampler2D diffuse;
-    sampler2D specular;
-    sampler2D normal;
     sampler2D emission;
-    float shininess;
 };
 
 uniform Material material;
-uniform DirLight directionalLight;
-uniform vec3 viewPos;
 
+uniform vec3 sunPosition;
 uniform vec4 sunColor;
 uniform vec4 skyColor;
 uniform float fogDensity;
+uniform int minBlockLight;
 
-//#if FOG_LINEAR
-//vec4 computeFog(vec4 lightColor, float dist) {
-//    // 20 - fog starts; 80 - fog ends
-//    float fogFactor = (80 - dist)/(80 - 20);
-//    fogFactor = clamp( fogFactor, 0.0, 1.0 );
-//
-//    //if you inverse color in glsl mix function you have to
-//    //put 1.0 - fogFactor
-//    return mix(fogColor, lightColor, fogFactor);
-//}
-//    #elif FOG_EXPONENTIAL_SQUARED
-//vec4 computeFog(vec4 lightColor, float dist) {
-//    float fogFactor = 1.0 /exp( (dist * FogDensity)* (dist * FogDensity));
-//    fogFactor = clamp( fogFactor, 0.0, 1.0 );
-//
-//    return mix(fogColor, lightColor, fogFactor);
-//}
-//    #elif FOG_EXPONENTIAL
-//vec4 computeFog(vec4 lightColor, float dist) {
-//    float fogFactor = 1.0 / exp(dist * FogDensity);
-//    fogFactor = clamp( fogFactor, 0.0, 1.0 );
-//
-//    // mix function fogColor⋅(1−fogFactor) + lightColor⋅fogFactor
-//    return mix(fogColor, lightColor, fogFactor);
-//}
-//    #endif
-
-
-
-//    #if FOG_PLANE_BASED
-//float computeDist(vec4 viewSpace) {
-//    return abs(viewSpace.z);
-//}
-//    #else
-//float computeDist(vec4 viewSpace) {
-//    return length(viewSpace);
-//}
-//    #endif
-
-//
-vec4 computeFog(vec3 lightDir, vec3 viewDir, vec4 lightColor, float dist) {
-//    float c = 1F;
-//    float fogAmount = c * exp(-viewPos.y*fogDensity) * (1.0-exp( -dist*viewDir.y*fogDensity ))/viewDir.y;
-     float fogAmount = 1.0 - exp( -dist * fogDensity );
-    float sunAmount = max( dot( viewDir, -lightDir ), 0.0 );
-    vec4  fogColor  = mix( skyColor, sunColor, pow(sunAmount, 64.0) );
-    return mix( lightColor, skyColor, fogAmount );
-//    return mix( lightColor, fogColor, fogAmount );
+int unpackRed(int light) {
+    return (light & 0xF00) >> 8;
 }
 
-// plane based distance.
-float computeDist(vec4 viewSpace) {
-    return -(viewSpace.z);
+int unpackGreen(int light) {
+    return (light & 0xF0) >> 4;
 }
 
-/**
- TBN calculation from
- http://ogldev.atspace.co.uk/www/tutorial26/tutorial26.html
-*/
-vec3 calculateMappedNormal() {
-    vec3 normal = normalize(passNormal);
-    vec3 tangent = normalize(passTangent);
-    tangent = normalize(tangent - dot(tangent, normal) * normal);
-    vec3 bitangent = cross(tangent, normal);
-    vec3 bumpMapNormal = texture(material.normal, passTextureCoordinates).xyz;
-    bumpMapNormal = 2.0 * bumpMapNormal - vec3(1.0, 1.0, 1.0);
-    vec3 newNormal;
-    mat3 TBN = mat3(tangent, bitangent, normal);
-    newNormal = TBN * bumpMapNormal;
-    newNormal = normalize(newNormal);
-    return newNormal;
+int unpackBlue(int light) {
+    return light & 0xF;
 }
 
 void main() {
@@ -118,30 +44,18 @@ void main() {
         discard;
     }
 
-    vec3 normal   = calculateMappedNormal();
-    vec3 viewDir  = normalize(viewPos - passFragPos);
+    float minLight = max(MIN_BLOCK_LIGHT, minBlockLight);
 
-    // directional lighting below:
-    vec3 lightDir = normalize(-directionalLight.direction);
+    float lightR = min(MAX_BLOCK_LIGHT, max(minLight, float(unpackRed(blockLight)))) / MAX_BLOCK_LIGHT;
+    float lightG = min(MAX_BLOCK_LIGHT, max(minLight, float(unpackGreen(blockLight)))) / MAX_BLOCK_LIGHT;
+    float lightB = min(MAX_BLOCK_LIGHT, max(minLight, float(unpackBlue(blockLight)))) / MAX_BLOCK_LIGHT;
+    vec3 lightFactor = vec3(lightR, lightG, lightB);
 
-    // diffuse calculation
-    float diff = max(dot(normal, lightDir), 0.0);
-
-    // specular calculation
-    vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-
-    vec3 ambient  = directionalLight.ambient  *        textureColor.rgb;
-    vec3 diffuse  = directionalLight.diffuse  * diff * textureColor.rgb;
-    vec3 specular = directionalLight.specular * spec * texture(material.specular, passTextureCoordinates).rgb;
-
+    vec3 diffuse  = textureColor.rgb * lightFactor;
     vec3 emission = texture(material.emission, passTextureCoordinates).rgb;
 
-    vec4 lightColor = vec4(ambient + diffuse + specular + emission, 1.0);
+    float brightestLight = max(max(lightFactor.r, lightFactor.g), lightFactor.b);
+    vec4 lightColor = vec4(diffuse + emission, 1F + brightestLight);
 
-    //distance
-    float dist = computeDist(passViewSpace);
-
-    fragColor = computeFog(lightDir, viewDir, lightColor, dist);
-
+    fragColor = lightColor;
 }

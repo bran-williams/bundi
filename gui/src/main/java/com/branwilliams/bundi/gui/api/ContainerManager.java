@@ -157,7 +157,7 @@ public class ContainerManager implements Destructible, MouseListener, KeyListene
     @Override
     public void wheel(Window window, double xoffset, double yoffset) {
         for (Container container : containers) {
-            if (container.isActivated(MouseWheelDirection.class, yoffset < 0 ? MouseWheelDirection.UP : MouseWheelDirection.DOWN))
+            if (container.isActivated(MouseWheelDirection.class, yoffset > 0 ? MouseWheelDirection.UP : MouseWheelDirection.DOWN))
                 break;
         }
     }

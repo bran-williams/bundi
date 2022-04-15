@@ -13,15 +13,22 @@ public class Voxel {
 
     public final VoxelIdentifier id;
 
-    private boolean translucent;
+    private boolean opaque;
+
+    private int light;
 
     public Voxel(VoxelIdentifier id) {
-        this(id, false);
+        this(id, true);
     }
 
-    public Voxel(VoxelIdentifier id, boolean translucent) {
+    public Voxel(VoxelIdentifier id, boolean opaque) {
+        this(id, opaque, 0);
+    }
+
+    public Voxel(VoxelIdentifier id, boolean opaque, int light) {
         this.id = id;
-        this.translucent = translucent;
+        this.opaque = opaque;
+        this.light = light;
     }
 
     public AABB getBoundingBox(Vector3f position) {
@@ -40,14 +47,25 @@ public class Voxel {
      * @return True if this voxel should render the provided face, given the adjacent voxel.
      * */
     public boolean shouldRenderFace(Voxel adjacentVoxel, VoxelFace face) {
-        return Voxel.isAir(adjacentVoxel) || adjacentVoxel.isTranslucent();
+        return Voxel.isAir(adjacentVoxel) || !adjacentVoxel.isOpaque();
+    }
+
+    public boolean emitsLight() {
+        return getLight() > 0;
+    }
+
+    /**
+     *
+     * */
+    public int getLight() {
+        return light;
     }
 
     /**
      * @return True if this voxel is considered translucent (i.e. see-through)
      * */
-    public boolean isTranslucent() {
-        return translucent;
+    public boolean isOpaque() {
+        return opaque;
     }
 
     /**
@@ -68,7 +86,7 @@ public class Voxel {
     public String toString() {
         return "Voxel{" +
                 "id=" + id +
-                ", translucent=" + translucent +
+                ", opaque=" + opaque +
                 '}';
     }
 }

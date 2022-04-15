@@ -15,19 +15,25 @@ import org.joml.Vector3f;
  */
 public class PlayerState {
 
+    public enum CameraType {
+        FREE, FIRST_PERSON, THIRD_PERSON
+    }
+
+    private CameraType cameraType = CameraType.FIRST_PERSON;
+
     private Inventory inventory;
 
     private RaycastResult raycast;
 
-    private float reachDistance;
-
-    private AABB boundingBox;
-
-    private Vector3f eyeOffset;
-
     private boolean onGround;
 
+    private float initialJumpHeight;
+
     private boolean noClip;
+
+    private float reachDistance = 6F;
+
+    private Vector3f eyeOffset = new Vector3f(0F, 1.62F, 0F);;
 
     private float width = 0.6F;
 
@@ -35,11 +41,12 @@ public class PlayerState {
 
     private float height = 1.8F;
 
+    private AABB boundingBox = new AABB(-halfWidth, 0, -halfWidth, halfWidth, height, halfWidth);
+
+    private float mass = 4F;
+
     public PlayerState() {
         inventory = new Inventory();
-        reachDistance = 6F;
-        eyeOffset = new Vector3f(0F, 1.62F, 0F);
-        boundingBox = new AABB(-halfWidth, 0, -halfWidth, halfWidth, height, halfWidth);
     }
 
     public Vector3f getEyePosition(Transformable transformable) {
@@ -99,5 +106,29 @@ public class PlayerState {
 
     public void setReachDistance(float reachDistance) {
         this.reachDistance = reachDistance;
+    }
+
+    public float getMass() {
+        return mass;
+    }
+
+    public void setMass(float mass) {
+        this.mass = mass;
+    }
+
+    public float getInitialJumpHeight() {
+        return initialJumpHeight;
+    }
+
+    public void setInitialJumpHeight(float initialJumpHeight) {
+        this.initialJumpHeight = initialJumpHeight;
+    }
+
+    public CameraType getCameraType() {
+        return cameraType;
+    }
+
+    public void setCameraType(CameraType cameraType) {
+        this.cameraType = cameraType;
     }
 }

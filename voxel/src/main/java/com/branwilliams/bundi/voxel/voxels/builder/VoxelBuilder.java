@@ -10,6 +10,6 @@ import com.branwilliams.bundi.voxel.voxels.Voxel;
 public class VoxelBuilder {
 
     public Voxel buildVoxel(String voxelIdentifier, VoxelProperties voxelProperties) {
-        return new Voxel(() -> voxelIdentifier, voxelProperties.isTranslucent());
+        return new Voxel(() -> voxelIdentifier, voxelProperties.isOpaque(), voxelProperties.getLight());
     }
 }

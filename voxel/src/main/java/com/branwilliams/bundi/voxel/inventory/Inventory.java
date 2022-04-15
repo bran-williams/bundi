@@ -62,10 +62,14 @@ public class Inventory {
         return items.get(heldItem);
     }
 
+    public int getHeldIndex() {
+        return heldItem;
+    }
+
     public Item nextItem() {
         heldItem++;
         if (heldItem >= items.size()) {
-            heldItem = items.size() - 1;
+            heldItem = 0;
         }
         return getHeldItem();
     }
@@ -73,7 +77,7 @@ public class Inventory {
     public Item prevItem() {
         heldItem--;
         if (heldItem < 0) {
-            heldItem = 0;
+            heldItem = items.size() - 1;
         }
         return getHeldItem();
     }

@@ -29,19 +29,13 @@ public class ScrollableContainer extends Container {
         this.setLayout(new PaddedLayout());
 
         // Sets the SCROLLBAR activated
-        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event ->
-                updateMouseClick(event.x, event.y));
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) this::updateMouseClick);
 
         // Sets scrolling to false once the mouse button is released.
-        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) event -> {
-            verticalScrollbar.setScrolling(false);
-            horizontalScrollbar.setScrolling(false);
-            return false;
-        });
+        this.addListener(ClickEvent.class, (ClickEvent.ClickActionListener) this::releaseScrollbars);
 
         // Scrolls when the mouse wheel is moved.
-        this.addListener(MouseWheelDirection.class, (WheelActionListener) mouseWheelDirection ->
-                                updateMouseWheel(mouseWheelDirection.toInt()));
+        this.addListener(MouseWheelDirection.class, (WheelActionListener) this::updateMouseWheel);
     }
 
     @Override
@@ -57,23 +51,25 @@ public class ScrollableContainer extends Container {
     @Override
     public boolean isPointInside(int x, int y) {
         // Include this to ensure that the components outside the viewable area are not interacted with.
-        return super.isPointInside(x, y) && toolbox.isPointInside(x, y, new int[] {
+        return (verticalScrollbar.has() && verticalScrollbar.isPointInside(x, y))
+                || (horizontalScrollbar.has() && horizontalScrollbar.isPointInside(x, y))
+                || (super.isPointInside(x, y) && toolbox.isPointInside(x, y, new int[] {
                 getX(),
                 getY(),
                 getWidth(),
                 getHeight()
-        });
+        }));
     }
 
     /**
      * @return True if this container's SCROLLBAR was clicked and if this container's SCROLLBAR has been clicked upon.
      * */
-    private boolean updateMouseClick(int mouseX, int mouseY) {
+    private boolean updateMouseClick(ClickEvent event) {
         if (isHovered()) {
-            if (verticalScrollbar.has() && verticalScrollbar.isPointInside(mouseX, mouseY)) {
+            if (verticalScrollbar.has() && verticalScrollbar.isPointInside(event.x, event.y)) {
                 verticalScrollbar.setScrolling(true);
                 return true;
-            } else if (horizontalScrollbar.has() && horizontalScrollbar.isPointInside(mouseX, mouseY)) {
+            } else if (horizontalScrollbar.has() && horizontalScrollbar.isPointInside(event.x, event.y)) {
                 horizontalScrollbar.setScrolling(true);
                 return true;
             }
@@ -84,11 +80,19 @@ public class ScrollableContainer extends Container {
     /**
      * Updates the scroll bar based on the mouse wheel.
      * */
-    private boolean updateMouseWheel(int direction) {
+    private boolean updateMouseWheel(MouseWheelDirection direction) {
         if (isHovered() && isPointInside(toolbox.getMouseX(), toolbox.getMouseY())) {
-            verticalScrollbar.wheel(direction);
-            horizontalScrollbar.wheel(direction);
+            verticalScrollbar.wheel(direction.toInt());
+            horizontalScrollbar.wheel(direction.toInt());
             return true;
+        }
+        return false;
+    }
+
+    private boolean releaseScrollbars(ClickEvent event) {
+        if (ClickEvent.MouseClickAction.MOUSE_RELEASE.equals(event.mouseClickAction)) {
+            verticalScrollbar.setScrolling(false);
+            horizontalScrollbar.setScrolling(false);
         }
         return false;
     }

@@ -43,7 +43,7 @@ public class VoxelMeshBuilderImpl implements VoxelMeshBuilder {
         int index = 0;
 
         for (VoxelFace face : faces) {
-            index = addVoxelFace(index, voxelProperties, face, vertices, uvs, indices, minX, minY, minZ, maxX, maxY,
+            index = addVoxelFace(index, voxelProperties, face, vertices, uvs, indices, minX, maxX, minY, maxY, minZ,
                     maxZ);
         }
 

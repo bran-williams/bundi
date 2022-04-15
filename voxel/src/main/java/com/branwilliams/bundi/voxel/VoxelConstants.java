@@ -37,4 +37,17 @@ public class VoxelConstants {
     public static final int MAX_KERNEL_Z = 15;
 
     public static final long CHUNK_ANIMATION_TIME_MS = 250L;
+
+    public static final int MIN_LIGHT = 0;
+
+    public static final int MAX_LIGHT = 15;
+
+    public static final int MAX_LIGHT_RED = MAX_LIGHT;
+
+    public static final int MAX_LIGHT_GREEN = MAX_LIGHT;
+
+    public static final int MAX_LIGHT_BLUE = MAX_LIGHT;
+
+    public static final int ZERO_LIGHT = 0;
+
 }

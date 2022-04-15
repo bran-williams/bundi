@@ -1,17 +1,20 @@
 <UI>
-    <Container tag="mainmenu" x="50" y="50" width="100" height="100" opacity="0">
+    <Container tag="mainmenu" x="20%" y="15%" width="80%" height="85%" opacity="0">
         <ListLayout padding="2" componentPadding="4"/>
 
-        <Label tag="menu_title" text="Mine man" color="#ffffff" height="70" alignment="left">
-            <FontData font="Roboto" size="68" style="bold"/>
+        <Label tag="menu_title" text="Mine man" color="#ffffff" height="50" alignment="center">
+            <FontData font="Roboto" size="48" style="bold"/>
         </Label>
 
-        <Button tag="load_button" text="Play" width="150" height="24" highlight="true">
-            <FontData font="Roboto" size="18" style="bold"/>
+        <Button tag="play_button" width="300" height="48" highlight="true" color="#aaaaaa">
+            <Label text="Play" color="#444444" height="36" alignment="left">
+                <FontData font="Roboto" size="36" style="plain"/>
+            </Label>
         </Button>
-
-        <Button tag="quit_button" text="Quit" width="150" height="24" highlight="true">
-            <FontData font="Roboto" size="18" style="bold"/>
+        <Button tag="quit_button" width="300" height="48" highlight="true" color="#f44336">
+            <Label text="Quit" color="#ffffff" height="36" alignment="left">
+                <FontData font="Roboto" size="36" style="plain"/>
+            </Label>
         </Button>
     </Container>
 </UI>

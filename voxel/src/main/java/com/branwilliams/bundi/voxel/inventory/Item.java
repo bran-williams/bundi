@@ -9,6 +9,4 @@ public interface Item {
 
     boolean place(VoxelWorld world, Vector3f blockPosition);
 
-
-
 }

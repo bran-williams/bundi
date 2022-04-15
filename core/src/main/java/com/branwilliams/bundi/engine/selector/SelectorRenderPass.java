@@ -6,6 +6,7 @@ import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderContext;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
+import com.branwilliams.bundi.engine.font.BasicFontData;
 import com.branwilliams.bundi.engine.font.BasicFontRenderer;
 import com.branwilliams.bundi.engine.font.FontData;
 import com.branwilliams.bundi.engine.font.FontRenderer;
@@ -33,9 +34,9 @@ public class SelectorRenderPass extends RenderPass<RenderContext> {
 
     private Transformable worldTransform = new Transformation();
 
-    private FontData normal = new FontData();
+    private FontData normal = new BasicFontData();
 
-    private FontData bold = new FontData();
+    private FontData bold = new BasicFontData();
 
     public SelectorRenderPass(SelectorScene selectorScene) {
         this.selectorScene = selectorScene;

@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public final class Voxels {
 
-    public static final Voxel air            = new Voxel(VoxelIdentifiers.AIR);
+    public static final Voxel air            = new Voxel(VoxelIdentifiers.AIR, false);
 
     public static final Voxel grass          = new Voxel(VoxelIdentifiers.GRASS);
 

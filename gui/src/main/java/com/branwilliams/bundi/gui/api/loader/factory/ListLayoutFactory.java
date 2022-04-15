@@ -13,11 +13,11 @@ import org.w3c.dom.Node;
  */
 public class ListLayoutFactory implements UIElementFactory<ListLayout> {
     @Override
-    public ListLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes) {
+    public ListLayout createElement(Toolbox toolbox, Node node, NamedNodeMap attributes, int parentWidth, int parentHeight) {
         int padding = XmlUtils.getAttributeInt(attributes, "padding", 0);
-        int componentPadding = XmlUtils.getAttributeInt(attributes, "componentPadding", padding);
+        int componentPadding = XmlUtils.getAttributeInt(attributes, "componentpadding", padding);
         boolean vertical = XmlUtils.getAttributeBoolean(attributes, "vertical", true);
-        boolean forcedSize = XmlUtils.getAttributeBoolean(attributes, "forcedSize", false);
+        boolean forcedSize = XmlUtils.getAttributeBoolean(attributes, "forcedsize", false);
         ListLayout listLayout = new ListLayout(padding, componentPadding, vertical, forcedSize);
         return listLayout;
     }
