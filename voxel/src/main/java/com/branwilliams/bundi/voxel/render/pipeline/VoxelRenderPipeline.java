@@ -29,8 +29,8 @@ public class VoxelRenderPipeline extends RenderPipeline<VoxelRenderContext> {
         this.addLast(new VoxelGuiScreenRenderPass(scene));
 
 //        this.addLast(new BloomViewRenderPass(scene::getCamera));
-//        this.addLast(new ChunkBorderRenderPass(scene));
 //        this.addLast(new SSAOViewRenderPass(scene::getCamera));
+//        this.addLast(new ChunkBorderRenderPass(scene));
 //        this.addLast(new VoxelDebugRenderPass(scene));
     }
 }
