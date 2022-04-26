@@ -189,18 +189,30 @@ public class ModularShaderProgram extends ShaderProgram {
                 (s) -> String.format("    vec4 %s = %s;\n", ModularShaderConstants.FRAG_MATERIAL_DIFFUSE,
                         getMaterialDiffuseAsVec4()), CommentShaderPatch.ModificationType.PREPEND));
 
+        // ensure we set pixelColor if no modules are available to do so for us.
+        if (shaderModules.isEmpty()) {
+            shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
+                    (s) -> String.format("    pixelColor = %s;\n", ModularShaderConstants.FRAG_MATERIAL_DIFFUSE),
+                    CommentShaderPatch.ModificationType.PREPEND));
+        }
+
         shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
                 (s) -> String.format("    vec4 %s = %s;\n", ModularShaderConstants.FRAG_MATERIAL_SPECULAR,
                         getMaterialSpecularAsVec4()), CommentShaderPatch.ModificationType.PREPEND));
 
-        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
-                (s) -> String.format("    vec4 %s = %s;\n", ModularShaderConstants.FRAG_MATERIAL_NORMAL,
-                        getMaterialNormalAsVec4()), CommentShaderPatch.ModificationType.PREPEND));
+//        shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
+//                (s) -> String.format("    vec4 %s = %s;\n", ModularShaderConstants.FRAG_MATERIAL_NORMAL,
+//                        getMaterialNormalAsVec4()), CommentShaderPatch.ModificationType.PREPEND));
 
+        // overwrite the normal used for lighting with the texture mapped one
         if (hasNormals && materialFormat.hasElementAsSampler(MaterialElement.NORMAL)) {
             String materialMappedNormal = getMaterialMappedNormal();
 
             if (!shouldUseTriplanarMapping()) {
+                shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_MAIN_COMMENT,
+                        (s) -> String.format("    vec4 %s = %s;\n", ModularShaderConstants.FRAG_MATERIAL_NORMAL,
+                                getMaterialNormalAsVec4()), CommentShaderPatch.ModificationType.PREPEND));
+
                 shaderPatches.add(new CommentShaderPatch(ModularShaderConstants.FRAG_UNIFORMS_COMMENT,
                         (s) -> IOUtils.readResource(ModularShaderConstants.NORMAL_FUNCTION_LOCATION, null),
                         CommentShaderPatch.ModificationType.PREPEND));
@@ -227,6 +239,10 @@ public class ModularShaderProgram extends ShaderProgram {
                 "triplanarTile", "triplanarBlendOffset");
     }
 
+    private String getMaterialNormalTriplanarVec3(String materialName, MaterialFormat materialFormat) {
+        return getMaterialNormalTriplanarVec4(materialName, materialFormat) + ".rgb";
+    }
+
     private String getMaterialDiffuseAsVec4() {
         if (shouldUseTriplanarMapping() && materialFormat.hasElementAsSampler(MaterialElement.DIFFUSE)) {
             return getMaterialElementTriplanarVec4(materialName, materialFormat, MaterialElement.DIFFUSE);
@@ -251,7 +267,7 @@ public class ModularShaderProgram extends ShaderProgram {
 
     private String getMaterialMappedNormal() {
         if (shouldUseTriplanarMapping()) {
-            return getMaterialNormalTriplanarVec4(materialName, materialFormat);
+            return getMaterialNormalTriplanarVec3(materialName, materialFormat);
         } else {
             return createNormalMappedNormal();
         }

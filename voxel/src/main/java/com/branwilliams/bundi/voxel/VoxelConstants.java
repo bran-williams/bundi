@@ -38,9 +38,13 @@ public class VoxelConstants {
 
     public static final long CHUNK_ANIMATION_TIME_MS = 250L;
 
-    public static final int MIN_LIGHT = 0;
+    public static final int ZERO_LIGHT = 0;
+
+    public static final int MIN_LIGHT = ZERO_LIGHT;
 
     public static final int MAX_LIGHT = 15;
+
+    public static final int DEFAULT_LIGHT = 3; // for game settings
 
     public static final int MAX_LIGHT_RED = MAX_LIGHT;
 
@@ -48,6 +52,8 @@ public class VoxelConstants {
 
     public static final int MAX_LIGHT_BLUE = MAX_LIGHT;
 
-    public static final int ZERO_LIGHT = 0;
+    public static final float MAX_AO = 3F;
+
+    public static final float MIN_AO = 0F;
 
 }

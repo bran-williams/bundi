@@ -4,7 +4,6 @@ import com.branwilliams.bundi.engine.core.Engine;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
-import com.branwilliams.bundi.engine.core.window.WindowListener;
 import com.branwilliams.bundi.engine.shader.*;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicShaderProgram;
 import com.branwilliams.bundi.engine.shader.dynamic.DynamicVAO;
@@ -26,17 +25,11 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
  * @author Brandon
  * @since August 10, 2019
  */
-public class VoxelIngameGuiRenderPass extends RenderPass<VoxelRenderContext> implements WindowListener {
+public class VoxelHotbarRenderPass extends RenderPass<VoxelRenderContext> {
 
     private static final int HOTBAR_ITEM_SIZE = 48;
 
     private static final int HOTBAR_PADDING = 3;
-
-    private static final float CROSSHAIR_SIZE = 8F;
-
-    private final Transformable crosshairTransform = new Transformation();
-
-    private final Vector4f crosshairColor = new Vector4f(1F);
 
     private final Transformable selectionTransform = new Transformation();
 
@@ -48,16 +41,11 @@ public class VoxelIngameGuiRenderPass extends RenderPass<VoxelRenderContext> imp
 
     private DynamicShaderProgram texturedShaderProgram;
 
-    private DynamicShaderProgram dynamicShaderProgram;
-
-    private DynamicVAO crosshair;
-
     private DynamicVAO selection;
 
     private DynamicVAO texturedVao;
 
-    public VoxelIngameGuiRenderPass(VoxelScene scene) {
-        scene.addWindowListener(this);
+    public VoxelHotbarRenderPass(VoxelScene scene) {
         this.scene = scene;
     }
 
@@ -66,14 +54,9 @@ public class VoxelIngameGuiRenderPass extends RenderPass<VoxelRenderContext> imp
         try {
             shapeShaderProgram = new DynamicShaderProgram(VertexFormat.POSITION);
             texturedShaderProgram = new DynamicShaderProgram(VertexFormat.POSITION_UV);
-            dynamicShaderProgram = new DynamicShaderProgram();
         } catch (ShaderInitializationException | ShaderUniformException e) {
             e.printStackTrace();
         }
-
-        crosshair = new DynamicVAO(VertexFormat.POSITION);
-        crosshairTransform.position(window.getWidth() * 0.5F, window.getHeight() * 0.5F, 0F);
-        buildCrosshair();
 
         selection = new DynamicVAO(VertexFormat.POSITION);
         buildSelection(-HOTBAR_PADDING, -HOTBAR_PADDING, HOTBAR_ITEM_SIZE + HOTBAR_PADDING,
@@ -84,34 +67,11 @@ public class VoxelIngameGuiRenderPass extends RenderPass<VoxelRenderContext> imp
 
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
-        glDisable(GL_DEPTH_TEST);
-
         if (scene.getGuiScreen() != null) {
-            dynamicShaderProgram.bind();
-            dynamicShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
-            dynamicShaderProgram.setModelMatrix(Transformable.empty());
-            scene.getGuiScreen().render();
-            ShaderProgram.unbind();
             return;
         }
 
-        drawCrosshair(renderContext);
-
         drawPlayerHotbar(renderContext, window);
-    }
-
-    @Override
-    public void resize(Window window, int width, int height) {
-        crosshairTransform.position(width * 0.5F, height * 0.5F, 0F);
-    }
-
-    private void drawCrosshair(VoxelRenderContext renderContext) {
-        shapeShaderProgram.bind();
-        shapeShaderProgram.setProjectionMatrix(renderContext.getOrthoProjection());
-        shapeShaderProgram.setModelMatrix(crosshairTransform);
-        shapeShaderProgram.setColor(crosshairColor);
-
-        crosshair.draw(GL_LINES);
     }
 
     private void drawPlayerHotbar(VoxelRenderContext renderContext, Window window) {
@@ -172,16 +132,6 @@ public class VoxelIngameGuiRenderPass extends RenderPass<VoxelRenderContext> imp
         vao.position(x1, y, z).texture(s, v).endVertex();
     }
 
-    private void buildCrosshair() {
-        crosshair.begin();
-        crosshair.position(0, -CROSSHAIR_SIZE, 0).endVertex();
-        crosshair.position(0, CROSSHAIR_SIZE, 0).endVertex();
-
-        crosshair.position(-CROSSHAIR_SIZE, 0F, 0).endVertex();
-        crosshair.position(CROSSHAIR_SIZE, 0F, 0).endVertex();
-        crosshair.compile();
-    }
-
     private void buildSelection(float x, float y, float x1, float y1) {
         selection.begin();
         float z = 0F;
@@ -192,16 +142,14 @@ public class VoxelIngameGuiRenderPass extends RenderPass<VoxelRenderContext> imp
         selection.position(x, y1, z).endVertex();
         selection.position(x1, y1, z).endVertex();
         selection.position(x1, y, z).endVertex();
-        crosshair.compile();
+        selection.compile();
     }
 
     @Override
     public void destroy() {
         super.destroy();
         this.shapeShaderProgram.destroy();
-        this.dynamicShaderProgram.destroy();
         this.texturedShaderProgram.destroy();
-        this.crosshair.destroy();
         this.texturedVao.destroy();
     }
 }

@@ -7,12 +7,15 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.util.Objects;
 
 import static com.branwilliams.bundi.engine.util.TextureUtils.getChannelsFromFormat;
 import static com.branwilliams.bundi.engine.util.TextureUtils.toByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.opengl.GL14.GL_DEPTH_COMPONENT24;
 import static org.lwjgl.opengl.GL30.*;
@@ -32,7 +35,7 @@ public class Texture implements Destructible {
      * <li>data type</li>
      * </ul>
      * */
-    public enum TextureType {
+    public enum TextureType implements TextureFormat {
         /**
          * This texture type is a high precision texture (16 bit precision per component)
          * */
@@ -68,7 +71,15 @@ public class Texture implements Destructible {
         /**
          *
          * */
-        DEPTH24_STENCIL8(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_FLOAT)
+        DEPTH24_STENCIL8(GL_DEPTH24_STENCIL8, GL_DEPTH_COMPONENT, GL_FLOAT),
+        /**
+         * Default precision for textures.
+         * */
+        RED(GL_RED, GL_RED, GL_FLOAT),
+        /**
+         * Default precision for textures.
+         * */
+        COLOR3f(GL_RGBA16F, GL_RGB, GL_UNSIGNED_BYTE)
         ;
 
         /** This is the internal format OpenGL uses to store the texture data. */
@@ -84,6 +95,66 @@ public class Texture implements Destructible {
             this.glInternalFormat = glInternalFormat;
             this.dataFormat = dataFormat;
             this.dataType = dataType;
+        }
+
+        @Override
+        public int glInternalFormat() {
+            return glInternalFormat;
+        }
+
+        @Override
+        public int dataFormat() {
+            return dataFormat;
+        }
+
+        @Override
+        public int dataType() {
+            return dataType;
+        }
+    }
+
+    /**
+     * Used to determine a texture's
+     * <ul>
+     * <li>internal format</li>
+     * <li>data format</li>
+     * <li>data type</li>
+     * </ul>
+     * */
+    public interface TextureFormat {
+
+        /**
+         * This is the internal format OpenGL uses to store the texture data.
+         * */
+        int glInternalFormat();
+
+        /**
+         * This is the format OpenGL should expect the texture data to be uploaded in.
+         * */
+        int dataFormat();
+
+        /**
+         * This is the type of data stored inside of the buffer that is stored in the texture.
+         * */
+        int dataType();
+
+        static TextureFormat of(int glInternalFormat, int dataFormat, int dataType) {
+            return new TextureFormat() {
+                @Override
+                public int glInternalFormat() {
+                    return glInternalFormat;
+                }
+
+                @Override
+                public int dataFormat() {
+                    return dataFormat;
+                }
+
+                @Override
+                public int dataType() {
+                    return dataType;
+                }
+            };
         }
     }
 
@@ -117,16 +188,16 @@ public class Texture implements Destructible {
 
     /**
      * Creates a texture object from the provided {@link ByteBuffer} with the provided width and height.
-     * Mipmaps will be generated if specified and the {@link TextureType} specifies the internal format, expected buffer
-     * format, and data type.
+     * Mipmaps will be generated if specified and the {@link TextureFormat} specifies the internal format, expected
+     * buffer format, and data type.
      * @param buffer The buffer containing the data of the image. This value can be null for creating a texture object
      *               with an empty buffer.
      * @param width The width of this texture.
      * @param height The height of this texture.
      * @param mipmaps Creates mip maps for this image if true.
-     * @param textureType Determines the internal format OpenGL uses to store this image data.
+     * @param textureFormat Determines the internal format OpenGL uses to store this image data.
      * */
-    public Texture(@Nullable ByteBuffer buffer, int width, int height, boolean mipmaps, TextureType textureType) {
+    public Texture(@Nullable Buffer buffer, int width, int height, boolean mipmaps, TextureFormat textureFormat) {
         this(GL_TEXTURE_2D);
 
         this.width = width;
@@ -134,8 +205,8 @@ public class Texture implements Destructible {
 
         bind();
 
-        glTexImage2D(target, 0, textureType.glInternalFormat, width, height, 0, textureType.dataFormat,
-                textureType.dataType, buffer);
+        initializeTexture(buffer, width, height, textureFormat.glInternalFormat(), textureFormat.dataFormat(),
+                textureFormat.dataType());
 
         if (mipmaps) {
             generateMipmaps();
@@ -154,8 +225,8 @@ public class Texture implements Destructible {
         this(buffer, width, height, mipmaps, TextureType.COLOR);
     }
 
-    public Texture(int[] pixels, int width, int height, boolean mipmaps, TextureType textureType) {
-        this(toByteBuffer(pixels, width, height), width, height, mipmaps, textureType);
+    public Texture(int[] pixels, int width, int height, boolean mipmaps, TextureFormat textureFormat) {
+        this(toByteBuffer(pixels, width, height), width, height, mipmaps, textureFormat);
     }
 
     public Texture(int[] pixels, int width, int height, boolean mipmaps) {
@@ -213,19 +284,19 @@ public class Texture implements Destructible {
     /**
      * Creates a texture from the provided {@link TextureData} using the texture type
      * of {@link TextureType#COLOR}.
-     * See {@link Texture#Texture(TextureData, TextureType, boolean)}.
+     * See {@link Texture#Texture(AbstractTextureData, TextureFormat, boolean)}.
      * */
-    public Texture(TextureData textureData, boolean mipmaps) {
+    public Texture(AbstractTextureData<?,?> textureData, boolean mipmaps) {
         this(textureData, TextureType.COLOR, mipmaps);
     }
 
     /**
      * Uploads the data from the provided {@link TextureData} into an OpenGL texture.
      * @param textureData The image data used to create this texture.
-     * @param textureType Determines the internal format OpenGL uses to store this image data.
+     * @param textureFormat Determines the internal format OpenGL uses to store this image data.
      * @param mipmaps Creates mip maps for this image if true.
      * */
-    public Texture(TextureData textureData, TextureType textureType, boolean mipmaps) {
+    public Texture(AbstractTextureData<?,?> textureData, TextureFormat textureFormat, boolean mipmaps) {
         this(GL_TEXTURE_2D);
 
         this.width = textureData.getWidth();
@@ -237,10 +308,9 @@ public class Texture implements Destructible {
         if (textureData.getChannels() == 3 && (width & 3) != 0) {
             glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (width & 1));
         }
-        //glPixelStorei(GL_UNPACK_ALIGNMENT,1);
 
-        glTexImage2D(target, 0, textureType.glInternalFormat, width, height, 0, textureData.getFormat(),
-                textureType.dataType, textureData.getData());
+        initializeTexture(textureData.getData(), width, height, textureFormat.glInternalFormat(),
+                textureData.getFormat(), textureFormat.dataType());
 
         if (mipmaps) {
             generateMipmaps();
@@ -253,6 +323,23 @@ public class Texture implements Destructible {
 
         // destroy the image data so it doesn't take up memory.
         textureData.destroy();
+    }
+
+    protected void initializeTexture(Buffer buffer, int width, int height, int glInternalFormat, int dataFormat,
+                                     int dataType) {
+        if (buffer instanceof ByteBuffer) {
+            ByteBuffer byteBuffer = (ByteBuffer) buffer;
+            glTexImage2D(target, 0, glInternalFormat, width, height, 0, dataFormat, dataType, byteBuffer);
+        } else if (buffer instanceof FloatBuffer) {
+            FloatBuffer floatBuffer = (FloatBuffer) buffer;
+            glTexImage2D(target, 0, glInternalFormat, width, height, 0, dataFormat, dataType, floatBuffer);
+        } else if (buffer == null) {
+            glTexImage2D(target, 0, glInternalFormat, width, height, 0, dataFormat, dataType,
+                    (ByteBuffer) null);
+        } else {
+            destroy();
+            throw new IllegalArgumentException("Unable to initialize texture with buffer type: " + buffer);
+        }
     }
 
     /**

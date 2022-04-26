@@ -202,7 +202,8 @@
       "all":  {
         "diffuse": "blocks_hd/glowstone.png",
         "normal": "blocks_hd/glowstone_n.png",
-        "specular": "blocks_hd/glowstone_s.png"
+        "specular": "blocks_hd/glowstone_s.png",
+        "emission": "blocks_hd/glowstone_e2.png"
       }
     },
     "light": "#0f0f0f"

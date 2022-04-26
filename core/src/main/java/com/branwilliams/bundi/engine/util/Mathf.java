@@ -218,6 +218,15 @@ public enum Mathf {
      * Linearly interpolates from x to y by the amount.
      * This produces a new vector.
      * */
+    public static Vector3f lerp(Vector3f x, Vector3f y, double amount) {
+        return new Vector3f(lerp(x.x, y.x, amount), lerp(x.y, y.y, amount), lerp(x.z, y.z, amount));
+    }
+
+
+    /**
+     * Linearly interpolates from x to y by the amount.
+     * This produces a new vector.
+     * */
     public static Vector3f lerp(Vector3f x, Vector3f y, float amount) {
         return new Vector3f(lerp(x.x, y.x, amount), lerp(x.y, y.y, amount), lerp(x.z, y.z, amount));
     }
@@ -229,6 +238,14 @@ public enum Mathf {
     public static Vector2f lerp(Vector2f x, Vector2f y, float amount) {
         return new Vector2f(lerp(x.x, y.x, amount), lerp(x.y, y.y, amount));
     }
+
+    /**
+     * Linearly interpolates from x to y by the amount.
+     * */
+    public static float lerp(float x, float y, double amount) {
+        return x * (float) (1D - amount) + (float) (y * amount);
+    }
+
 
     /**
      * Linearly interpolates from x to y by the amount.

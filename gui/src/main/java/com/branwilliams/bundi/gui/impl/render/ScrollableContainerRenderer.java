@@ -7,6 +7,8 @@ import com.branwilliams.bundi.gui.api.containers.ScrollableContainer;
 import com.branwilliams.bundi.gui.api.render.ImageRenderer;
 import com.branwilliams.bundi.gui.impl.AbstractComponentRenderer;
 
+import static com.branwilliams.bundi.engine.util.ColorUtils.toARGB;
+
 
 /**
  * Basic scrollable container renderer. <br/>
@@ -40,7 +42,8 @@ public class ScrollableContainerRenderer extends AbstractComponentRenderer<Scrol
     @Override
     public void render(ScrollableContainer container) {
         if (container.getOpacity() > 0F) {
-            shapeRenderer.drawRect(container.getRenderArea().getArea(), container.getBackgroundColor());
+            shapeRenderer.drawRect(container.getRenderArea().getArea(), toARGB(container.getBackgroundColor().getRGB(),
+                    container.getOpacity()));
         }
         if (container.getVerticalScrollbar().has()) {
             shapeRenderer.drawRect(container.getVerticalScrollbar().getArea(), container.getScrollbarBackgroundColor());

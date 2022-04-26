@@ -50,7 +50,7 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
      * */
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
-        renderContext.getScreenFrameBuffer().bind();
+        renderContext.getGBuffer().bind();
         glClearColor(0F, 0F, 0F, 0.0F);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -87,9 +87,6 @@ public class ChunkRenderPass extends RenderPass<VoxelRenderContext> {
             }
         }
 
-        // draw to screen!!
-        FrameBufferObject.unbind();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     private boolean shouldRenderMesh(VoxelRenderContext renderContext, ChunkMesh chunkMesh, VoxelChunk voxelChunk) {

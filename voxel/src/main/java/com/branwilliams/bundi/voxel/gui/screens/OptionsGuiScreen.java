@@ -9,6 +9,7 @@ import com.branwilliams.bundi.voxel.gui.VoxelGuiScreen;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 
+import static com.branwilliams.bundi.voxel.VoxelConstants.MAX_AO;
 import static com.branwilliams.bundi.voxel.VoxelConstants.MAX_LIGHT;
 
 public class OptionsGuiScreen extends VoxelGuiScreen<VoxelScene> {
@@ -110,5 +111,19 @@ public class OptionsGuiScreen extends VoxelGuiScreen<VoxelScene> {
         });
         minLightLabel.setText(String.valueOf(scene.getGameSettings().getMinBlockLight()));
         minLightSlider.setSliderPercentage((float) scene.getGameSettings().getMinBlockLight() / MAX_LIGHT);
+
+
+
+        Slider aoSlider = containerManager.getByTag("ao_slider");
+        Label aoLabel = containerManager.getByTag("ao_value");
+
+        aoSlider.onValueChange((s) -> {
+            float roundedValue = Float.parseFloat(df.format(s.getSliderPercentage()));
+            float ao = roundedValue * MAX_AO;
+            aoLabel.setText(String.format("%.2f", ao));
+            scene.getGameSettings().setAmbientOcclusionPower(ao);
+        });
+        aoLabel.setText(String.format("%.2f", scene.getGameSettings().getAmbientOcclusionPower()));
+        aoSlider.setSliderPercentage(scene.getGameSettings().getAmbientOcclusionPower() / MAX_AO);
     }
 }

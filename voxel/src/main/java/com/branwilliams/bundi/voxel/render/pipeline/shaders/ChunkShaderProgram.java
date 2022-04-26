@@ -25,9 +25,8 @@ public class ChunkShaderProgram extends ShaderProgram {
 
     public ChunkShaderProgram(EngineContext engineContext) throws ShaderInitializationException, ShaderUniformException {
         super();
-        Path directory = engineContext.getAssetDirectory();
-        this.setVertexShader(IOUtils.readFile(directory, "voxel/shaders/world/vertexShader.vert", null));
-        this.setFragmentShader(IOUtils.readFile(directory, "voxel/shaders/world/fragmentShader.frag", null));
+        this.setVertexShader(IOUtils.readResource( "voxel/shaders/world/vertexShader.vert", null));
+        this.setFragmentShader(IOUtils.readResource("voxel/shaders/world/fragmentShader.frag", null));
         this.link();
 
         this.createUniform("projectionMatrix");
@@ -37,10 +36,12 @@ public class ChunkShaderProgram extends ShaderProgram {
         this.createUniform("minBlockLight");
 
         this.createUniform("material.diffuse");
+        this.createUniform("material.normal");
         this.createUniform("material.emission");
 
         this.bind();
         this.setUniform("material.diffuse", 0);
+        this.setUniform("material.normal", 1);
         this.setUniform("material.emission", 3);
 
         ShaderProgram.unbind();

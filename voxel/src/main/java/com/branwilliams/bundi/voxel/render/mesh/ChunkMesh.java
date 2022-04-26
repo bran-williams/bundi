@@ -69,6 +69,7 @@ public class ChunkMesh implements Destructible {
     private void initializeSolidMesh() {
         int vertexCount = 8 * 6;
         this.solidMesh.bind();
+        this.solidMesh.setVertexFormat(CHUNK_VERTEX_FORMAT);
         this.solidMesh.initializeAttribute(0, 4, vertexCount * 4);
         this.solidMesh.initializeAttribute(1, 2, vertexCount * 2);
         this.solidMesh.initializeAttribute(2, 3, vertexCount * 3);
@@ -87,7 +88,6 @@ public class ChunkMesh implements Destructible {
             return;
         }
 
-        this.solidMesh.setVertexFormat(CHUNK_VERTEX_FORMAT);
         this.solidMesh.bind();
         this.solidMesh.storeAttribute(0,
                 toArray4f(vertices.stream().map((v) -> v.vertex).collect(Collectors.toList())),

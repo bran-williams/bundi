@@ -2,19 +2,17 @@ package com.branwilliams.bundi.voxel.components;
 
 import com.branwilliams.bundi.engine.util.Mathf;
 
+import static com.branwilliams.bundi.voxel.VoxelConstants.*;
+
 /**
  * @author Brandon
  * @since August 19, 2019
  */
 public class GameSettings {
 
-    private static final int MIN_BLOCK_LIGHT = 1;
-
-    private static final int MAX_BLOCK_LIGHT = 15;
-
     private int chunkRenderDistance;
 
-    private int minBlockLight = MIN_BLOCK_LIGHT;
+    private int minBlockLight = DEFAULT_LIGHT;
 
     private float musicVolume;
 
@@ -23,6 +21,8 @@ public class GameSettings {
     private boolean vsync;
 
     private boolean fullscreen;
+
+    private float ambientOcclusionPower = 1F;
 
     public int getChunkRenderDistance() {
         return chunkRenderDistance;
@@ -37,7 +37,7 @@ public class GameSettings {
     }
 
     public void setMinBlockLight(int minBlockLight) {
-        this.minBlockLight = Mathf.clamp(minBlockLight, MIN_BLOCK_LIGHT, MAX_BLOCK_LIGHT);
+        this.minBlockLight = Mathf.clamp(minBlockLight, MIN_LIGHT, MAX_LIGHT);
     }
 
     public float getMusicVolume() {
@@ -70,5 +70,13 @@ public class GameSettings {
 
     public void setFullscreen(boolean fullscreen) {
         this.fullscreen = fullscreen;
+    }
+
+    public float getAmbientOcclusionPower() {
+        return ambientOcclusionPower;
+    }
+
+    public void setAmbientOcclusionPower(float ambientOcclusionPower) {
+        this.ambientOcclusionPower = Mathf.clamp(ambientOcclusionPower, MIN_AO, MAX_AO);
     }
 }

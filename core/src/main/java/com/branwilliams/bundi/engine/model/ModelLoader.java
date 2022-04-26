@@ -73,7 +73,8 @@ public class ModelLoader {
                 aiProcess_PreTransformVertices); //aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_FixInfacingNormals);
 
         if (scene == null) {
-            throw new IOException(String.format("Unable to load model from location %s!", location));
+            throw new IOException(String.format("Unable to load model from location \"%s\". Error: %s", location,
+                    aiGetErrorString()));
         }
         log.info(String.format("Creating model from location %s", location));
 

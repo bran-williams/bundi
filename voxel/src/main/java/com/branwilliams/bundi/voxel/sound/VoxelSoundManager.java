@@ -1,4 +1,4 @@
-package com.branwilliams.bundi.voxel;
+package com.branwilliams.bundi.voxel.sound;
 
 import com.branwilliams.bundi.engine.audio.AudioData;
 import com.branwilliams.bundi.engine.audio.AudioLoader;

@@ -5,6 +5,7 @@ import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.core.pipeline.InitializationException;
 import com.branwilliams.bundi.engine.core.pipeline.RenderPass;
 import com.branwilliams.bundi.engine.mesh.MeshRenderer;
+import com.branwilliams.bundi.engine.shader.FrameBufferObject;
 import com.branwilliams.bundi.engine.shader.ShaderInitializationException;
 import com.branwilliams.bundi.engine.shader.ShaderUniformException;
 import com.branwilliams.bundi.engine.skybox.Skybox;
@@ -13,6 +14,9 @@ import com.branwilliams.bundi.voxel.render.pipeline.VoxelRenderContext;
 import com.branwilliams.bundi.voxel.render.pipeline.shaders.AtmosphereShaderProgram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 /**
  * Created by Brandon Williams on 11/28/2018.
@@ -41,6 +45,13 @@ public class AtmosphereRenderPass extends RenderPass<VoxelRenderContext> {
 
     @Override
     public void render(VoxelRenderContext renderContext, Engine engine, Window window, double deltaTime) {
+        glEnable(GL_DEPTH_TEST);
+        glDepthMask(true);
+
+        // draw to screen!!
+        FrameBufferObject.unbind();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // Bind skybox shader program and render skybox.
         this.atmosphereShaderProgram.bind();
         this.atmosphereShaderProgram.setProjectionMatrix(renderContext.getProjection());

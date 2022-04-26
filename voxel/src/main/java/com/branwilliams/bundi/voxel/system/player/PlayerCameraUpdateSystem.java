@@ -7,9 +7,14 @@ import com.branwilliams.bundi.engine.ecs.EntitySystemManager;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.ecs.matchers.ClassComponentMatcher;
 import com.branwilliams.bundi.engine.shader.Transformable;
+import com.branwilliams.bundi.engine.util.Mathf;
 import com.branwilliams.bundi.voxel.scene.VoxelScene;
 import com.branwilliams.bundi.voxel.components.CameraComponent;
 import com.branwilliams.bundi.voxel.components.PlayerState;
+import org.joml.Vector3f;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Updates the camera rotation and position in order to follow an entities transformable and the mouse movements.
@@ -18,6 +23,8 @@ import com.branwilliams.bundi.voxel.components.PlayerState;
  * @since August 16, 2019
  */
 public class PlayerCameraUpdateSystem extends AbstractSystem {
+
+    private Map<Integer, Vector3f> prevPos = new HashMap<>();
 
     public PlayerCameraUpdateSystem(VoxelScene scene) {
         super(new ClassComponentMatcher(Transformable.class, PlayerState.class, CameraComponent.class));
@@ -39,7 +46,10 @@ public class PlayerCameraUpdateSystem extends AbstractSystem {
             Transformable transformable = entity.getComponent(Transformable.class);
             CameraComponent cameraComponent = entity.getComponent(CameraComponent.class);
             PlayerState playerState = entity.getComponent(PlayerState.class);
-            cameraComponent.getCamera().setPosition(playerState.getEyePosition(transformable));
+            Vector3f eyePos = playerState.getEyePosition(transformable);
+            Vector3f previousPos = prevPos.computeIfAbsent(entity.getId(), (k) -> new Vector3f());
+            cameraComponent.getCamera().setPosition(Mathf.lerp(previousPos, eyePos, deltaTime));
+            previousPos.set(eyePos);
         }
     }
 }

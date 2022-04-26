@@ -24,7 +24,7 @@ public class ScrollableContainerFactory extends ComponentFactory<ScrollableConta
         boolean autoLayout = XmlUtils.getAttributeBoolean(attributes, "autolayout", false);
         boolean layering = XmlUtils.getAttributeBoolean(attributes, "layering", false);
         boolean useLayoutSize = XmlUtils.getAttributeBoolean(attributes, "uselayoutsize", false);
-        float opacity = Math.max(0F, XmlUtils.getAttributeFloat(attributes, "opacity", 1F));
+        float opacity = Math.max(0F, XmlUtils.getAttributeOpacity(attributes, "opacity", 1F));
         Color backgroundColor = XmlUtils.getAttributeColor(attributes, "color", toolbox.get(COLOR_SECONDARY_BACKGROUND));
         Color scrollbarBackgroundColor = XmlUtils.getAttributeColor(attributes, "scrollbarBackgroundColor", toolbox.get(COLOR_TERTIARY_BACKGROUND));
         Color scrollbarColor = XmlUtils.getAttributeColor(attributes, "scrollbarColor", toolbox.get(COLOR_HIGHLIGHT));

@@ -19,9 +19,8 @@ public class AtmosphereShaderProgram extends ShaderProgram {
 
     public AtmosphereShaderProgram(EngineContext engineContext) throws ShaderInitializationException, ShaderUniformException {
         super();
-        Path directory = engineContext.getAssetDirectory();
-        this.setVertexShader(IOUtils.readFile(directory, "voxel/shaders/atmosphere/vertexShader.vert", null));
-        this.setFragmentShader(IOUtils.readFile(directory, "voxel/shaders/atmosphere/fragmentShader.frag", null));
+        this.setVertexShader(IOUtils.readResource( "voxel/shaders/atmosphere/vertexShader.vert", null));
+        this.setFragmentShader(IOUtils.readResource("voxel/shaders/atmosphere/fragmentShader.frag", null));
         this.link();
 
         this.createUniform("projectionMatrix");

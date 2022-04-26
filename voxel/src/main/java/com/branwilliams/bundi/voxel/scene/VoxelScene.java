@@ -4,7 +4,10 @@ import com.branwilliams.bundi.engine.core.*;
 import com.branwilliams.bundi.engine.core.window.Window;
 import com.branwilliams.bundi.engine.ecs.IEntity;
 import com.branwilliams.bundi.engine.material.Material;
+import com.branwilliams.bundi.engine.model.Model;
+import com.branwilliams.bundi.engine.model.ModelLoader;
 import com.branwilliams.bundi.engine.shader.*;
+import com.branwilliams.bundi.engine.shader.dynamic.VertexFormat;
 import com.branwilliams.bundi.engine.skybox.Skybox;
 import com.branwilliams.bundi.engine.systems.LockableSystem;
 import com.branwilliams.bundi.engine.texture.CubeMapTexture;
@@ -16,7 +19,7 @@ import com.branwilliams.bundi.gui.impl.ColorPack;
 import com.branwilliams.bundi.gui.screen.GuiScreen;
 import com.branwilliams.bundi.gui.screen.GuiScreenManager;
 import com.branwilliams.bundi.voxel.VoxelGameState;
-import com.branwilliams.bundi.voxel.VoxelSoundManager;
+import com.branwilliams.bundi.voxel.sound.VoxelSoundManager;
 import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelChunkMeshBuilder;
 import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelChunkMeshBuilderImpl;
 import com.branwilliams.bundi.voxel.render.mesh.builder.VoxelMeshBuilder;
@@ -179,13 +182,30 @@ public class VoxelScene extends AbstractScene implements Lockable {
     public void play(Engine engine) {
         es.clearEntities();
 
+        TextureLoader textureLoader = new TextureLoader(engine.getContext());
+
         try {
-            TextureLoader textureLoader = new TextureLoader(engine.getContext());
             CubeMapTexture skyboxTexture = textureLoader.loadCubeMapTexture("assets/one.csv");
             skybox = new Skybox(500, new Material(skyboxTexture));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+        try {
+            ModelLoader modelLoader = new ModelLoader(engine.getContext(), textureLoader);
+            Model cowModel = modelLoader.load("models/cow/cow.obj", "models/cow/textures/",
+                    VertexFormat.POSITION_UV_NORMAL);
+
+            es.entity("cow").component(cowModel,
+                    new Transformation()
+                            .position(128, 84, 128)
+                            .scale(0.25F)
+            ).build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
 
         playerState = new PlayerState();
         playerState.getInventory().addItems(itemRegistry);

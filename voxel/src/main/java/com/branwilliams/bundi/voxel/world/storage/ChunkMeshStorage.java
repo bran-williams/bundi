@@ -70,7 +70,6 @@ public class ChunkMeshStorage implements Destructible {
         ChunkMesh mesh = meshes.get(voxelChunk.chunkPos);
 
         if (mesh != null) {
-//            System.out.println("mesh state=" + mesh.getMeshState().name());
             switch (mesh.getMeshState()) {
                 case REASSIGNED:
                     if (meshCreationLimiter.reached()) {

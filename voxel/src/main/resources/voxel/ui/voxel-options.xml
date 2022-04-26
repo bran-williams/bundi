@@ -2,38 +2,59 @@
     <Import res="voxel/ui/voxel-background.xml"/>
 
     <Container tag="optionsmenu" autolayout="true" useLayoutSize="false" x="5%" y="10%" width="90%" height="70%" opacity="0">
-        <GridLayout rows="3" columns="1" horizontalpadding="0" verticalpadding="4%"/>
+        <GridLayout rows="3" columns="1" horizontalpadding="4" verticalpadding="4" componentpadding="4"/>
 
         <Label tag="menu_title" text="Options" color="#ffffff" height="70" alignment="center">
             <FontData font="Roboto" size="50" style="bold"/>
         </Label>
 
-        <ScrollableContainer tag="menu_body" x="0" y="0" width="100%" height="70%">
-            <GridLayout rows="6" columns="1" horizontalpadding="4" verticalpadding="4" componentpadding="4"/>
+        <ScrollableContainer tag="menu_body" x="0" y="0" width="100%" height="70%" opacity="0.5">
+<!--            <ListLayout horizontalpadding="4%" verticalpadding="4%" componentpadding="4%"/>-->
+            <GridLayout rows="7" columns="1" horizontalpadding="4" verticalpadding="4" componentpadding="4"/>
 
-            <Checkbox tag="toggle_vsync" text="Vsync" width="300" height="36" enabled="false">
-                <FontData font="Roboto" size="24" style="plain"/>
-            </Checkbox>
+            <Container tag="sound_body" x="0" y="0" width="50%" height="50%" opacity="0.2">
+                <ListLayout padding="4" componentpadding="4"/>
+                <Label tag="sound_title" text="Sound" color="#ffffff" height="40" alignment="left">
+                    <FontData font="Roboto" size="36" style="bold"/>
+                </Label>
 
-            <Checkbox tag="toggle_fullscreen" text="Fullscreen" width="300" height="36" enabled="false">
-                <FontData font="Roboto" size="24" style="plain"/>
-            </Checkbox>
+                <Checkbox tag="play_music_checkbox" text="Play Music" width="300" height="36" enabled="false">
+                    <FontData font="Roboto" size="24" style="plain"/>
+                </Checkbox>
 
-            <Checkbox tag="play_music_checkbox" text="Play Music" width="300" height="36" enabled="false">
-                <FontData font="Roboto" size="24" style="plain"/>
-            </Checkbox>
+                <Import res="voxel/ui/voxel-slider.xml" slider_container="music_volume_container"
+                        title="music_volume_title" title_text="Music Volume" value="music_volume_value"
+                        value_text="100%" slider="music_volume_slider"/>
+            </Container>
 
-            <Import res="voxel/ui/voxel-slider.xml" slider_container="music_volume_container"
-                    title="music_volume_title" title_text="Music Volume" value="music_volume_value"
-                    value_text="100%" slider="music_volume_slider"/>
+            <Container tag="visual_body" x="0" y="50%" width="50%" height="50%" opacity="0.2">
+                <ListLayout padding="4%" componentpadding="4%"/>
 
-            <Import res="voxel/ui/voxel-slider.xml" slider_container="render_distance_container"
-                    title="render_distance_title" title_text="Render distance" value="render_distance_value"
-                    value_text="8" slider="render_distance_slider"/>
+                <Label tag="visual_title" text="Visual" color="#ffffff" height="40" alignment="left">
+                    <FontData font="Roboto" size="36" style="bold"/>
+                </Label>
 
-            <Import res="voxel/ui/voxel-slider.xml" slider_container="min_light_container"
-                    title="min_light_title" title_text="Minimum Light" value="min_light_value"
-                    value_text="0" slider="min_light_slider"/>
+                <Checkbox tag="toggle_vsync" text="Vsync" width="300" height="36" enabled="false">
+                    <FontData font="Roboto" size="24" style="plain"/>
+                </Checkbox>
+
+                <Checkbox tag="toggle_fullscreen" text="Fullscreen" width="300" height="36" enabled="false">
+                    <FontData font="Roboto" size="24" style="plain"/>
+                </Checkbox>
+
+                <Import res="voxel/ui/voxel-slider.xml" slider_container="render_distance_container"
+                        title="render_distance_title" title_text="Render distance" value="render_distance_value"
+                        value_text="8" slider="render_distance_slider"/>
+
+                <Import res="voxel/ui/voxel-slider.xml" slider_container="min_light_container"
+                        title="min_light_title" title_text="Minimum Light" value="min_light_value"
+                        value_text="0" slider="min_light_slider"/>
+
+
+                <Import res="voxel/ui/voxel-slider.xml" slider_container="ao_container"
+                        title="ao_title" title_text="Ambient Occlusion Power" value="ao_value"
+                        value_text="1.00" slider="ao_slider"/>
+            </Container>
         </ScrollableContainer>
 
         <Button tag="previous_button" width="100%" height="48" highlight="true" color="#aaaaaa">
